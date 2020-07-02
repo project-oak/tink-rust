@@ -14,7 +14,28 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-mod keyset;
-mod primitiveset;
-mod registry;
-mod subtle;
+//! Provide methods to generate, read, write or validate keysets.
+
+mod binary_io;
+pub use binary_io::*;
+mod handle;
+pub use handle::*;
+/* TODO: add support for JSON serialization of keysets
+#[cfg(feature = "json")]
+mod json_io;
+#[cfg(feature = "json")]
+pub use json_io::*;
+*/
+mod manager;
+pub use manager::*;
+mod mem_io;
+pub use mem_io::*;
+mod reader;
+pub use reader::*;
+mod validation;
+pub use validation::*;
+mod writer;
+pub use writer::*;
+
+#[cfg(feature = "insecure")]
+pub mod insecure;

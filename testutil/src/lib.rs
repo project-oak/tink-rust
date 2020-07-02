@@ -602,7 +602,7 @@ pub fn new_aes_cmac_key_format(tag_size: u32) -> tink::proto::AesCmacKeyFormat {
     }
 }
 
-/// Return a new `tink::keyset::Manager` that contains a [`HmacKey`](tink::proto::HmacKey).
+/// Return a new [`tink::keyset::Manager`] that contains a [`HmacKey`](tink::proto::HmacKey).
 /* TODO need hmac_sha256
 pub fn new_hmac_keyset_manager() -> tink::keyset::Manager {
     let ksm = tink::keyset::Manager::new();

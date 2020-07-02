@@ -4,6 +4,9 @@ version = "0.1.0"
 authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 
+[features]
+insecure = []
+
 [dependencies]
 digest = "*"
 hkdf = "*"
@@ -17,5 +20,6 @@ sha2 = "*"
 prost-build = "*"
 
 [dev-dependencies]
+base64 = "*"
 hex = "*"
 tink-testutil = "*"

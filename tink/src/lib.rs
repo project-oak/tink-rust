@@ -21,6 +21,7 @@
 use std::sync::Arc;
 
 pub mod cryptofmt;
+pub mod keyset;
 pub mod primitiveset;
 pub mod proto {
     //! Auto-generated code from protocol buffer message definitions.

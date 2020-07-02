@@ -14,7 +14,16 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-mod keyset;
-mod primitiveset;
-mod registry;
-mod subtle;
+mod binary_io_test;
+mod handle_test;
+/* TODO: add support for JSON serialization of keysets
+#[cfg(feature = "json")]
+mod json_io_test;
+*/
+/* TODO: re-enable when tink-mac available.
+mod manager_test;
+*/
+mod validation_test;
+
+mod utils;
+pub use utils::SharedBuf;
