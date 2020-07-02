@@ -1,7 +1,8 @@
 [workspace]
-members = ["testutil", "tink"]
+members = ["daead", "testutil", "tink"]
 
 # Patch dependencies on tink crates so that they refer to the versions within this same repository.
 [patch.crates-io]
 tink = { path = "tink" }
+tink-daead = { path = "daead" }
 tink-testutil = { path = "testutil" }

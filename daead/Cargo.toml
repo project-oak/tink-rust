@@ -1,0 +1,17 @@
+[package]
+name = "tink-daead"
+version = "0.1.0"
+authors = ["David Drysdale <drysdale@google.com>"]
+edition = "2018"
+
+[dependencies]
+aead = { version = "*", features = ["std"] }
+aes-siv = "*"
+prost = "*"
+tink = "*"
+
+[dev-dependencies]
+hex = "*"
+serde = { version = "*", features = ["derive"] }
+serde_json = "*"
+tink-testutil = "*"
