@@ -25,6 +25,7 @@ pub mod proto {
     //! Auto-generated code from protocol buffer message definitions.
     include!("codegen/google.crypto.tink.rs");
 }
+pub mod registry;
 pub mod utils;
 pub use utils::TinkError;
 

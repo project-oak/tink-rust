@@ -18,7 +18,7 @@
 
 #![deny(intra_doc_link_resolution_failure)]
 
-use std::convert::TryInto;
+use std::{convert::TryInto, sync::Arc};
 use tink::{
     proto::{KeyData, Keyset},
     TinkError,
@@ -37,7 +37,6 @@ pub fn get_random_bytes(size: usize) -> Vec<u8> {
     data
 }
 
-/* TODO: enable when tink::registry available
 /// Dummy implementation of the `KeyManager` trait.
 /// It returns [`DummyAead`] when `primitive()` functions are called.
 #[derive(Debug)]
@@ -70,11 +69,14 @@ impl tink::registry::KeyManager for DummyAeadKeyManager {
         self.type_url.to_string()
     }
 
+    fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {
+        tink::proto::key_data::KeyMaterialType::Symmetric
+    }
+
     fn new_key_data(&self, _serialized_key_format: &[u8]) -> Result<KeyData, TinkError> {
         Err("not implemented".into())
     }
 }
-*/
 
 /// Dummy implementation of [`tink::Aead`] trait.
 #[derive(Debug)]
@@ -111,7 +113,6 @@ impl tink::Mac for DummyMac {
     }
 }
 
-/* TODO: enable when tink::registry available
 /// Dummy implementation of a [`tink::registry::KmsClient`].
 pub struct DummyKmsClient;
 
@@ -124,7 +125,6 @@ impl tink::registry::KmsClient for DummyKmsClient {
         Ok(Arc::new(DummyAead))
     }
 }
- */
 
 /// Create a new [`Keyset`] containing an [`AesGcmKey`](tink::proto::AesGcmKey).
 pub fn new_test_aes_gcm_keyset(
