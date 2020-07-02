@@ -21,6 +21,7 @@
 use std::sync::Arc;
 
 pub mod cryptofmt;
+pub mod primitiveset;
 pub mod proto {
     //! Auto-generated code from protocol buffer message definitions.
     include!("codegen/google.crypto.tink.rs");
