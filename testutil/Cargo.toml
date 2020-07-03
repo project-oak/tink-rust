@@ -1,0 +1,14 @@
+[package]
+name = "tink-testutil"
+version = "0.1.0"
+authors = ["David Drysdale <drysdale@google.com>"]
+edition = "2018"
+
+[dependencies]
+prost = "*"
+rand = "*"
+serde = { version = "*", features = ["derive"] }
+tink = "*"
+
+[dev-dependencies]
+serde_json = "*"

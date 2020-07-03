@@ -4,7 +4,11 @@ rust:
   - beta
   - nightly-2020-06-10
 
+env:
+  - WYCHEPROOF_DIR=${TRAVIS_BUILD_DIR}/wycheproof
+
 install:
+  - git clone --depth 1 https://github.com/google/wycheproof # Needed for test vectors
   - rustup component add clippy-preview rustfmt
 
 script:
