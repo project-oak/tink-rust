@@ -14,6 +14,18 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-mod primitiveset;
-mod registry;
-mod subtle;
+//! Utilities for random data.
+
+use rand::{thread_rng, Rng};
+
+/// Return a vector of the given `size` filled with random bytes.
+pub fn get_random_bytes(size: usize) -> Vec<u8> {
+    let mut data = vec![0u8; size];
+    thread_rng().fill(&mut data[..]);
+    data
+}
+
+/// Randomly generate an unsigned 32-bit integer.
+pub fn get_random_uint32() -> u32 {
+    thread_rng().gen()
+}

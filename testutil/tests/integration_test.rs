@@ -14,8 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::Mac;
-use tink_testutil::get_random_bytes;
+use tink::{subtle::random::get_random_bytes, Mac};
 
 mod wycheproofutil_test;
 

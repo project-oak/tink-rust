@@ -21,6 +21,7 @@
 use std::{convert::TryInto, sync::Arc};
 use tink::{
     proto::{KeyData, Keyset},
+    subtle::random::get_random_bytes,
     TinkError,
 };
 
@@ -28,14 +29,6 @@ mod constant;
 pub use constant::*;
 mod wycheproofutil;
 pub use wycheproofutil::*;
-
-// TODO: use tink::subtle::random helpers
-use rand::{thread_rng, Rng};
-pub fn get_random_bytes(size: usize) -> Vec<u8> {
-    let mut data = vec![0u8; size];
-    thread_rng().fill(&mut data[..]);
-    data
-}
 
 /// Dummy implementation of the `KeyManager` trait.
 /// It returns [`DummyAead`] when `primitive()` functions are called.

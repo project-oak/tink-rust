@@ -5,12 +5,17 @@ authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 
 [dependencies]
+digest = "*"
+hkdf = "*"
 lazy_static = "*"
 prost = "*"
 rand = "*"
+sha-1 = "*"
+sha2 = "*"
 
 [build-dependencies]
 prost-build = "*"
 
 [dev-dependencies]
+hex = "*"
 tink-testutil = "*"

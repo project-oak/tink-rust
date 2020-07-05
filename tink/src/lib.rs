@@ -27,6 +27,7 @@ pub mod proto {
     include!("codegen/google.crypto.tink.rs");
 }
 pub mod registry;
+pub mod subtle;
 pub mod utils;
 pub use utils::TinkError;
 

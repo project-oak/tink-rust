@@ -14,6 +14,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-mod primitiveset;
-mod registry;
-mod subtle;
+use tink::subtle::random;
+
+#[test]
+fn test_get_random_bytes() {
+    for i in 0..33 {
+        let buf = random::get_random_bytes(i);
+        assert_eq!(i, buf.len(), "length of the output doesn't match the input")
+    }
+}
