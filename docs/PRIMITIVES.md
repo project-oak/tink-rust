@@ -27,15 +27,15 @@ describe the main properties of Tink primitives.
 
 ### Primitives supported by language
 
-**Primitive**      | **Java** | **C++** | **ObjC** | **Go** | **Python**
------------------- | -------- | ------- | -------- | ------ | ----------
-AEAD               | yes      | yes     | yes      | yes    | yes
-Streaming AEAD     | yes      | yes     | no       | yes    | no
-Deterministic AEAD | yes      | yes     | yes      | yes    | yes
-MAC                | yes      | yes     | yes      | yes    | yes
-PRF                | yes      | yes     | no       | yes    | yes
-Digital signatures | yes      | yes     | yes      | yes    | yes
-Hybrid encryption  | yes      | yes     | yes      | yes    | yes
+**Primitive**      | **Java** | **C++** | **ObjC** | **Go** | **Python** | **Rust**
+------------------ | -------- | ------- | -------- | ------ | ---------- | --------
+AEAD               | yes      | yes     | yes      | yes    | yes        | no
+Streaming AEAD     | yes      | yes     | no       | yes    | no         | no
+Deterministic AEAD | yes      | yes     | yes      | yes    | yes        | yes
+MAC                | yes      | yes     | yes      | yes    | yes        | yes
+PRF                | yes      | yes     | no       | yes    | yes        | yes
+Digital signatures | yes      | yes     | yes      | yes    | yes        | no
+Hybrid encryption  | yes      | yes     | yes      | yes    | yes        | no
 
 JavaScript is currently under development.
 
@@ -97,6 +97,17 @@ MAC                | HMAC-SHA2, AES-CMAC
 PRF                | HKDF-SHA2, HMAC-SHA2, AES-CMAC
 Digital Signatures | ECDSA over NIST curves, Ed25519, RSA-SSA-PKCS1, RSA-SSA-PSS
 Hybrid Encryption  | ECIES with AEAD and HKDF
+
+#### Rust
+
+Primitive          | Rust Implementations
+------------------ | -----------------------------------------------------------------------------
+AEAD               |
+Deterministic AEAD | AES-SIV
+MAC                | HMAC-SHA2, AES-CMAC
+PRF                | HKDF-SHA2, HMAC-SHA2, AES-CMAC
+Digital Signatures |
+Hybrid Encryption  |
 
 ---
 
