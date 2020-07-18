@@ -590,6 +590,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "tink-mac"
+version = "0.1.0"
+dependencies = [
+ "hex",
+ "lazy_static",
+ "maplit",
+ "prost",
+ "serde",
+ "serde_json",
+ "tink",
+ "tink-prf",
+ "tink-testutil",
+]
+
+[[package]]
 name = "tink-prf"
 version = "0.1.0"
 dependencies = [
