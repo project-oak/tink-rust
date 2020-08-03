@@ -1,0 +1,23 @@
+[package]
+name = "tink-prf"
+version = "0.1.0"
+authors = ["David Drysdale <drysdale@google.com>"]
+edition = "2018"
+
+[dependencies]
+aes = "*"
+cmac = "*"
+digest = "*"
+hkdf = "*"
+hmac = "*"
+prost = "*"
+sha-1 = "*"
+sha2 = "*"
+tink = "*"
+
+[dev-dependencies]
+hex = "*"
+maplit = "*"
+serde = { version = "*", features = ["derive"] }
+serde_json = "*"
+tink-testutil = "*"

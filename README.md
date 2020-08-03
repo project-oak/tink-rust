@@ -68,7 +68,7 @@ Go packages and the equivalent Rust crates and modules, when available.
 | `tink-daead`         | `daead` |
 |                      | `hybrid` |
 |                      | `mac` |
-|                      | `prf` |
+| `tink-prf`           | `prf` |
 |                      | `signature` |
 |                      | `streamingaead` |
 
