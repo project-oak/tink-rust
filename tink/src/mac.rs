@@ -25,5 +25,12 @@ pub trait Mac {
 
     // Returns `()` if `mac` is a correct authentication code (MAC) for `data`,
     // otherwise it returns an error.
-    fn verify_mac(&self, mac: &[u8], data: &[u8]) -> Result<(), crate::TinkError>;
+    fn verify_mac(&self, mac: &[u8], data: &[u8]) -> Result<(), crate::TinkError> {
+        let computed = self.compute_mac(data)?;
+        if crate::subtle::constant_time_compare(mac, &computed) {
+            Ok(())
+        } else {
+            Err("Invalid MAC".into())
+        }
+    }
 }
