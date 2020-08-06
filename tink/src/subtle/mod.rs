@@ -18,6 +18,7 @@
 
 use crate::{proto::HashType, TinkError};
 use digest::Digest;
+use subtle::ConstantTimeEq;
 
 mod hkdf;
 pub use self::hkdf::*;
@@ -77,6 +78,11 @@ where
     hash_func.finalize_reset().to_vec()
 }
 
+/// Compare two slices in constant time. Return `true` if they are equal, `false` otherwise.
+pub fn constant_time_compare(left: &[u8], right: &[u8]) -> bool {
+    left.ct_eq(right).into()
+}
+
 /* TODO: plumb elliptic curves through to crypto library, and be less stringly-typed
 /// Return the curve object that corresponds to the given curve type.
 /// It returns null if the curve type is not supported.
@@ -92,4 +98,4 @@ pub fn get_curve(curve string) elliptic.Curve {
         return nil
     }
 }
- */
+*/

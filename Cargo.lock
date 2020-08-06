@@ -571,6 +571,7 @@ dependencies = [
  "rand",
  "sha-1",
  "sha2",
+ "subtle",
  "tink-testutil",
 ]
 

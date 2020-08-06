@@ -15,6 +15,7 @@ prost = "*"
 rand = "*"
 sha-1 = "*"
 sha2 = "*"
+subtle = "*"
 
 [build-dependencies]
 prost-build = "*"
