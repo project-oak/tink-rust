@@ -40,9 +40,9 @@ Go packages and the equivalent Rust crates and modules, when available.
 | `tink::keyset::insecure` | `internal` | Gated on (non-default) `insecure` feature |
 | `tink::keyset::insecure` | `testkeyset` | Gated on (non-default) `insecure` feature |
 | `tink-testutil`          | `testutil` | Depends on `insecure` feature of `tink` crate |
-|                          | `services` (`/testing/go/`) |
+| `tink-testing`           | `services` (`/testing/go/`) |
+| `tink-testing::proto`    | `testing_api_go_grpc` (`/proto/testing/`) |
 |                          | `main` (`/tools/testing/go/`) |
-|                          | `testing_api_go_grpc` (`/proto/testing/`) |
 
 ### Key Management Systems
 

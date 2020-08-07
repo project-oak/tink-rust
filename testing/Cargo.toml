@@ -1,0 +1,28 @@
+[package]
+name = "tink-testing-server"
+version = "0.1.0"
+authors = ["David Drysdale <drysdale@google.com>"]
+edition = "2018"
+
+[dependencies]
+env_logger = "*"
+futures = "*"
+log = "*"
+prost = "*"
+structopt = "*"
+tink = { version = "*", features = [
+  "insecure",
+  "json",
+ ] }
+tink-daead = "*"
+tink-mac = "*"
+tink-prf = "*"
+tokio = { version = "*", features = [
+  "macros",
+  "rt-threaded",
+  "signal",
+] }
+tonic = "*"
+
+[build-dependencies]
+tonic-build = "*"
