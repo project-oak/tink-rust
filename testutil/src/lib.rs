@@ -601,14 +601,12 @@ pub fn new_aes_cmac_key_format(tag_size: u32) -> tink::proto::AesCmacKeyFormat {
 }
 
 /// Return a new [`tink::keyset::Manager`] that contains a [`HmacKey`](tink::proto::HmacKey).
-/* TODO need hmac_sha256
 pub fn new_hmac_keyset_manager() -> tink::keyset::Manager {
-    let ksm = tink::keyset::Manager::new();
-    let kt = mac::hmac_sha256_tag128_key_template();
-    ksm.rotate(kt).expect("cannot rotate keyset manager");
+    let mut ksm = tink::keyset::Manager::new();
+    let kt = tink_mac::hmac_sha256_tag128_key_template();
+    ksm.rotate(&kt).expect("cannot rotate keyset manager");
     ksm
 }
-*/
 
 /// Return a new [`KeyData`] that contains a [`HmacKey`](tink::proto::HmacKey).
 pub fn new_hmac_key_data(hash_type: tink::proto::HashType, tag_size: u32) -> KeyData {

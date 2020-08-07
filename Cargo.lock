@@ -634,6 +634,7 @@ dependencies = [
  "serde_json",
  "tink",
  "tink-daead",
+ "tink-mac",
 ]
 
 [[package]]
