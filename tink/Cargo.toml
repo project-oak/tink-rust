@@ -23,4 +23,5 @@ prost-build = "*"
 [dev-dependencies]
 base64 = "*"
 hex = "*"
+tink-mac = "*"
 tink-testutil = "*"

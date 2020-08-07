@@ -572,6 +572,7 @@ dependencies = [
  "sha-1",
  "sha2",
  "subtle",
+ "tink-mac",
  "tink-testutil",
 ]
 

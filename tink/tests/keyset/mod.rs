@@ -20,9 +20,7 @@ mod handle_test;
 #[cfg(feature = "json")]
 mod json_io_test;
 */
-/* TODO: re-enable when tink-mac available.
 mod manager_test;
-*/
 mod validation_test;
 
 mod utils;

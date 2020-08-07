@@ -19,7 +19,6 @@ use tink::keyset::{Reader, Writer};
 
 #[test]
 fn test_binary_io_unencrypted() {
-    /* TODO: enable when hmac available
     tink_mac::init();
     let buf = SharedBuf::new();
     let mut w = tink::keyset::BinaryWriter::new(buf.clone());
@@ -37,7 +36,6 @@ fn test_binary_io_unencrypted() {
         "written keyset ({:?}) doesn't match read keyset ({:?})",
         ks1, ks2
     );
-    */
 }
 
 #[test]

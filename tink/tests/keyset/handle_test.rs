@@ -16,7 +16,6 @@
 
 use tink::keyset::{insecure, Handle};
 
-/* TODO: re-instate when tink_mac available
 #[test]
 fn test_new_handle() {
     tink_mac::init();
@@ -36,9 +35,7 @@ fn test_new_handle() {
         "cannot get primitive from generated keyset handle"
     );
 }
- */
 
-/* TODO: re-instate when tink_mac available
 #[test]
 fn test_new_handle_with_invalid_input() {
     tink_mac::init();
@@ -50,7 +47,6 @@ fn test_new_handle_with_invalid_input() {
         "expect an error when type_url is not registered"
     );
 }
-*/
 
 /* TODO: enable when tink-aead crate is available.
 #[test]
