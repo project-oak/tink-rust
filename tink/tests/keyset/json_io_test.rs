@@ -16,16 +16,19 @@
 
 use super::SharedBuf;
 use std::io::{Read, Write};
+use tink::keyset::{Reader, Writer};
 
+#[test]
 fn test_json_io_unencrypted() {
+    tink_mac::init();
     let buf = SharedBuf::new();
-    let mut w = tink::keyset::JSONWriter::new(Box::new(buf.clone()));
-    let mut r = tink::keyset::JSONReader::new(Box::new(buf));
+    let mut w = tink::keyset::JsonWriter::new(buf.clone());
+    let mut r = tink::keyset::JsonReader::new(buf);
 
     let manager = tink_testutil::new_hmac_keyset_manager();
     let h = manager.handle().expect("cannot get keyset handle");
 
-    let ks1 = tink::keyset::insecure::keyset_material(h);
+    let ks1 = tink::keyset::insecure::keyset_material(&h);
     w.write(&ks1).expect("cannot write keyset");
 
     let ks2 = r.read().expect("cannot read keyset");
@@ -36,9 +39,20 @@ fn test_json_io_unencrypted() {
     );
 }
 
+// TODO: get this in sync with key encoding - the Go *test* code
+// does a one-line compact text format of the key protobuf (which is
+// then base64-encoded by the standard Go JSON encoder).  The code
+// below uses a Rust `Debug` format (not text proto), but this may
+// be OK for a test -- would a 'real' Keyset have serialized binary
+// proto data?
+#[test]
 fn test_json_reader() {
-    let gcm_key = tink_testutil::new_aes_gcm_key(0, 16); // TODO is a .String() conversion needed?
-    let eax_key = tink_testutil::new_hmac_key(tink::proto::HashType::Sha512, 32); // TODO is a .String() conversion needed?
+    tink_mac::init();
+    let gcm_key = tink_testutil::proto_encode(&tink_testutil::new_aes_gcm_key(0, 16));
+    let eax_key = tink_testutil::proto_encode(&tink_testutil::new_hmac_key(
+        tink::proto::HashType::Sha512,
+        32,
+    ));
     let json_keyset = format!(
         r#"{{
          "primaryKeyId":42,
@@ -65,12 +79,12 @@ fn test_json_reader() {
             }}
          ]
       }}"#,
-        base64::encode(gcm_key),
-        base64::encode(eax_key)
+        base64::encode(&gcm_key),
+        base64::encode(&eax_key)
     );
-    let buf = Box::new(SharedBuf::new());
-    buf.write(json_keyset.as_bytes());
-    let r = tink::keyset::JSONReader::new(buf);
+    let mut buf = SharedBuf::new();
+    buf.write_all(json_keyset.as_bytes()).unwrap();
+    let mut r = tink::keyset::JsonReader::new(buf);
 
     let got = r.read().expect("cannot read keyset");
 
@@ -102,8 +116,10 @@ fn test_json_reader() {
     assert_eq!(got, want, "written keyset doesn't match expected keyset");
 }
 
+#[test]
 fn test_json_reader_large_ids() {
-    let gcm_key = tink_testutil::new_aes_gcm_key(0, 16); // TODO is a .String() conversion needed?
+    tink_mac::init();
+    let gcm_key = tink_testutil::proto_encode(&tink_testutil::new_aes_gcm_key(0, 16));
     let json_keyset = format!(
         r#"{{
          "primaryKeyId":4294967275,
@@ -120,22 +136,22 @@ fn test_json_reader_large_ids() {
             }}
          ]
       }}"#,
-        base64::encode(gcm_key),
+        base64::encode(&gcm_key),
     );
-    let buf = SharedBuf::new();
-    buf.write(json_keyset.as_bytes());
-    let r = tink::keyset::JSONReader::new(Box::new(buf));
+    let mut buf = SharedBuf::new();
+    buf.write_all(json_keyset.as_bytes()).unwrap();
+    let mut r = tink::keyset::JsonReader::new(buf);
 
     let got = r.read().expect("cannot read keyset");
 
     let want = tink::proto::Keyset {
         primary_key_id: 4294967275,
         key: vec![tink::proto::keyset::Key {
-            key_data: tink::proto::KeyData {
+            key_data: Some(tink::proto::KeyData {
                 type_url: "type.googleapis.com/google.crypto.tink.AesGcmKey".to_string(),
                 key_material_type: tink::proto::key_data::KeyMaterialType::Symmetric as i32,
                 value: gcm_key,
-            },
+            }),
             output_prefix_type: tink::proto::OutputPrefixType::Tink as i32,
             key_id: 4294967275,
             status: tink::proto::KeyStatusType::Enabled as i32,
@@ -145,9 +161,11 @@ fn test_json_reader_large_ids() {
     assert_eq!(got, want, "written keyset doesn't match expected keyset");
 }
 
+#[test]
 fn test_json_reader_negative_ids() {
-    let gcm_key = tink_testutil::new_aes_gcm_key(0, 16); // TODO is a .String() conversion needed?
-    let jsonKeyset = format!(
+    tink_mac::init();
+    let gcm_key = tink_testutil::proto_encode(&tink_testutil::new_aes_gcm_key(0, 16));
+    let json_keyset = format!(
         r#"{{
          "primaryKeyId": -10,
          "key":[
@@ -163,18 +181,23 @@ fn test_json_reader_negative_ids() {
             }}
          ]
       }}"#,
-        base64::encode(gcm_key),
+        base64::encode(&gcm_key),
     );
-    let buf = Box::new(SharedBuf::new());
-    buf.write(json_keyset.as_bytes());
-    let r = tink::keyset::JSONReader::new(buf);
+    let mut buf = SharedBuf::new();
+    buf.write_all(json_keyset.as_bytes()).unwrap();
+    let mut r = tink::keyset::JsonReader::new(buf);
 
     assert!(r.read().is_err(), "Expected failure due to negative key id");
 }
 
 // Tests that large IDs (>2^31) are written correctly.
+#[test]
 fn test_json_writer_large_id() {
-    let eax_key = tink_testutil::new_hmac_key(tink::proto::HashType::Sha512, 32); // TODO is a .String() conversion needed?
+    tink_mac::init();
+    let eax_key = tink_testutil::proto_encode(&tink_testutil::new_hmac_key(
+        tink::proto::HashType::Sha512,
+        32,
+    ));
 
     let ks = tink::proto::Keyset {
         primary_key_id: 4294967275,
@@ -190,8 +213,8 @@ fn test_json_writer_large_id() {
         }],
     };
 
-    let buf = Box::new(SharedBuf::new());
-    let w = tink::keyset::JSONWriter::new(buf.clone());
+    let mut buf = SharedBuf::new();
+    let mut w = tink::keyset::JsonWriter::new(buf.clone());
     w.write(&ks).expect("cannot write keyset");
 
     let mut contents = String::new();
@@ -206,13 +229,15 @@ fn test_json_writer_large_id() {
     );
 }
 
+#[test]
 fn test_json_io_encrypted() {
+    tink_mac::init();
     let buf = SharedBuf::new();
-    let mut w = tink::keyset::JSONWriter::new(Box::new(buf.clone()));
-    let mut r = tink::keyset::JSONReader::new(Box::new(buf));
+    let mut w = tink::keyset::JsonWriter::new(buf.clone());
+    let mut r = tink::keyset::JsonReader::new(buf);
 
     let kse1 = tink::proto::EncryptedKeyset {
-        encrypted_keyset: vec!['A' as u8; 32],
+        encrypted_keyset: vec![b'A'; 32],
         keyset_info: None,
     };
     w.write_encrypted(&kse1)

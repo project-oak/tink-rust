@@ -16,10 +16,8 @@
 
 mod binary_io_test;
 mod handle_test;
-/* TODO: add support for JSON serialization of keysets
 #[cfg(feature = "json")]
 mod json_io_test;
-*/
 mod manager_test;
 mod validation_test;
 

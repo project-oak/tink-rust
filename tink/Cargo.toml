@@ -5,14 +5,19 @@ authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 
 [features]
+default = ["json"]
 insecure = []
+json = ["base64", "serde", "serde_json"]
 
 [dependencies]
+base64 = { version = "*", optional = true }
 digest = "*"
 hkdf = "*"
 lazy_static = "*"
 prost = "*"
 rand = "*"
+serde = { version = "*", features = ["derive"], optional = true }
+serde_json = { version = "*", optional = true }
 sha-1 = "*"
 sha2 = "*"
 subtle = "*"

@@ -20,12 +20,10 @@ mod binary_io;
 pub use binary_io::*;
 mod handle;
 pub use handle::*;
-/* TODO: add support for JSON serialization of keysets
 #[cfg(feature = "json")]
 mod json_io;
 #[cfg(feature = "json")]
 pub use json_io::*;
-*/
 mod manager;
 pub use manager::*;
 mod mem_io;
