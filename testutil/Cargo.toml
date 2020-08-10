@@ -10,6 +10,7 @@ rand = "*"
 serde = { version = "*", features = ["derive"] }
 # Depending on tink-testutil will turn on the `insecure` feature of `tink`.
 tink = { version = "*", features = ["insecure"] }
+tink-daead = "*"
 
 [dev-dependencies]
 serde_json = "*"

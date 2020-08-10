@@ -131,9 +131,7 @@ pub fn new_test_aes_gcm_keyset(
 pub fn new_test_aes_siv_keyset(
     primary_output_prefix_type: tink::proto::OutputPrefixType,
 ) -> Keyset {
-    // TODO: replace with dep on tink_daead
-    let key_value = get_random_bytes(64);
-    // let key_value = get_random_bytes(tink_daead::subtle::AES_SIV_KEY_SIZE);
+    let key_value = get_random_bytes(tink_daead::subtle::AES_SIV_KEY_SIZE);
     let key = &tink::proto::AesSivKey {
         version: AES_SIV_KEY_VERSION,
         key_value,
