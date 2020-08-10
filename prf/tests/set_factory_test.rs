@@ -148,8 +148,6 @@ fn test_non_raw_keys() {
     );
 }
 
-/*
-// TODO: reinstate when tink_mac available
 #[test]
 fn test_non_prf_primitives() {
     tink_mac::init();
@@ -175,7 +173,6 @@ fn test_non_prf_primitives() {
         "Expected mixed primitive keyset to fail to create prf.Set"
     );
 }
-*/
 
 fn run_z_tests(results: Vec<Vec<u8>>) {
     for (i, result1) in results.iter().enumerate() {
