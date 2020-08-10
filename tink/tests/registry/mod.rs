@@ -17,14 +17,15 @@
 use prost::Message;
 use std::sync::Arc;
 
-// TODO: re-enable when real primitives registered
 #[test]
-#[ignore]
 fn test_register_key_manager() {
+    tink_mac::init();
     // get HMACKeyManager
     tink::registry::get_key_manager(tink_testutil::HMAC_TYPE_URL).unwrap();
-    // get AESGCMKeyManager
-    tink::registry::get_key_manager(tink_testutil::AES_GCM_TYPE_URL).unwrap();
+    /* TODO: enable when tink-aead crate is available.
+        // get AESGCMKeyManager
+        tink::registry::get_key_manager(tink_testutil::AES_GCM_TYPE_URL).unwrap();
+    */
     // some random typeurl
     assert!(
         tink::registry::get_key_manager("some url").is_err(),
@@ -61,7 +62,6 @@ fn test_register_key_manager_duplicate() {
     );
 }
 
-/* TODO: need tink_mac crate
 #[test]
 fn test_new_key_data() {
     tink_mac::init();
@@ -87,7 +87,6 @@ fn test_new_key_data() {
         "expect an error when key template contains unregistered type_url"
     );
 }
-*/
 
 /* TODO: enable when tink-aead crate is available.
 #[test]
@@ -121,15 +120,14 @@ fn test_new_key() {
 
 #[test]
 fn test_primitive_from_key_data() {
+    tink_mac::init();
     // hmac keydata
     let mut key_data = tink_testutil::new_hmac_key_data(tink::proto::HashType::Sha256, 16);
-    let _p = tink::registry::primitive_from_key_data(&key_data);
-
-    /* TODO: need real hmac registration
-    let p = p.unwrap();
-    use std::any::Any;
-    assert_eq!(std::any::TypeId::of::<tink_hmac::subtle::HMAC>(), p.type_id());
-    */
+    let p = tink::registry::primitive_from_key_data(&key_data).unwrap();
+    if let tink::Primitive::Mac(_) = p {
+    } else {
+        panic!("Primitive not a Mac");
+    }
 
     // unregistered url
     key_data.type_url = "some url".to_string();
@@ -147,17 +145,16 @@ fn test_primitive_from_key_data() {
 
 #[test]
 fn test_primitive() {
+    tink_mac::init();
     // hmac key
     let key = tink_testutil::new_hmac_key(tink::proto::HashType::Sha256, 16);
     let mut serialized_key = vec![];
     key.encode(&mut serialized_key).unwrap();
-    let _p = tink::registry::primitive(tink_testutil::HMAC_TYPE_URL, &serialized_key);
-
-    /* TODO: need real hmac registration
-    let p = p.unwrap();
-    use std::any::Any;
-    assert_eq!(std::any::TypeId::of::<tink_hmac::subtle::HMAC>(), p.type_id());
-     */
+    let p = tink::registry::primitive(tink_testutil::HMAC_TYPE_URL, &serialized_key).unwrap();
+    if let tink::Primitive::Mac(_) = p {
+    } else {
+        panic!("Primitive not a Mac");
+    }
 
     // unregistered url
     assert!(
