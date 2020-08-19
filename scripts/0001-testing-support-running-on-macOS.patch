@@ -1,0 +1,25 @@
+From baf75fbe4c7b1baa84e860d777b4ce8ef147e1f8 Mon Sep 17 00:00:00 2001
+From: David Drysdale <drysdale@google.com>
+Date: Thu, 13 Aug 2020 17:46:49 +0100
+Subject: [PATCH 1/2] testing: support running on macOS
+
+---
+ testing/cross_language/util/testing_servers.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/testing/cross_language/util/testing_servers.py b/testing/cross_language/util/testing_servers.py
+index bda66a73ee8f..aaebef3af28e 100644
+--- a/testing/cross_language/util/testing_servers.py
++++ b/testing/cross_language/util/testing_servers.py
+@@ -39,7 +39,7 @@ _SERVER_PATHS = {
+         'cc/testing_server'
+     ],
+     'go': [
+-        'go/bazel-bin/linux_amd64_stripped/testing_server',
++        'go/bazel-bin/%s_amd64_stripped/testing_server' % os.uname().sysname.lower(),
+         'go/testing_server'
+     ],
+     'java': [
+-- 
+2.26.2
+

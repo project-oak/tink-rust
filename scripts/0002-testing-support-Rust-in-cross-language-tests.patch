@@ -1,0 +1,111 @@
+From 15250e28345aa1bc302d7d867f4396c2944428f9 Mon Sep 17 00:00:00 2001
+From: David Drysdale <drysdale@google.com>
+Date: Thu, 13 Aug 2020 17:47:28 +0100
+Subject: [PATCH 2/2] testing: support Rust in cross-language tests
+
+---
+ .../key_generation_consistency_test.py             | 10 +++++++++-
+ testing/cross_language/util/supported_key_types.py | 14 +++++++-------
+ testing/cross_language/util/testing_servers.py     |  9 ++++++---
+ 3 files changed, 22 insertions(+), 11 deletions(-)
+
+diff --git a/testing/cross_language/key_generation_consistency_test.py b/testing/cross_language/key_generation_consistency_test.py
+index 4d8910633cbb..e13dabcc283d 100644
+--- a/testing/cross_language/key_generation_consistency_test.py
++++ b/testing/cross_language/key_generation_consistency_test.py
+@@ -37,7 +37,7 @@ TYPE_URL_TO_SUPPORTED_LANGUAGES = {
+ # Test cases that succeed in a language but should fail
+ SUCCEEDS_BUT_SHOULD_FAIL = [
+     # TODO(b/159989251)
+-    # HMAC with SHA384 is accepted in go, but not in other langs.
++    # HMAC with SHA384 is accepted in Go and Rust, but not in other langs.
+     ('HmacKey(32,10,SHA384)', 'go'),
+     ('HmacKey(32,16,SHA384)', 'go'),
+     ('HmacKey(32,20,SHA384)', 'go'),
+@@ -46,6 +46,14 @@ SUCCEEDS_BUT_SHOULD_FAIL = [
+     ('HmacKey(32,32,SHA384)', 'go'),
+     ('HmacKey(32,33,SHA384)', 'go'),
+     ('HmacPrfKey(32,SHA384)', 'go'),
++    ('HmacKey(32,10,SHA384)', 'rust'),
++    ('HmacKey(32,16,SHA384)', 'rust'),
++    ('HmacKey(32,20,SHA384)', 'rust'),
++    ('HmacKey(32,21,SHA384)', 'rust'),
++    ('HmacKey(32,24,SHA384)', 'rust'),
++    ('HmacKey(32,32,SHA384)', 'rust'),
++    ('HmacKey(32,33,SHA384)', 'rust'),
++    ('HmacPrfKey(32,SHA384)', 'rust'),
+     # TODO(b/160130470): In CC and Python Hybrid templates are not checked for
+     # valid AEAD params. (These params *are* checked when the key is used.)
+     ('EciesAeadHkdfPrivateKey(NIST_P256,UNCOMPRESSED,SHA256,AesEaxKey(15,11))',
+diff --git a/testing/cross_language/util/supported_key_types.py b/testing/cross_language/util/supported_key_types.py
+index d040f6b41d4b..b882cd0168e2 100644
+--- a/testing/cross_language/util/supported_key_types.py
++++ b/testing/cross_language/util/supported_key_types.py
+@@ -26,7 +26,7 @@ from tink import streaming_aead
+ from tink.proto import tink_pb2
+ 
+ # All languages supported by cross-language tests.
+-ALL_LANGUAGES = ['cc', 'java', 'go', 'python']
++ALL_LANGUAGES = ['cc', 'java', 'go', 'python', 'rust']
+ 
+ # All KeyTypes (without the prefix 'type.googleapis.com/google.crypto.tink.')
+ AEAD_KEY_TYPES = [
+@@ -71,19 +71,19 @@ SUPPORTED_LANGUAGES = {
+     'AesCtrHmacAeadKey': ['cc', 'java', 'go', 'python'],
+     'ChaCha20Poly1305Key': ['java', 'go'],
+     'XChaCha20Poly1305Key': ['cc', 'java', 'go', 'python'],
+-    'AesSivKey': ['cc', 'java', 'go', 'python'],
++    'AesSivKey': ['cc', 'java', 'go', 'python', 'rust'],
+     'AesCtrHmacStreamingKey': ['cc', 'java', 'go', 'python'],
+     'AesGcmHkdfStreamingKey': ['cc', 'java', 'go', 'python'],
+     'EciesAeadHkdfPrivateKey': ['cc', 'java', 'go', 'python'],
+-    'AesCmacKey': ['cc', 'java', 'go', 'python'],
+-    'HmacKey': ['cc', 'java', 'go', 'python'],
++    'AesCmacKey': ['cc', 'java', 'go', 'python', 'rust'],
++    'HmacKey': ['cc', 'java', 'go', 'python', 'rust'],
+     'EcdsaPrivateKey': ['cc', 'java', 'go', 'python'],
+     'Ed25519PrivateKey': ['cc', 'java', 'go', 'python'],
+     'RsaSsaPkcs1PrivateKey': ['cc', 'java', 'python'],
+     'RsaSsaPssPrivateKey': ['cc', 'java', 'python'],
+-    'AesCmacPrfKey': ['cc', 'java', 'go', 'python'],
+-    'HmacPrfKey': ['cc', 'java', 'go', 'python'],
+-    'HkdfPrfKey': ['cc', 'java', 'go', 'python'],
++    'AesCmacPrfKey': ['cc', 'java', 'go', 'python', 'rust'],
++    'HmacPrfKey': ['cc', 'java', 'go', 'python', 'rust'],
++    'HkdfPrfKey': ['cc', 'java', 'go', 'python', 'rust'],
+ }
+ 
+ SUPPORTED_LANGUAGES_PER_TYPE_URL = {
+diff --git a/testing/cross_language/util/testing_servers.py b/testing/cross_language/util/testing_servers.py
+index aaebef3af28e..2202100050be 100644
+--- a/testing/cross_language/util/testing_servers.py
++++ b/testing/cross_language/util/testing_servers.py
+@@ -49,6 +49,9 @@ _SERVER_PATHS = {
+     'python': [
+         'python/bazel-bin/testing_server',
+         'python/testing_server',
++    ],
++    'rust': [
++        '../../tink-rust/target/debug/tink-testing-server',
+     ]
+ }
+ 
+@@ -73,12 +76,12 @@ _PRIMITIVES = list(_PRIMITIVE_STUBS.keys())
+ 
+ SUPPORTED_LANGUAGES_BY_PRIMITIVE = {
+     'aead': ['cc', 'go', 'java', 'python'],
+-    'daead': ['cc', 'go', 'java', 'python'],
++    'daead': ['cc', 'go', 'java', 'python', 'rust'],
+     'streaming_aead': ['cc', 'go', 'java', 'python'],
+     'hybrid': ['cc', 'go', 'java', 'python'],
+-    'mac': ['cc', 'go', 'java', 'python'],
++    'mac': ['cc', 'go', 'java', 'python', 'rust'],
+     'signature': ['cc', 'go', 'java', 'python'],
+-    'prf': ['cc', 'java', 'go', 'python'],
++    'prf': ['cc', 'java', 'go', 'python', 'rust'],
+ }
+ 
+ 
+-- 
+2.26.2
+
