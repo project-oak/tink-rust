@@ -1,5 +1,5 @@
 [package]
-name = "tink-testutil"
+name = "tink-signature"
 version = "0.1.0"
 authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
@@ -8,14 +8,17 @@ edition = "2018"
 ed25519-dalek = "*"
 elliptic-curve = "*"
 generic-array = "*"
+# TODO  remove this:
+hex = "*"
 p256 = { version = "*", features = ["ecdsa"] }
 prost = "*"
 rand = "*"
-serde = { version = "*", features = ["derive"] }
-# Depending on tink-testutil will turn on the `insecure` feature of `tink`.
-tink = { version = "*", features = ["insecure"] }
-tink-daead = "*"
-tink-mac = "*"
+signature = "*"
+tink = "*"
 
 [dev-dependencies]
+hex = "*"
+serde = { version = "*", features = ["derive"] }
 serde_json = "*"
+tink-mac = "*"
+tink-testutil = "*"

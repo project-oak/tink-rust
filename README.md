@@ -69,7 +69,7 @@ Go packages and the equivalent Rust crates and modules, when available.
 |                      | `hybrid` |
 | `tink-mac`           | `mac` |
 | `tink-prf`           | `prf` |
-|                      | `signature` |
+| `tink-signature`     | `signature` |
 |                      | `streamingaead` |
 
 ## Dependency Structure

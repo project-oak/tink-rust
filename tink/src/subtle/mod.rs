@@ -82,20 +82,3 @@ where
 pub fn constant_time_compare(left: &[u8], right: &[u8]) -> bool {
     left.ct_eq(right).into()
 }
-
-/* TODO: plumb elliptic curves through to crypto library, and be less stringly-typed
-/// Return the curve object that corresponds to the given curve type.
-/// It returns null if the curve type is not supported.
-pub fn get_curve(curve string) elliptic.Curve {
-    switch curve {
-    case "NIST_P256":
-        return elliptic.P256()
-    case "NIST_P384":
-        return elliptic.P384()
-    case "NIST_P521":
-        return elliptic.P521()
-    default:
-        return nil
-    }
-}
-*/

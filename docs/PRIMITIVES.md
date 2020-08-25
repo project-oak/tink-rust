@@ -34,7 +34,7 @@ Streaming AEAD     | yes      | yes     | no       | yes    | no         | no
 Deterministic AEAD | yes      | yes     | yes      | yes    | yes        | yes
 MAC                | yes      | yes     | yes      | yes    | yes        | yes
 PRF                | yes      | yes     | no       | yes    | yes        | yes
-Digital signatures | yes      | yes     | yes      | yes    | yes        | no
+Digital signatures | yes      | yes     | yes      | yes    | yes        | yes
 Hybrid encryption  | yes      | yes     | yes      | yes    | yes        | no
 
 JavaScript is currently under development.
@@ -106,7 +106,7 @@ AEAD               |
 Deterministic AEAD | AES-SIV
 MAC                | HMAC-SHA2, AES-CMAC
 PRF                | HKDF-SHA2, HMAC-SHA2, AES-CMAC
-Digital Signatures |
+Digital Signatures | ECDSA over P-256 curve, Ed25519
 Hybrid Encryption  |
 
 ---

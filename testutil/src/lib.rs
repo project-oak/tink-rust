@@ -18,9 +18,11 @@
 
 #![deny(intra_doc_link_resolution_failure)]
 
+use generic_array::typenum::Unsigned;
+use p256::elliptic_curve::Generate;
 use std::{convert::TryInto, sync::Arc};
 use tink::{
-    proto::{KeyData, Keyset},
+    proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType, KeyData, Keyset},
     subtle::random::get_random_bytes,
     TinkError,
 };
@@ -150,7 +152,7 @@ pub fn new_test_hmac_keyset(
     tag_size: u32,
     primary_output_prefix_type: tink::proto::OutputPrefixType,
 ) -> Keyset {
-    let key_data = new_hmac_key_data(tink::proto::HashType::Sha256, tag_size);
+    let key_data = new_hmac_key_data(HashType::Sha256, tag_size);
     new_test_keyset(key_data, primary_output_prefix_type)
 }
 
@@ -162,7 +164,7 @@ pub fn new_test_aes_gcm_hkdf_keyset() -> Keyset {
     let key_data = new_aes_gcm_hkdf_key_data(
         KEY_SIZE,
         DERIVED_KEY_SIZE,
-        tink::proto::HashType::Sha256,
+        HashType::Sha256,
         CIPHERTEXT_SEGMENT_SIZE,
     );
     new_test_keyset(key_data, tink::proto::OutputPrefixType::Raw)
@@ -224,9 +226,9 @@ pub fn new_dummy_key(
 
 /// Create an [`EcdsaParams`](tink::proto::EcdsaParams) with the specified parameters.
 pub fn new_ecdsa_params(
-    hash_type: tink::proto::HashType,
-    curve: tink::proto::EllipticCurveType,
-    encoding: tink::proto::EcdsaSignatureEncoding,
+    hash_type: HashType,
+    curve: EllipticCurveType,
+    encoding: EcdsaSignatureEncoding,
 ) -> tink::proto::EcdsaParams {
     tink::proto::EcdsaParams {
         hash_type: hash_type as i32,
@@ -236,68 +238,67 @@ pub fn new_ecdsa_params(
 }
 
 /// Create an [`EcdsaKeyFormat`](tink::proto::EcdsaKeyFormat) with the specified parameters.
-pub fn new_ecdsa_key_format(params: tink::proto::EcdsaParams) -> tink::proto::EcdsaKeyFormat {
+pub fn new_ecdsa_key_format(params: &tink::proto::EcdsaParams) -> tink::proto::EcdsaKeyFormat {
     tink::proto::EcdsaKeyFormat {
-        params: Some(params),
-    }
-}
-
-/// Create an [`EcdsaPrivateKey`](tink::proto::EcdsaPrivateKey) with the specified paramaters.
-pub fn new_ecdsa_private_key(
-    version: u32,
-    public_key: tink::proto::EcdsaPublicKey,
-    key_value: &[u8],
-) -> tink::proto::EcdsaPrivateKey {
-    tink::proto::EcdsaPrivateKey {
-        version,
-        public_key: Some(public_key),
-        key_value: key_value.to_vec(),
-    }
-}
-
-/// Create an [`EcdsaPublicKey`](tink::proto::EcdsaPublicKey) with the specified paramaters.
-pub fn new_ecdsa_public_key(
-    version: u32,
-    params: tink::proto::EcdsaParams,
-    x: &[u8],
-    y: &[u8],
-) -> tink::proto::EcdsaPublicKey {
-    tink::proto::EcdsaPublicKey {
-        version,
-        params: Some(params),
-        x: x.to_vec(),
-        y: y.to_vec(),
+        params: Some(params.clone()),
     }
 }
 
 /// Create an [`EcdsaPrivateKey`](tink::proto::EcdsaPrivateKey) with randomly generated key
 /// material.
-/* TODO: need ecdsa
 pub fn new_random_ecdsa_private_key(
-    hash_type: tink::proto::HashType,
-    curve: tink::proto::EllipticCurveType,
+    hash_type: HashType,
+    curve: EllipticCurveType,
 ) -> tink::proto::EcdsaPrivateKey {
-    // Prost's implementation of the `Debug` trait for enums gives CamelCase strings.
-    let curve_name = format!("{:?}", curve);
-    let priv_key = ecdsa::generate_key(tink::subtle::get_curve(curve_name), thread_rng()).unwrap();
-    let params = new_ecdsa_params(hash_type, curve, tink::proto::EcdsaSignatureEncoding::Der);
-    let public_key = new_ecdsa_public_key(
-        ECDSA_VERIFIER_KEY_VERSION,
-        params,
-        priv_key.X.Bytes(),
-        priv_key.Y.Bytes(),
-    );
-    new_ecdsa_private_key(ECDSA_SIGNER_KEY_VERSION, public_key, priv_key.D.Bytes())
+    let mut csprng = rand::thread_rng();
+    let (secret_key_data, pub_x, pub_y) = match curve {
+        EllipticCurveType::NistP256 => {
+            let sk = p256::SecretKey::generate(&mut csprng);
+            let pk = p256::PublicKey::from_secret_key(&sk, /* compressed= */ false).unwrap();
+            let point_len = <p256::NistP256 as elliptic_curve::Curve>::ElementSize::to_usize();
+            let pk_data = pk.as_bytes();
+            (
+                sk.as_bytes().to_vec(),
+                pk_data[1..point_len + 1].to_vec(),
+                pk_data[point_len + 1..].to_vec(),
+            )
+        }
+        /* TODO: more ECDSA curves
+        EllipticCurveType::NistP384 => {
+            let sk = p384::SecretKey::generate(&mut csprng);
+            let pk = p384::PublicKey::from_secret_key(&sk, /* compressed= */ false).unwrap();
+            let point_len =
+                        <p384::NistP384 as elliptic_curve::Curve>::ElementSize::to_usize();
+            let pk_data = pk.as_bytes();
+            (
+                sk.as_bytes().to_vec(),
+                pk_data[..point_len].to_vec(),
+                pk_data[point_len..].to_vec(),
+            )
+        }
+        */
+        _ => panic!("unsupported curve {:?}", curve),
+    };
+    let params = new_ecdsa_params(hash_type, curve, EcdsaSignatureEncoding::Der);
+    let pub_key = tink::proto::EcdsaPublicKey {
+        version: ECDSA_SIGNER_KEY_VERSION,
+        params: Some(params),
+        x: pub_x,
+        y: pub_y,
+    };
+
+    tink::proto::EcdsaPrivateKey {
+        version: ECDSA_SIGNER_KEY_VERSION,
+        public_key: Some(pub_key),
+        key_value: secret_key_data,
+    }
 }
 
 /// Create a [`KeyData`] containing an [`EcdsaPrivateKey`](tink::proto::EcdsaPrivateKey) with
 /// randomly generated key material.
-pub fn new_random_ecdsa_private_key_data(
-    hash_type: tink::proto::HashType,
-    curve: tink::proto::EllipticCurveType,
-) -> KeyData {
+pub fn new_random_ecdsa_private_key_data(hash_type: HashType, curve: EllipticCurveType) -> KeyData {
     let key = new_random_ecdsa_private_key(hash_type, curve);
-    let serialized_key = proto_encode(key);
+    let serialized_key = proto_encode(&key);
     KeyData {
         type_url: ECDSA_SIGNER_TYPE_URL.to_string(),
         value: serialized_key,
@@ -307,55 +308,48 @@ pub fn new_random_ecdsa_private_key_data(
 
 /// Create an [`EcdsaPublicKey`](tink::proto::EcdsaPublicKey) with randomly generated key material.
 pub fn new_random_ecdsa_public_key(
-    hash_type: tink::proto::HashType,
-    curve: tink::proto::EllipticCurveType,
+    hash_type: HashType,
+    curve: EllipticCurveType,
 ) -> tink::proto::EcdsaPublicKey {
     new_random_ecdsa_private_key(hash_type, curve)
         .public_key
         .unwrap()
 }
-*/
 
-/// Return the string representations of each parameter in the given
+/// Return the enum representations of each parameter in the given
 /// [`EcdsaParams`](tink::proto::EcdsaParams).
-pub fn get_ecdsa_param_names(params: &tink::proto::EcdsaParams) -> (String, String, String) {
-    // Prost's implementation of the `Debug` trait for enums gives
-    // CamelCase strings (e.g. "Curve25519")
-    let hash_name = format!(
-        "{:?}",
-        tink::proto::HashType::from_i32(params.hash_type).unwrap()
-    );
-    let curve_name = format!(
-        "{:?}",
-        tink::proto::EllipticCurveType::from_i32(params.curve).unwrap()
-    );
-    let encoding_name = format!(
-        "{:?}",
-        tink::proto::EcdsaSignatureEncoding::from_i32(params.encoding).unwrap()
-    );
-    (hash_name, curve_name, encoding_name)
+pub fn get_ecdsa_params(
+    params: &tink::proto::EcdsaParams,
+) -> (HashType, EllipticCurveType, EcdsaSignatureEncoding) {
+    (
+        HashType::from_i32(params.hash_type).unwrap(),
+        EllipticCurveType::from_i32(params.curve).unwrap(),
+        EcdsaSignatureEncoding::from_i32(params.encoding).unwrap(),
+    )
 }
 
 /// Create an [`Ed25519PrivateKey`](tink::proto::Ed25519PrivateKey) with randomly generated key
 /// material.
-/* TODO need ed25519
 pub fn new_ed25519_private_key() -> tink::proto::Ed25519PrivateKey {
-    let (public, private) = ed25519::generate_key(thread_rng()).unwrap();
+    let mut csprng = rand::thread_rng();
+    let keypair = ed25519_dalek::Keypair::generate(&mut csprng);
+
     let public_proto = tink::proto::Ed25519PublicKey {
         version: ED25519_SIGNER_KEY_VERSION,
-        key_value: public,
+        key_value: keypair.public.as_bytes().to_vec(),
     };
     tink::proto::Ed25519PrivateKey {
         version: ED25519_SIGNER_KEY_VERSION,
         public_key: Some(public_proto),
-        key_value: private.seed(),
+        key_value: keypair.secret.as_bytes().to_vec(),
     }
 }
 
-/// Create a [`KeyData`] containing an [`Ed25519PrivateKey`](tink::proto::Ed25519PrivateKey) with randomly generated key material.
+/// Create a [`KeyData`] containing an [`Ed25519PrivateKey`](tink::proto::Ed25519PrivateKey) with
+/// randomly generated key material.
 pub fn new_ed25519_private_key_data() -> KeyData {
     let key = new_ed25519_private_key();
-    let serialized_key = proto_encode(key);
+    let serialized_key = proto_encode(&key);
     KeyData {
         type_url: ED25519_SIGNER_TYPE_URL.to_string(),
         value: serialized_key,
@@ -363,11 +357,11 @@ pub fn new_ed25519_private_key_data() -> KeyData {
     }
 }
 
-/// Create an [`Ed25519PublicKey`](tink::proto::Ed25519PublicKey) with randomly generated key material.
+/// Create an [`Ed25519PublicKey`](tink::proto::Ed25519PublicKey) with randomly generated key
+/// material.
 pub fn new_ed25519_public_key() -> tink::proto::Ed25519PublicKey {
     new_ed25519_private_key().public_key.unwrap()
 }
-*/
 
 /// Create a randomly generated [`AesGcmKey`](tink::proto::AesGcmKey).
 pub fn new_aes_gcm_key(key_version: u32, key_size: u32) -> tink::proto::AesGcmKey {
@@ -409,7 +403,7 @@ pub fn new_aes_gcm_hkdf_key(
     key_version: u32,
     key_size: u32,
     derived_key_size: u32,
-    hkdf_hash_type: tink::proto::HashType,
+    hkdf_hash_type: HashType,
     ciphertext_segment_size: u32,
 ) -> tink::proto::AesGcmHkdfStreamingKey {
     let key_value = get_random_bytes(key_size.try_into().unwrap());
@@ -429,7 +423,7 @@ pub fn new_aes_gcm_hkdf_key(
 pub fn new_aes_gcm_hkdf_key_data(
     key_size: u32,
     derived_key_size: u32,
-    hkdf_hash_type: tink::proto::HashType,
+    hkdf_hash_type: HashType,
     ciphertext_segment_size: u32,
 ) -> KeyData {
     let key = new_aes_gcm_hkdf_key(
@@ -451,7 +445,7 @@ pub fn new_aes_gcm_hkdf_key_data(
 pub fn new_aes_gcm_hkdf_key_format(
     key_size: u32,
     derived_key_size: u32,
-    hkdf_hash_type: tink::proto::HashType,
+    hkdf_hash_type: HashType,
     ciphertext_segment_size: u32,
 ) -> tink::proto::AesGcmHkdfStreamingKeyFormat {
     tink::proto::AesGcmHkdfStreamingKeyFormat {
@@ -469,9 +463,9 @@ pub fn new_aes_gcm_hkdf_key_format(
 pub fn new_aes_ctr_hmac_key(
     key_version: u32,
     key_size: u32,
-    hkdf_hash_type: tink::proto::HashType,
+    hkdf_hash_type: HashType,
     derived_key_size: u32,
-    hash_type: tink::proto::HashType,
+    hash_type: HashType,
     tag_size: u32,
     ciphertext_segment_size: u32,
 ) -> tink::proto::AesCtrHmacStreamingKey {
@@ -495,9 +489,9 @@ pub fn new_aes_ctr_hmac_key(
 /// [`AesCtrHmacStreamingKey`](tink::proto::AesCtrHmacStreamingKey).
 pub fn new_aes_ctr_hmac_key_data(
     key_size: u32,
-    hkdf_hash_type: tink::proto::HashType,
+    hkdf_hash_type: HashType,
     derived_key_size: u32,
-    hash_type: tink::proto::HashType,
+    hash_type: HashType,
     tag_size: u32,
     ciphertext_segment_size: u32,
 ) -> KeyData {
@@ -521,9 +515,9 @@ pub fn new_aes_ctr_hmac_key_data(
 /// Return a new [`AesCtrHmacStreamingKeyFormat`](tink::proto::AesCtrHmacStreamingKeyFormat).
 pub fn new_aes_ctr_hmac_key_format(
     key_size: u32,
-    hkdf_hash_type: tink::proto::HashType,
+    hkdf_hash_type: HashType,
     derived_key_size: u32,
-    hash_type: tink::proto::HashType,
+    hash_type: HashType,
     tag_size: u32,
     ciphertext_segment_size: u32,
 ) -> tink::proto::AesCtrHmacStreamingKeyFormat {
@@ -542,7 +536,7 @@ pub fn new_aes_ctr_hmac_key_format(
 }
 
 /// Return a new [`HmacParams`](tink::proto::HmacParams).
-pub fn new_hmac_params(hash_type: tink::proto::HashType, tag_size: u32) -> tink::proto::HmacParams {
+pub fn new_hmac_params(hash_type: HashType, tag_size: u32) -> tink::proto::HmacParams {
     tink::proto::HmacParams {
         hash: hash_type as i32,
         tag_size,
@@ -550,7 +544,7 @@ pub fn new_hmac_params(hash_type: tink::proto::HashType, tag_size: u32) -> tink:
 }
 
 /// Create a new [`HmacKey`](tink::proto::HmacKey) with the specified parameters.
-pub fn new_hmac_key(hash_type: tink::proto::HashType, tag_size: u32) -> tink::proto::HmacKey {
+pub fn new_hmac_key(hash_type: HashType, tag_size: u32) -> tink::proto::HmacKey {
     let params = new_hmac_params(hash_type, tag_size);
     let key_value = get_random_bytes(20);
     tink::proto::HmacKey {
@@ -561,10 +555,7 @@ pub fn new_hmac_key(hash_type: tink::proto::HashType, tag_size: u32) -> tink::pr
 }
 
 /// Create a new [`HmacKeyFormat`](tink::proto::HmacKeyFormat) with the specified parameters.
-pub fn new_hmac_key_format(
-    hash_type: tink::proto::HashType,
-    tag_size: u32,
-) -> tink::proto::HmacKeyFormat {
+pub fn new_hmac_key_format(hash_type: HashType, tag_size: u32) -> tink::proto::HmacKeyFormat {
     let params = new_hmac_params(hash_type, tag_size);
     let key_size = 20u32;
     tink::proto::HmacKeyFormat {
@@ -609,7 +600,7 @@ pub fn new_hmac_keyset_manager() -> tink::keyset::Manager {
 }
 
 /// Return a new [`KeyData`] that contains a [`HmacKey`](tink::proto::HmacKey).
-pub fn new_hmac_key_data(hash_type: tink::proto::HashType, tag_size: u32) -> KeyData {
+pub fn new_hmac_key_data(hash_type: HashType, tag_size: u32) -> KeyData {
     let key = new_hmac_key(hash_type, tag_size);
     let serialized_key = proto_encode(&key);
     KeyData {
@@ -620,14 +611,14 @@ pub fn new_hmac_key_data(hash_type: tink::proto::HashType, tag_size: u32) -> Key
 }
 
 /// Return a new [`HmacPrfParams`](tink::proto::HmacPrfParams).
-pub fn new_hmac_prf_params(hash_type: tink::proto::HashType) -> tink::proto::HmacPrfParams {
+pub fn new_hmac_prf_params(hash_type: HashType) -> tink::proto::HmacPrfParams {
     tink::proto::HmacPrfParams {
         hash: hash_type as i32,
     }
 }
 
 /// Create a new [`HmacPrfKey`](tink::proto::HmacPrfKey) with the specified parameters.
-pub fn new_hmac_prf_key(hash_type: tink::proto::HashType) -> tink::proto::HmacPrfKey {
+pub fn new_hmac_prf_key(hash_type: HashType) -> tink::proto::HmacPrfKey {
     let params = new_hmac_prf_params(hash_type);
     let key_value = get_random_bytes(32);
     tink::proto::HmacPrfKey {
@@ -638,7 +629,7 @@ pub fn new_hmac_prf_key(hash_type: tink::proto::HashType) -> tink::proto::HmacPr
 }
 
 /// Create a new [`HmacPrfKeyFormat`](tink::proto::HmacPrfKeyFormat) with the specified parameters.
-pub fn new_hmac_prf_key_format(hash_type: tink::proto::HashType) -> tink::proto::HmacPrfKeyFormat {
+pub fn new_hmac_prf_key_format(hash_type: HashType) -> tink::proto::HmacPrfKeyFormat {
     let params = new_hmac_prf_params(hash_type);
     let key_size = 32u32;
     tink::proto::HmacPrfKeyFormat {
@@ -649,10 +640,7 @@ pub fn new_hmac_prf_key_format(hash_type: tink::proto::HashType) -> tink::proto:
 }
 
 /// Return a new [`HkdfPrfParams`](tink::proto::HkdfPrfParams).
-pub fn new_hkdf_prf_params(
-    hash_type: tink::proto::HashType,
-    salt: &[u8],
-) -> tink::proto::HkdfPrfParams {
+pub fn new_hkdf_prf_params(hash_type: HashType, salt: &[u8]) -> tink::proto::HkdfPrfParams {
     tink::proto::HkdfPrfParams {
         hash: hash_type as i32,
         salt: salt.to_vec(),
@@ -660,7 +648,7 @@ pub fn new_hkdf_prf_params(
 }
 
 /// Create a new [`HkdfPrfKey`](tink::proto::HkdfPrfKey) with the specified parameters.
-pub fn new_hkdf_prf_key(hash_type: tink::proto::HashType, salt: &[u8]) -> tink::proto::HkdfPrfKey {
+pub fn new_hkdf_prf_key(hash_type: HashType, salt: &[u8]) -> tink::proto::HkdfPrfKey {
     let params = new_hkdf_prf_params(hash_type, salt);
     let key_value = get_random_bytes(32);
     tink::proto::HkdfPrfKey {
@@ -671,10 +659,7 @@ pub fn new_hkdf_prf_key(hash_type: tink::proto::HashType, salt: &[u8]) -> tink::
 }
 
 /// Create a new [`HkdfPrfKeyFormat`](tink::proto::HkdfPrfKeyFormat) with the specified parameters.
-pub fn new_hkdf_prf_key_format(
-    hash_type: tink::proto::HashType,
-    salt: &[u8],
-) -> tink::proto::HkdfPrfKeyFormat {
+pub fn new_hkdf_prf_key_format(hash_type: HashType, salt: &[u8]) -> tink::proto::HkdfPrfKeyFormat {
     let params = new_hkdf_prf_params(hash_type, salt);
     let key_size = 32u32;
     tink::proto::HkdfPrfKeyFormat {
@@ -876,8 +861,8 @@ pub fn z_test_autocorrelation_uniform_string(bytes: &[u8]) -> Result<(), TinkErr
 /// Return a [`EciesAeadHkdfPublicKey`](tink::proto::EciesAeadHkdfPublicKey) with specified
 /// parameters.
 pub fn ecies_aead_hkdf_public_key(
-    c: tink::proto::EllipticCurveType,
-    ht: tink::proto::HashType,
+    c: EllipticCurveType,
+    ht: HashType,
     ptfmt: tink::proto::EcPointFormat,
     dek_t: tink::proto::KeyTemplate,
     x: &[u8],
@@ -917,8 +902,8 @@ pub fn ecies_aead_hkdf_private_key(
 
 /// Generate a new EC key pair and returns the private key proto.
 pub fn generate_ecies_aead_hkdf_private_key(
-    c: tink::proto::EllipticCurveType,
-    ht: tink::proto::HashType,
+    c: EllipticCurveType,
+    ht: HashType,
     ptfmt: tink::proto::EcPointFormat,
     dek_t: tink::proto::KeyTemplate,
     salt: &[u8],
