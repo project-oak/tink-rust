@@ -5,4 +5,8 @@ authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 
 [dependencies]
+prost = "*"
 rand = "*"
+
+[build-dependencies]
+prost-build = "*"
