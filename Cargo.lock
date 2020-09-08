@@ -1355,6 +1355,7 @@ dependencies = [
  "tink-daead",
  "tink-mac",
  "tink-prf",
+ "tink-signature",
  "tokio",
  "tonic",
  "tonic-build",

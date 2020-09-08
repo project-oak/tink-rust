@@ -38,5 +38,6 @@ bazel test --cache_test_results=no \
       :json_test \
       :mac_test \
       :prf_set_test \
+      :signature_test \
       --test_env testing_dir=${PWD}/.. \
       $@

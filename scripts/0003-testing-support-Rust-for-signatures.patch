@@ -1,0 +1,70 @@
+From 2067724f56bb856f53c06ead9c6f2b5494d77a81 Mon Sep 17 00:00:00 2001
+From: David Drysdale <drysdale@google.com>
+Date: Mon, 14 Sep 2020 08:55:49 +0100
+Subject: [PATCH] testing: support Rust for signatures
+
+Split out ECDSA curves into different targets to allow for Rust
+only supporting P256 as yet.
+---
+ .../cross_language/util/supported_key_types.py  | 17 ++++++++++-------
+ testing/cross_language/util/testing_servers.py  |  2 +-
+ 2 files changed, 11 insertions(+), 8 deletions(-)
+
+diff --git a/testing/cross_language/util/supported_key_types.py b/testing/cross_language/util/supported_key_types.py
+index b882cd0168e2..21046c56e84c 100644
+--- a/testing/cross_language/util/supported_key_types.py
++++ b/testing/cross_language/util/supported_key_types.py
+@@ -48,7 +48,9 @@ MAC_KEY_TYPES = [
+     'HmacKey',
+ ]
+ SIGNATURE_KEY_TYPES = [
+-    'EcdsaPrivateKey',
++    'EcdsaP256PrivateKey',
++    'EcdsaP384PrivateKey',
++    'EcdsaP521PrivateKey',
+     'Ed25519PrivateKey',
+     'RsaSsaPkcs1PrivateKey',
+     'RsaSsaPssPrivateKey',
+@@ -77,8 +79,10 @@ SUPPORTED_LANGUAGES = {
+     'EciesAeadHkdfPrivateKey': ['cc', 'java', 'go', 'python'],
+     'AesCmacKey': ['cc', 'java', 'go', 'python', 'rust'],
+     'HmacKey': ['cc', 'java', 'go', 'python', 'rust'],
+-    'EcdsaPrivateKey': ['cc', 'java', 'go', 'python'],
+-    'Ed25519PrivateKey': ['cc', 'java', 'go', 'python'],
++    'EcdsaP256PrivateKey': ['cc', 'java', 'go', 'python', 'rust'],
++    'EcdsaP384PrivateKey': ['cc', 'java', 'go', 'python'],
++    'EcdsaP521PrivateKey': ['cc', 'java', 'go', 'python'],
++    'Ed25519PrivateKey': ['cc', 'java', 'go', 'python', 'rust'],
+     'RsaSsaPkcs1PrivateKey': ['cc', 'java', 'python'],
+     'RsaSsaPssPrivateKey': ['cc', 'java', 'python'],
+     'AesCmacPrfKey': ['cc', 'java', 'go', 'python', 'rust'],
+@@ -117,10 +121,9 @@ KEY_TEMPLATE_NAMES = {
+         'HMAC_SHA256_128BITTAG', 'HMAC_SHA256_256BITTAG',
+         'HMAC_SHA512_256BITTAG', 'HMAC_SHA512_512BITTAG'
+     ],
+-    'EcdsaPrivateKey': [
+-        'ECDSA_P256', 'ECDSA_P384', 'ECDSA_P521', 'ECDSA_P256_IEEE_P1363',
+-        'ECDSA_P384_IEEE_P1363', 'ECDSA_P521_IEEE_P1363'
+-    ],
++    'EcdsaP256PrivateKey': ['ECDSA_P256', 'ECDSA_P256_IEEE_P1363'],
++    'EcdsaP384PrivateKey': ['ECDSA_P384', 'ECDSA_P521'],
++    'EcdsaP521PrivateKey': ['ECDSA_P384_IEEE_P1363', 'ECDSA_P521_IEEE_P1363'],
+     'Ed25519PrivateKey': ['ED25519'],
+     'RsaSsaPkcs1PrivateKey': [
+         'RSA_SSA_PKCS1_3072_SHA256_F4', 'RSA_SSA_PKCS1_4096_SHA512_F4'
+diff --git a/testing/cross_language/util/testing_servers.py b/testing/cross_language/util/testing_servers.py
+index 2202100050be..6ba058b2f009 100644
+--- a/testing/cross_language/util/testing_servers.py
++++ b/testing/cross_language/util/testing_servers.py
+@@ -80,7 +80,7 @@ SUPPORTED_LANGUAGES_BY_PRIMITIVE = {
+     'streaming_aead': ['cc', 'go', 'java', 'python'],
+     'hybrid': ['cc', 'go', 'java', 'python'],
+     'mac': ['cc', 'go', 'java', 'python', 'rust'],
+-    'signature': ['cc', 'go', 'java', 'python'],
++    'signature': ['cc', 'go', 'java', 'python', 'rust'],
+     'prf': ['cc', 'java', 'go', 'python', 'rust'],
+ }
+ 
+-- 
+2.26.2
+

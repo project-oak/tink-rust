@@ -17,6 +17,7 @@ tink = { version = "*", features = [
 tink-daead = "*"
 tink-mac = "*"
 tink-prf = "*"
+tink-signature = "*"
 tokio = { version = "*", features = [
   "macros",
   "rt-threaded",

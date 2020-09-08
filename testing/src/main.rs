@@ -37,6 +37,8 @@ mod metadata_service;
 use metadata_service::*;
 mod prf_set_service;
 use prf_set_service::*;
+mod signature_service;
+use signature_service::*;
 
 /// Command-line options for Tink Rust testing server.
 #[derive(Debug, StructOpt)]
@@ -54,6 +56,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tink_daead::init();
     tink_mac::init();
     tink_prf::init();
+    tink_signature::init();
 
     info!("Running testing server");
 
@@ -62,6 +65,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let daead_handler = DaeadServerImpl {};
     let mac_handler = MacServerImpl {};
     let prf_set_handler = PrfSetServerImpl {};
+    let signature_handler = SignatureServerImpl {};
 
     let address = format!("[::]:{}", opt.port).parse()?;
     info!("Starting gRPC server at {:?}", address);
@@ -73,6 +77,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .add_service(proto::deterministic_aead_server::DeterministicAeadServer::new(daead_handler))
         .add_service(proto::mac_server::MacServer::new(mac_handler))
         .add_service(proto::prf_set_server::PrfSetServer::new(prf_set_handler))
+        .add_service(proto::signature_server::SignatureServer::new(
+            signature_handler,
+        ))
         .serve_with_shutdown(address, tokio::signal::ctrl_c().map(|r| r.unwrap()))
         .await?;
 
