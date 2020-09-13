@@ -120,18 +120,17 @@ where
     Ok(())
 }
 
-/* TODO: re-enable when tink_signature is available
 #[test]
 fn test_factory_with_invalid_primitive_set_type() {
     tink_daead::init();
-    let wrong_kh = tink::keyset::Handle::new(tink_signature::ecdsa_p256_key_template()).unwrap();
+    tink_signature::init();
+    let wrong_kh = tink::keyset::Handle::new(&tink_signature::ecdsa_p256_key_template()).unwrap();
 
     assert!(
         tink_daead::new(&wrong_kh).is_err(),
         "calling new() with wrong tink::keyset::Handle should fail"
     );
 }
- */
 
 #[test]
 fn test_factory_with_valid_primitive_set_type() {

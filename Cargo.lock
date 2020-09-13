@@ -1283,6 +1283,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tink",
+ "tink-signature",
  "tink-testutil",
 ]
 
