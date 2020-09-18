@@ -2,6 +2,7 @@
 members = [
   "aead",
   "daead",
+  "integration/awskms",
   "mac",
   "prf",
   "rinkey",
@@ -16,6 +17,7 @@ members = [
 rinkey = { path = "rinkey" }
 tink = { path = "tink" }
 tink-aead = { path = "aead" }
+tink-awskms = { path = "integration/awskms" }
 tink-daead = { path = "daead" }
 tink-mac = { path = "mac" }
 tink-prf = { path = "prf" }

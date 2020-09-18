@@ -1,0 +1,19 @@
+[package]
+name = "tink-awskms"
+version = "0.1.0"
+authors = ["David Drysdale <drysdale@google.com>"]
+edition = "2018"
+
+[dependencies]
+csv = "*"
+hex = "*"
+regex = "*"
+rusoto_core = "*"
+rusoto_credential = "*"
+rusoto_kms = "*"
+tink = "*"
+tokio = "*"
+
+[dev-dependencies]
+tink-aead = "*"
+tink-testutil = "*"

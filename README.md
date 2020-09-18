@@ -54,7 +54,7 @@ Go packages and the equivalent Rust crates and modules, when available.
 
 |  Rust Crate/Module   | Go Package |
 |----------------------|------------|
-|                      | `integration/awskms` |
+| `tink-awskms`        | `integration/awskms` |
 |                      | `integration/gcpkms` |
 |                      | `integration/hcvault` |
 
