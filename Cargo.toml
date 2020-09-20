@@ -10,6 +10,7 @@ members = [
   "examples/signature",
   "examples/streaming",
   "integration/awskms",
+  "integration/gcpkms",
   "mac",
   "prf",
   "rinkey",
@@ -27,6 +28,7 @@ tink = { path = "tink" }
 tink-aead = { path = "aead" }
 tink-awskms = { path = "integration/awskms" }
 tink-daead = { path = "daead" }
+tink-gcpkms = { path = "integration/gcpkms" }
 tink-mac = { path = "mac" }
 tink-prf = { path = "prf" }
 tink-signature = { path = "signature" }

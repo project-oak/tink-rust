@@ -20,6 +20,8 @@ ignore = [
   "RUSTSEC-2020-0016",
   # TODO: Remove when rusoto-* no longer depends on dirs.
   "RUSTSEC-2020-0053",
+  # TODO: remove when fixed version available.
+  "RUSTSEC-2020-0027",
 ]
 
 # Deny multiple versions unless explicitly skipped.
@@ -59,8 +61,56 @@ version = "=0.1.44"
 name = "winapi"
 version = "=0.2.8"
 
+# google-cloudkms1 (v1.0.14) => url (v1.7.2) => percent-encoding (v1.0.1)
+# rusoto_core (v0.45.0) => percent-encoding (v2.1.0)
+[[bans.skip]]
+name = "percent-encoding"
+version = "=1.0.1"
+
+# google-cloudkms1 (v1.0.14) => hyper (v0.10.16) =B=> unicase (v1.4.2) => version_check (v0.1.5)
+# aead (v0.3.2) =B=> generic-array (v0.14.4) => version_check (v0.9.2)
+[[bans.skip]]
+name = "version_check"
+version = "=0.1.5"
+
+# google-cloudkms1 (v1.0.14) => hyper (v0.10.16) => log (v0.3.9)
+# env_logger (v0.8.2) => log (v0.4.11)
+[[bans.skip]]
+name = "log"
+version = "=0.3.9"
+
+# google-cloudkms1 (v1.0.14) => hyper (v0.10.16)
+# rusoto_core (v0.45.0) => hyper-tls (v0.4.3) => hyper (0.13.9)
+[[bans.skip]]
+name = "hyper"
+version = "=0.10.16"
+
+# google-cloudkms1 (v1.0.14) => hyper (v0.10.16) => base64 (v0.9.3)
+# google-cloudkms1 (v1.0.14) =>yup-oauth2 (v1.0.12) => base64 (v0.10.1)
+# rusoto_core (v0.45.0) => base64 (v0.12.3)
+[[bans.skip]]
+name = "base64"
+version = "=0.9.3"
+[[bans.skip]]
+name = "base64"
+version = "=0.10.1"
+
+
 # List of allowed licenses.
 # For more detailed information see http://go/thirdpartylicenses.
 [licenses]
-allow = ["Apache-2.0", "MIT", "BSD-3-Clause"]
+allow = [
+  "Apache-2.0",
+  "MPL-2.0",
+  "ISC",
+  "MIT",
+  "OpenSSL",
+  "BSD-3-Clause",
+]
 copyleft = "deny"
+
+[[licenses.clarify]]
+name = "ring"
+version = "*"
+expression = "MIT AND ISC AND OpenSSL"
+license-files = [{ path = "LICENSE", hash = 3171872035 }]
