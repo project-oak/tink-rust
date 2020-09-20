@@ -1,0 +1,18 @@
+[package]
+name = "tink-gcpkms"
+version = "0.1.0"
+authors = ["David Drysdale <drysdale@google.com>"]
+edition = "2018"
+license = "Apache-2.0"
+
+[dependencies]
+base64 = "^0.12"
+google-cloudkms1 = "^1.0.14"
+hyper = "^0.10.16"
+hyper-rustls = " ^0.6"
+serde_json = "^1.0.60"
+tink = "^0.1"
+yup-oauth2 = "^1.0.12"
+
+[dev-dependencies]
+tink-aead = "^0.1"
