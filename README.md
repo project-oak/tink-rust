@@ -64,7 +64,7 @@ Go packages and the equivalent Rust crates and modules, when available.
 
 |  Rust Crate/Module   | Go Package |
 |----------------------|------------|
-|                      | `aead` |
+| `tink-aead`          | `aead` |
 | `tink-daead`         | `daead` |
 |                      | `hybrid` |
 | `tink-mac`           | `mac` |
