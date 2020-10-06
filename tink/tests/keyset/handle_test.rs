@@ -48,15 +48,14 @@ fn test_new_handle_with_invalid_input() {
     );
 }
 
-/* TODO: enable when tink-aead crate is available.
 #[test]
 fn test_read() {
-    let master_key = tink_aead::subtle::AesGcm::new(&['A' as u8, 32]).unwrap();
+    let master_key = tink_aead::subtle::AesGcm::new(&[b'A'; 32]).unwrap();
 
     // Create a keyset
     let key_data = tink_testutil::new_key_data(
-        "some type url".to_string(),
-        &vec![0],
+        "some type url",
+        &[0],
         tink::proto::key_data::KeyMaterialType::Symmetric,
     );
     let key = tink_testutil::new_key(
@@ -69,8 +68,8 @@ fn test_read() {
     let h = insecure::new_handle(ks).unwrap();
 
     let mem_keyset = &mut tink::keyset::MemReaderWriter::default();
-    assert!(h.write(mem_keyset, master_key).is_ok());
-    let h2 = Handle::read(mem_keyset, master_key).unwrap();
+    assert!(h.write(mem_keyset, &master_key).is_ok());
+    let h2 = Handle::read(mem_keyset, &master_key).unwrap();
     assert_eq!(
         insecure::keyset_material(&h),
         insecure::keyset_material(&h2),
@@ -79,7 +78,6 @@ fn test_read() {
         h
     );
 }
-*/
 
 #[test]
 fn test_read_with_no_secrets() {

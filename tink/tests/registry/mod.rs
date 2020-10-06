@@ -20,12 +20,11 @@ use std::sync::Arc;
 #[test]
 fn test_register_key_manager() {
     tink_mac::init();
+    tink_aead::init();
     // get HMACKeyManager
     tink::registry::get_key_manager(tink_testutil::HMAC_TYPE_URL).unwrap();
-    /* TODO: enable when tink-aead crate is available.
-        // get AESGCMKeyManager
-        tink::registry::get_key_manager(tink_testutil::AES_GCM_TYPE_URL).unwrap();
-    */
+    // get AESGCMKeyManager
+    tink::registry::get_key_manager(tink_testutil::AES_GCM_TYPE_URL).unwrap();
     // some random typeurl
     assert!(
         tink::registry::get_key_manager("some url").is_err(),
@@ -33,9 +32,7 @@ fn test_register_key_manager() {
     );
 }
 
-/* TODO: enable when tink-aead crate is available.
 #[test]
-#[ignore]
 fn test_register_key_manager_with_collision() {
     tink_aead::init();
     // dummy_key_manager's type_url is equal to that of AES-GCM by default.
@@ -46,7 +43,6 @@ fn test_register_key_manager_with_collision() {
         "AES_GCM_TYPE_URL shouldn't be registered again",
     );
 }
-*/
 
 #[test]
 fn test_register_key_manager_duplicate() {
@@ -86,15 +82,14 @@ fn test_new_key_data() {
     );
 }
 
-/* TODO: enable when tink-aead crate is available.
 #[test]
 fn test_new_key() {
     tink_aead::init();
     // aead template
     let aes_gcm_template = tink_aead::aes128_gcm_key_template();
-    let key = tink::registry::new_key(aes_gcm_template).unwrap();
+    let key = tink::registry::new_key(&aes_gcm_template).unwrap();
 
-    let aes_gcm_key: tink::proto::AesGcmKey = key;
+    let aes_gcm_key = tink::proto::AesGcmKey::decode(key.as_ref()).unwrap();
 
     let aes_gcm_format =
         tink::proto::AesGcmKeyFormat::decode(aes_gcm_template.value.as_ref()).unwrap();
@@ -114,7 +109,6 @@ fn test_new_key() {
         "expect an error when key template is not registered"
     );
 }
-*/
 
 #[test]
 fn test_primitive_from_key_data() {
