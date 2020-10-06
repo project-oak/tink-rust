@@ -37,7 +37,7 @@
 ///
 /// - [RFC 5116](https://tools.ietf.org/html/rfc5116_
 /// - [RFC 5297 s1.3](https://tools.ietf.org/html/rfc5297#section-1.3)
-pub trait DeterministicAead {
+pub trait DeterministicAead: DeterministicAeadBoxClone {
     // Deterministical encrypt plaintext with `additional_data` as additional authenticated data.
     // The resulting ciphertext allows for checking authenticity and integrity of additional
     // data `additional_data`, but there are no guarantees wrt. secrecy of that data.
@@ -55,4 +55,21 @@ pub trait DeterministicAead {
         ciphertext: &[u8],
         additional_data: &[u8],
     ) -> Result<Vec<u8>, crate::TinkError>;
+}
+
+/// Trait bound to indicate that primitive trait objects should support cloning
+/// themselves as trait objects.
+pub trait DeterministicAeadBoxClone {
+    fn box_clone(&self) -> Box<dyn DeterministicAead>;
+}
+
+/// Default implementation of the box-clone trait bound for any underlying
+/// concrete type that implements [`Clone`].
+impl<T> DeterministicAeadBoxClone for T
+where
+    T: 'static + DeterministicAead + Clone,
+{
+    fn box_clone(&self) -> Box<dyn DeterministicAead> {
+        Box::new(self.clone())
+    }
 }

@@ -41,7 +41,7 @@ impl tink::registry::KeyManager for Ed25519SignerKeyManager {
         validate_key(&key)?;
 
         match crate::subtle::Ed25519Signer::new(&key.key_value) {
-            Ok(p) => Ok(tink::Primitive::Signer(std::sync::Arc::new(p))),
+            Ok(p) => Ok(tink::Primitive::Signer(Box::new(p))),
             Err(e) => Err(wrap_err("Ed25519SignerKeyManager: invalid key", e)),
         }
     }

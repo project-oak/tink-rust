@@ -21,7 +21,7 @@
 /// Implementations of this trait are secure against adaptive chosen ciphertext attacks.
 /// Encryption with additional data ensures authenticity and integrity of that data, but not
 /// its secrecy (see [RFC 5116](https://tools.ietf.org/html/rfc5116)).
-pub trait Aead {
+pub trait Aead: AeadBoxClone {
     // Encrypt plaintext with `additional_data` as additional
     // authenticated data. The resulting ciphertext allows for checking
     // authenticity and integrity of additional data `additional_data`,
@@ -40,4 +40,21 @@ pub trait Aead {
         ciphertext: &[u8],
         additional_data: &[u8],
     ) -> Result<Vec<u8>, crate::TinkError>;
+}
+
+/// Trait bound to indicate that primitive trait objects should support cloning
+/// themselves as trait objects.
+pub trait AeadBoxClone {
+    fn box_clone(&self) -> Box<dyn Aead>;
+}
+
+/// Default implementation of the box-clone trait bound for any underlying
+/// concrete type that implements [`Clone`].
+impl<T> AeadBoxClone for T
+where
+    T: 'static + Aead + Clone,
+{
+    fn box_clone(&self) -> Box<dyn Aead> {
+        Box::new(self.clone())
+    }
 }

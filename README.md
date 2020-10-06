@@ -102,15 +102,12 @@ trait objects):
 
 ```Rust
 enum Primitive {
-    Aead(Arc<dyn Aead>),
-    DeterministicAead(Arc<dyn DeterministicAead>),
+    Aead(Box<dyn Aead>),
+    DeterministicAead(Box<dyn DeterministicAead>),
     // ...
-    Verifier(Arc<dyn Verifier>),
+    Verifier(Box<dyn Verifier>),
 }
 ```
-
-**TODO**: decide whether `Box<dyn Thing>` (with `Thing: Copy`) would be preferable to `Arc`, given that primitives are
-[stateless and copy-safe](/docs/PRIMITIVES.md#general-properties-of-all-primitives).
 
 However, this has the big downside that it is impossible for third parties to extend the Rust port of Tink to include
 new types of primitive without modifying the Tink source.

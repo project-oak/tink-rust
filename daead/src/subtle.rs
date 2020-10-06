@@ -17,7 +17,7 @@
 //! Provides subtle implementations of the `DeterministicAEAD` primitive using AES-SIV.
 
 use aes_siv::{aead::generic_array::GenericArray, siv::Aes256Siv};
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 use tink::{utils::wrap_err, TinkError};
 
 /// `AesSiv` is an implementation of AES-SIV-CMAC as defined in
@@ -41,10 +41,11 @@ use tink::{utils::wrap_err, TinkError};
 /// Since 192-bit AES keys are not supported by tink for voodoo reasons
 /// and RFC 5297 only supports same size encryption and MAC keys this
 /// implies that keys must be 64 bytes (2*256 bits) long.
+#[derive(Clone)]
 pub struct AesSiv {
     // Need to use interior mutability because `aes_siv::siv::Siv` operations
     // take a `&mut self` parameter.
-    cipher: Mutex<Aes256Siv>,
+    cipher: Arc<Mutex<Aes256Siv>>,
 }
 
 /// Key size in bytes.
@@ -60,7 +61,7 @@ impl AesSiv {
         }
 
         Ok(AesSiv {
-            cipher: Mutex::new(Aes256Siv::new(*GenericArray::from_slice(key))),
+            cipher: Arc::new(Mutex::new(Aes256Siv::new(*GenericArray::from_slice(key)))),
         })
     }
 }

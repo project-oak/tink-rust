@@ -44,7 +44,7 @@ impl tink::registry::KeyManager for HkdfPrfKeyManager {
         let hash = HashType::from_i32(params.hash).unwrap_or(HashType::UnknownHash);
 
         match subtle::HkdfPrf::new(hash, &key.key_value, &params.salt) {
-            Ok(p) => Ok(tink::Primitive::Prf(std::sync::Arc::new(p))),
+            Ok(p) => Ok(tink::Primitive::Prf(Box::new(p))),
             Err(e) => Err(wrap_err("HkdfPrfManager: cannot create new primitive", e)),
         }
     }

@@ -21,7 +21,24 @@
 /// Implementations of this trait are secure against adaptive chosen-message
 /// attacks.  Signing data ensures authenticity and integrity of that data, but
 /// not its secrecy.
-pub trait Signer {
+pub trait Signer: SignerBoxClone {
     // Computes the digital signature for data.
     fn sign(&self, data: &[u8]) -> Result<Vec<u8>, crate::TinkError>;
+}
+
+/// Trait bound to indicate that primitive trait objects should support cloning
+/// themselves as trait objects.
+pub trait SignerBoxClone {
+    fn box_clone(&self) -> Box<dyn Signer>;
+}
+
+/// Default implementation of the box-clone trait bound for any underlying
+/// concrete type that implements [`Clone`].
+impl<T> SignerBoxClone for T
+where
+    T: 'static + Signer + Clone,
+{
+    fn box_clone(&self) -> Box<dyn Signer> {
+        Box::new(self.clone())
+    }
 }

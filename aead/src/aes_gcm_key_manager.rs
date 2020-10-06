@@ -18,7 +18,6 @@
 
 use crate::subtle;
 use prost::Message;
-use std::sync::Arc;
 use tink::{utils::wrap_err, TinkError};
 
 /// Maximal version of AES-GCM keys.
@@ -42,7 +41,7 @@ impl tink::registry::KeyManager for AesGcmKeyManager {
             .map_err(|e| wrap_err("AesGcmKeyManager: invalid key", e))?;
         validate_key(&key)?;
         match subtle::AesGcm::new(&key.key_value) {
-            Ok(p) => Ok(tink::Primitive::Aead(Arc::new(p))),
+            Ok(p) => Ok(tink::Primitive::Aead(Box::new(p))),
             Err(e) => Err(wrap_err("AesGcmKeyManager: cannot create new primitive", e)),
         }
     }

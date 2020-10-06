@@ -18,7 +18,6 @@
 
 use crate::subtle;
 use prost::Message;
-use std::sync::Arc;
 use tink::{utils::wrap_err, TinkError};
 
 /// Maximal version of ChaCha20Poly1305 keys.
@@ -44,7 +43,7 @@ impl tink::registry::KeyManager for ChaCha20Poly1305KeyManager {
             .map_err(|e| wrap_err("ChaCha20Poly1305KeyManager: invalid key", e))?;
         validate_key(&key)?;
         match subtle::ChaCha20Poly1305::new(&key.key_value) {
-            Ok(p) => Ok(tink::Primitive::Aead(Arc::new(p))),
+            Ok(p) => Ok(tink::Primitive::Aead(Box::new(p))),
             Err(e) => Err(wrap_err(
                 "ChaCha20Poly1305KeyManager: cannot create new primitive",
                 e,

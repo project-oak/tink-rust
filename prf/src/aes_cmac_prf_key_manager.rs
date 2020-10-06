@@ -41,7 +41,7 @@ impl tink::registry::KeyManager for AesCmacPrfKeyManager {
             .map_err(|_| TinkError::new("AesCmacPrfKeyManager: invalid key"))?;
         validate_key(&key)?;
         match subtle::AesCmacPrf::new(&key.key_value) {
-            Ok(p) => Ok(tink::Primitive::Prf(std::sync::Arc::new(p))),
+            Ok(p) => Ok(tink::Primitive::Prf(Box::new(p))),
             Err(e) => Err(wrap_err(
                 "AesCmacPrfManager: cannot create new primitive",
                 e,

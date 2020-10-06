@@ -14,7 +14,6 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use std::sync::Arc;
 use tink::{
     primitiveset::Entry,
     proto::{keyset::Key, KeyStatusType, OutputPrefixType},
@@ -50,7 +49,7 @@ fn test_primitive_set_basic() {
     let mut macs = Vec::with_capacity(keys.len());
     let mut entries = Vec::with_capacity(keys.len());
     for i in 0..keys.len() {
-        let mac = Arc::new(DummyMac {
+        let mac = Box::new(DummyMac {
             name: format!("Mac#{}", i),
         });
         macs.push(mac);
@@ -148,7 +147,7 @@ fn test_primitive_set_basic() {
 #[test]
 fn test_add_with_invalid_input() {
     let mut ps = tink::primitiveset::PrimitiveSet::new();
-    let dummy_mac = Arc::new(DummyMac {
+    let dummy_mac = Box::new(DummyMac {
         name: "".to_string(),
     });
     // unknown prefix type
@@ -170,7 +169,7 @@ fn test_add_with_invalid_input() {
 fn validate_entry_list(
     entries: &[Entry],
     key_ids: &[u32],
-    macs: &[Arc<DummyMac>],
+    macs: &[Box<DummyMac>],
     statuses: &[KeyStatusType],
     prefix_types: &[OutputPrefixType],
 ) -> bool {
@@ -178,13 +177,7 @@ fn validate_entry_list(
         return false;
     }
     for (i, entry) in entries.iter().enumerate() {
-        if !validate_entry(
-            entry,
-            key_ids[i],
-            macs[i].clone(),
-            &statuses[i],
-            &prefix_types[i],
-        ) {
+        if !validate_entry(entry, key_ids[i], &macs[i], &statuses[i], &prefix_types[i]) {
             return false;
         }
     }
@@ -195,7 +188,7 @@ fn validate_entry_list(
 fn validate_entry(
     entry: &Entry,
     key_id: u32,
-    test_mac: Arc<DummyMac>,
+    test_mac: &DummyMac,
     status: &KeyStatusType,
     output_prefix_type: &OutputPrefixType,
 ) -> bool {

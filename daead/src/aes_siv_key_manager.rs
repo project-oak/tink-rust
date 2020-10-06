@@ -45,7 +45,7 @@ impl KeyManager for AesSivKeyManager {
             .map_err(|e| wrap_err("AesSivKeyManager: decode failed", e))?;
         validate_key(&key)?;
         match subtle::AesSiv::new(&key.key_value) {
-            Ok(p) => Ok(tink::Primitive::DeterministicAead(std::sync::Arc::new(p))),
+            Ok(p) => Ok(tink::Primitive::DeterministicAead(Box::new(p))),
             Err(e) => Err(wrap_err("AesSivKeyManager: cannot create new primitive", e)),
         }
     }

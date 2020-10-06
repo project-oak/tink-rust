@@ -38,6 +38,7 @@ pub fn new_verifier_with_key_manager(
 }
 
 /// A [`tink::Verifier`] implementation that uses the underlying primitive set for verifying.
+#[derive(Clone)]
 struct WrappedVerifier {
     ps: tink::primitiveset::PrimitiveSet,
 }

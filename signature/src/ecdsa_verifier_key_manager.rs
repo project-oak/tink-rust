@@ -44,7 +44,7 @@ impl tink::registry::KeyManager for EcdsaVerifierKeyManager {
 
         let (hash, curve, encoding) = crate::get_ecdsa_param_ids(&params);
         match crate::subtle::EcdsaVerifier::new(hash, curve, encoding, &key.x, &key.y) {
-            Ok(p) => Ok(tink::Primitive::Verifier(std::sync::Arc::new(p))),
+            Ok(p) => Ok(tink::Primitive::Verifier(Box::new(p))),
             Err(e) => Err(wrap_err("EcdsaVerifierKeyManager: invalid key", e)),
         }
     }

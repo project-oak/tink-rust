@@ -18,7 +18,11 @@
 
 use aes::{Aes128, Aes192, Aes256};
 use cmac::{Cmac, Mac, NewMac};
-use std::{cmp::min, ops::DerefMut, sync::Mutex};
+use std::{
+    cmp::min,
+    ops::DerefMut,
+    sync::{Arc, Mutex},
+};
 use tink::TinkError;
 
 const RECOMMENDED_KEY_SIZE: usize = 32;
@@ -31,8 +35,9 @@ enum AesCmacVariant {
 }
 
 /// `AesCmacPrf` is a type that can be used to compute several CMACs with the same key material.
+#[derive(Clone)]
 pub struct AesCmacPrf {
-    mac: Mutex<AesCmacVariant>,
+    mac: Arc<Mutex<AesCmacVariant>>,
 }
 
 impl AesCmacPrf {
@@ -54,7 +59,7 @@ impl AesCmacPrf {
             _ => return Err("AesCmacPrf: invalid key length for AES".into()),
         };
         Ok(AesCmacPrf {
-            mac: Mutex::new(aes_cmac),
+            mac: Arc::new(Mutex::new(aes_cmac)),
         })
     }
 }

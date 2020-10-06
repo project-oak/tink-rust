@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use prost::Message;
-use std::{collections::HashSet, sync::Arc};
+use std::collections::HashSet;
 use tink::{subtle::random::get_random_bytes, TinkError};
 use tink_testutil::proto_encode;
 
@@ -228,7 +228,7 @@ fn validate_aes_gcm_key(
     }
     // try to encrypt and decrypt
     let p = tink_aead::subtle::AesGcm::new(&key.key_value)?;
-    validate_aes_gcm_primitive(tink::Primitive::Aead(Arc::new(p)), key)
+    validate_aes_gcm_primitive(tink::Primitive::Aead(Box::new(p)), key)
 }
 
 fn validate_aes_gcm_primitive(

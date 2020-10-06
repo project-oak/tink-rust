@@ -18,7 +18,6 @@
 
 use crate::subtle;
 use prost::Message;
-use std::sync::Arc;
 use tink::{proto::HashType, utils::wrap_err, TinkError};
 
 /// Maximal version of AES-CTR-HMAC keys.
@@ -73,8 +72,8 @@ impl tink::registry::KeyManager for AesCtrHmacAeadKeyManager {
                 )
             })?;
 
-        match subtle::EncryptThenAuthenticate::new(Arc::new(ctr), Arc::new(hmac), hmac_params.tag_size as usize) {
-            Ok(p) => Ok(tink::Primitive::Aead(Arc::new(p))),
+        match subtle::EncryptThenAuthenticate::new(Box::new(ctr), Box::new(hmac), hmac_params.tag_size as usize) {
+            Ok(p) => Ok(tink::Primitive::Aead(Box::new(p))),
             Err(e) => Err(wrap_err("AesCtrHmacAeadKeyManager: cannot create encrypt then authenticate primitive, error", e)),
         }
     }

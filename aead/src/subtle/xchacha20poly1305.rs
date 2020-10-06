@@ -23,6 +23,7 @@ pub const X_CHA_CHA20_KEY_SIZE: usize = 32;
 pub const X_CHA_CHA20_NONCE_SIZE: usize = 24;
 
 /// `XChaCha20Poly1305` is an implementation of the [`tink::Aead`] trait.
+#[derive(Clone)]
 pub struct XChaCha20Poly1305 {
     key: chacha20poly1305::Key,
 }

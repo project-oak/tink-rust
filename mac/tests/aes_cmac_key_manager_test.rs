@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use prost::Message;
-use std::{collections::HashSet, sync::Arc};
+use std::collections::HashSet;
 use tink::{utils::wrap_err, Mac, TinkError};
 use tink_testutil::proto_encode;
 
@@ -249,7 +249,7 @@ fn validate_cmac_key(
         key.params.as_ref().unwrap().tag_size as usize,
     )
     .map_err(|e| wrap_err("cannot create primitive from key", e))?;
-    validate_cmac_primitive(tink::Primitive::Mac(Arc::new(p)), key)
+    validate_cmac_primitive(tink::Primitive::Mac(Box::new(p)), key)
 }
 
 /// Check whether the given primitive matches the given `AesCmacKey`.

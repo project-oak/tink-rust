@@ -21,7 +21,24 @@
 /// Implementations of this trait are secure against adaptive chosen-message
 /// attacks.  Signing data ensures authenticity and integrity of that data, but
 /// not its secrecy.
-pub trait Verifier {
+pub trait Verifier: VerifierBoxClone {
     // Returns `()` if `signature` is a valid signature for `data`; otherwise returns an error.
     fn verify(&self, signature: &[u8], data: &[u8]) -> Result<(), crate::TinkError>;
+}
+
+/// Trait bound to indicate that primitive trait objects should support cloning
+/// themselves as trait objects.
+pub trait VerifierBoxClone {
+    fn box_clone(&self) -> Box<dyn Verifier>;
+}
+
+/// Default implementation of the box-clone trait bound for any underlying
+/// concrete type that implements [`Clone`].
+impl<T> VerifierBoxClone for T
+where
+    T: 'static + Verifier + Clone,
+{
+    fn box_clone(&self) -> Box<dyn Verifier> {
+        Box::new(self.clone())
+    }
 }

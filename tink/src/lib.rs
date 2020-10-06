@@ -18,8 +18,6 @@
 
 #![deny(intra_doc_link_resolution_failure)]
 
-use std::sync::Arc;
-
 pub mod cryptofmt;
 pub mod keyset;
 pub mod primitiveset;
@@ -56,15 +54,33 @@ mod verifier;
 pub use verifier::*;
 
 /// The primitives available in Tink.
-#[derive(Clone)]
 pub enum Primitive {
-    Aead(Arc<dyn Aead>),
-    DeterministicAead(Arc<dyn DeterministicAead>),
-    HybridDecrypt(Arc<dyn HybridDecrypt>),
-    HybridEncrypt(Arc<dyn HybridEncrypt>),
-    Mac(Arc<dyn Mac>),
-    Prf(Arc<dyn Prf>),
-    Signer(Arc<dyn Signer>),
-    StreamingAead(Arc<dyn StreamingAead>),
-    Verifier(Arc<dyn Verifier>),
+    Aead(Box<dyn Aead>),
+    DeterministicAead(Box<dyn DeterministicAead>),
+    HybridDecrypt(Box<dyn HybridDecrypt>),
+    HybridEncrypt(Box<dyn HybridEncrypt>),
+    Mac(Box<dyn Mac>),
+    Prf(Box<dyn Prf>),
+    Signer(Box<dyn Signer>),
+    StreamingAead(Box<dyn StreamingAead>),
+    Verifier(Box<dyn Verifier>),
+}
+
+/// Manual implementation of the [`Clone`] trait, which makes use of the trait bounds
+/// on the individual primitive types; specifically that they provide a `box_clone()`
+/// method.
+impl Clone for Primitive {
+    fn clone(&self) -> Self {
+        match self {
+            Primitive::Aead(p) => Primitive::Aead(p.box_clone()),
+            Primitive::DeterministicAead(p) => Primitive::DeterministicAead(p.box_clone()),
+            Primitive::HybridDecrypt(p) => Primitive::HybridDecrypt(p.box_clone()),
+            Primitive::HybridEncrypt(p) => Primitive::HybridEncrypt(p.box_clone()),
+            Primitive::Mac(p) => Primitive::Mac(p.box_clone()),
+            Primitive::Prf(p) => Primitive::Prf(p.box_clone()),
+            Primitive::Signer(p) => Primitive::Signer(p.box_clone()),
+            Primitive::StreamingAead(p) => Primitive::StreamingAead(p.box_clone()),
+            Primitive::Verifier(p) => Primitive::Verifier(p.box_clone()),
+        }
+    }
 }

@@ -52,7 +52,7 @@ impl tink::registry::KeyManager for EcdsaSignerKeyManager {
 
         let (hash, curve, encoding) = crate::get_ecdsa_param_ids(&params);
         match crate::subtle::EcdsaSigner::new(hash, curve, encoding, &key.key_value) {
-            Ok(p) => Ok(tink::Primitive::Signer(std::sync::Arc::new(p))),
+            Ok(p) => Ok(tink::Primitive::Signer(Box::new(p))),
             Err(e) => Err(wrap_err("EcdsaSignerKeyManager: invalid key", e)),
         }
     }

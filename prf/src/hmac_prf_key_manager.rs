@@ -44,7 +44,7 @@ impl tink::registry::KeyManager for HmacPrfKeyManager {
         let hash = HashType::from_i32(params.hash).unwrap_or(HashType::UnknownHash);
 
         match subtle::HmacPrf::new(hash, &key.key_value) {
-            Ok(p) => Ok(tink::Primitive::Prf(std::sync::Arc::new(p))),
+            Ok(p) => Ok(tink::Primitive::Prf(Box::new(p))),
             Err(e) => Err(wrap_err("HmacPrfManager: cannot create new primitive", e)),
         }
     }

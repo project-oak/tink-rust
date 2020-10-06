@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use prost::Message;
-use std::{collections::HashSet, sync::Arc};
+use std::collections::HashSet;
 use tink::{proto::HashType, utils::wrap_err, Prf, TinkError};
 use tink_testutil::proto_encode;
 
@@ -274,7 +274,7 @@ fn validate_hkdf_key(
         &key.params.as_ref().unwrap().salt,
     )
     .map_err(|e| wrap_err("cannot create primitive from key", e))?;
-    validate_hkdf_primitive(tink::Primitive::Prf(Arc::new(p)), key)
+    validate_hkdf_primitive(tink::Primitive::Prf(Box::new(p)), key)
 }
 
 /// Check whether the given primitive matches the given [`HkdfPrfKey`](tink::proto::HkdfPrfKey).

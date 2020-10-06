@@ -22,6 +22,15 @@ pub struct Ed25519Signer {
     keypair: ed25519_dalek::Keypair,
 }
 
+/// Manual implementation of [`Clone`].
+impl Clone for Ed25519Signer {
+    fn clone(&self) -> Self {
+        Self {
+            keypair: ed25519_dalek::Keypair::from_bytes(&self.keypair.to_bytes()).unwrap(),
+        }
+    }
+}
+
 impl Ed25519Signer {
     /// Create an [`Ed25519Signer`] from the provided seed, which must be 32 bytes.
     /// RFC8032's private keys correspond to seeds here.

@@ -27,7 +27,7 @@ pub struct Set {
     /// The key ID marked as primary in the corresponding [`Keyset`](tink::proto::Keyset).
     pub primary_id: u32,
     /// Map key IDs to their corresponding Prf.
-    pub prfs: HashMap<u32, Arc<dyn Prf>>,
+    pub prfs: HashMap<u32, Box<dyn Prf>>,
 }
 
 impl Set {

@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use prost::Message;
-use std::{error::Error, sync::Arc};
+use std::error::Error;
 use tink::subtle::random::get_random_bytes;
 
 #[test]
@@ -141,7 +141,7 @@ fn validate_aes_siv_key(key: &tink::proto::AesSivKey) -> Result<(), Box<dyn Erro
 
     // Try to encrypt and decrypt.
     let p = tink_daead::subtle::AesSiv::new(&key.key_value)?;
-    validate_aes_siv_primitive(tink::Primitive::DeterministicAead(Arc::new(p)))
+    validate_aes_siv_primitive(tink::Primitive::DeterministicAead(Box::new(p)))
 }
 
 fn gen_invalid_aes_siv_keys() -> Vec<tink::proto::AesSivKey> {

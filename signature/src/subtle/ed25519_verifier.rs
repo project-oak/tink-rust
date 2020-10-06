@@ -18,6 +18,7 @@ use signature::{Signature, Verifier as RustCryptoVerifier};
 use tink::{utils::wrap_err, TinkError};
 
 /// A [`tink::Verifier`] for ED25519.
+#[derive(Clone)]
 pub struct Ed25519Verifier {
     public_key: ed25519_dalek::PublicKey,
 }

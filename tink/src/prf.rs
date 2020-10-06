@@ -32,7 +32,7 @@
 /// verification, avoiding the security problems that often happen during
 /// verification, and having automatic support for key rotation. It also allows
 /// for non-deterministic MAC algorithms.
-pub trait Prf {
+pub trait Prf: PrfBoxClone {
     /// Compute the PRF selected by the underlying key on input and
     /// returns the first `output_length` bytes.
     /// When choosing this parameter keep the birthday paradox in mind.
@@ -44,4 +44,21 @@ pub trait Prf {
     /// Returns a non ok status if the algorithm fails or if the output of
     /// algorithm is less than outputLength.
     fn compute_prf(&self, input: &[u8], output_length: usize) -> Result<Vec<u8>, crate::TinkError>;
+}
+
+/// Trait bound to indicate that primitive trait objects should support cloning
+/// themselves as trait objects.
+pub trait PrfBoxClone {
+    fn box_clone(&self) -> Box<dyn Prf>;
+}
+
+/// Default implementation of the box-clone trait bound for any underlying
+/// concrete type that implements [`Clone`].
+impl<T> PrfBoxClone for T
+where
+    T: 'static + Prf + Clone,
+{
+    fn box_clone(&self) -> Box<dyn Prf> {
+        Box::new(self.clone())
+    }
 }

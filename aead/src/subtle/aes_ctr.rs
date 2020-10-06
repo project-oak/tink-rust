@@ -27,12 +27,14 @@ pub const AES_CTR_MIN_IV_SIZE: usize = 12;
 
 pub const AES_BLOCK_SIZE_IN_BYTES: usize = 16;
 
+#[derive(Clone)]
 enum AesCtrVariant {
     Aes128(Key<aes_ctr::Aes128Ctr>),
     Aes256(Key<aes_ctr::Aes256Ctr>),
 }
 
 /// `AesCtr` is an implementation of AEAD interface.
+#[derive(Clone)]
 pub struct AesCtr {
     key: AesCtrVariant,
     pub iv_size: usize,

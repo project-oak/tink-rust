@@ -19,7 +19,7 @@
 /// `Mac` is the interface for MACs (Message Authentication Codes).
 /// This interface should be used for authentication only, and not for other purposes
 /// (for example, it should not be used to generate pseudorandom bytes).
-pub trait Mac {
+pub trait Mac: MacBoxClone {
     // Compute message authentication code (MAC) for code data.
     fn compute_mac(&self, data: &[u8]) -> Result<Vec<u8>, crate::TinkError>;
 
@@ -32,5 +32,22 @@ pub trait Mac {
         } else {
             Err("Invalid MAC".into())
         }
+    }
+}
+
+/// Trait bound to indicate that primitive trait objects should support cloning
+/// themselves as trait objects.
+pub trait MacBoxClone {
+    fn box_clone(&self) -> Box<dyn Mac>;
+}
+
+/// Default implementation of the box-clone trait bound for any underlying
+/// concrete type that implements [`Clone`].
+impl<T> MacBoxClone for T
+where
+    T: 'static + Mac + Clone,
+{
+    fn box_clone(&self) -> Box<dyn Mac> {
+        Box::new(self.clone())
     }
 }

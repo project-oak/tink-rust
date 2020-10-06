@@ -40,6 +40,7 @@ pub fn new_with_key_manager(
 
 /// A [`tink::DeterministicAead`] implementation that uses the underlying primitive set
 /// for deterministic encryption and decryption.
+#[derive(Clone)]
 struct WrappedDeterministicAead {
     ps: tink::primitiveset::PrimitiveSet,
 }

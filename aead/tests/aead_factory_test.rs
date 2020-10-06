@@ -14,7 +14,6 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use std::sync::Arc;
 use tink::{proto::OutputPrefixType, subtle::random::get_random_bytes, utils::wrap_err, TinkError};
 use tink_aead::subtle;
 
@@ -33,7 +32,8 @@ fn test_factory_multiple_keys() {
     let keyset_handle = tink::keyset::insecure::new_handle(keyset).unwrap();
     let a = tink_aead::new(&keyset_handle).expect("tink_aead::new failed");
     let expected_prefix = tink::cryptofmt::output_prefix(&primary_key).unwrap();
-    validate_aead_factory_cipher(a.clone(), a.clone(), &expected_prefix).expect("invalid cipher");
+    validate_aead_factory_cipher(a.box_clone(), a.box_clone(), &expected_prefix)
+        .expect("invalid cipher");
 
     // encrypt with a non-primary RAW key and decrypt with the keyset
     assert_eq!(
@@ -45,7 +45,7 @@ fn test_factory_multiple_keys() {
     let keyset2 = tink_testutil::new_keyset(raw_key.key_id, vec![raw_key]);
     let keyset_handle2 = tink::keyset::insecure::new_handle(keyset2).unwrap();
     let a2 = tink_aead::new(&keyset_handle2).expect("tink_aead::new failed");
-    validate_aead_factory_cipher(a2.clone(), a.clone(), &tink::cryptofmt::RAW_PREFIX)
+    validate_aead_factory_cipher(a2.box_clone(), a.box_clone(), &tink::cryptofmt::RAW_PREFIX)
         .expect("invalid cipher");
 
     // encrypt with a random key not in the keyset, decrypt with the keyset should fail
@@ -54,7 +54,7 @@ fn test_factory_multiple_keys() {
     let expected_prefix = tink::cryptofmt::output_prefix(&primary_key).unwrap();
     let keyset_handle2 = tink::keyset::insecure::new_handle(keyset2).unwrap();
     let a2 = tink_aead::new(&keyset_handle2).expect("tink_aead::new failed");
-    let result = validate_aead_factory_cipher(a2.clone(), a.clone(), &expected_prefix);
+    let result = validate_aead_factory_cipher(a2.box_clone(), a.box_clone(), &expected_prefix);
     assert!(result.is_err(), "expect decryption to fail with random key");
     assert!(
         format!("{:?}", result).contains("decryption failed"),
@@ -75,13 +75,13 @@ fn test_factory_raw_key_as_primary() {
     let keyset_handle = tink::keyset::insecure::new_handle(keyset).unwrap();
 
     let a = tink_aead::new(&keyset_handle).expect("cannot get primitive from keyset handle");
-    validate_aead_factory_cipher(a.clone(), a.clone(), &tink::cryptofmt::RAW_PREFIX)
+    validate_aead_factory_cipher(a.box_clone(), a.box_clone(), &tink::cryptofmt::RAW_PREFIX)
         .expect("invalid cipher");
 }
 
 fn validate_aead_factory_cipher(
-    encrypt_cipher: Arc<dyn tink::Aead>,
-    decrypt_cipher: Arc<dyn tink::Aead>,
+    encrypt_cipher: Box<dyn tink::Aead>,
+    decrypt_cipher: Box<dyn tink::Aead>,
     expected_prefix: &[u8],
 ) -> Result<(), TinkError> {
     let prefix_size = expected_prefix.len();

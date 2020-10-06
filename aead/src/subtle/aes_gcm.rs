@@ -24,12 +24,14 @@ pub const AES_GCM_IV_SIZE: usize = 12;
 /// The only tag size that this implementation supports.
 pub const AES_GCM_TAG_SIZE: usize = 16;
 
+#[derive(Clone)]
 enum AesGcmVariant {
     Aes128(Box<aes_gcm::Aes128Gcm>),
     Aes256(Box<aes_gcm::Aes256Gcm>),
 }
 
 /// `AesGcm` is an implementation of the [`tink::Aead`] trait.
+#[derive(Clone)]
 pub struct AesGcm {
     key: AesGcmVariant,
 }

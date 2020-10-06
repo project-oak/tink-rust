@@ -26,8 +26,20 @@ pub enum EcdsaPrivateKey {
     NistP256(p256::ecdsa::SigningKey),
 }
 
+/// Manual implementation of [`Clone`].
+impl Clone for EcdsaPrivateKey {
+    fn clone(&self) -> Self {
+        match self {
+            EcdsaPrivateKey::NistP256(k) => {
+                EcdsaPrivateKey::NistP256(p256::ecdsa::SigningKey::new(&k.to_bytes()).unwrap())
+            }
+        }
+    }
+}
+
 /// `EcdsaSigner` is an implementation of [`tink::Signer`] for ECDSA.
 /// At the moment, the implementation only accepts DER encoding.
+#[derive(Clone)]
 pub struct EcdsaSigner {
     private_key: EcdsaPrivateKey,
     encoding: EcdsaSignatureEncoding,

@@ -17,14 +17,19 @@
 //! Provides an implementation of PRF using HMAC.
 
 use ::hmac::{Hmac, Mac, NewMac};
-use std::{cmp::min, ops::DerefMut, sync::Mutex};
+use std::{
+    cmp::min,
+    ops::DerefMut,
+    sync::{Arc, Mutex},
+};
 use tink::{proto::HashType, TinkError};
 
 const MIN_HMAC_KEY_SIZE_IN_BYTES: usize = 16;
 
 /// `HmacPrf` is a type that can be used to compute several HMACs with the same key material.
+#[derive(Clone)]
 pub struct HmacPrf {
-    mac: Mutex<HmacPrfVariant>,
+    mac: Arc<Mutex<HmacPrfVariant>>,
     mac_size: usize,
 }
 
@@ -65,7 +70,7 @@ impl HmacPrf {
         };
 
         Ok(HmacPrf {
-            mac: Mutex::new(mac),
+            mac: Arc::new(Mutex::new(mac)),
             mac_size,
         })
     }

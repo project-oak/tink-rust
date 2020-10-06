@@ -16,11 +16,10 @@
 
 //! Provides an implementation of AEAD using a set of underlying implementations.
 
-use std::sync::Arc;
 use tink::{utils::wrap_err, TinkError};
 
 /// Returns a [`tink::Aead`] primitive from the given keyset handle.
-pub fn new(h: &tink::keyset::Handle) -> Result<Arc<dyn tink::Aead>, TinkError> {
+pub fn new(h: &tink::keyset::Handle) -> Result<Box<dyn tink::Aead>, TinkError> {
     new_with_key_manager(h, None)
 }
 
@@ -28,18 +27,19 @@ pub fn new(h: &tink::keyset::Handle) -> Result<Arc<dyn tink::Aead>, TinkError> {
 /// manager.
 pub fn new_with_key_manager(
     h: &tink::keyset::Handle,
-    km: Option<Arc<dyn tink::registry::KeyManager>>,
-) -> Result<Arc<dyn tink::Aead>, TinkError> {
+    km: Option<std::sync::Arc<dyn tink::registry::KeyManager>>,
+) -> Result<Box<dyn tink::Aead>, TinkError> {
     let ps = h
         .primitives_with_key_manager(km)
         .map_err(|e| wrap_err("aead::factory: cannot obtain primitive set", e))?;
 
     let ret = WrappedAead::new(ps)?;
-    Ok(Arc::new(ret))
+    Ok(Box::new(ret))
 }
 
 /// `WrappedAead` is an AEAD implementation that uses the underlying primitive set for encryption
 /// and decryption.
+#[derive(Clone)]
 struct WrappedAead {
     ps: tink::primitiveset::PrimitiveSet,
 }

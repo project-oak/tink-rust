@@ -40,7 +40,7 @@ impl tink::registry::KeyManager for Ed25519VerifierKeyManager {
         validate_key(&key)?;
 
         match crate::subtle::Ed25519Verifier::new(&key.key_value) {
-            Ok(p) => Ok(tink::Primitive::Verifier(std::sync::Arc::new(p))),
+            Ok(p) => Ok(tink::Primitive::Verifier(Box::new(p))),
             Err(e) => Err(wrap_err("Ed25519VerifierKeyManager: invalid key", e)),
         }
     }

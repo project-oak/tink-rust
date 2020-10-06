@@ -17,7 +17,6 @@
 //! Key manager for keys wrapped by a KMS.
 
 use prost::Message;
-use std::sync::Arc;
 use tink::{utils::wrap_err, TinkError};
 
 /// Maximal version of KMS-wrapped keys.
@@ -51,7 +50,7 @@ impl tink::registry::KeyManager for KmsEnvelopeAeadKeyManager {
             .get_aead(&uri)
             .map_err(|e| wrap_err("KmsEnvelopeAeadKeyManager: invalid aead backend", e))?;
 
-        Ok(tink::Primitive::Aead(Arc::new(
+        Ok(tink::Primitive::Aead(Box::new(
             crate::KmsEnvelopeAead::new(
                 key_params.dek_template.ok_or_else(|| {
                     TinkError::new("KmsEnvelopeAeadKeyManager: missing DEK template")

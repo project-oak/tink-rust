@@ -14,7 +14,6 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use std::sync::Arc;
 use tink::keyset::{insecure, Handle};
 
 #[test]
@@ -51,7 +50,7 @@ fn test_new_handle_with_invalid_input() {
 
 #[test]
 fn test_read() {
-    let master_key = Arc::new(tink_aead::subtle::AesGcm::new(&[b'A'; 32]).unwrap());
+    let master_key = Box::new(tink_aead::subtle::AesGcm::new(&[b'A'; 32]).unwrap());
 
     // Create a keyset
     let key_data = tink_testutil::new_key_data(

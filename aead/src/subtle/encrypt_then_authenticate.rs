@@ -17,7 +17,6 @@
 //! General AEAD implementation combining an `IndCpaCipher` with a `tink::Mac`
 
 use super::IndCpaCipher;
-use std::sync::Arc;
 use tink::{utils::wrap_err, TinkError};
 
 /// `EncryptThenAuthenticate` performs an encrypt-then-MAC operation on plaintext
@@ -25,9 +24,21 @@ use tink::{utils::wrap_err, TinkError};
 /// ciphertext || size of aad). This implementation is based on
 /// http://tools.ietf.org/html/draft-mcgrew-aead-aes-cbc-hmac-sha2-05.
 pub struct EncryptThenAuthenticate {
-    ind_cpa_cipher: Arc<dyn IndCpaCipher>,
-    mac: Arc<dyn tink::Mac>,
+    ind_cpa_cipher: Box<dyn IndCpaCipher>,
+    mac: Box<dyn tink::Mac>,
     tag_size: usize,
+}
+
+/// Manual implementation of [`Clone`] relying on the trait bounds for
+/// primitives to provide `.box_clone()` methods.
+impl Clone for EncryptThenAuthenticate {
+    fn clone(&self) -> Self {
+        Self {
+            ind_cpa_cipher: self.ind_cpa_cipher.box_clone(),
+            mac: self.mac.box_clone(),
+            tag_size: self.tag_size,
+        }
+    }
 }
 
 const MIN_TAG_SIZE_IN_BYTES: usize = 10;
@@ -35,8 +46,8 @@ const MIN_TAG_SIZE_IN_BYTES: usize = 10;
 impl EncryptThenAuthenticate {
     /// Return a new instance of EncryptThenAuthenticate.
     pub fn new(
-        ind_cpa_cipher: Arc<dyn IndCpaCipher>,
-        mac: Arc<dyn tink::Mac>,
+        ind_cpa_cipher: Box<dyn IndCpaCipher>,
+        mac: Box<dyn tink::Mac>,
         tag_size: usize,
     ) -> Result<EncryptThenAuthenticate, TinkError> {
         if tag_size < MIN_TAG_SIZE_IN_BYTES {

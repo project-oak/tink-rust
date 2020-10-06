@@ -63,9 +63,9 @@ impl Entry {
 ///
 /// `PrimitiveSet` is public to allow its use in implementations of custom
 /// primitives.
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub struct PrimitiveSet {
-    // Copy of the primary entry `entries`.
+    // Copy of the primary entry in `entries`.
     pub primary: Option<Entry>,
 
     // The primitives are stored in a map of (ciphertext prefix, list of

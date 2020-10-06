@@ -15,7 +15,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use prost::Message;
-use std::sync::Arc;
 use tink::{subtle::random::get_random_bytes, TinkError};
 use tink_aead::subtle;
 
@@ -156,5 +155,5 @@ fn validate_x_cha_cha20_poly1305_key(
 
     // Try to encrypt and decrypt.
     let p = subtle::XChaCha20Poly1305::new(&key.key_value)?;
-    validate_x_cha_cha20_poly1305_primitive(tink::Primitive::Aead(Arc::new(p)), key)
+    validate_x_cha_cha20_poly1305_primitive(tink::Primitive::Aead(Box::new(p)), key)
 }

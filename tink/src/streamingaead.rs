@@ -27,7 +27,7 @@
 /// Instances of `StreamingAead` must follow the OAE2 definition as proposed in the paper "Online
 /// Authenticated-Encryption and its Nonce-Reuse Misuse-Resistance" by [Hoang, Reyhanitabar, Rogaway
 /// and Vizár](https://eprint.iacr.org/2015/189.pdf)
-pub trait StreamingAead {
+pub trait StreamingAead: StreamingAeadBoxClone {
     /// Return a wrapper around an underlying `std::io::Write`, such that any write-operation
     /// via the wrapper results in AEAD-encryption of the written data, using `aad`
     /// as associated authenticated data. The associated data is not included in the ciphertext
@@ -46,4 +46,21 @@ pub trait StreamingAead {
         r: Box<dyn std::io::Read>,
         aad: &[u8],
     ) -> Result<Box<dyn std::io::Read>, crate::TinkError>;
+}
+
+/// Trait bound to indicate that primitive trait objects should support cloning
+/// themselves as trait objects.
+pub trait StreamingAeadBoxClone {
+    fn box_clone(&self) -> Box<dyn StreamingAead>;
+}
+
+/// Default implementation of the box-clone trait bound for any underlying
+/// concrete type that implements [`Clone`].
+impl<T> StreamingAeadBoxClone for T
+where
+    T: 'static + StreamingAead + Clone,
+{
+    fn box_clone(&self) -> Box<dyn StreamingAead> {
+        Box::new(self.clone())
+    }
 }

@@ -38,6 +38,7 @@ pub fn new_signer_with_key_manager(
 }
 
 /// A [`tink::Signer`] implementation that uses the underlying primitive set for signing.
+#[derive(Clone)]
 struct WrappedSigner {
     ps: tink::primitiveset::PrimitiveSet,
 }

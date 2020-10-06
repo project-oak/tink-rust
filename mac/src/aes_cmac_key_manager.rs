@@ -40,7 +40,7 @@ impl tink::registry::KeyManager for AesCmacKeyManager {
             .map_err(|e| wrap_err("AesCmacKeyManager: decode failed", e))?;
         let tag_size = validate_key(&key)?;
         match crate::subtle::AesCmac::new(&key.key_value, tag_size) {
-            Ok(p) => Ok(tink::Primitive::Mac(std::sync::Arc::new(p))),
+            Ok(p) => Ok(tink::Primitive::Mac(Box::new(p))),
             Err(e) => Err(wrap_err(
                 "AesCmacKeyManager: cannot create new primitive",
                 e,

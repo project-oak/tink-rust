@@ -50,7 +50,7 @@ impl Handle {
 
     /// Attempt to create a [`Handle`] from an encrypted keyset obtained via a
     /// [`Reader`](crate::keyset::Reader).
-    pub fn read<T>(reader: &mut T, master_key: Arc<dyn crate::Aead>) -> Result<Self, TinkError>
+    pub fn read<T>(reader: &mut T, master_key: Box<dyn crate::Aead>) -> Result<Self, TinkError>
     where
         T: crate::keyset::Reader,
     {
@@ -98,7 +98,7 @@ impl Handle {
     pub fn write<T>(
         &self,
         writer: &mut T,
-        master_key: Arc<dyn crate::Aead>,
+        master_key: Box<dyn crate::Aead>,
     ) -> Result<(), TinkError>
     where
         T: super::Writer,
@@ -229,7 +229,7 @@ fn public_key_data(
 /// Decrypt a keyset with a master key.
 fn decrypt(
     encrypted_keyset: &crate::proto::EncryptedKeyset,
-    master_key: Arc<dyn crate::Aead>,
+    master_key: Box<dyn crate::Aead>,
 ) -> Result<crate::proto::Keyset, TinkError> {
     let decrypted = master_key
         .decrypt(&encrypted_keyset.encrypted_keyset, &[])
@@ -241,7 +241,7 @@ fn decrypt(
 /// Encrypt a keyset with a master key.
 fn encrypt(
     keyset: &crate::proto::Keyset,
-    master_key: Arc<dyn crate::Aead>,
+    master_key: Box<dyn crate::Aead>,
 ) -> Result<crate::proto::EncryptedKeyset, TinkError> {
     let mut serialized_keyset = vec![];
     keyset

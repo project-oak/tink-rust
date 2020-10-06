@@ -53,8 +53,25 @@
 ///   [RFC 5116](ttps://tools.ietf.org/html/rfc5116)).
 /// - use `context_info` as "CtxInfo"-input for HKDF (if the implementation uses HKDF as key
 ///   derivation function, cf. [RFC 5869](https://tools.ietf.org/html/rfc5869)).
-pub trait HybridEncrypt {
+pub trait HybridEncrypt: HybridEncryptBoxClone {
     /// Encrypt plaintext binding `context_info` to the resulting
     /// ciphertext. Returns resulting ciphertext.
     fn encrypt(&self, plaintext: &[u8], context_info: &[u8]) -> Result<Vec<u8>, crate::TinkError>;
+}
+
+/// Trait bound to indicate that primitive trait objects should support cloning
+/// themselves as trait objects.
+pub trait HybridEncryptBoxClone {
+    fn box_clone(&self) -> Box<dyn HybridEncrypt>;
+}
+
+/// Default implementation of the box-clone trait bound for any underlying
+/// concrete type that implements [`Clone`].
+impl<T> HybridEncryptBoxClone for T
+where
+    T: 'static + HybridEncrypt + Clone,
+{
+    fn box_clone(&self) -> Box<dyn HybridEncrypt> {
+        Box::new(self.clone())
+    }
 }

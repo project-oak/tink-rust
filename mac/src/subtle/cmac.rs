@@ -24,6 +24,7 @@ const MIN_TAG_LENGTH_IN_BYTES: usize = 10;
 const MAX_TAG_LENGTH_IN_BYTES: usize = 16;
 
 /// `AesCmac` represents an AES-CMAC struct that implements the [`tink::Mac`] interface.
+#[derive(Clone)]
 pub struct AesCmac {
     prf: tink_prf::subtle::AesCmacPrf,
     tag_size: usize,

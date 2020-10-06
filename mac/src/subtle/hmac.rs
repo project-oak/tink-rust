@@ -25,6 +25,7 @@ const MIN_KEY_SIZE_IN_BYTES: usize = 16;
 const MIN_TAG_SIZE_IN_BYTES: usize = 10;
 
 /// Implementation of trait `tink::Mac`.
+#[derive(Clone)]
 pub struct Hmac {
     prf: tink_prf::subtle::HmacPrf,
     tag_size: usize,

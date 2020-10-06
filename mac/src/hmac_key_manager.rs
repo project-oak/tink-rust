@@ -45,7 +45,7 @@ impl tink::registry::KeyManager for HmacKeyManager {
         };
         let hash = HashType::from_i32(params.hash).unwrap_or(HashType::UnknownHash);
         match crate::subtle::Hmac::new(hash, &key.key_value, params.tag_size as usize) {
-            Ok(p) => Ok(tink::Primitive::Mac(std::sync::Arc::new(p))),
+            Ok(p) => Ok(tink::Primitive::Mac(Box::new(p))),
             Err(e) => Err(wrap_err("HmacKeyManager: cannot create new primitive", e)),
         }
     }

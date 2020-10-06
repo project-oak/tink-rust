@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use prost::Message;
-use std::{collections::HashSet, sync::Arc};
+use std::collections::HashSet;
 use tink::{proto::HashType, utils::wrap_err, Mac, TinkError};
 use tink_testutil::proto_encode;
 
@@ -304,7 +304,7 @@ fn validate_hmac_key(
         key.params.as_ref().unwrap().tag_size as usize,
     )
     .map_err(|e| wrap_err("cannot create primitive from key", e))?;
-    validate_hmac_primitive(tink::Primitive::Mac(Arc::new(p)), key)
+    validate_hmac_primitive(tink::Primitive::Mac(Box::new(p)), key)
 }
 
 /// Check whether the given primitive matches the given `HmacKey`

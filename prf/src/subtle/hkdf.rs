@@ -25,10 +25,12 @@ use tink::{proto::HashType, TinkError};
 const MIN_HKDF_KEY_SIZE_IN_BYTES: usize = 32;
 
 // `HkdfPrf` is a type that can be used to compute several HKDFs with the same key material.
+#[derive(Clone)]
 pub struct HkdfPrf {
     prk: HkdfPrfVariant,
 }
 
+#[derive(Clone)]
 enum HkdfPrfVariant {
     Sha1(hkdf::Hkdf<sha1::Sha1>),
     Sha256(hkdf::Hkdf<sha2::Sha256>),

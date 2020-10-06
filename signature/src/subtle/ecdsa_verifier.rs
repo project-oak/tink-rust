@@ -25,12 +25,14 @@ use tink::{
 };
 
 /// An ECDSA public key.
+#[derive(Clone)]
 pub enum EcdsaPublicKey {
     NistP256(p256::ecdsa::VerifyKey),
 }
 
 // `EcdsaVerifier` is an implementation of [`tink::Verifier`] for ECDSA.
 // At the moment, the implementation only accepts signatures with strict DER encoding.
+#[derive(Clone)]
 pub struct EcdsaVerifier {
     public_key: EcdsaPublicKey,
     encoding: EcdsaSignatureEncoding,

@@ -16,13 +16,11 @@
 
 //! Trait definition for KMS clients.
 
-use std::sync::Arc;
-
 /// `KmsClient` knows how to produce primitives backed by keys stored in remote KMS services.
 pub trait KmsClient: Send + Sync {
     /// Returns true if this client does support `key_uri`.
     fn supported(&self, key_uri: &str) -> bool;
 
     /// Get an [`Aead`](crate::Aead) backend by `key_uri`.
-    fn get_aead(&self, key_uri: &str) -> Result<Arc<dyn crate::Aead>, crate::TinkError>;
+    fn get_aead(&self, key_uri: &str) -> Result<Box<dyn crate::Aead>, crate::TinkError>;
 }

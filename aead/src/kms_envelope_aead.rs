@@ -16,7 +16,7 @@
 
 //! Provide an implementation of AEAD using a KMS.
 
-use std::{convert::TryInto, sync::Arc};
+use std::convert::TryInto;
 use tink::{utils::wrap_err, TinkError};
 
 const LEN_DEK: usize = 4;
@@ -24,11 +24,22 @@ const LEN_DEK: usize = 4;
 /// `KmsEnvelopeAead` represents an instance of Envelope AEAD.
 pub struct KmsEnvelopeAead {
     dek_template: tink::proto::KeyTemplate,
-    remote: Arc<dyn tink::Aead>,
+    remote: Box<dyn tink::Aead>,
+}
+
+/// Manual implementation of [`Clone`] relying on the trait bounds for
+/// primitives to provide `.box_clone()` methods.
+impl Clone for KmsEnvelopeAead {
+    fn clone(&self) -> Self {
+        Self {
+            dek_template: self.dek_template.clone(),
+            remote: self.remote.box_clone(),
+        }
+    }
 }
 
 impl KmsEnvelopeAead {
-    pub fn new(kt: tink::proto::KeyTemplate, remote: Arc<dyn tink::Aead>) -> KmsEnvelopeAead {
+    pub fn new(kt: tink::proto::KeyTemplate, remote: Box<dyn tink::Aead>) -> KmsEnvelopeAead {
         KmsEnvelopeAead {
             dek_template: kt,
             remote,

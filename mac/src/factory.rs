@@ -39,6 +39,7 @@ pub fn new_with_key_manager(
 
 /// A [`tink::Mac`] implementation that uses the underlying primitive set to compute and
 /// verify MACs.
+#[derive(Clone)]
 struct WrappedMac {
     ps: tink::primitiveset::PrimitiveSet,
 }

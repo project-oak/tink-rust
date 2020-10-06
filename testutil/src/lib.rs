@@ -19,7 +19,7 @@
 #![deny(intra_doc_link_resolution_failure)]
 
 use generic_array::typenum::Unsigned;
-use std::{convert::TryInto, sync::Arc};
+use std::convert::TryInto;
 use tink::{
     proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType, KeyData, Keyset},
     subtle::random::get_random_bytes,
@@ -48,7 +48,7 @@ impl Default for DummyAeadKeyManager {
 
 impl tink::registry::KeyManager for DummyAeadKeyManager {
     fn primitive(&self, _serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
-        Ok(tink::Primitive::Aead(Arc::new(DummyAead)))
+        Ok(tink::Primitive::Aead(Box::new(DummyAead)))
     }
 
     fn new_key(&self, _serialized_key_format: &[u8]) -> Result<Vec<u8>, TinkError> {
@@ -69,7 +69,7 @@ impl tink::registry::KeyManager for DummyAeadKeyManager {
 }
 
 /// Dummy implementation of [`tink::Aead`] trait.
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct DummyAead;
 
 impl tink::Aead for DummyAead {
@@ -83,7 +83,7 @@ impl tink::Aead for DummyAead {
 }
 
 /// Dummy implementation of [`tink::Mac`] trait.
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct DummyMac {
     pub name: String,
 }
@@ -111,8 +111,8 @@ impl tink::registry::KmsClient for DummyKmsClient {
         key_uri == "dummy"
     }
 
-    fn get_aead(&self, _key_uri: &str) -> Result<Arc<dyn tink::Aead>, TinkError> {
-        Ok(Arc::new(DummyAead))
+    fn get_aead(&self, _key_uri: &str) -> Result<Box<dyn tink::Aead>, TinkError> {
+        Ok(Box::new(DummyAead))
     }
 }
 
