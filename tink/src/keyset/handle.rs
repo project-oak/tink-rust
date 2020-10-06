@@ -50,10 +50,9 @@ impl Handle {
 
     /// Attempt to create a [`Handle`] from an encrypted keyset obtained via a
     /// [`Reader`](crate::keyset::Reader).
-    pub fn read<T, S>(reader: &mut T, master_key: &S) -> Result<Self, TinkError>
+    pub fn read<T>(reader: &mut T, master_key: Arc<dyn crate::Aead>) -> Result<Self, TinkError>
     where
         T: crate::keyset::Reader,
-        S: crate::Aead,
     {
         let encrypted_keyset = reader.read_encrypted()?;
         let ks = decrypt(&encrypted_keyset, master_key)?;
@@ -96,10 +95,13 @@ impl Handle {
     }
 
     /// Encrypts and writes the enclosed [`Keyset`](crate::proto::Keyset).
-    pub fn write<T, S>(&self, writer: &mut T, master_key: S) -> Result<(), TinkError>
+    pub fn write<T>(
+        &self,
+        writer: &mut T,
+        master_key: Arc<dyn crate::Aead>,
+    ) -> Result<(), TinkError>
     where
         T: super::Writer,
-        S: crate::Aead,
     {
         let encrypted = encrypt(&self.ks, master_key)?;
         writer.write_encrypted(&encrypted)
@@ -219,13 +221,10 @@ fn public_key_data(
 }
 
 /// Decrypt a keyset with a master key.
-fn decrypt<T>(
+fn decrypt(
     encrypted_keyset: &crate::proto::EncryptedKeyset,
-    master_key: &T,
-) -> Result<crate::proto::Keyset, TinkError>
-where
-    T: crate::Aead,
-{
+    master_key: Arc<dyn crate::Aead>,
+) -> Result<crate::proto::Keyset, TinkError> {
     let decrypted = master_key
         .decrypt(&encrypted_keyset.encrypted_keyset, &[])
         .map_err(|e| wrap_err("keyset::Handle: decryption failed", e))?;
@@ -234,13 +233,10 @@ where
 }
 
 /// Encrypt a keyset with a master key.
-fn encrypt<T>(
+fn encrypt(
     keyset: &crate::proto::Keyset,
-    master_key: T,
-) -> Result<crate::proto::EncryptedKeyset, TinkError>
-where
-    T: crate::Aead,
-{
+    master_key: Arc<dyn crate::Aead>,
+) -> Result<crate::proto::EncryptedKeyset, TinkError> {
     let mut serialized_keyset = vec![];
     keyset
         .encode(&mut serialized_keyset)
