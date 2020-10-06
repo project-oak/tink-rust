@@ -75,12 +75,8 @@ impl KeyManager for AesSivKeyManager {
         Ok(sk)
     }
 
-    fn does_support(&self, type_url: &str) -> bool {
-        type_url == AES_SIV_TYPE_URL
-    }
-
-    fn type_url(&self) -> String {
-        AES_SIV_TYPE_URL.to_string()
+    fn type_url(&self) -> &'static str {
+        AES_SIV_TYPE_URL
     }
 
     fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {
@@ -96,7 +92,7 @@ impl KeyManager for AesSivKeyManager {
     ) -> Result<tink::proto::KeyData, TinkError> {
         let serialized_key = self.new_key(serialized_key_format)?;
         Ok(tink::proto::KeyData {
-            type_url: self.type_url(),
+            type_url: self.type_url().to_string(),
             value: serialized_key,
             key_material_type: tink::proto::key_data::KeyMaterialType::Symmetric as i32,
         })

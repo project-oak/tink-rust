@@ -74,12 +74,8 @@ impl tink::registry::KeyManager for HkdfPrfKeyManager {
         Ok(sk)
     }
 
-    fn does_support(&self, type_url: &str) -> bool {
-        type_url == HKDF_PRF_TYPE_URL
-    }
-
-    fn type_url(&self) -> String {
-        HKDF_PRF_TYPE_URL.to_string()
+    fn type_url(&self) -> &'static str {
+        HKDF_PRF_TYPE_URL
     }
 
     fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {

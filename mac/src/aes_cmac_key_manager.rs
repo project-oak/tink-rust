@@ -70,12 +70,8 @@ impl tink::registry::KeyManager for AesCmacKeyManager {
         Ok(sk)
     }
 
-    fn does_support(&self, type_url: &str) -> bool {
-        type_url == CMAC_TYPE_URL
-    }
-
-    fn type_url(&self) -> String {
-        CMAC_TYPE_URL.to_string()
+    fn type_url(&self) -> &'static str {
+        CMAC_TYPE_URL
     }
 
     fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {

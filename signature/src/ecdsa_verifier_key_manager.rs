@@ -53,12 +53,8 @@ impl tink::registry::KeyManager for EcdsaVerifierKeyManager {
         Err("EcdsaVerifierKeyManager: not implemented".into())
     }
 
-    fn does_support(&self, type_url: &str) -> bool {
-        type_url == ECDSA_VERIFIER_TYPE_URL
-    }
-
-    fn type_url(&self) -> String {
-        ECDSA_VERIFIER_TYPE_URL.to_string()
+    fn type_url(&self) -> &'static str {
+        ECDSA_VERIFIER_TYPE_URL
     }
 
     fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {

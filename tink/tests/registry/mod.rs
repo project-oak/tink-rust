@@ -50,9 +50,7 @@ fn test_register_key_manager_with_collision() {
 
 #[test]
 fn test_register_key_manager_duplicate() {
-    let dummy_key_manager = Arc::new(tink_testutil::DummyAeadKeyManager {
-        type_url: "blah".to_string(),
-    });
+    let dummy_key_manager = Arc::new(tink_testutil::DummyAeadKeyManager { type_url: "blah" });
     tink::registry::register_key_manager(dummy_key_manager.clone()).unwrap();
 
     // This should fail because overwriting is disallowed.

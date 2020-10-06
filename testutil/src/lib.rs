@@ -36,13 +36,13 @@ pub use wycheproofutil::*;
 /// It returns [`DummyAead`] when `primitive()` functions are called.
 #[derive(Debug)]
 pub struct DummyAeadKeyManager {
-    pub type_url: String,
+    pub type_url: &'static str,
 }
 
 impl Default for DummyAeadKeyManager {
     fn default() -> Self {
         Self {
-            type_url: AES_GCM_TYPE_URL.to_string(),
+            type_url: AES_GCM_TYPE_URL,
         }
     }
 }
@@ -56,12 +56,8 @@ impl tink::registry::KeyManager for DummyAeadKeyManager {
         Err("not implemented".into())
     }
 
-    fn does_support(&self, type_url: &str) -> bool {
-        type_url == self.type_url
-    }
-
-    fn type_url(&self) -> String {
-        self.type_url.to_string()
+    fn type_url(&self) -> &'static str {
+        self.type_url
     }
 
     fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {

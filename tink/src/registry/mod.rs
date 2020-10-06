@@ -40,7 +40,7 @@ pub use key_manager::*;
 
 lazy_static! {
     /// Global registry of key manager objects, indexed by type URL.
-    static ref KEY_MANAGERS: RwLock<HashMap<String, Arc<dyn KeyManager>>> =
+    static ref KEY_MANAGERS: RwLock<HashMap<&'static str, Arc<dyn KeyManager>>> =
         RwLock::new(HashMap::new());
     /// Global list of KMS client objects.
     static ref KMS_CLIENTS: RwLock<Vec<Arc<dyn KmsClient>>> = RwLock::new(Vec::new());
@@ -59,7 +59,7 @@ where
     let mut key_mgrs = KEY_MANAGERS.write().expect(MERR);
 
     let type_url = km.type_url();
-    if key_mgrs.contains_key(&type_url) {
+    if key_mgrs.contains_key(type_url) {
         return Err(format!(
             "registry::register_key_manager: type {} already registered",
             type_url

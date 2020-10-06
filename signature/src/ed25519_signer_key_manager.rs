@@ -65,12 +65,8 @@ impl tink::registry::KeyManager for Ed25519SignerKeyManager {
         Ok(sk)
     }
 
-    fn does_support(&self, type_url: &str) -> bool {
-        type_url == ED25519_SIGNER_TYPE_URL
-    }
-
-    fn type_url(&self) -> String {
-        ED25519_SIGNER_TYPE_URL.to_string()
+    fn type_url(&self) -> &'static str {
+        ED25519_SIGNER_TYPE_URL
     }
 
     fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {

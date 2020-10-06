@@ -71,12 +71,8 @@ impl tink::registry::KeyManager for AesCmacPrfKeyManager {
         Ok(sk)
     }
 
-    fn does_support(&self, type_url: &str) -> bool {
-        type_url == AES_CMAC_PRF_TYPE_URL
-    }
-
-    fn type_url(&self) -> String {
-        AES_CMAC_PRF_TYPE_URL.to_string()
+    fn type_url(&self) -> &'static str {
+        AES_CMAC_PRF_TYPE_URL
     }
 
     fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {

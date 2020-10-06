@@ -32,10 +32,12 @@ pub trait KeyManager: Send + Sync {
     fn new_key(&self, serialized_key_format: &[u8]) -> Result<Vec<u8>, TinkError>;
 
     /// Return true iff this [`KeyManager`] supports key type identified by `type_url`.
-    fn does_support(&self, type_url: &str) -> bool;
+    fn does_support(&self, type_url: &str) -> bool {
+        type_url == self.type_url()
+    }
 
     /// Return the type URL that identifes the key type of keys managed by this key manager.
-    fn type_url(&self) -> String;
+    fn type_url(&self) -> &'static str;
 
     /// Return the key material type handled by this key manager
     fn key_material_type(&self) -> crate::proto::key_data::KeyMaterialType;
@@ -50,7 +52,7 @@ pub trait KeyManager: Send + Sync {
     ) -> Result<crate::proto::KeyData, TinkError> {
         let serialized_key = self.new_key(serialized_key_format)?;
         Ok(crate::proto::KeyData {
-            type_url: self.type_url(),
+            type_url: self.type_url().to_string(),
             value: serialized_key,
             key_material_type: self.key_material_type() as i32,
         })
