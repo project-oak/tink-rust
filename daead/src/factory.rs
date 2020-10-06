@@ -33,30 +33,37 @@ pub fn new_with_key_manager(
     let ps = h
         .primitives_with_key_manager(km)
         .map_err(|e| wrap_err("daead::factory: cannot obtain primitive set", e))?;
-    if let Some(primary) = &ps.primary {
-        match primary.primitive {
-            tink::Primitive::DeterministicAead(_) => {}
-            _ => return Err("daead::factory: not a DeterministicAEAD primitive".into()),
-        }
-    } else {
-        return Err("deaed::factory: no primary primitive".into());
-    }
-    for (_, primitives) in ps.entries.iter() {
-        for p in primitives {
-            match p.primitive {
-                tink::Primitive::DeterministicAead(_) => {}
-                _ => return Err("daead::factory: not a DeterministicAEAD primitive".into()),
-            };
-        }
-    }
-    let ret = WrappedDeterministicAead { ps };
+
+    let ret = WrappedDeterministicAead::new(ps)?;
     Ok(Box::new(ret))
 }
 
-// A [`tink::DeterministicAead`] implementation that uses the underlying primitive set
-// for deterministic encryption and decryption.
+/// A [`tink::DeterministicAead`] implementation that uses the underlying primitive set
+/// for deterministic encryption and decryption.
 struct WrappedDeterministicAead {
     ps: tink::primitiveset::PrimitiveSet,
+}
+
+impl WrappedDeterministicAead {
+    fn new(ps: tink::primitiveset::PrimitiveSet) -> Result<WrappedDeterministicAead, TinkError> {
+        let entry = match &ps.primary {
+            None => return Err("daead::factory: no primary primitive".into()),
+            Some(p) => p,
+        };
+        match entry.primitive {
+            tink::Primitive::DeterministicAead(_) => {}
+            _ => return Err("daead::factory: not a DeterministicAEAD primitive".into()),
+        };
+        for (_, primitives) in ps.entries.iter() {
+            for p in primitives {
+                match p.primitive {
+                    tink::Primitive::DeterministicAead(_) => {}
+                    _ => return Err("daead::factory: not a DeterministicAEAD primitive".into()),
+                };
+            }
+        }
+        Ok(WrappedDeterministicAead { ps })
+    }
 }
 
 impl tink::DeterministicAead for WrappedDeterministicAead {
