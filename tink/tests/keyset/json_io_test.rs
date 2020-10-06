@@ -39,12 +39,6 @@ fn test_json_io_unencrypted() {
     );
 }
 
-// TODO: get this in sync with key encoding - the Go *test* code
-// does a one-line compact text format of the key protobuf (which is
-// then base64-encoded by the standard Go JSON encoder).  The code
-// below uses a Rust `Debug` format (not text proto), but this may
-// be OK for a test -- would a 'real' Keyset have serialized binary
-// proto data?
 #[test]
 fn test_json_reader() {
     tink_mac::init();
