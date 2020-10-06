@@ -43,7 +43,7 @@ struct WrappedVerifier {
 }
 
 impl WrappedVerifier {
-    pub fn new(ps: tink::primitiveset::PrimitiveSet) -> Result<WrappedVerifier, TinkError> {
+    fn new(ps: tink::primitiveset::PrimitiveSet) -> Result<WrappedVerifier, TinkError> {
         let primary = match &ps.primary {
             None => return Err("verifier::factory: no primary primitive".into()),
             Some(p) => p,
