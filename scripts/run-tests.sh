@@ -33,6 +33,8 @@ cd ${TINK_DIR}/testing/cross_language
 )
 
 bazel test --cache_test_results=no \
+      :aead_test \
+      :aead_consistency_test \
       :deterministic_aead_test \
       :key_generation_consistency_test \
       :json_test \

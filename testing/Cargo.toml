@@ -14,6 +14,7 @@ tink = { version = "*", features = [
   "insecure",
   "json",
  ] }
+tink-aead = "*"
 tink-daead = "*"
 tink-mac = "*"
 tink-prf = "*"

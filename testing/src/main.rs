@@ -27,6 +27,8 @@ pub mod proto {
     include!("codegen/tink_testing_api.rs");
 }
 
+mod aead_service;
+use aead_service::*;
 mod daead_service;
 use daead_service::*;
 mod keyset_service;
@@ -53,6 +55,7 @@ struct Opt {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let opt = Opt::from_args();
     env_logger::init();
+    tink_aead::init();
     tink_daead::init();
     tink_mac::init();
     tink_prf::init();
@@ -62,6 +65,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let metadata_handler = MetadataServerImpl {};
     let keyset_handler = KeysetServerImpl {};
+    let aead_handler = AeadServerImpl {};
     let daead_handler = DaeadServerImpl {};
     let mac_handler = MacServerImpl {};
     let prf_set_handler = PrfSetServerImpl {};
@@ -74,6 +78,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             metadata_handler,
         ))
         .add_service(proto::keyset_server::KeysetServer::new(keyset_handler))
+        .add_service(proto::aead_server::AeadServer::new(aead_handler))
         .add_service(proto::deterministic_aead_server::DeterministicAeadServer::new(daead_handler))
         .add_service(proto::mac_server::MacServer::new(mac_handler))
         .add_service(proto::prf_set_server::PrfSetServer::new(prf_set_handler))

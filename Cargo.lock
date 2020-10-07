@@ -1524,6 +1524,7 @@ dependencies = [
  "prost",
  "structopt",
  "tink",
+ "tink-aead",
  "tink-daead",
  "tink-mac",
  "tink-prf",

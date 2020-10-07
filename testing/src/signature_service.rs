@@ -72,6 +72,10 @@ impl proto::signature_server::Signature for SignatureServerImpl {
     }
 }
 
+// The testing infrastructure expects errors to be included in the response,
+// rather than using the gRPC error reporting mechanism.  Include helpers to
+// make it easy to map `TinkError` instances to this.
+
 fn sign_rsp_from_err(
     e: tink::TinkError,
 ) -> Result<tonic::Response<proto::SignatureSignResponse>, tonic::Status> {

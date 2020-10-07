@@ -1,0 +1,62 @@
+From d6eac7a8381b26e5168a5e8edd2df31e3b786fa4 Mon Sep 17 00:00:00 2001
+From: David Drysdale <drysdale@google.com>
+Date: Wed, 7 Oct 2020 16:13:42 +0100
+Subject: [PATCH] testing: support Rust for AEAD operations
+
+---
+ testing/cross_language/aead_consistency_test.py    | 3 ++-
+ testing/cross_language/util/supported_key_types.py | 8 ++++----
+ testing/cross_language/util/testing_servers.py     | 2 +-
+ 3 files changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/testing/cross_language/aead_consistency_test.py b/testing/cross_language/aead_consistency_test.py
+index da1bfb4908f3..b077a8d63622 100644
+--- a/testing/cross_language/aead_consistency_test.py
++++ b/testing/cross_language/aead_consistency_test.py
+@@ -38,8 +38,9 @@ HASH_TYPES = [
+ # Test cases that succeed in a language but should fail
+ SUCCEEDS_BUT_SHOULD_FAIL = [
+     # TODO(b/159989251)
+-    # HMAC with SHA384 is accepted in go, but not in other langs.
++    # HMAC with SHA384 is accepted in Go and Rust, but not in other langs.
+     ('AesCtrHmacAeadKey(16,16,16,16,SHA384,0,0,0)', 'go'),
++    ('AesCtrHmacAeadKey(16,16,16,16,SHA384,0,0,0)', 'rust'),
+ ]
+ 
+ # Test cases that fail in a language but should succeed
+diff --git a/testing/cross_language/util/supported_key_types.py b/testing/cross_language/util/supported_key_types.py
+index 21046c56e84c..b5d4f03e74e3 100644
+--- a/testing/cross_language/util/supported_key_types.py
++++ b/testing/cross_language/util/supported_key_types.py
+@@ -68,11 +68,11 @@ ALL_KEY_TYPES = (
+ # All languages that are supported by a KeyType
+ SUPPORTED_LANGUAGES = {
+     'AesEaxKey': ['cc', 'java', 'python'],
+-    'AesGcmKey': ['cc', 'java', 'go', 'python'],
++    'AesGcmKey': ['cc', 'java', 'go', 'python', 'rust'],
+     'AesGcmSivKey': ['cc', 'python'],
+-    'AesCtrHmacAeadKey': ['cc', 'java', 'go', 'python'],
+-    'ChaCha20Poly1305Key': ['java', 'go'],
+-    'XChaCha20Poly1305Key': ['cc', 'java', 'go', 'python'],
++    'AesCtrHmacAeadKey': ['cc', 'java', 'go', 'python', 'rust'],
++    'ChaCha20Poly1305Key': ['java', 'go', 'rust'],
++    'XChaCha20Poly1305Key': ['cc', 'java', 'go', 'python', 'rust'],
+     'AesSivKey': ['cc', 'java', 'go', 'python', 'rust'],
+     'AesCtrHmacStreamingKey': ['cc', 'java', 'go', 'python'],
+     'AesGcmHkdfStreamingKey': ['cc', 'java', 'go', 'python'],
+diff --git a/testing/cross_language/util/testing_servers.py b/testing/cross_language/util/testing_servers.py
+index 6ba058b2f009..b2d01e81ac9e 100644
+--- a/testing/cross_language/util/testing_servers.py
++++ b/testing/cross_language/util/testing_servers.py
+@@ -75,7 +75,7 @@ _PRIMITIVE_STUBS = {
+ _PRIMITIVES = list(_PRIMITIVE_STUBS.keys())
+ 
+ SUPPORTED_LANGUAGES_BY_PRIMITIVE = {
+-    'aead': ['cc', 'go', 'java', 'python'],
++    'aead': ['cc', 'go', 'java', 'python', 'rust'],
+     'daead': ['cc', 'go', 'java', 'python', 'rust'],
+     'streaming_aead': ['cc', 'go', 'java', 'python'],
+     'hybrid': ['cc', 'go', 'java', 'python'],
+-- 
+2.26.2
+
