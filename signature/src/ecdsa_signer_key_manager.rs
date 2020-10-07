@@ -16,7 +16,6 @@
 
 //! Key manager for ECDSA signing keys.
 
-use elliptic_curve::Generate;
 use generic_array::typenum::Unsigned;
 use prost::Message;
 use tink::{proto::EllipticCurveType, utils::wrap_err, TinkError};
@@ -77,13 +76,10 @@ impl tink::registry::KeyManager for EcdsaSignerKeyManager {
             match EllipticCurveType::from_i32(params.curve) {
                 Some(EllipticCurveType::NistP256) => {
                     // Generate a new keypair.
-                    let secret_key = p256::SecretKey::generate(&mut csprng);
-                    let public_key =
-                        p256::PublicKey::from_secret_key(&secret_key, /* compressed= */ false)
-                            .map_err(|e| {
-                                wrap_err("EcdsaSignerKeyManager: failed to create public key", e)
-                            })?;
-                    let public_key_data = public_key.as_bytes();
+                    let secret_key = p256::ecdsa::SigningKey::random(&mut csprng);
+                    let public_key = p256::ecdsa::VerifyKey::from(&secret_key);
+                    let public_key_point = public_key.to_encoded_point(/* compress= */ false);
+                    let public_key_data = public_key_point.as_bytes();
 
                     // Check that the public key data is in the expected uncompressed format:
                     //  - 1 byte uncompressed prefix (0x04)
@@ -91,7 +87,7 @@ impl tink::registry::KeyManager for EcdsaSignerKeyManager {
                     //  - P bytes of Y coordinate
                     // where P is the field element size.
                     let point_len =
-                        <p256::NistP256 as elliptic_curve::Curve>::ElementSize::to_usize();
+                        <p256::NistP256 as elliptic_curve::Curve>::FieldSize::to_usize();
                     if public_key_data.len() != 2 * point_len + 1
                         || public_key_data[0] != ECDSA_UNCOMPRESSED_POINT_PREFIX
                     {
@@ -100,7 +96,7 @@ impl tink::registry::KeyManager for EcdsaSignerKeyManager {
                         );
                     }
                     (
-                        secret_key.as_bytes().to_vec(),
+                        secret_key.to_bytes().to_vec(),
                         public_key_data[1..point_len + 1].to_vec(),
                         public_key_data[point_len + 1..].to_vec(),
                     )

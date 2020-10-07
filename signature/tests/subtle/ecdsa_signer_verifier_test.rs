@@ -15,7 +15,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use generic_array::typenum::Unsigned;
-use p256::elliptic_curve::Generate;
 use serde::Deserialize;
 use std::collections::HashSet;
 use tink::{
@@ -38,9 +37,8 @@ fn test_sign_verify() {
     for encoding in encodings {
         let (priv_key, pub_key) = match curve {
             EllipticCurveType::NistP256 => {
-                let secret_key = p256::SecretKey::generate(&mut csprng);
-                let public_key =
-                    p256::PublicKey::from_secret_key(&secret_key, /* compressed= */ false).unwrap();
+                let secret_key = p256::ecdsa::SigningKey::random(&mut csprng);
+                let public_key = p256::ecdsa::VerifyKey::from(&secret_key);
                 (
                     EcdsaPrivateKey::NistP256(secret_key),
                     EcdsaPublicKey::NistP256(public_key),
@@ -49,12 +47,13 @@ fn test_sign_verify() {
             _ => panic!("unsupported curve {:?}", curve),
         };
         let priv_key_bytes = match &priv_key {
-            EcdsaPrivateKey::NistP256(secret_key) => secret_key.as_bytes().to_vec(),
+            EcdsaPrivateKey::NistP256(secret_key) => secret_key.to_bytes().to_vec(),
         };
         let (pub_x, pub_y) = match &pub_key {
             EcdsaPublicKey::NistP256(public_key) => {
-                let point_len = <p256::NistP256 as elliptic_curve::Curve>::ElementSize::to_usize();
-                let pub_key_data = public_key.as_bytes();
+                let point_len = <p256::NistP256 as elliptic_curve::Curve>::FieldSize::to_usize();
+                let pub_key_point = public_key.to_encoded_point(/* compress= */ false);
+                let pub_key_data = pub_key_point.as_bytes();
                 assert_eq!(
                     pub_key_data[0],
                     tink_signature::ECDSA_UNCOMPRESSED_POINT_PREFIX
@@ -155,12 +154,14 @@ fn test_wycheproof_vectors() {
         TestVector {
             filename: "ecdsa_test.json",
             encoding: EcdsaSignatureEncoding::Der,
-            panic_tests: vec![4, 654, 690, 693, 707, 708].into_iter().collect(),
+            // Test 4 uses ASN.1 long form encoding of sequence length, which is not DER.
+            // TODO: fix upstream
+            panic_tests: vec![4].into_iter().collect(),
         },
         TestVector {
             filename: "ecdsa_secp256r1_sha256_p1363_test.json",
             encoding: EcdsaSignatureEncoding::IeeeP1363,
-            panic_tests: vec![136, 172, 175, 189, 190].into_iter().collect(),
+            panic_tests: HashSet::new(),
         },
         /* TODO: more ECDSA curves
                 TestVector {
@@ -179,7 +180,6 @@ fn test_wycheproof_vectors() {
 }
 
 fn wycheproof_test(filename: &str, encoding: EcdsaSignatureEncoding, panic_tests: HashSet<i32>) {
-    // TODO: fix all panic tests
     println!(
         "wycheproof file 'testvectors/{}', encoding '{:?}'",
         filename, encoding

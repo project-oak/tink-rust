@@ -19,7 +19,6 @@
 #![deny(intra_doc_link_resolution_failure)]
 
 use generic_array::typenum::Unsigned;
-use p256::elliptic_curve::Generate;
 use std::{convert::TryInto, sync::Arc};
 use tink::{
     proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType, KeyData, Keyset},
@@ -249,12 +248,13 @@ pub fn new_random_ecdsa_private_key(
     let mut csprng = rand::thread_rng();
     let (secret_key_data, pub_x, pub_y) = match curve {
         EllipticCurveType::NistP256 => {
-            let sk = p256::SecretKey::generate(&mut csprng);
-            let pk = p256::PublicKey::from_secret_key(&sk, /* compressed= */ false).unwrap();
-            let point_len = <p256::NistP256 as elliptic_curve::Curve>::ElementSize::to_usize();
-            let pk_data = pk.as_bytes();
+            let sk = p256::ecdsa::SigningKey::random(&mut csprng);
+            let pk = p256::ecdsa::VerifyKey::from(&sk);
+            let point_len = <p256::NistP256 as elliptic_curve::Curve>::FieldSize::to_usize();
+            let pk_point = pk.to_encoded_point(/* compress= */ false);
+            let pk_data = pk_point.as_bytes();
             (
-                sk.as_bytes().to_vec(),
+                sk.to_bytes().to_vec(),
                 pk_data[1..point_len + 1].to_vec(),
                 pk_data[point_len + 1..].to_vec(),
             )

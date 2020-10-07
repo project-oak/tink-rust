@@ -14,10 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use p256::ecdsa::{
-    signature::{RandomizedSigner, Signature},
-    Signer,
-};
+use p256::ecdsa::signature::{RandomizedSigner, Signature};
 use tink::{
     proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType},
     utils::wrap_err,
@@ -26,7 +23,7 @@ use tink::{
 
 // An ECDSA private key.
 pub enum EcdsaPrivateKey {
-    NistP256(p256::SecretKey),
+    NistP256(p256::ecdsa::SigningKey),
 }
 
 /// `EcdsaSigner` is an implementation of [`tink::Signer`] for ECDSA.
@@ -45,10 +42,11 @@ impl EcdsaSigner {
         key_value: &[u8],
     ) -> Result<Self, TinkError> {
         let priv_key = match curve {
-            EllipticCurveType::NistP256 => EcdsaPrivateKey::NistP256(
-                p256::SecretKey::from_bytes(key_value)
-                    .map_err(|e| wrap_err("EcdsaSigner: invalid private key", e))?,
-            ),
+            EllipticCurveType::NistP256 => {
+                let secret_key = p256::SecretKey::from_bytes(key_value)
+                    .map_err(|e| wrap_err("EcdsaSigner: invalid private key", e))?;
+                EcdsaPrivateKey::NistP256(p256::ecdsa::SigningKey::from(&secret_key))
+            }
             _ => return Err(format!("EcdsaSigner: unsupported curve {:?}", curve).into()),
         };
         Self::new_from_private_key(hash_alg, curve, encoding, priv_key)
@@ -74,20 +72,17 @@ impl tink::Signer for EcdsaSigner {
     fn sign(&self, data: &[u8]) -> Result<Vec<u8>, tink::TinkError> {
         let mut csprng = rand::rngs::OsRng {};
         match &self.private_key {
-            EcdsaPrivateKey::NistP256(secret_key) => {
-                let signer = Signer::new(&secret_key).expect("secret key invalid");
-                match self.encoding {
-                    EcdsaSignatureEncoding::Der => {
-                        let signature = signer.sign_with_rng(&mut csprng, data).to_asn1();
-                        Ok(signature.as_bytes().to_vec())
-                    }
-                    EcdsaSignatureEncoding::IeeeP1363 => {
-                        let signature = signer.sign_with_rng(&mut csprng, data);
-                        Ok(signature.as_bytes().to_vec())
-                    }
-                    _ => Err("EcdsaSigner: unknown encoding".into()),
+            EcdsaPrivateKey::NistP256(secret_key) => match self.encoding {
+                EcdsaSignatureEncoding::Der => {
+                    let signature = secret_key.sign_with_rng(&mut csprng, data).to_asn1();
+                    Ok(signature.as_bytes().to_vec())
                 }
-            }
+                EcdsaSignatureEncoding::IeeeP1363 => {
+                    let signature = secret_key.sign_with_rng(&mut csprng, data);
+                    Ok(signature.as_bytes().to_vec())
+                }
+                _ => Err("EcdsaSigner: unknown encoding".into()),
+            },
         }
     }
 }

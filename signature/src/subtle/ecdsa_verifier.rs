@@ -14,12 +14,10 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+use elliptic_curve::sec1::EncodedPoint;
 use generic_array::typenum::Unsigned;
-use p256::{
-    ecdsa::{Signature, Verifier},
-    UncompressedPoint,
-};
-use signature::{Signature as _, Verifier as _};
+use p256::ecdsa::{signature::Verifier, Signature};
+use signature::Signature as _;
 use tink::{
     proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType},
     utils::wrap_err,
@@ -28,7 +26,7 @@ use tink::{
 
 /// An ECDSA public key.
 pub enum EcdsaPublicKey {
-    NistP256(p256::PublicKey),
+    NistP256(p256::ecdsa::VerifyKey),
 }
 
 // `EcdsaVerifier` is an implementation of [`tink::Verifier`] for ECDSA.
@@ -51,8 +49,10 @@ impl EcdsaVerifier {
             EllipticCurveType::NistP256 => {
                 let x = element_from_padded_slice::<p256::NistP256>(x)?;
                 let y = element_from_padded_slice::<p256::NistP256>(y)?;
-                let pt = UncompressedPoint::from_affine_coords(&x, &y);
-                EcdsaPublicKey::NistP256(p256::PublicKey::Uncompressed(pt))
+                let pt = EncodedPoint::from_affine_coordinates(&x, &y, /* compress= */ false);
+                let verify_key = p256::ecdsa::VerifyKey::from_encoded_point(&pt)
+                    .map_err(|e| wrap_err("EcdsaVerifier: invalid point", e))?;
+                EcdsaPublicKey::NistP256(verify_key)
             }
             _ => return Err(format!("EcdsaVerifier: unsupported curve {:?}", curve,).into()),
         };
@@ -77,9 +77,9 @@ impl EcdsaVerifier {
 
 fn element_from_padded_slice<C: elliptic_curve::Curve>(
     data: &[u8],
-) -> Result<elliptic_curve::ElementBytes<C>, TinkError> {
+) -> Result<elliptic_curve::FieldBytes<C>, TinkError> {
     // TODO: reduce copies here
-    let point_len = C::ElementSize::to_usize();
+    let point_len = C::FieldSize::to_usize();
     if data.len() >= point_len {
         let offset = data.len() - point_len;
         for v in data.iter().take(offset) {
@@ -87,11 +87,11 @@ fn element_from_padded_slice<C: elliptic_curve::Curve>(
                 return Err("EcdsaVerifier: point too large".into());
             }
         }
-        Ok(elliptic_curve::ElementBytes::<C>::from_slice(&data[offset..]).clone())
+        Ok(elliptic_curve::FieldBytes::<C>::from_slice(&data[offset..]).clone())
     } else {
         let mut data_copy = vec![0; point_len];
         data_copy[(point_len - data.len())..].copy_from_slice(data);
-        Ok(elliptic_curve::ElementBytes::<C>::clone_from_slice(
+        Ok(elliptic_curve::FieldBytes::<C>::clone_from_slice(
             &data_copy,
         ))
     }
@@ -114,13 +114,9 @@ impl tink::Verifier for EcdsaVerifier {
             _ => return Err("EcdsaVerifier: unknown encoding".into()),
         };
         match &self.public_key {
-            EcdsaPublicKey::NistP256(public_key) => {
-                let verifier = Verifier::new(public_key)
-                    .map_err(|e| wrap_err("EcdsaVerifier: public key invalid", e))?;
-                verifier
-                    .verify(&data, &signature)
-                    .map_err(|e| wrap_err("EcdsaVerifier: invalid signature", e))
-            }
+            EcdsaPublicKey::NistP256(verify_key) => verify_key
+                .verify(&data, &signature)
+                .map_err(|e| wrap_err("EcdsaVerifier: invalid signature", e)),
         }
     }
 }
