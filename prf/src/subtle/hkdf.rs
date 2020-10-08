@@ -75,19 +75,12 @@ pub fn validate_hkdf_prf_params(
 }
 
 impl tink::Prf for HkdfPrf {
-    fn compute_prf(&self, data: &[u8], output_length: usize) -> Result<Vec<u8>, TinkError> {
-        // TODO: use the pre-built hasher
+    fn compute_prf(&self, data: &[u8], out_len: usize) -> Result<Vec<u8>, TinkError> {
         match &self.prk {
-            HkdfPrfVariant::Sha1(prk) => compute_hkdf_with::<sha1::Sha1>(prk, data, output_length),
-            HkdfPrfVariant::Sha256(prk) => {
-                compute_hkdf_with::<sha2::Sha256>(prk, data, output_length)
-            }
-            HkdfPrfVariant::Sha384(prk) => {
-                compute_hkdf_with::<sha2::Sha384>(prk, data, output_length)
-            }
-            HkdfPrfVariant::Sha512(prk) => {
-                compute_hkdf_with::<sha2::Sha512>(prk, data, output_length)
-            }
+            HkdfPrfVariant::Sha1(prk) => compute_hkdf_with::<sha1::Sha1>(prk, data, out_len),
+            HkdfPrfVariant::Sha256(prk) => compute_hkdf_with::<sha2::Sha256>(prk, data, out_len),
+            HkdfPrfVariant::Sha384(prk) => compute_hkdf_with::<sha2::Sha384>(prk, data, out_len),
+            HkdfPrfVariant::Sha512(prk) => compute_hkdf_with::<sha2::Sha512>(prk, data, out_len),
         }
     }
 }
@@ -95,12 +88,12 @@ impl tink::Prf for HkdfPrf {
 fn compute_hkdf_with<D>(
     prk: &hkdf::Hkdf<D>,
     data: &[u8],
-    output_length: usize,
+    out_len: usize,
 ) -> Result<Vec<u8>, TinkError>
 where
     D: digest::Update + digest::BlockInput + digest::FixedOutput + digest::Reset + Default + Clone,
 {
-    let mut okm = vec![0; output_length];
+    let mut okm = vec![0; out_len];
     prk.expand(data, &mut okm)
         .map_err(|_| TinkError::new("HkdfPrf: compute of hkdf failed"))?;
 

@@ -298,9 +298,7 @@ fn test_hkdf_prf_salt() {
     );
 }
 
-// TODO: make faster and reinstate test
 #[test]
-#[ignore]
 fn test_hkdf_prf_output_length() {
     let testdata = hashmap! {
         HashType::Sha1 => 20,
@@ -323,7 +321,10 @@ fn test_hkdf_prf_output_length() {
                 hash
             )
         });
-        for i in 0..=(length * 255) {
+        // If overflow checks are enabled (which they are by default for tests),
+        // this loop runs too slow, so only test every 10th length.
+        let stride: usize = if cfg!(overflow_checks) { 1 } else { 10 };
+        for i in (0..=(length * 255)).step_by(stride) {
             let output = prf.compute_prf(&[0x01, 0x02], i).unwrap_or_else(|e| {
                 panic!(
                     "Expected to be able to compute HKDF {:?} PRF with {} output length: {:?}",

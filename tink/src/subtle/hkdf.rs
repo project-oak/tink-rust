@@ -21,7 +21,6 @@ use crate::{proto::HashType, utils::wrap_err, TinkError};
 /// Minimum tag size in bytes. This provides minimum 80-bit security strength.
 const MIN_TAG_SIZE_IN_BYTES: usize = 10;
 
-// TODO: make use of key_size (also in upstream Go code)
 /// Validate parameters of HKDF constructor.
 fn validate_hkdf_params(
     hash: HashType,
