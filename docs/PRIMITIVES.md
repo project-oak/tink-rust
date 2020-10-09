@@ -103,6 +103,7 @@ Hybrid Encryption  | ECIES with AEAD and HKDF
 Primitive          | Rust Implementations
 ------------------ | -----------------------------------------------------------------------------
 AEAD               | AES-GCM, AES-CTR-HMAC, KMS Envelope, CHACHA20-POLY1305, XCHACHA-POLY1305
+Streaming AEAD     |
 Deterministic AEAD | AES-SIV
 MAC                | HMAC-SHA2, AES-CMAC
 PRF                | HKDF-SHA2, HMAC-SHA2, AES-CMAC

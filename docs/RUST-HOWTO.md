@@ -42,7 +42,27 @@ Rust can be found [here](PRIMITIVES.md#rust).
 AEAD encryption assures the confidentiality and authenticity of the data. This
 primitive is CPA secure.
 
-TODO: implement
+```Rust
+fn main() {
+    tink_aead::init();
+    let kh = tink::keyset::Handle::new(&tink_aead::aes256_gcm_key_template()).unwrap();
+    let a = tink_aead::new(&kh).unwrap();
+    let ct = a
+        .encrypt(
+            b"this data needs to be encrypted",
+            b"this data needs to be authenticated, but not encrypted",
+        )
+        .unwrap();
+    let pt = a
+        .decrypt(
+            &ct,
+            b"this data needs to be authenticated, but not encrypted",
+        )
+        .unwrap();
+
+    assert_eq!(b"this data needs to be encrypted".to_vec(), pt);
+}
+```
 
 ### MAC
 
@@ -54,7 +74,7 @@ message.
 fn main() {
     tink_mac::init();
     let kh = tink::keyset::Handle::new(tink_mac::hmac_sha256_tag256_key_template()).unwrap();
-    let m = mac.new(kh).unwrap();
+    let m = tink_mac::new(&kh).unwrap();
 
     let mac = m.compute_mac(b"this data needs to be MACed").unwrap();
 
@@ -93,8 +113,20 @@ fn main() {
 
 To sign data using Tink you can use ECDSA or ED25519 key templates.
 
-TODO: implement
+```Rust
+fn example_ecdsa() {
+    tink_signature::init();
+    // Other key templates can also be used.
+    let kh = tink::keyset::Handle::new(&tink_signature::ecdsa_p256_key_template()).unwrap();
+    let s = tink_signature::new_signer(&kh).unwrap();
 
+    let a = s.sign(b"this data needs to be signed").unwrap();
+
+    let pubkh = kh.public().unwrap();
+    let v = tink_signature::new_verifier(&pubkh).unwrap();
+    assert!(v.verify(&a, b"this data needs to be signed").is_ok());
+}
+```
 
 ## Key management
 
@@ -109,7 +141,7 @@ keysets via a wrapper called keyset handle. You can generate a new keyset and
 obtain its handle using a KeyTemplate. KeysetHandle objects enforce certain
 restrictions that prevent accidental leakage of the sensitive key material.
 
-```go
+```Rust
 fn main() {
     tink_daead::init();
     // Other key templates can also be used, if the relevant primitive crate
@@ -124,11 +156,19 @@ Key templates are available for MAC and DAEAD encryption.
 
 Key Template Type  | Key Template
 ------------------ | ------------
+AEAD               | `tink_aead::aes128_ctr_hmac_sha256_key_template()`
+AEAD               | `tink_aead::aes128_gcm_key_template()`
+AEAD               | `tink_aead::aes256_ctr_hmac_sha256_key_template()`
+AEAD               | `tink_aead::aes256_gcm_key_template()`
+AEAD               | `tink_aead::cha_cha20_poly1305_key_template()`
+AEAD               | `tink_aead::x_cha_cha20_poly1305_key_template()`
 DAEAD              | `tink_daead::aes_siv_key_template()`
 MAC                | `tink_mac::hmac_sha256_tag128_key_template()`
 MAC                | `tink_mac::hmac_sha256_tag256_key_template()`
 MAC                | `tink_mac::hmac_sha512_tag256_key_template()`
 MAC                | `tink_mac::hmac_sha512_tag512_key_template()`
+Signature          | `tink_signature::ecdsa_p256_key_template()`
+Signature          | `tink_signature::ed25519_key_template()`
 
 To avoid accidental leakage of sensitive key material, one should avoid mixing
 keyset generation and usage in code. To support the separation of these
