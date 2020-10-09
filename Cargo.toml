@@ -1,8 +1,19 @@
 [workspace]
-members = ["aead", "daead", "mac", "prf", "signature", "testing", "testutil", "tink"]
+members = [
+  "aead",
+  "daead",
+  "mac",
+  "prf",
+  "rinkey",
+  "signature",
+  "testing",
+  "testutil",
+  "tink",
+]
 
 # Patch dependencies on tink crates so that they refer to the versions within this same repository.
 [patch.crates-io]
+rinkey = { path = "rinkey" }
 tink = { path = "tink" }
 tink-aead = { path = "aead" }
 tink-daead = { path = "daead" }

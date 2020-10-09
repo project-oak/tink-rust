@@ -1191,6 +1191,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "rinkey"
+version = "0.1.0"
+dependencies = [
+ "structopt",
+ "tink",
+ "tink-aead",
+ "tink-daead",
+ "tink-mac",
+ "tink-prf",
+ "tink-signature",
+]
+
+[[package]]
 name = "ryu"
 version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
