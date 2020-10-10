@@ -70,13 +70,15 @@ impl<T: Write> super::Writer for JsonWriter<T> {
     /// Write the keyset to the underlying [`std::io::Write`].
     fn write(&mut self, keyset: &crate::proto::Keyset) -> Result<(), TinkError> {
         let keyset: copy::Keyset = keyset.clone().into();
-        serde_json::to_writer(&mut self.w, &keyset).map_err(|e| wrap_err("failed to encode", e))
+        serde_json::to_writer_pretty(&mut self.w, &keyset)
+            .map_err(|e| wrap_err("failed to encode", e))
     }
 
     /// Write the encrypted keyset to the underlying [`std::io::Write`].
     fn write_encrypted(&mut self, keyset: &crate::proto::EncryptedKeyset) -> Result<(), TinkError> {
         let keyset: copy::EncryptedKeyset = keyset.clone().into();
-        serde_json::to_writer(&mut self.w, &keyset).map_err(|e| wrap_err("failed to encode", e))
+        serde_json::to_writer_pretty(&mut self.w, &keyset)
+            .map_err(|e| wrap_err("failed to encode", e))
     }
 }
 

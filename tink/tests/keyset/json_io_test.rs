@@ -214,11 +214,11 @@ fn test_json_writer_large_id() {
     let mut contents = String::new();
     buf.read_to_string(&mut contents).unwrap();
     assert!(
-        contents.contains("\"keyId\":4294967275"),
+        contents.contains("\"keyId\": 4294967275"),
         "written keyset does not contain a key with keyId 4294967275"
     );
     assert!(
-        contents.contains("\"primaryKeyId\":4294967275"),
+        contents.contains("\"primaryKeyId\": 4294967275"),
         "written keyset does not contain have primaryKeyId 4294967275"
     );
 }
