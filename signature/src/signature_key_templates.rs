@@ -33,6 +33,21 @@ pub fn ecdsa_p256_key_template() -> KeyTemplate {
     )
 }
 
+/// Return a [`KeyTemplate`] that generates a new ECDSA private key with the following parameters:
+///   - Hash function: SHA256
+///   - Curve: NIST P-256
+///   - Signature encoding: IEEE_P1363
+///   - Output prefix type: TINK
+pub fn ecdsa_p256_key_p1363_template() -> KeyTemplate {
+    create_ecdsa_key_template(
+        tink::proto::HashType::Sha256,
+        tink::proto::EllipticCurveType::NistP256,
+        tink::proto::EcdsaSignatureEncoding::IeeeP1363,
+        IeeeP1363 = 1,
+        tink::proto::OutputPrefixType::Tink,
+    )
+}
+
 /// Return a [`KeyTemplate`] that generates a new ECDSA private key with the following
 /// parameters:
 ///   - Hash function: SHA256
