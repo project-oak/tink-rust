@@ -252,7 +252,7 @@ fn encrypt(
 
 /// Return a [`KeysetInfo`](crate::proto::KeysetInfo) from a [`Keyset`](crate::proto::Keyset)
 /// protobuf.
-fn get_keyset_info(keyset: &crate::proto::Keyset) -> crate::proto::KeysetInfo {
+pub fn get_keyset_info(keyset: &crate::proto::Keyset) -> crate::proto::KeysetInfo {
     let n_key = keyset.key.len();
     let mut key_infos = Vec::with_capacity(n_key);
     for key in &keyset.key {
