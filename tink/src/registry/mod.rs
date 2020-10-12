@@ -37,6 +37,8 @@ mod kms_client;
 pub use kms_client::*;
 mod key_manager;
 pub use key_manager::*;
+mod key_templates;
+pub use key_templates::*;
 
 lazy_static! {
     /// Global registry of key manager objects, indexed by type URL.

@@ -38,9 +38,9 @@ static INIT: Once = Once::new();
 /// tink.
 pub fn init() {
     INIT.call_once(|| {
-        tink::registry::register_key_manager(std::sync::Arc::new(
-            aes_siv_key_manager::AesSivKeyManager::default(),
-        ))
-        .expect("tink_daead::init() failed");
+        tink::registry::register_key_manager(std::sync::Arc::new(AesSivKeyManager::default()))
+            .expect("tink_daead::init() failed");
+
+        tink::registry::register_template_generator("AES256_SIV", aes_siv_key_template);
     });
 }

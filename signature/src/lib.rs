@@ -58,5 +58,16 @@ pub fn init() {
             .expect("tink_signature::init() failed");
         register_key_manager(std::sync::Arc::new(Ed25519VerifierKeyManager::default()))
             .expect("tink_signature::init() failed");
+
+        tink::registry::register_template_generator("ECDSA_P256", ecdsa_p256_key_template);
+        tink::registry::register_template_generator(
+            "ECDSA_P256_IEEE_P1363",
+            ecdsa_p256_key_p1363_template,
+        );
+        tink::registry::register_template_generator("ED25519", ed25519_key_template);
+        tink::registry::register_template_generator(
+            "ED25519WithRawOutput",
+            ed25519_key_without_prefix_template,
+        );
     });
 }

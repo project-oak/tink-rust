@@ -19,6 +19,7 @@
 #![deny(intra_doc_link_resolution_failure)]
 
 use std::sync::Once;
+use tink::registry::register_key_manager;
 
 mod aes_cmac_prf_key_manager;
 pub use aes_cmac_prf_key_manager::*;
@@ -39,17 +40,22 @@ static INIT: Once = Once::new();
 /// Tink.
 pub fn init() {
     INIT.call_once(|| {
-        tink::registry::register_key_manager(std::sync::Arc::new(
-            crate::HmacPrfKeyManager::default(),
-        ))
-        .expect("tink_prf::init() failed");
-        tink::registry::register_key_manager(std::sync::Arc::new(
-            crate::HkdfPrfKeyManager::default(),
-        ))
-        .expect("tink_prf::init() failed");
-        tink::registry::register_key_manager(std::sync::Arc::new(
-            crate::AesCmacPrfKeyManager::default(),
-        ))
-        .expect("tink_prf::init() failed");
+        register_key_manager(std::sync::Arc::new(HmacPrfKeyManager::default()))
+            .expect("tink_prf::init() failed");
+        register_key_manager(std::sync::Arc::new(HkdfPrfKeyManager::default()))
+            .expect("tink_prf::init() failed");
+        register_key_manager(std::sync::Arc::new(AesCmacPrfKeyManager::default()))
+            .expect("tink_prf::init() failed");
+
+        tink::registry::register_template_generator("HKDF_SHA256", hkdf_sha256_prf_key_template);
+        tink::registry::register_template_generator(
+            "HMAC_SHA256_PRF",
+            hmac_sha256_prf_key_template,
+        );
+        tink::registry::register_template_generator(
+            "HMAC_SHA512_PRF",
+            hmac_sha512_prf_key_template,
+        );
+        tink::registry::register_template_generator("AES_CMAC_PRF", aes_cmac_prf_key_template);
     });
 }

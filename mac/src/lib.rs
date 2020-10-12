@@ -45,5 +45,23 @@ pub fn init() {
             .expect("tink_mac::init() failed");
         tink::registry::register_key_manager(std::sync::Arc::new(AesCmacKeyManager::default()))
             .expect("tink_mac::init() failed");
+
+        tink::registry::register_template_generator(
+            "HMAC_SHA256_128BITTAG",
+            hmac_sha256_tag128_key_template,
+        );
+        tink::registry::register_template_generator(
+            "HMAC_SHA256_256BITTAG",
+            hmac_sha256_tag256_key_template,
+        );
+        tink::registry::register_template_generator(
+            "HMAC_SHA512_256BITTAG",
+            hmac_sha512_tag256_key_template,
+        );
+        tink::registry::register_template_generator(
+            "HMAC_SHA512_512BITTAG",
+            hmac_sha512_tag512_key_template,
+        );
+        tink::registry::register_template_generator("AES_CMAC", aes_cmac_tag128_key_template);
     });
 }

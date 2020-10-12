@@ -59,5 +59,24 @@ pub fn init() {
             .expect("tink_aead::init() failed");
         register_key_manager(std::sync::Arc::new(KmsEnvelopeAeadKeyManager::default()))
             .expect("tink_aead::init() failed");
+
+        tink::registry::register_template_generator("AES128_GCM", aes128_gcm_key_template);
+        tink::registry::register_template_generator("AES256_GCM", aes256_gcm_key_template);
+        tink::registry::register_template_generator(
+            "AES128_CTR_HMAC_SHA256",
+            aes128_ctr_hmac_sha256_key_template,
+        );
+        tink::registry::register_template_generator(
+            "AES256_CTR_HMAC_SHA256",
+            aes256_ctr_hmac_sha256_key_template,
+        );
+        tink::registry::register_template_generator(
+            "CHACHA20_POLY1305",
+            cha_cha20_poly1305_key_template,
+        );
+        tink::registry::register_template_generator(
+            "XCHACHA20_POLY1305",
+            x_cha_cha20_poly1305_key_template,
+        );
     });
 }
