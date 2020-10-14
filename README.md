@@ -2,6 +2,12 @@
 
 This repository holds an in-progress Rust port of Google's [Tink cryptography library](https://github.com/google/tink).
 
+Note that this repository does not implement cryptographic functionality itself; the underlying cryptographic operations
+are provided by the [RustCrypto](https::github.com/github/RustCrypto) crates.  Instead, this repo focuses on making those
+cryptographic operations available via the Tink API.
+
+**This repo is under construction** and so details of the API and the code may change without warning.
+
 ## Disclaimer
 
 This is not an officially supported Google product.
