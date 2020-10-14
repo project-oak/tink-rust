@@ -194,6 +194,14 @@ MAC                | `tink_mac::hmac_sha512_tag256_key_template()`
 MAC                | `tink_mac::hmac_sha512_tag512_key_template()`
 Signature          | `tink_signature::ecdsa_p256_key_template()`
 Signature          | `tink_signature::ed25519_key_template()`
+Streaming AEAD     | `tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template`
+Streaming AEAD     | `tink_streaming_aead::aes128_gcm_hkdf_1mb_key_template`
+Streaming AEAD     | `tink_streaming_aead::aes256_gcm_hkdf_4kb_key_template`
+Streaming AEAD     | `tink_streaming_aead::aes256_gcm_hkdf_1mb_key_template`
+Streaming AEAD     | `tink_streaming_aead::aes128_ctr_hmac_sha256_segment_4kb_key_template`
+Streaming AEAD     | `tink_streaming_aead::aes128_ctr_hmac_sha256_segment_1mb_key_template`
+Streaming AEAD     | `tink_streaming_aead::aes256_ctr_hmac_sha256_segment_4kb_key_template`
+Streaming AEAD     | `tink_streaming_aead::aes256_ctr_hmac_sha256_segment_1mb_key_template`
 
 To avoid accidental leakage of sensitive key material, one should avoid mixing keyset generation and usage in code. To
 support the separation of these activities Tink-Rust provides a command-line tool, `rinkey` that is equivalent to the

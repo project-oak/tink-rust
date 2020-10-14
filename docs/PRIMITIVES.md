@@ -30,7 +30,7 @@ describe the main properties of Tink primitives.
 **Primitive**      | **Java** | **C++** | **ObjC** | **Go** | **Python** | **Rust**
 ------------------ | -------- | ------- | -------- | ------ | ---------- | --------
 AEAD               | yes      | yes     | yes      | yes    | yes        | yes
-Streaming AEAD     | yes      | yes     | no       | yes    | no         | no
+Streaming AEAD     | yes      | yes     | no       | yes    | no         | yes
 Deterministic AEAD | yes      | yes     | yes      | yes    | yes        | yes
 MAC                | yes      | yes     | yes      | yes    | yes        | yes
 PRF                | yes      | yes     | no       | yes    | yes        | yes
@@ -103,7 +103,7 @@ Hybrid Encryption  | ECIES with AEAD and HKDF
 Primitive          | Rust Implementations
 ------------------ | ------------------------------------------------------------------------------------
 AEAD               | AES-GCM, AES-GCM-SIV, AES-CTR-HMAC, KMS Envelope, CHACHA20-POLY1305, XCHACHA-POLY1305
-Streaming AEAD     |
+Streaming AEAD     | AES-GCM-HKDF-STREAMING, AES-CTR-HMAC-STREAMING
 Deterministic AEAD | AES-SIV
 MAC                | HMAC-SHA2, AES-CMAC
 PRF                | HKDF-SHA2, HMAC-SHA2, AES-CMAC

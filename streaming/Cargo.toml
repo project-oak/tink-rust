@@ -1,0 +1,21 @@
+[package]
+name = "tink-streaming-aead"
+version = "0.1.0"
+authors = ["David Drysdale <drysdale@google.com>"]
+edition = "2018"
+license = "Apache-2.0"
+
+[dependencies]
+aes-ctr = "^0.6"
+# Need the `std` feature for Error type conversion
+aes-gcm = { version = "^0.8", features = ["std"] }
+prost = "^0.6.1"
+rand = "^0.7"
+tink = "^0.1"
+tink-mac = "^0.1"
+
+[dev-dependencies]
+hex = "^0.4.2"
+tempfile = "^3.1"
+tink-mac = "^0.1"
+tink-testutil = "^0.1"
