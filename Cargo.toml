@@ -13,6 +13,7 @@ members = [
   "prf",
   "rinkey",
   "signature",
+  "streaming",
   "testing",
   "testutil",
   "tink",
@@ -28,5 +29,6 @@ tink-daead = { path = "daead" }
 tink-mac = { path = "mac" }
 tink-prf = { path = "prf" }
 tink-signature = { path = "signature" }
+tink-streaming-aead = { path = "streaming" }
 tink-testing-server = { path = "testing" }
 tink-testutil = { path = "testutil" }

@@ -36,7 +36,7 @@ pub trait StreamingAead: StreamingAeadBoxClone {
         &self,
         w: Box<dyn std::io::Write>,
         aad: &[u8],
-    ) -> Result<Box<dyn std::io::Write>, crate::TinkError>;
+    ) -> Result<Box<dyn EncryptingWrite>, crate::TinkError>;
 
     /// Return a wrapper around an underlying `std::io::Read`, such that any read-operation
     /// via the wrapper results in AEAD-decryption of the underlying ciphertext,
@@ -46,6 +46,13 @@ pub trait StreamingAead: StreamingAeadBoxClone {
         r: Box<dyn std::io::Read>,
         aad: &[u8],
     ) -> Result<Box<dyn std::io::Read>, crate::TinkError>;
+}
+
+/// Trait for an object that writes encrypted data.  Users must call `close()` to finish.
+pub trait EncryptingWrite: std::io::Write {
+    /// Close the stream, writing any final buffered data.  Any operation
+    /// on the stream after this will fail.
+    fn close(&mut self) -> Result<(), crate::TinkError>;
 }
 
 /// Trait bound to indicate that primitive trait objects should support cloning
