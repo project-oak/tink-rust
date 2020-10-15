@@ -1,7 +1,7 @@
 # Tink for Rust HOW-TO
 
 This document contains instructions and Rust code snippets for common tasks in
-[Tink](https://github.com/google/tink).
+[Tink](https://github.com/tink-crypto/tink-rust).
 
 ## Setup instructions
 
@@ -10,8 +10,8 @@ TODO: confirm official location
 To install Tink locally run:
 
 ```sh
-git clone https://github.com/google/tink-rust
-cd tink
+git clone https://github.com/tink-crypto/tink-rust
+cd tink-rust
 ```
 
 to run all the tests locally:
@@ -23,7 +23,7 @@ cargo test --all
 ## Rustdoc
 
 Documentation for the Tink API can be found
-[here](https://google.github.io/tink/rust/).
+[here](https://tink-crypto.github.io/tink-rust/).
 
 ## Obtaining and using primitives
 
@@ -34,7 +34,7 @@ have multiple implementations, and you choose a desired implementation by
 using a key of corresponding type (see the [this
 section](KEY-MANAGEMENT.md#key-keyset-and-keysethandle) for details).
 
-A list of primitives and their implemenations currently supported by Tink in
+A list of primitives and their implementations currently supported by Tink in
 Rust can be found [here](PRIMITIVES.md#rust).
 
 ### AEAD

@@ -17,19 +17,24 @@
 fn example() {
     tink_daead::init();
     let kh = tink::keyset::Handle::new(&tink_daead::aes_siv_key_template()).unwrap();
+
+    // TODO: save the keyset to a safe location. DO NOT hardcode it in source code.
+    // Consider encrypting it with a remote key in Cloud KMS, AWS KMS or HashiCorp Vault.
+    // See https://github.com/google/tink/blob/master/docs/GOLANG-HOWTO.md#storing-and-loading-existing-keysets.
+
     let d = tink_daead::new(&kh).unwrap();
-    let pt = b"this data needs to be encrypted";
-    let ad = b"this data needs to be authenticated, but not encrypted";
-    let ct1 = d.encrypt_deterministically(pt, ad).unwrap();
-    let ct2 = d.encrypt_deterministically(pt, ad).unwrap();
+    let msg = b"this data needs to be encrypted";
+    let aad = b"this data needs to be authenticated, but not encrypted";
+    let ct1 = d.encrypt_deterministically(msg, aad).unwrap();
+    let pt = d.decrypt_deterministically(&ct1, aad).unwrap();
+    let ct2 = d.encrypt_deterministically(msg, aad).unwrap();
 
-    assert_eq!(ct1, ct2, "cipher texts are not equal");
-    println!("Cipher texts are equal.");
+    assert_eq!(ct1, ct2, "ct1 != ct2");
 
-    let pt2 = d.decrypt_deterministically(&ct1, ad).unwrap();
-
-    println!("Plain text: {}", String::from_utf8_lossy(pt));
-    assert_eq!(pt, &pt2[..]);
+    println!("Ciphertext: {}", base64::encode(&ct1));
+    println!("Original  plaintext: {}", std::str::from_utf8(msg).unwrap());
+    println!("Decrypted Plaintext: {}", std::str::from_utf8(&pt).unwrap());
+    assert_eq!(msg, &pt[..]);
 }
 
 #[test]

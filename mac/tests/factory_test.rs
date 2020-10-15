@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::TinkError;
+use tink::{utils::wrap_err, TinkError};
 
 #[test]
 fn test_factory_multiple_keys() {
@@ -95,9 +95,9 @@ fn verify_mac_primitive(
     if prefix_size + tag_size != tag.len() {
         return Err("incorrect tag length".into());
     }
-    if verify_primitive.verify_mac(&tag, &data[..]).is_err() {
-        return Err("mac verification failed".into());
-    }
+    verify_primitive
+        .verify_mac(&tag, &data[..])
+        .map_err(|e| wrap_err("mac verification failed", e))?;
 
     // Modify plaintext or tag and make sure verify_mac failed.
     let mut data_and_tag = Vec::new();

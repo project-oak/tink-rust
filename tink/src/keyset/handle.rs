@@ -197,6 +197,12 @@ impl Handle {
         }
         false
     }
+
+    /// Return [`KeysetInfo`](crate::proto::KeysetInfo) representation of the managed
+    /// keyset. The result does not contain any sensitive key material.
+    pub fn keyset_info(&self) -> crate::proto::KeysetInfo {
+        get_keyset_info(&self.ks)
+    }
 }
 
 /// Extract the public key data corresponding to private key data.
@@ -252,7 +258,7 @@ fn encrypt(
 
 /// Return a [`KeysetInfo`](crate::proto::KeysetInfo) from a [`Keyset`](crate::proto::Keyset)
 /// protobuf.
-pub fn get_keyset_info(keyset: &crate::proto::Keyset) -> crate::proto::KeysetInfo {
+fn get_keyset_info(keyset: &crate::proto::Keyset) -> crate::proto::KeysetInfo {
     let n_key = keyset.key.len();
     let mut key_infos = Vec::with_capacity(n_key);
     for key in &keyset.key {

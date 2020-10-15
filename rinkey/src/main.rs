@@ -365,8 +365,7 @@ fn enable_key(opts: KeyIdOptions) {
 /// List keys in a keyset
 fn list_keyset(opts: InOptions) {
     let kh = read_keyset(opts);
-    let keyset = tink::keyset::insecure::keyset_material(&kh);
-    let info = tink::keyset::get_keyset_info(&keyset);
+    let info = kh.keyset_info();
 
     // prost does not support text format conversion for protobuf messages,
     // so manually build the text representaion of the keyset.

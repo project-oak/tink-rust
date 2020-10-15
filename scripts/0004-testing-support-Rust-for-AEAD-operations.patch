@@ -1,7 +1,7 @@
-From d6eac7a8381b26e5168a5e8edd2df31e3b786fa4 Mon Sep 17 00:00:00 2001
+From ef41eeaefabde517954ad03c308c36c66f9c24e0 Mon Sep 17 00:00:00 2001
 From: David Drysdale <drysdale@google.com>
 Date: Wed, 7 Oct 2020 16:13:42 +0100
-Subject: [PATCH] testing: support Rust for AEAD operations
+Subject: [PATCH 4/5] testing: support Rust for AEAD operations
 
 ---
  testing/cross_language/aead_consistency_test.py    | 3 ++-
@@ -10,10 +10,10 @@ Subject: [PATCH] testing: support Rust for AEAD operations
  3 files changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/testing/cross_language/aead_consistency_test.py b/testing/cross_language/aead_consistency_test.py
-index da1bfb4908f3..b077a8d63622 100644
+index 530e8c3fa374..4079f7954178 100644
 --- a/testing/cross_language/aead_consistency_test.py
 +++ b/testing/cross_language/aead_consistency_test.py
-@@ -38,8 +38,9 @@ HASH_TYPES = [
+@@ -43,8 +43,9 @@ HASH_TYPES = [
  # Test cases that succeed in a language but should fail
  SUCCEEDS_BUT_SHOULD_FAIL = [
      # TODO(b/159989251)
@@ -25,10 +25,10 @@ index da1bfb4908f3..b077a8d63622 100644
  
  # Test cases that fail in a language but should succeed
 diff --git a/testing/cross_language/util/supported_key_types.py b/testing/cross_language/util/supported_key_types.py
-index 21046c56e84c..b5d4f03e74e3 100644
+index 64e8100df861..5390c94c3de8 100644
 --- a/testing/cross_language/util/supported_key_types.py
 +++ b/testing/cross_language/util/supported_key_types.py
-@@ -68,11 +68,11 @@ ALL_KEY_TYPES = (
+@@ -64,11 +64,11 @@ ALL_KEY_TYPES = (
  # All languages that are supported by a KeyType
  SUPPORTED_LANGUAGES = {
      'AesEaxKey': ['cc', 'java', 'python'],

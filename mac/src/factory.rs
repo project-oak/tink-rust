@@ -17,7 +17,7 @@
 //! Provides an implementation of MAC using a set of underlying implementations.
 
 use std::sync::Arc;
-use tink::{utils::wrap_err, TinkError};
+use tink::{proto::OutputPrefixType, utils::wrap_err, TinkError};
 
 /// Create a [`tink::Mac`] primitive from the given keyset handle.
 pub fn new(h: &tink::keyset::Handle) -> Result<Box<dyn tink::Mac>, TinkError> {
@@ -75,7 +75,16 @@ impl tink::Mac for WrappedMac {
             tink::Primitive::Mac(p) => p,
             _ => return Err("mac::factory: not a Mac primitive".into()),
         };
-        let mac = primitive.compute_mac(data)?;
+        let mac = if primary.prefix_type == OutputPrefixType::Legacy {
+            // This diverges from the upstream Go code (as of v1.5.0), but matches the
+            // behaviour of the upstream C++/Java/Python code.
+            let mut local_data = Vec::with_capacity(data.len() + 1);
+            local_data.extend_from_slice(data);
+            local_data.push(tink::cryptofmt::LEGACY_START_BYTE);
+            primitive.compute_mac(&local_data)?
+        } else {
+            primitive.compute_mac(data)?
+        };
 
         let mut ret = Vec::with_capacity(primary.prefix.len() + mac.len());
         ret.extend_from_slice(&primary.prefix);
@@ -97,7 +106,17 @@ impl tink::Mac for WrappedMac {
         let entries = self.ps.entries_for_prefix(&prefix);
         for entry in &entries {
             if let tink::Primitive::Mac(p) = &entry.primitive {
-                if p.verify_mac(mac_no_prefix, data).is_ok() {
+                let result = if entry.prefix_type == OutputPrefixType::Legacy {
+                    // This diverges from the upstream Go code (as of v1.5.0), but matches the
+                    // behaviour of the upstream C++/Java/Python code.
+                    let mut local_data = Vec::with_capacity(data.len() + 1);
+                    local_data.extend_from_slice(data);
+                    local_data.push(tink::cryptofmt::LEGACY_START_BYTE);
+                    p.verify_mac(mac_no_prefix, &local_data)
+                } else {
+                    p.verify_mac(mac_no_prefix, data)
+                };
+                if result.is_ok() {
                     return Ok(());
                 }
             } else {
@@ -108,7 +127,17 @@ impl tink::Mac for WrappedMac {
         let entries = self.ps.raw_entries();
         for entry in &entries {
             if let tink::Primitive::Mac(p) = &entry.primitive {
-                if p.verify_mac(mac, data).is_ok() {
+                let result = if entry.prefix_type == OutputPrefixType::Legacy {
+                    // This diverges from the upstream Go code (as of v1.5.0), but matches the
+                    // behaviour of the upstream C++/Java/Python code.
+                    let mut local_data = Vec::with_capacity(data.len() + 1);
+                    local_data.extend_from_slice(data);
+                    local_data.push(tink::cryptofmt::LEGACY_START_BYTE);
+                    p.verify_mac(mac, &local_data)
+                } else {
+                    p.verify_mac(mac, data)
+                };
+                if result.is_ok() {
                     return Ok(());
                 }
             } else {

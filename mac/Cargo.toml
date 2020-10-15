@@ -10,6 +10,7 @@ tink = "*"
 tink-prf = "*"
 
 [dev-dependencies]
+base64 = "*"
 hex = "*"
 lazy_static = "*"
 maplit = "*"

@@ -32,6 +32,9 @@ pub mod subtle;
 pub mod utils;
 pub use utils::TinkError;
 
+/// The upstream Tink version that this Rust port is based on.
+pub const UPSTREAM_VERSION: &str = "1.5.0";
+
 // Traits for primitives.
 mod aead;
 pub use aead::*;

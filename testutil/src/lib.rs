@@ -518,6 +518,7 @@ pub fn new_aes_ctr_hmac_key_format(
     ciphertext_segment_size: u32,
 ) -> tink::proto::AesCtrHmacStreamingKeyFormat {
     tink::proto::AesCtrHmacStreamingKeyFormat {
+        version: AES_CTR_HMAC_AEAD_KEY_VERSION,
         key_size,
         params: Some(tink::proto::AesCtrHmacStreamingParams {
             ciphertext_segment_size,

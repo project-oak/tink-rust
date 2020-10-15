@@ -208,3 +208,12 @@ fn test_with_no_secrets_functions_fail_with_asymmetric_private_key_material() {
         "keyset.read_with_no_secrets should fail when importing secret key material"
     );
 }
+
+#[test]
+fn test_keyset_info() {
+    tink_mac::init();
+    let kt = tink_mac::hmac_sha256_tag128_key_template();
+    let kh = tink::keyset::Handle::new(&kt).unwrap();
+    let info = kh.keyset_info();
+    assert_eq!(info.primary_key_id, info.key_info[0].key_id);
+}

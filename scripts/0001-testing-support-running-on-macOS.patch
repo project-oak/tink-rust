@@ -1,7 +1,7 @@
-From baf75fbe4c7b1baa84e860d777b4ce8ef147e1f8 Mon Sep 17 00:00:00 2001
+From 1adcd174981f7506581081675f496cf13175f5a8 Mon Sep 17 00:00:00 2001
 From: David Drysdale <drysdale@google.com>
 Date: Thu, 13 Aug 2020 17:46:49 +0100
-Subject: [PATCH 1/2] testing: support running on macOS
+Subject: [PATCH 1/5] testing: support running on macOS
 
 ---
  testing/cross_language/util/testing_servers.py | 2 +-

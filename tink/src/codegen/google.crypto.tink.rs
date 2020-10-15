@@ -147,6 +147,8 @@ pub struct AesCtrHmacStreamingParams {
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesCtrHmacStreamingKeyFormat {
+    #[prost(uint32, tag="3")]
+    pub version: u32,
     #[prost(message, optional, tag="1")]
     pub params: ::std::option::Option<AesCtrHmacStreamingParams>,
     /// size of the main key (aka. "ikm", input key material)

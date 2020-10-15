@@ -1,7 +1,7 @@
-From 15250e28345aa1bc302d7d867f4396c2944428f9 Mon Sep 17 00:00:00 2001
+From 05ac9dc6b305015c092890959d0aa2a11a439b13 Mon Sep 17 00:00:00 2001
 From: David Drysdale <drysdale@google.com>
 Date: Thu, 13 Aug 2020 17:47:28 +0100
-Subject: [PATCH 2/2] testing: support Rust in cross-language tests
+Subject: [PATCH 2/5] testing: support Rust in cross-language tests
 
 ---
  .../key_generation_consistency_test.py             | 10 +++++++++-
@@ -10,10 +10,10 @@ Subject: [PATCH 2/2] testing: support Rust in cross-language tests
  3 files changed, 22 insertions(+), 11 deletions(-)
 
 diff --git a/testing/cross_language/key_generation_consistency_test.py b/testing/cross_language/key_generation_consistency_test.py
-index 4d8910633cbb..e13dabcc283d 100644
+index a073394e6db5..a887b9b274ed 100644
 --- a/testing/cross_language/key_generation_consistency_test.py
 +++ b/testing/cross_language/key_generation_consistency_test.py
-@@ -37,7 +37,7 @@ TYPE_URL_TO_SUPPORTED_LANGUAGES = {
+@@ -35,7 +35,7 @@ from util import testing_servers
  # Test cases that succeed in a language but should fail
  SUCCEEDS_BUT_SHOULD_FAIL = [
      # TODO(b/159989251)
@@ -22,7 +22,7 @@ index 4d8910633cbb..e13dabcc283d 100644
      ('HmacKey(32,10,SHA384)', 'go'),
      ('HmacKey(32,16,SHA384)', 'go'),
      ('HmacKey(32,20,SHA384)', 'go'),
-@@ -46,6 +46,14 @@ SUCCEEDS_BUT_SHOULD_FAIL = [
+@@ -44,6 +44,14 @@ SUCCEEDS_BUT_SHOULD_FAIL = [
      ('HmacKey(32,32,SHA384)', 'go'),
      ('HmacKey(32,33,SHA384)', 'go'),
      ('HmacPrfKey(32,SHA384)', 'go'),
@@ -38,10 +38,10 @@ index 4d8910633cbb..e13dabcc283d 100644
      # valid AEAD params. (These params *are* checked when the key is used.)
      ('EciesAeadHkdfPrivateKey(NIST_P256,UNCOMPRESSED,SHA256,AesEaxKey(15,11))',
 diff --git a/testing/cross_language/util/supported_key_types.py b/testing/cross_language/util/supported_key_types.py
-index d040f6b41d4b..b882cd0168e2 100644
+index 8a3651a34d3b..19c5dd49d906 100644
 --- a/testing/cross_language/util/supported_key_types.py
 +++ b/testing/cross_language/util/supported_key_types.py
-@@ -26,7 +26,7 @@ from tink import streaming_aead
+@@ -24,7 +24,7 @@ from tink import streaming_aead
  from tink.proto import tink_pb2
  
  # All languages supported by cross-language tests.
@@ -50,7 +50,7 @@ index d040f6b41d4b..b882cd0168e2 100644
  
  # All KeyTypes (without the prefix 'type.googleapis.com/google.crypto.tink.')
  AEAD_KEY_TYPES = [
-@@ -71,19 +71,19 @@ SUPPORTED_LANGUAGES = {
+@@ -69,19 +69,19 @@ SUPPORTED_LANGUAGES = {
      'AesCtrHmacAeadKey': ['cc', 'java', 'go', 'python'],
      'ChaCha20Poly1305Key': ['java', 'go'],
      'XChaCha20Poly1305Key': ['cc', 'java', 'go', 'python'],
@@ -75,7 +75,7 @@ index d040f6b41d4b..b882cd0168e2 100644
 +    'HkdfPrfKey': ['cc', 'java', 'go', 'python', 'rust'],
  }
  
- SUPPORTED_LANGUAGES_PER_TYPE_URL = {
+ KEY_TYPE_FROM_URL = {
 diff --git a/testing/cross_language/util/testing_servers.py b/testing/cross_language/util/testing_servers.py
 index aaebef3af28e..2202100050be 100644
 --- a/testing/cross_language/util/testing_servers.py

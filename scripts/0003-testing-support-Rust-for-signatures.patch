@@ -1,24 +1,24 @@
-From 30bfc666000e0a2ee5f55b29a591cd9b632624f2 Mon Sep 17 00:00:00 2001
+From 1754449dc0f95b09f18cb85fd5646906e9224380 Mon Sep 17 00:00:00 2001
 From: David Drysdale <drysdale@google.com>
 Date: Mon, 14 Sep 2020 08:55:49 +0100
-Subject: [PATCH] testing: support Rust for signatures
+Subject: [PATCH 3/5] testing: support Rust for signatures
 
 Rust only supports P256 as yet so also add some expected failures.
 ---
- .../key_generation_consistency_test.py             |  7 +++++++
- testing/cross_language/signature_test.py           | 14 ++++++++++++--
- testing/cross_language/util/supported_key_types.py |  4 ++--
- testing/cross_language/util/testing_servers.py     |  2 +-
- 4 files changed, 22 insertions(+), 5 deletions(-)
+ .../key_generation_consistency_test.py           |  7 +++++++
+ testing/cross_language/signature_test.py         | 16 ++++++++++++++--
+ .../cross_language/util/supported_key_types.py   |  4 ++--
+ testing/cross_language/util/testing_servers.py   |  2 +-
+ 4 files changed, 24 insertions(+), 5 deletions(-)
 
 diff --git a/testing/cross_language/key_generation_consistency_test.py b/testing/cross_language/key_generation_consistency_test.py
-index e13dabcc283d..6a6bb6447416 100644
+index a887b9b274ed..fa7e3e12d15e 100644
 --- a/testing/cross_language/key_generation_consistency_test.py
 +++ b/testing/cross_language/key_generation_consistency_test.py
-@@ -94,6 +94,13 @@ FAILS_BUT_SHOULD_SUCCEED = [
-     ('EcdsaPrivateKey(SHA384,NIST_P384,IEEE_P1363)', 'python'),
-     ('EcdsaPrivateKey(SHA384,NIST_P384,DER)', 'cc'),
-     ('EcdsaPrivateKey(SHA384,NIST_P384,DER)', 'python'),
+@@ -87,6 +87,13 @@ FAILS_BUT_SHOULD_SUCCEED = [
+      'java'),
+     ('EciesAeadHkdfPrivateKey(NIST_P521,UNCOMPRESSED,SHA384,AesGcmKey(16))',
+      'java'),
 +    # TODO: Rust does not support Ecdsa with NIST_P384 nor NIST_P512.
 +    ('EcdsaPrivateKey(SHA384,NIST_P384,IEEE_P1363)', 'rust'),
 +    ('EcdsaPrivateKey(SHA384,NIST_P384,DER)', 'rust'),
@@ -30,25 +30,27 @@ index e13dabcc283d..6a6bb6447416 100644
  
  HASH_TYPES = [
 diff --git a/testing/cross_language/signature_test.py b/testing/cross_language/signature_test.py
-index b37fa3868523..2406eeb8ca4e 100644
+index 0087aeb91217..afee8cdb22e1 100644
 --- a/testing/cross_language/signature_test.py
 +++ b/testing/cross_language/signature_test.py
-@@ -23,6 +23,14 @@ from util import testing_servers
- SUPPORTED_LANGUAGES = (testing_servers
-                        .SUPPORTED_LANGUAGES_BY_PRIMITIVE['signature'])
+@@ -41,6 +41,16 @@ def key_rotation_test_cases(
+         for new_key_tmpl in KEY_ROTATION_TEMPLATES:
+           yield (enc_lang, dec_lang, old_key_tmpl, new_key_tmpl)
  
 +# Test cases that fail in a language but should succeed
 +FAILS_BUT_SHOULD_SUCCEED = [
 +    # TODO: Rust does not support Ecdsa with NIST_P384 nor NIST_P512.
 +    ('ECDSA_P384', 'rust'),
 +    ('ECDSA_P384_IEEE_P1363', 'rust'),
++    ('ECDSA_P384_SHA384', 'rust'),
++    ('ECDSA_P384_SHA384_IEEE_P1363', 'rust'),
 +    ('ECDSA_P521', 'rust'),
 +    ('ECDSA_P521_IEEE_P1363', 'rust'),
 +]
  
  def setUpModule():
    signature.register()
-@@ -46,21 +54,23 @@ class SignaturePythonTest(parameterized.TestCase):
+@@ -72,21 +82,23 @@ class SignaturePythonTest(parameterized.TestCase):
      supported_signers = [
          testing_servers.public_key_sign(lang, private_keyset)
          for lang in supported_langs
@@ -75,10 +77,10 @@ index b37fa3868523..2406eeb8ca4e 100644
      for signer in supported_signers:
        message = (
 diff --git a/testing/cross_language/util/supported_key_types.py b/testing/cross_language/util/supported_key_types.py
-index b882cd0168e2..65f3e635ba21 100644
+index 19c5dd49d906..64e8100df861 100644
 --- a/testing/cross_language/util/supported_key_types.py
 +++ b/testing/cross_language/util/supported_key_types.py
-@@ -77,8 +77,8 @@ SUPPORTED_LANGUAGES = {
+@@ -75,8 +75,8 @@ SUPPORTED_LANGUAGES = {
      'EciesAeadHkdfPrivateKey': ['cc', 'java', 'go', 'python'],
      'AesCmacKey': ['cc', 'java', 'go', 'python', 'rust'],
      'HmacKey': ['cc', 'java', 'go', 'python', 'rust'],

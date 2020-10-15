@@ -20,21 +20,22 @@ mod subtle;
 fn example() {
     tink_aead::init();
     let kh = tink::keyset::Handle::new(&tink_aead::aes256_gcm_key_template()).unwrap();
-    let a = tink_aead::new(&kh).unwrap();
-    let ct = a
-        .encrypt(
-            b"this data needs to be encrypted",
-            b"this data needs to be authenticated, but not encrypted",
-        )
-        .unwrap();
-    let pt = a
-        .decrypt(
-            &ct,
-            b"this data needs to be authenticated, but not encrypted",
-        )
-        .unwrap();
 
-    assert_eq!(b"this data needs to be encrypted".to_vec(), pt);
+    // TODO: save the keyset to a safe location. DO NOT hardcode it in source code.
+    // Consider encrypting it with a remote key in Cloud KMS, AWS KMS or HashiCorp Vault.
+    // See https://github.com/google/tink/blob/master/docs/GOLANG-HOWTO.md#storing-and-loading-existing-keysets.
+
+    let a = tink_aead::new(&kh).unwrap();
+    let msg = b"this message needs to be encrypted";
+    let aad = b"this data needs to be authenticated, but not encrypted";
+    let ct = a.encrypt(msg, aad).unwrap();
+    let pt = a.decrypt(&ct, aad).unwrap();
+
+    println!("Ciphertext: {}", base64::encode(&ct));
+    println!("Original  plaintext: {}", std::str::from_utf8(msg).unwrap());
+    println!("Decrypted Plaintext: {}", std::str::from_utf8(&pt).unwrap());
+
+    assert_eq!(msg.to_vec(), pt);
 }
 
 #[test]

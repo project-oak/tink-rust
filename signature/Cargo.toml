@@ -17,6 +17,7 @@ signature = "*"
 tink = "*"
 
 [dev-dependencies]
+base64 = "*"
 hex = "*"
 serde = { version = "*", features = ["derive"] }
 serde_json = "*"
