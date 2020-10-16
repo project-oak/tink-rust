@@ -24,7 +24,7 @@ use tink::{proto::HashType, TinkError};
 // https://eprint.iacr.org/2012/159)
 const MIN_HKDF_KEY_SIZE_IN_BYTES: usize = 32;
 
-// `HkdfPrf` is a type that can be used to compute several HKDFs with the same key material.
+/// `HkdfPrf` is a type that can be used to compute several HKDFs with the same key material.
 #[derive(Clone)]
 pub struct HkdfPrf {
     prk: HkdfPrfVariant,
