@@ -16,7 +16,7 @@
 
 //! Provides common methods needed in test code.
 
-#![deny(intra_doc_link_resolution_failure)]
+#![deny(broken_intra_doc_links)]
 
 use generic_array::typenum::Unsigned;
 use std::convert::TryInto;

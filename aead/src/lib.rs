@@ -19,7 +19,7 @@
 //! AEAD encryption assures the confidentiality and authenticity of the data. This primitive is CPA
 //! secure.
 
-#![deny(intra_doc_link_resolution_failure)]
+#![deny(broken_intra_doc_links)]
 
 use std::sync::Once;
 use tink::registry::register_key_manager;

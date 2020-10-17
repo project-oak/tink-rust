@@ -19,7 +19,7 @@
 //! Unlike AEAD, implementations of this interface are not semantically secure, because
 //! encrypting the same plaintex always yields the same ciphertext.
 
-#![deny(intra_doc_link_resolution_failure)]
+#![deny(broken_intra_doc_links)]
 
 use std::sync::Once;
 
