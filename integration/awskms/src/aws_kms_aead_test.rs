@@ -19,7 +19,7 @@ const KEY_URI: &str =
     "aws-kms://arn:aws:kms:us-east-2:235739564943:key/3ee50705-5a82-4f5b-9753-05c4f473922f";
 
 const CRED_FILE: &str = "../../testdata/credentials_aws.csv";
-const CRED_INI_FILE: &str = "../../testdata/credentials_aws.cred";
+const CRED_INI_FILE: &str = "../../testdata/credentials_aws.ini";
 
 fn init() {
     tink_aead::init();

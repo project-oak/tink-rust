@@ -23,7 +23,10 @@ use std::{
     str::FromStr,
 };
 use structopt::StructOpt;
-use tink::proto::{KeyStatusType, OutputPrefixType};
+use tink::{
+    proto::{KeyStatusType, OutputPrefixType},
+    TinkError,
+};
 
 /// File format for a keyset.
 #[derive(Clone, StructOpt)]
@@ -457,9 +460,7 @@ fn read_keyset_with<T: tink::keyset::Reader>(
     if wrap_opts.master_key_uri.is_empty() {
         tink::keyset::insecure::read(&mut reader).expect("Read failure")
     } else {
-        let kms_client =
-            tink::registry::get_kms_client(&wrap_opts.master_key_uri).expect("No KMS client found");
-        // TODO: make use of `opts.wrap_opts.credential_path`
+        let kms_client = get_kms_client(&wrap_opts).expect("No KMS client found");
         let aead = kms_client
             .get_aead(&wrap_opts.master_key_uri)
             .expect("Failed to build KMS AEAD");
@@ -491,12 +492,33 @@ fn write_keyset_with<T: tink::keyset::Writer>(
     if wrap_opts.master_key_uri.is_empty() {
         tink::keyset::insecure::write(&kh, &mut writer).expect("Write failure")
     } else {
-        let kms_client =
-            tink::registry::get_kms_client(&wrap_opts.master_key_uri).expect("No KMS client found");
-        // TODO: make use of `opts.wrap_opts.credential_path`
+        let kms_client = get_kms_client(&wrap_opts).expect("No KMS client found");
         let aead = kms_client
             .get_aead(&wrap_opts.master_key_uri)
             .expect("Failed to build KMS AEAD");
         kh.write(&mut writer, aead).expect("Write failure")
+    }
+}
+
+/// Build and register a KMS Client.
+fn get_kms_client(
+    wrap_opts: &WrappingOptions,
+) -> Result<std::sync::Arc<dyn tink::registry::KmsClient>, TinkError> {
+    if wrap_opts
+        .master_key_uri
+        .starts_with(tink_awskms::AWS_PREFIX)
+    {
+        let g = if wrap_opts.credential_path.is_empty() {
+            tink_awskms::AwsClient::new(&wrap_opts.master_key_uri)?
+        } else {
+            tink_awskms::AwsClient::new_with_credentials(
+                &wrap_opts.master_key_uri,
+                &wrap_opts.credential_path,
+            )?
+        };
+        tink::registry::register_kms_client(g);
+        tink::registry::get_kms_client(&wrap_opts.master_key_uri)
+    } else {
+        Err("Unrecognized key URI".into())
     }
 }

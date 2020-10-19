@@ -8,6 +8,7 @@ edition = "2018"
 structopt = "*"
 tink = { version = "*", features = ["insecure"] }
 tink-aead = "*"
+tink-awskms = "*"
 tink-daead = "*"
 tink-mac = "*"
 tink-prf = "*"

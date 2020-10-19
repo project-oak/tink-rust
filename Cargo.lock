@@ -1513,6 +1513,7 @@ dependencies = [
  "structopt",
  "tink",
  "tink-aead",
+ "tink-awskms",
  "tink-daead",
  "tink-mac",
  "tink-prf",
