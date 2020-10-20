@@ -19,7 +19,7 @@
 use crate::{
     proto::{KeyStatusType, OutputPrefixType},
     utils::wrap_err,
-    TinkError,
+    KeyId, TinkError,
 };
 use rand::Rng;
 
@@ -43,13 +43,14 @@ impl Manager {
         Self { ks: kh.ks }
     }
 
-    /// Generate a fresh key using the given key template and set the new key as the primary key.  The key that was
-    /// primary prior to rotation remains `Enabled`.
+    /// Generate a fresh key using the given key template and set the new key as the primary key.
+    /// The key that was primary prior to rotation remains `Enabled`.
     pub fn rotate(&mut self, kt: &crate::proto::KeyTemplate) -> Result<(), TinkError> {
         self.add(kt, true)
     }
 
-    /// Generate a fresh key using the given key template, and optionally set the new key as the primary key.
+    /// Generate a fresh key using the given key template, and optionally set the new key as the
+    /// primary key.
     pub fn add(
         &mut self,
         kt: &crate::proto::KeyTemplate,
@@ -83,9 +84,10 @@ impl Manager {
         })
     }
 
-    /// Sets the status of the specified key to [`KeyStatusType::Enabled`].  Succeeds only if before the call the
-    /// specified key has status [`KeyStatusType::Disabled`] or [`KeyStatusType::Enabled`].
-    pub fn enable(&mut self, key_id: u32) -> Result<(), TinkError> {
+    /// Sets the status of the specified key to [`KeyStatusType::Enabled`].  Succeeds only if before
+    /// the call the specified key has status [`KeyStatusType::Disabled`] or
+    /// [`KeyStatusType::Enabled`].
+    pub fn enable(&mut self, key_id: KeyId) -> Result<(), TinkError> {
         for key in &mut self.ks.key {
             if key.key_id == key_id {
                 return match KeyStatusType::from_i32(key.status) {
@@ -107,7 +109,7 @@ impl Manager {
     /// Sets the status of the specified key to [`KeyStatusType::Disabled`].
     /// Succeeds only if before the call the specified key
     /// is not primary and has status [`KeyStatusType::Disabled`] or [`KeyStatusType::Enabled`].
-    pub fn disable(&mut self, key_id: u32) -> Result<(), TinkError> {
+    pub fn disable(&mut self, key_id: KeyId) -> Result<(), TinkError> {
         if self.ks.primary_key_id == key_id {
             return Err(format!("Cannot disable primary key (key_id {})", key_id).into());
         }
@@ -129,10 +131,11 @@ impl Manager {
         Err(format!("Key {} not found", key_id).into())
     }
 
-    /// Sets the status of the specified key to [`KeyStatusType::Destroyed`], and removes the corresponding key
-    /// material, if any.  Succeeds only if before the call the specified key is not primary and has status
-    /// [`KeyStatusType::Disabled`], or [`KeyStatusType::Enabled`], or [`KeyStatusType::Destroyed`].
-    pub fn destroy(&mut self, key_id: u32) -> Result<(), TinkError> {
+    /// Sets the status of the specified key to [`KeyStatusType::Destroyed`], and removes the
+    /// corresponding key material, if any.  Succeeds only if before the call the specified key
+    /// is not primary and has status [`KeyStatusType::Disabled`], or
+    /// [`KeyStatusType::Enabled`], or [`KeyStatusType::Destroyed`].
+    pub fn destroy(&mut self, key_id: KeyId) -> Result<(), TinkError> {
         if self.ks.primary_key_id == key_id {
             return Err(format!("Cannot destroy primary key (key_id {})", key_id).into());
         }
@@ -157,9 +160,9 @@ impl Manager {
         Err(format!("Key {} not found", key_id).into())
     }
 
-    /// Removes the specifed key from the managed keyset.  Succeeds only if the specified key is not primary.  After
-    /// deletion the keyset contains one key fewer.
-    pub fn delete(&mut self, key_id: u32) -> Result<(), TinkError> {
+    /// Removes the specifed key from the managed keyset.  Succeeds only if the specified key is not
+    /// primary.  After deletion the keyset contains one key fewer.
+    pub fn delete(&mut self, key_id: KeyId) -> Result<(), TinkError> {
         if self.ks.primary_key_id == key_id {
             return Err(format!("Cannot delete primary key (key_id {})", key_id).into());
         }
@@ -180,7 +183,7 @@ impl Manager {
     }
 
     /// Sets the specified key as the primary.  Succeeds only if the specified key is `Enabled`.
-    pub fn set_primary(&mut self, key_id: u32) -> Result<(), TinkError> {
+    pub fn set_primary(&mut self, key_id: KeyId) -> Result<(), TinkError> {
         for key in &self.ks.key {
             if key.key_id == key_id {
                 return match KeyStatusType::from_i32(key.status) {
@@ -200,7 +203,7 @@ impl Manager {
     }
 
     /// Generate a key id that has not been used by any key in the [`Keyset`](crate::proto::Keyset).
-    fn new_key_id(&self) -> u32 {
+    fn new_key_id(&self) -> KeyId {
         let mut rng = rand::thread_rng();
 
         loop {

@@ -27,7 +27,7 @@ use std::collections::{hash_map, HashMap};
 /// primitive, it holds the identifier and status of the primitive.
 #[derive(Clone)]
 pub struct Entry {
-    pub key_id: u32,
+    pub key_id: crate::KeyId,
     pub primitive: crate::Primitive,
     pub prefix: Vec<u8>,
     pub prefix_type: crate::proto::OutputPrefixType,
@@ -36,7 +36,7 @@ pub struct Entry {
 
 impl Entry {
     fn new(
-        key_id: u32,
+        key_id: crate::KeyId,
         p: crate::Primitive,
         prefix: &[u8],
         prefix_type: crate::proto::OutputPrefixType,

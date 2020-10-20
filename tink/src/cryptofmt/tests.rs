@@ -19,7 +19,7 @@ use crate::cryptofmt;
 #[test]
 fn test_output_prefix() {
     struct Case {
-        key_id: u32,
+        key_id: crate::KeyId,
         result: Vec<u8>,
     };
     let tests = vec![

@@ -63,7 +63,7 @@ pub fn output_prefix(key: &crate::proto::keyset::Key) -> Result<Vec<u8>, TinkErr
 }
 
 /// Build a vector of requested size with key ID prefix pre-filled.
-fn create_output_prefix(size: usize, start_byte: u8, key_id: u32) -> Vec<u8> {
+fn create_output_prefix(size: usize, start_byte: u8, key_id: crate::KeyId) -> Vec<u8> {
     let mut prefix = Vec::with_capacity(size);
     prefix.push(start_byte);
     prefix.extend_from_slice(&key_id.to_be_bytes());

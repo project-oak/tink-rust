@@ -33,6 +33,9 @@ pub use utils::TinkError;
 /// The upstream Tink version that this Rust port is based on.
 pub const UPSTREAM_VERSION: &str = "1.5.0";
 
+/// Type alias for `u32` values being used as key identifiers.
+pub type KeyId = u32;
+
 // Traits for primitives.
 mod aead;
 pub use aead::*;

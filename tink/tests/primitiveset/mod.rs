@@ -168,7 +168,7 @@ fn test_add_with_invalid_input() {
 
 fn validate_entry_list(
     entries: &[Entry],
-    key_ids: &[u32],
+    key_ids: &[tink::KeyId],
     macs: &[Box<DummyMac>],
     statuses: &[KeyStatusType],
     prefix_types: &[OutputPrefixType],
@@ -187,7 +187,7 @@ fn validate_entry_list(
 // Compare an entry with the [`DummyMAC`] that was used to create the entry.
 fn validate_entry(
     entry: &Entry,
-    key_id: u32,
+    key_id: tink::KeyId,
     test_mac: &DummyMac,
     status: &KeyStatusType,
     output_prefix_type: &OutputPrefixType,

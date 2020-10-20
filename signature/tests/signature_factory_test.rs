@@ -84,7 +84,7 @@ fn new_ecdsa_keyset_keypair(
     hash_type: tink::proto::HashType,
     curve: tink::proto::EllipticCurveType,
     output_prefix_type: tink::proto::OutputPrefixType,
-    key_id: u32,
+    key_id: tink::KeyId,
 ) -> (tink::proto::keyset::Key, tink::proto::keyset::Key) {
     let key = tink_testutil::new_random_ecdsa_private_key(hash_type, curve);
     let serialized_key = tink_testutil::proto_encode(&key);

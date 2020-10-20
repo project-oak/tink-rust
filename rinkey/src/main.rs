@@ -237,7 +237,7 @@ struct KeyIdOptions {
     out_opts: OutOptions,
 
     #[structopt(long, help = "The target key id")]
-    key_id: u32,
+    key_id: tink::KeyId,
 }
 
 /// Top-level command to perform.

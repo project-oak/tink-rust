@@ -207,7 +207,7 @@ pub fn new_test_keyset(
 
 /// Return a dummy key that doesn't contain actual key material.
 pub fn new_dummy_key(
-    key_id: u32,
+    key_id: tink::KeyId,
     status: tink::proto::KeyStatusType,
     output_prefix_type: tink::proto::OutputPrefixType,
 ) -> tink::proto::keyset::Key {
@@ -702,7 +702,7 @@ pub fn new_key_data(
 pub fn new_key(
     key_data: &KeyData,
     status: tink::proto::KeyStatusType,
-    key_id: u32,
+    key_id: tink::KeyId,
     prefix_type: tink::proto::OutputPrefixType,
 ) -> tink::proto::keyset::Key {
     tink::proto::keyset::Key {
@@ -714,7 +714,7 @@ pub fn new_key(
 }
 
 /// Create a new [`Keyset`] with the specified parameters.
-pub fn new_keyset(primary_key_id: u32, keys: Vec<tink::proto::keyset::Key>) -> Keyset {
+pub fn new_keyset(primary_key_id: tink::KeyId, keys: Vec<tink::proto::keyset::Key>) -> Keyset {
     Keyset {
         primary_key_id,
         key: keys,
