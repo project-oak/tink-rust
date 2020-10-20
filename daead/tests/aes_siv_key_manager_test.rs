@@ -15,8 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use prost::Message;
-use std::error::Error;
-use tink::subtle::random::get_random_bytes;
+use tink::{subtle::random::get_random_bytes, TinkError};
 
 #[test]
 fn test_aes_siv_primitive() {
@@ -106,7 +105,7 @@ fn test_aes_siv_type_url() {
     assert_eq!(km.type_url(), tink_testutil::AES_SIV_TYPE_URL);
 }
 
-fn validate_aes_siv_primitive(p: tink::Primitive) -> Result<(), Box<dyn Error>> {
+fn validate_aes_siv_primitive(p: tink::Primitive) -> Result<(), TinkError> {
     let cipher = match p {
         tink::Primitive::DeterministicAead(c) => c,
         _ => panic!("not a DeterministicAEAD"),
@@ -123,7 +122,7 @@ fn validate_aes_siv_primitive(p: tink::Primitive) -> Result<(), Box<dyn Error>> 
     Ok(())
 }
 
-fn validate_aes_siv_key(key: &tink::proto::AesSivKey) -> Result<(), Box<dyn Error>> {
+fn validate_aes_siv_key(key: &tink::proto::AesSivKey) -> Result<(), TinkError> {
     if key.version != tink_testutil::AES_SIV_KEY_VERSION {
         return Err(format!(
             "incorrect key version: key_version != {}",

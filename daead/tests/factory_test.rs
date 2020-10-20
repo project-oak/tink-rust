@@ -14,8 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use std::error::Error;
-use tink::subtle::random::get_random_bytes;
+use tink::{subtle::random::get_random_bytes, TinkError};
 
 #[test]
 fn test_factory_multiple_keys() {
@@ -86,7 +85,7 @@ fn validate_daead_factory_cipher<T: ?Sized>(
     encrypt_cipher: &Box<T>,
     decrypt_cipher: &Box<T>,
     expected_prefix: &[u8],
-) -> Result<(), Box<dyn Error>>
+) -> Result<(), TinkError>
 where
     T: tink::DeterministicAead,
 {
