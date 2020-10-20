@@ -37,6 +37,7 @@ bazel test --cache_test_results=no \
       :aead_consistency_test \
       :deterministic_aead_test \
       :key_generation_consistency_test \
+      :key_version_test \
       :json_test \
       :mac_test \
       :prf_set_test \
