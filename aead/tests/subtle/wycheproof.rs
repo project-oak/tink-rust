@@ -17,6 +17,7 @@
 //! Common structures for AEAD Wycheproof test vectors.
 
 use serde::Deserialize;
+use tink_testutil::hex_string;
 
 #[derive(Debug, Deserialize)]
 pub struct TestData {
@@ -43,10 +44,16 @@ pub struct TestGroup {
 pub struct TestCase {
     #[serde(flatten)]
     pub case: tink_testutil::WycheproofCase,
-    pub aad: String,
-    pub ct: String,
-    pub iv: String,
-    pub key: String,
-    pub msg: String,
-    pub tag: String,
+    #[serde(with = "hex_string")]
+    pub aad: Vec<u8>,
+    #[serde(with = "hex_string")]
+    pub ct: Vec<u8>,
+    #[serde(with = "hex_string")]
+    pub iv: Vec<u8>,
+    #[serde(with = "hex_string")]
+    pub key: Vec<u8>,
+    #[serde(with = "hex_string")]
+    pub msg: Vec<u8>,
+    #[serde(with = "hex_string")]
+    pub tag: Vec<u8>,
 }

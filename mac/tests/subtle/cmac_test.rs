@@ -57,9 +57,12 @@ pub struct TestGroup {
 pub struct TestCase {
     #[serde(flatten)]
     pub case: tink_testutil::WycheproofCase,
-    pub key: String,
-    pub msg: String,
-    pub tag: String,
+    #[serde(with = "tink_testutil::hex_string")]
+    pub key: Vec<u8>,
+    #[serde(with = "tink_testutil::hex_string")]
+    pub msg: Vec<u8>,
+    #[serde(with = "tink_testutil::hex_string")]
+    pub tag: Vec<u8>,
 }
 
 #[test]
@@ -79,25 +82,7 @@ fn test_vectors_wycheproof() {
                 "     case {} [{}] {}",
                 tc.case.case_id, tc.case.result, tc.case.comment
             );
-            let key = hex::decode(&tc.key).unwrap_or_else(|_| {
-                panic!(
-                    "Could not decode key for test case {} ({})",
-                    tc.case.case_id, tc.case.comment
-                )
-            });
-            assert_eq!(key.len() * 8, g.key_size as usize);
-            let msg = hex::decode(&tc.msg).unwrap_or_else(|_| {
-                panic!(
-                    "Could not decode message for test case {} ({})",
-                    tc.case.case_id, tc.case.comment
-                )
-            });
-            let tag = hex::decode(&tc.tag).unwrap_or_else(|_| {
-                panic!(
-                    "Could not decode tag for test case {} ({})",
-                    tc.case.case_id, tc.case.comment
-                )
-            });
+            assert_eq!(tc.key.len() * 8, g.key_size as usize);
             assert_eq!(
                 g.tag_size % 8,
                 0,
@@ -108,7 +93,7 @@ fn test_vectors_wycheproof() {
             );
 
             let valid = tc.case.result == "valid";
-            let aes = match tink_mac::subtle::AesCmac::new(&key, g.tag_size as usize / 8) {
+            let aes = match tink_mac::subtle::AesCmac::new(&tc.key, g.tag_size as usize / 8) {
                 Err(e) => {
                     if valid {
                         panic!(
@@ -121,32 +106,31 @@ fn test_vectors_wycheproof() {
                 }
                 Ok(aes) => aes,
             };
-            let res = aes.compute_mac(&msg);
+            let res = aes.compute_mac(&tc.msg);
             if valid {
-                if res.is_err() {
-                    panic!(
-                        "Could not compute AES-CMAC for test case {} ({})",
-                        tc.case.case_id, tc.case.comment,
-                    );
-                } else {
-                    assert_eq!(
-                        hex::encode(res.unwrap()),
-                        tc.tag,
-                        "Computed AES-CMAC and expected for test case {} ({}) do not match",
-                        tc.case.case_id,
-                        tc.case.comment,
-                    );
-                }
+                assert!(
+                    res.is_ok(),
+                    "Could not compute AES-CMAC for test case {} ({})",
+                    tc.case.case_id,
+                    tc.case.comment,
+                );
+                assert_eq!(
+                    res.unwrap(),
+                    tc.tag,
+                    "Computed AES-CMAC and expected for test case {} ({}) do not match",
+                    tc.case.case_id,
+                    tc.case.comment,
+                );
             } else if res.is_ok() {
                 assert_ne!(
-                    hex::encode(res.unwrap()),
+                    res.unwrap(),
                     tc.tag,
                     "Compute AES-CMAC and invalid expected for test case {} ({}) match",
                     tc.case.case_id,
                     tc.case.comment
                 );
             }
-            let result = aes.verify_mac(&tag, &msg);
+            let result = aes.verify_mac(&tc.tag, &tc.msg);
             if valid && result.is_err() {
                 panic!(
                     "Could not verify MAC for test case {} ({})",

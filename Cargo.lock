@@ -1559,6 +1559,7 @@ dependencies = [
  "ed25519-dalek",
  "elliptic-curve",
  "generic-array",
+ "hex",
  "p256",
  "prost",
  "rand",

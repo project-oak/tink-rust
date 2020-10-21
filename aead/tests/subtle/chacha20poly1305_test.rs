@@ -219,46 +219,40 @@ fn test_cha_cha20_poly1305_wycheproof_vectors() {
                 "     case {} [{}] {}",
                 tc.case.case_id, tc.case.result, tc.case.comment
             );
-
-            let key = hex::decode(&tc.key)
-                .unwrap_or_else(|_| panic!("{}: cannot decode key", tc.case.case_id));
-            let aad = hex::decode(&tc.aad)
-                .unwrap_or_else(|_| panic!("{}: cannot decode aad", tc.case.case_id));
-            let msg = hex::decode(&tc.msg)
-                .unwrap_or_else(|_| panic!("{}: cannot decode msg", tc.case.case_id));
-            let ct = hex::decode(&tc.ct)
-                .unwrap_or_else(|_| panic!("{}: cannot decode ct", tc.case.case_id));
-            let nonce = hex::decode(&tc.iv)
-                .unwrap_or_else(|_| panic!("{}: cannot decode nonce", tc.case.case_id));
-            let tag = hex::decode(&tc.tag)
-                .unwrap_or_else(|_| panic!("{}: cannot decode tag", tc.case.case_id));
-
             let mut combined_ct = Vec::new();
-            combined_ct.extend_from_slice(&nonce);
-            combined_ct.extend_from_slice(&ct);
-            combined_ct.extend_from_slice(&tag);
+            combined_ct.extend_from_slice(&tc.iv);
+            combined_ct.extend_from_slice(&tc.ct);
+            combined_ct.extend_from_slice(&tc.tag);
 
-            let ca = subtle::ChaCha20Poly1305::new(&key).unwrap_or_else(|e| {
+            let ca = subtle::ChaCha20Poly1305::new(&tc.key).unwrap_or_else(|e| {
                 panic!(
                     "#{}, cannot create new instance of ChaCha20Poly1305: {}",
                     tc.case.case_id, e
                 )
             });
-            ca.encrypt(&msg, &aad).unwrap_or_else(|e| {
+            ca.encrypt(&tc.msg, &tc.aad).unwrap_or_else(|e| {
                 panic!("#{}, unexpected encryption error: {:?}", tc.case.case_id, e)
             });
-            let result = ca.decrypt(&combined_ct, &aad);
+            let result = ca.decrypt(&combined_ct, &tc.aad);
             match result {
                 Err(e) => {
-                    if tc.case.result == "valid" {
-                        panic!("#{}, unexpected error: {}", tc.case.case_id, e);
-                    }
+                    assert_ne!(
+                        tc.case.result, "valid",
+                        "#{}, unexpected error: {}",
+                        tc.case.case_id, e
+                    );
                 }
                 Ok(decrypted) => {
-                    if tc.case.result == "invalid" {
-                        panic!("#{}, decrypted invalid", tc.case.case_id);
-                    }
-                    assert_eq!(decrypted, msg, "#{}, incorrect decryption", tc.case.case_id);
+                    assert_ne!(
+                        tc.case.result, "invalid",
+                        "#{}, decrypted invalid",
+                        tc.case.case_id
+                    );
+                    assert_eq!(
+                        decrypted, tc.msg,
+                        "#{}, incorrect decryption",
+                        tc.case.case_id
+                    );
                 }
             }
         }

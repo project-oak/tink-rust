@@ -126,11 +126,15 @@ struct HkdfTestGroup {
 struct HkdfTestCase {
     #[serde(flatten)]
     pub case: tink_testutil::WycheproofCase,
-    pub ikm: String,
-    pub salt: String,
-    pub info: String,
+    #[serde(with = "tink_testutil::hex_string")]
+    pub ikm: Vec<u8>,
+    #[serde(with = "tink_testutil::hex_string")]
+    pub salt: Vec<u8>,
+    #[serde(with = "tink_testutil::hex_string")]
+    pub info: Vec<u8>,
     pub size: usize,
-    pub okm: String,
+    #[serde(with = "tink_testutil::hex_string")]
+    pub okm: Vec<u8>,
 }
 
 #[test]
@@ -149,27 +153,8 @@ fn test_vectors_hkdf_wycheproof() {
                     "     case {} [{}] {}",
                     tc.case.case_id, tc.case.result, tc.case.comment
                 );
-                let ikm = hex::decode(&tc.ikm).unwrap_or_else(|_| {
-                    panic!(
-                        "Could not decode key for test case {} ({})",
-                        tc.case.case_id, tc.case.comment
-                    )
-                });
-                assert_eq!(ikm.len() * 8, g.key_size as usize);
-                let salt = hex::decode(&tc.salt).unwrap_or_else(|_| {
-                    panic!(
-                        "Could not decode salt for test case {} ({})",
-                        tc.case.case_id, tc.case.comment
-                    )
-                });
-                let info = hex::decode(&tc.info).unwrap_or_else(|_| {
-                    panic!(
-                        "Could not decode info for test case {} ({})",
-                        tc.case.case_id, tc.case.comment
-                    )
-                });
-
-                let hkdf_prf = HkdfPrf::new(*hash, &ikm, &salt);
+                assert_eq!(tc.ikm.len() * 8, g.key_size as usize);
+                let hkdf_prf = HkdfPrf::new(*hash, &tc.ikm, &tc.salt);
                 let valid = tc.case.result == "valid";
                 if valid && hkdf_prf.is_err() {
                     panic!(
@@ -180,36 +165,28 @@ fn test_vectors_hkdf_wycheproof() {
                 if !valid && hkdf_prf.is_err() {
                     continue;
                 }
-                let res = match hkdf_prf.unwrap().compute_prf(&info, tc.size) {
+                let res = match hkdf_prf.unwrap().compute_prf(&tc.info, tc.size) {
                     Err(_) => {
-                        if valid {
-                            panic!(
-                                "Could not compute HKDF {:?} PRF for test case {} ({})",
-                                hash, tc.case.case_id, tc.case.comment
-                            );
-                        } else {
-                            continue;
-                        }
+                        assert!(
+                            !valid,
+                            "Could not compute HKDF {:?} PRF for test case {} ({})",
+                            hash, tc.case.case_id, tc.case.comment
+                        );
+                        continue;
                     }
                     Ok(r) => r,
                 };
                 if valid {
                     assert_eq!(
-                        hex::encode(res),
-                        tc.okm,
-                        "Compute HKDF {:?} PRF and expected for test case {} ({}) do not match",
-                        hash,
-                        tc.case.case_id,
-                        tc.case.comment
+                        res, tc.okm,
+                        "Computed HKDF {:?} PRF and expected for test case {} ({}) do not match",
+                        hash, tc.case.case_id, tc.case.comment
                     );
                 } else {
                     assert_ne!(
-                        hex::encode(res),
-                        tc.okm,
-                        "Compute HKDF {:?} PRF and invalid expected for test case {} ({}) match",
-                        hash,
-                        tc.case.case_id,
-                        tc.case.comment
+                        res, tc.okm,
+                        "Computed HKDF {:?} PRF and invalid expected for test case {} ({}) match",
+                        hash, tc.case.case_id, tc.case.comment
                     );
                 }
             }

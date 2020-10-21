@@ -186,45 +186,36 @@ fn test_vectors() {
                 "     case {} [{}] {}",
                 tc.case.case_id, tc.case.result, tc.case.comment
             );
-            let key = hex::decode(&tc.key)
-                .unwrap_or_else(|_| panic!("{}: cannot decode key", tc.case.case_id));
-            let aad = hex::decode(&tc.aad)
-                .unwrap_or_else(|_| panic!("{}: cannot decode aad", tc.case.case_id));
-            let msg = hex::decode(&tc.msg)
-                .unwrap_or_else(|_| panic!("{}: cannot decode msg", tc.case.case_id));
-            let ct = hex::decode(&tc.ct)
-                .unwrap_or_else(|_| panic!("{}: cannot decode ct", tc.case.case_id));
-            let iv = hex::decode(&tc.iv)
-                .unwrap_or_else(|_| panic!("{}: cannot decode iv", tc.case.case_id));
-            let tag = hex::decode(&tc.tag)
-                .unwrap_or_else(|_| panic!("{}: cannot decode tag", tc.case.case_id));
-
             let mut combined_ct = Vec::new();
-            combined_ct.extend_from_slice(&iv);
-            combined_ct.extend_from_slice(&ct);
-            combined_ct.extend_from_slice(&tag);
+            combined_ct.extend_from_slice(&tc.iv);
+            combined_ct.extend_from_slice(&tc.ct);
+            combined_ct.extend_from_slice(&tc.tag);
 
             // create cipher and do decryption
-            let cipher = match subtle::AesGcm::new(&key) {
+            let cipher = match subtle::AesGcm::new(&tc.key) {
                 Ok(c) => c,
                 Err(e) => panic!(
                     "cannot create new instance of AesGcm in test case {}: {:?}",
                     tc.case.case_id, e
                 ),
             };
-            let result = cipher.decrypt(&combined_ct, &aad);
+            let result = cipher.decrypt(&combined_ct, &tc.aad);
             match result {
                 Err(e) => {
-                    if tc.case.result == "valid" {
-                        panic!("unexpected error in test case {}: {}", tc.case.case_id, e);
-                    }
+                    assert_ne!(
+                        tc.case.result, "valid",
+                        "unexpected error in test case {}: {}",
+                        tc.case.case_id, e
+                    );
                 }
                 Ok(decrypted) => {
-                    if tc.case.result == "invalid" {
-                        panic!("decrypted invalid test case {}", tc.case.case_id)
-                    }
+                    assert_ne!(
+                        tc.case.result, "invalid",
+                        "decrypted invalid test case {}",
+                        tc.case.case_id
+                    );
                     assert_eq!(
-                        decrypted, msg,
+                        decrypted, tc.msg,
                         "incorrect decryption in test case {}",
                         tc.case.case_id,
                     );

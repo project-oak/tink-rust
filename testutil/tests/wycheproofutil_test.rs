@@ -22,13 +22,16 @@ fn test_wycheproof_parsing() {
     struct AeadTest {
         #[serde(flatten)]
         pub case: tink_testutil::WycheproofCase,
-        pub key: String,
-        pub iv: String,
-        pub aad: String,
-        #[serde(rename = "msg")]
-        pub message: String,
-        #[serde(rename = "ct")]
-        pub ciphertext: String,
+        #[serde(with = "tink_testutil::hex_string")]
+        pub key: Vec<u8>,
+        #[serde(with = "tink_testutil::hex_string")]
+        pub iv: Vec<u8>,
+        #[serde(with = "tink_testutil::hex_string")]
+        pub aad: Vec<u8>,
+        #[serde(rename = "msg", with = "tink_testutil::hex_string")]
+        pub message: Vec<u8>,
+        #[serde(rename = "ct", with = "tink_testutil::hex_string")]
+        pub ciphertext: Vec<u8>,
         pub tag: String,
     }
 

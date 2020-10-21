@@ -8,6 +8,7 @@ edition = "2018"
 ed25519-dalek = "*"
 elliptic-curve = "*"
 generic-array = "*"
+hex = "*"
 p256 = { version = "*", features = ["ecdsa"] }
 prost = "*"
 rand = "*"

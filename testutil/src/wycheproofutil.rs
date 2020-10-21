@@ -20,7 +20,7 @@ use serde::Deserialize;
 
 /// `WycheproofSuite` represents the common elements of the top level object in a Wycheproof json
 /// file.  Implementations should embed (using `#[serde(flatten)]`) `WycheproofSuite` in a struct
-/// that strongly types the `testGroups` field.  See tests/wycheproofutil_test.go for an example.
+/// that strongly types the `testGroups` field.  See tests/wycheproofutil_test.rs for an example.
 #[derive(Debug, Deserialize)]
 pub struct WycheproofSuite {
     pub algorithm: String,
@@ -33,7 +33,7 @@ pub struct WycheproofSuite {
 
 /// `WycheproofGroup` represents the common elements of a testGroups object in a Wycheproof suite.
 /// Implementations should embed (using `#[serde(flatten)]`) WycheproofGroup in a struct that
-/// strongly types its list of cases.  See tests/wycheproofutil_test.go for an example.
+/// strongly types its list of cases.  See tests/wycheproofutil_test.rs for an example.
 #[derive(Debug, Deserialize)]
 pub struct WycheproofGroup {
     #[serde(rename = "type")]
@@ -42,7 +42,7 @@ pub struct WycheproofGroup {
 
 /// `WycheproofCase` represents the common elements of a tests object in a Wycheproof group.
 /// Implementations should embed (using `#[serde(flatten)]`) `WycheproofCase` in a struct that
-/// contains fields specific to the test type.  See tests/wycheproofutil_test.go for an example.
+/// contains fields specific to the test type.  See tests/wycheproofutil_test.rs for an example.
 #[derive(Debug, Deserialize)]
 pub struct WycheproofCase {
     #[serde(rename = "tcId")]
@@ -65,4 +65,18 @@ pub fn wycheproof_data(filename: &str) -> Vec<u8> {
             filename, wycheproof_dir
         )
     })
+}
+
+// Manual deserialization implementation that maps hex strings onto byte slices.
+pub mod hex_string {
+    //! Manual JSON deserialization for hex strings.
+    use serde::Deserialize;
+    pub fn deserialize<'de, D: serde::Deserializer<'de>>(
+        deserializer: D,
+    ) -> Result<Vec<u8>, D::Error> {
+        let s = String::deserialize(deserializer)?;
+        ::hex::decode(&s).map_err(|_e| {
+            serde::de::Error::invalid_value(serde::de::Unexpected::Str(&s), &"hex data expected")
+        })
+    }
 }

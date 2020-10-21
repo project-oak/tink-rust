@@ -111,21 +111,9 @@ fn test_vectors_hmac_wycheproof() {
                     "     case {} [{}] {}",
                     tc.case.case_id, tc.case.result, tc.case.comment
                 );
-                let key = hex::decode(&tc.key).unwrap_or_else(|_| {
-                    panic!(
-                        "Could not decode key for test case {} ({})",
-                        tc.case.case_id, tc.case.comment
-                    )
-                });
-                assert_eq!(key.len() * 8, g.key_size as usize);
-                let msg = hex::decode(&tc.msg).unwrap_or_else(|_| {
-                    panic!(
-                        "Could not decode message for test case {} ({})",
-                        tc.case.case_id, tc.case.comment
-                    )
-                });
+                assert_eq!(tc.key.len() * 8, g.key_size as usize);
 
-                let h = HmacPrf::new(*hash, &key);
+                let h = HmacPrf::new(*hash, &tc.key);
                 let valid = tc.case.result == "valid";
                 if valid && h.is_err() {
                     panic!(
@@ -144,34 +132,28 @@ fn test_vectors_hmac_wycheproof() {
                     tc.case.comment,
                     g.tag_size
                 );
-                let res = match h.unwrap().compute_prf(&msg, (g.tag_size / 8) as usize) {
+                let res = match h.unwrap().compute_prf(&tc.msg, (g.tag_size / 8) as usize) {
                     Err(e) => {
-                        if valid {
-                            panic!(
-                                "Could not compute HMAC for test case {} ({}): {}",
-                                tc.case.case_id, tc.case.comment, e
-                            );
-                        } else {
-                            continue;
-                        }
+                        assert!(
+                            !valid,
+                            "Could not compute HMAC for test case {} ({}): {}",
+                            tc.case.case_id, tc.case.comment, e
+                        );
+                        continue;
                     }
                     Ok(r) => r,
                 };
                 if valid {
                     assert_eq!(
-                        hex::encode(res),
-                        tc.tag,
-                        "Compute HMAC and expected for test case {} ({}) do not match",
-                        tc.case.case_id,
-                        tc.case.comment
+                        res, tc.tag,
+                        "Computed HMAC and expected for test case {} ({}) do not match",
+                        tc.case.case_id, tc.case.comment
                     );
                 } else {
                     assert_ne!(
-                        hex::encode(res),
-                        tc.tag,
-                        "Compute HMAC and invalid expected for test case {} ({}) match",
-                        tc.case.case_id,
-                        tc.case.comment
+                        res, tc.tag,
+                        "Computed HMAC and invalid expected for test case {} ({}) match",
+                        tc.case.case_id, tc.case.comment
                     )
                 }
             }

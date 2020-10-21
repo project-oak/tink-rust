@@ -145,16 +145,20 @@ struct TestGroupEd25519 {
 
 #[derive(Debug, Deserialize)]
 struct TestKeyEd25519 {
-    sk: String,
-    pk: String,
+    #[serde(with = "tink_testutil::hex_string")]
+    sk: Vec<u8>,
+    #[serde(with = "tink_testutil::hex_string")]
+    pk: Vec<u8>,
 }
 
 #[derive(Debug, Deserialize)]
 struct TestCaseEd25519 {
     #[serde(flatten)]
     pub case: tink_testutil::WycheproofCase,
-    pub msg: String,
-    pub sig: String,
+    #[serde(with = "tink_testutil::hex_string")]
+    pub msg: Vec<u8>,
+    #[serde(with = "tink_testutil::hex_string")]
+    pub sig: Vec<u8>,
 }
 
 #[test]
@@ -165,17 +169,19 @@ fn test_vectors_ed25519() {
     let bytes = tink_testutil::wycheproof_data(filename);
     let data: TestDataEd25519 = serde_json::from_slice(&bytes).unwrap();
     for g in &data.test_groups {
-        let pvt_key = hex::decode(&g.key.sk).expect("cannot decode wx");
-        let pub_key = hex::decode(&g.key.pk).expect("cannot decode wy");
-        println!("   key info: sk={}, pk={}", g.key.sk, g.key.pk);
+        println!(
+            "   key info: sk={}, pk={}",
+            hex::encode(&g.key.sk),
+            hex::encode(&g.key.pk)
+        );
 
-        let signer = match Ed25519Signer::new(&pvt_key) {
+        let signer = match Ed25519Signer::new(&g.key.sk) {
             Ok(s) => s,
             Err(e) => {
                 panic!("failed to build signer for test group {:?}: {:?}", g, e);
             }
         };
-        let verifier = match Ed25519Verifier::new(&pub_key) {
+        let verifier = match Ed25519Verifier::new(&g.key.pk) {
             Ok(v) => v,
             Err(e) => {
                 panic!("failed to build verifier for test group {:?}: {:?}", g, e);
@@ -187,19 +193,7 @@ fn test_vectors_ed25519() {
                 "     case {} [{}] {}",
                 tc.case.case_id, tc.case.result, tc.case.comment
             );
-            let message = hex::decode(&tc.msg).unwrap_or_else(|e| {
-                panic!(
-                    "cannot decode message in test case {}: {}",
-                    tc.case.case_id, e
-                )
-            });
-            let sig = hex::decode(&tc.sig).unwrap_or_else(|e| {
-                panic!(
-                    "cannot decode signature in test case {}: {}",
-                    tc.case.case_id, e
-                )
-            });
-            let result = signer.sign(&message);
+            let result = signer.sign(&tc.msg);
             if tc.case.result == "valid" {
                 match result {
                     Err(e) => panic!(
@@ -213,7 +207,7 @@ fn test_vectors_ed25519() {
                     // signature.
                     {
                         assert_eq!(
-                            sig,
+                            tc.sig,
                             got,
                             "sign failed in test case {}: invalid signature generated {}",
                             tc.case.case_id,
@@ -221,14 +215,14 @@ fn test_vectors_ed25519() {
                         )
                     }
                 }
-            } else if result.is_ok() && sig == result.unwrap() {
+            } else if result.is_ok() && tc.sig == result.unwrap() {
                 panic!(
                     "sign failed in test case {}: invalid signature generated",
                     tc.case.case_id
                 )
             }
 
-            let result = verifier.verify(&sig, &message);
+            let result = verifier.verify(&tc.sig, &tc.msg);
             if tc.case.result == "valid" && result.is_err() {
                 panic!(
                     "verify failed in test case {}: valid signature is rejected with error {:?}",

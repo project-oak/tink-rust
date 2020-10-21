@@ -190,10 +190,14 @@ struct TestGroup {
 struct TestCase {
     #[serde(flatten)]
     pub case: tink_testutil::WycheproofCase,
-    pub key: String,
-    pub aad: String,
-    pub msg: String,
-    pub ct: String,
+    #[serde(with = "tink_testutil::hex_string")]
+    pub key: Vec<u8>,
+    #[serde(with = "tink_testutil::hex_string")]
+    pub aad: Vec<u8>,
+    #[serde(with = "tink_testutil::hex_string")]
+    pub msg: Vec<u8>,
+    #[serde(with = "tink_testutil::hex_string")]
+    pub ct: Vec<u8>,
 }
 
 const VALID: &str = "valid";
@@ -217,30 +221,22 @@ fn test_aes_siv_wycheproof_vectors() {
                 "     case {} [{}] {}",
                 tc.case.case_id, tc.case.result, tc.case.comment
             );
-            let key = hex::decode(&tc.key)
-                .unwrap_or_else(|_| panic!("{}: cannot decode key", tc.case.case_id));
-            let aad = hex::decode(&tc.aad)
-                .unwrap_or_else(|_| panic!("{}: cannot decode aad", tc.case.case_id));
-            let msg = hex::decode(&tc.msg)
-                .unwrap_or_else(|_| panic!("{}: cannot decode msg", tc.case.case_id));
-            let ct = hex::decode(&tc.ct)
-                .unwrap_or_else(|_| panic!("{}: cannot decode ct", tc.case.case_id));
-            let a = tink_daead::subtle::AesSiv::new(&key).expect("AesSiv::new() failed");
+            let a = tink_daead::subtle::AesSiv::new(&tc.key).expect("AesSiv::new() failed");
 
             // EncryptDeterministically should always succeed since msg and aad are valid inputs.
             let got_ct = a
-                .encrypt_deterministically(&msg, &aad)
+                .encrypt_deterministically(&tc.msg, &tc.aad)
                 .unwrap_or_else(|_| panic!("{}: unexpected encryption error", tc.case.case_id));
             match tc.case.result.as_ref() {
                 VALID => {
-                    assert_eq!(got_ct, ct, "{}: incorrect encryption", tc.case.case_id);
+                    assert_eq!(got_ct, tc.ct, "{}: incorrect encryption", tc.case.case_id);
                 }
                 INVALID => {
-                    assert_ne!(got_ct, ct, "{}: invalid encryption", tc.case.case_id);
+                    assert_ne!(got_ct, tc.ct, "{}: invalid encryption", tc.case.case_id);
                 }
                 r => panic!("unknown result type {}", r),
             }
-            let pt_result = a.decrypt_deterministically(&ct, &aad);
+            let pt_result = a.decrypt_deterministically(&tc.ct, &tc.aad);
             match tc.case.result.as_ref() {
                 VALID => {
                     assert!(
@@ -250,7 +246,7 @@ fn test_aes_siv_wycheproof_vectors() {
                         pt_result
                     );
                     assert_eq!(
-                        msg,
+                        tc.msg,
                         pt_result.unwrap(),
                         "{}: incorrect decryption",
                         tc.case.case_id

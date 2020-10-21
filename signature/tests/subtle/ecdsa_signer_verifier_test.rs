@@ -23,6 +23,7 @@ use tink::{
     Signer, Verifier,
 };
 use tink_signature::subtle::{EcdsaPrivateKey, EcdsaPublicKey};
+use tink_testutil::hex_string;
 
 #[test]
 fn test_sign_verify() {
@@ -122,8 +123,10 @@ struct TestKey {
     curve: String,
     #[serde(rename = "type")]
     key_type: String,
-    wx: String,
-    wy: String,
+    #[serde(with = "hex_string")]
+    wx: Vec<u8>,
+    #[serde(with = "hex_string")]
+    wy: Vec<u8>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -139,8 +142,10 @@ struct Jwk {
 struct TestCase {
     #[serde(flatten)]
     pub case: tink_testutil::WycheproofCase,
-    pub msg: String,
-    pub sig: String,
+    #[serde(with = "hex_string")]
+    pub msg: Vec<u8>,
+    #[serde(with = "hex_string")]
+    pub sig: Vec<u8>,
 }
 
 #[test]
@@ -207,18 +212,16 @@ fn wycheproof_test(filename: &str, encoding: EcdsaSignatureEncoding, panic_tests
             }
             continue;
         }
-        let x_bytes = hex::decode(&g.key.wx).expect("cannot decode wx");
-        let y_bytes = hex::decode(&g.key.wy).expect("cannot decode wy");
         println!(
             "   key info: {:?}, {:?}, {:?}, {}, {}",
             hash,
             curve,
             encoding,
-            hex::encode(&x_bytes),
-            hex::encode(&y_bytes),
+            hex::encode(&g.key.wx),
+            hex::encode(&g.key.wy),
         );
         let verifier = match tink_signature::subtle::EcdsaVerifier::new(
-            hash, curve, encoding, &x_bytes, &y_bytes,
+            hash, curve, encoding, &g.key.wx, &g.key.wy,
         ) {
             Ok(v) => v,
             Err(e) => {
@@ -237,19 +240,7 @@ fn wycheproof_test(filename: &str, encoding: EcdsaSignatureEncoding, panic_tests
                 "     case {} [{}] {}",
                 tc.case.case_id, tc.case.result, tc.case.comment
             );
-            let message = hex::decode(&tc.msg).unwrap_or_else(|e| {
-                panic!(
-                    "cannot decode message in test case {}: {}",
-                    tc.case.case_id, e
-                )
-            });
-            let sig = hex::decode(&tc.sig).unwrap_or_else(|e| {
-                panic!(
-                    "cannot decode signature in test case {}: {}",
-                    tc.case.case_id, e
-                )
-            });
-            let result = verifier.verify(&sig, &message);
+            let result = verifier.verify(&tc.sig, &tc.msg);
             if (tc.case.result == "valid" && result.is_err())
                 || (tc.case.result == "invalid" && result.is_ok())
             {
