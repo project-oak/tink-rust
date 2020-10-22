@@ -40,6 +40,32 @@ pub struct WycheproofGroup {
     pub group_type: String,
 }
 
+/// `WycheproofResult` represents the possible result values for a Wycheproof test case.
+#[derive(Debug, PartialEq, Eq)]
+pub enum WycheproofResult {
+    /// Test case is valid, the crypto operation should succeed.
+    Valid,
+    /// Test case is invalid; the crypto operation should fail.
+    Invalid,
+    /// Test case is valid, but uses weak parameters; the crypto operation might succeed
+    /// or fail depending on how strict the library is.
+    Acceptable,
+}
+
+impl std::fmt::Display for WycheproofResult {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                WycheproofResult::Valid => "valid",
+                WycheproofResult::Invalid => "invalid",
+                WycheproofResult::Acceptable => "acceptable",
+            }
+        )
+    }
+}
+
 /// `WycheproofCase` represents the common elements of a tests object in a Wycheproof group.
 /// Implementations should embed (using `#[serde(flatten)]`) `WycheproofCase` in a struct that
 /// contains fields specific to the test type.  See tests/wycheproofutil_test.rs for an example.
@@ -48,7 +74,8 @@ pub struct WycheproofCase {
     #[serde(rename = "tcId")]
     pub case_id: i32,
     pub comment: String,
-    pub result: String,
+    #[serde(with = "wycheproof_result")]
+    pub result: WycheproofResult,
     #[serde(default)]
     pub flags: Vec<String>,
 }
@@ -67,7 +94,6 @@ pub fn wycheproof_data(filename: &str) -> Vec<u8> {
     })
 }
 
-// Manual deserialization implementation that maps hex strings onto byte slices.
 pub mod hex_string {
     //! Manual JSON deserialization for hex strings.
     use serde::Deserialize;
@@ -78,5 +104,24 @@ pub mod hex_string {
         ::hex::decode(&s).map_err(|_e| {
             serde::de::Error::invalid_value(serde::de::Unexpected::Str(&s), &"hex data expected")
         })
+    }
+}
+
+pub mod wycheproof_result {
+    //! Manual JSON deserialization for a `result` enum.
+    use serde::Deserialize;
+    pub fn deserialize<'de, D: serde::Deserializer<'de>>(
+        deserializer: D,
+    ) -> Result<super::WycheproofResult, D::Error> {
+        let s = String::deserialize(deserializer)?;
+        match s.as_ref() {
+            "valid" => Ok(super::WycheproofResult::Valid),
+            "invalid" => Ok(super::WycheproofResult::Invalid),
+            "acceptable" => Ok(super::WycheproofResult::Acceptable),
+            _ => Err(serde::de::Error::invalid_value(
+                serde::de::Unexpected::Str(&s),
+                &"unexpected result value",
+            )),
+        }
     }
 }

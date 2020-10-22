@@ -16,6 +16,7 @@
 
 use serde::Deserialize;
 use tink::{subtle::random::get_random_bytes, DeterministicAead};
+use tink_testutil::WycheproofResult;
 
 #[test]
 fn test_aes_siv_encrypt_decrypt() {
@@ -200,9 +201,6 @@ struct TestCase {
     pub ct: Vec<u8>,
 }
 
-const VALID: &str = "valid";
-const INVALID: &str = "invalid";
-
 #[test]
 fn test_aes_siv_wycheproof_vectors() {
     let filename = "testvectors/aes_siv_cmac_test.json";
@@ -227,18 +225,17 @@ fn test_aes_siv_wycheproof_vectors() {
             let got_ct = a
                 .encrypt_deterministically(&tc.msg, &tc.aad)
                 .unwrap_or_else(|_| panic!("{}: unexpected encryption error", tc.case.case_id));
-            match tc.case.result.as_ref() {
-                VALID => {
+            match tc.case.result {
+                WycheproofResult::Valid | WycheproofResult::Acceptable => {
                     assert_eq!(got_ct, tc.ct, "{}: incorrect encryption", tc.case.case_id);
                 }
-                INVALID => {
+                WycheproofResult::Invalid => {
                     assert_ne!(got_ct, tc.ct, "{}: invalid encryption", tc.case.case_id);
                 }
-                r => panic!("unknown result type {}", r),
             }
             let pt_result = a.decrypt_deterministically(&tc.ct, &tc.aad);
-            match tc.case.result.as_ref() {
-                VALID => {
+            match tc.case.result {
+                WycheproofResult::Valid | WycheproofResult::Acceptable => {
                     assert!(
                         pt_result.is_ok(),
                         "{}: unexpected decryption error: {:?}",
@@ -252,14 +249,13 @@ fn test_aes_siv_wycheproof_vectors() {
                         tc.case.case_id
                     );
                 }
-                INVALID => {
+                WycheproofResult::Invalid => {
                     assert!(
                         pt_result.is_err(),
                         "{}: decryption error expected",
                         tc.case.case_id
                     );
                 }
-                r => panic!("unknown result type {}", r),
             }
         }
     }

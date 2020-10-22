@@ -114,7 +114,7 @@ fn test_vectors_hmac_wycheproof() {
                 assert_eq!(tc.key.len() * 8, g.key_size as usize);
 
                 let h = HmacPrf::new(*hash, &tc.key);
-                let valid = tc.case.result == "valid";
+                let valid = tc.case.result == tink_testutil::WycheproofResult::Valid;
                 if valid && h.is_err() {
                     panic!(
                         "Could not create HmacPrf for test case {} ({})",

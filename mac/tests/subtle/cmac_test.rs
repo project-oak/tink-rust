@@ -92,7 +92,7 @@ fn test_vectors_wycheproof() {
                 g.tag_size
             );
 
-            let valid = tc.case.result == "valid";
+            let valid = tc.case.result == tink_testutil::WycheproofResult::Valid;
             let aes = match tink_mac::subtle::AesCmac::new(&tc.key, g.tag_size as usize / 8) {
                 Err(e) => {
                     if valid {

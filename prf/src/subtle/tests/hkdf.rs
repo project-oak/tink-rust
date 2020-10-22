@@ -155,7 +155,7 @@ fn test_vectors_hkdf_wycheproof() {
                 );
                 assert_eq!(tc.ikm.len() * 8, g.key_size as usize);
                 let hkdf_prf = HkdfPrf::new(*hash, &tc.ikm, &tc.salt);
-                let valid = tc.case.result == "valid";
+                let valid = tc.case.result == tink_testutil::WycheproofResult::Valid;
                 if valid && hkdf_prf.is_err() {
                     panic!(
                         "Could not create HKDF {:?} PRF for test case {} ({})",

@@ -19,6 +19,7 @@ use rand::{thread_rng, Rng};
 use std::collections::HashSet;
 use tink::{subtle::random::get_random_bytes, Aead};
 use tink_aead::subtle;
+use tink_testutil::WycheproofResult;
 
 #[test]
 fn test_cha_cha20_poly1305_encrypt_decrypt() {
@@ -237,14 +238,17 @@ fn test_cha_cha20_poly1305_wycheproof_vectors() {
             match result {
                 Err(e) => {
                     assert_ne!(
-                        tc.case.result, "valid",
+                        tc.case.result,
+                        WycheproofResult::Valid,
                         "#{}, unexpected error: {}",
-                        tc.case.case_id, e
+                        tc.case.case_id,
+                        e
                     );
                 }
                 Ok(decrypted) => {
                     assert_ne!(
-                        tc.case.result, "invalid",
+                        tc.case.result,
+                        WycheproofResult::Invalid,
                         "#{}, decrypted invalid",
                         tc.case.case_id
                     );

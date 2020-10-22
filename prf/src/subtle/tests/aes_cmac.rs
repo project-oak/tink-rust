@@ -91,7 +91,7 @@ fn test_vectors_wycheproof() {
             assert_eq!(tc.key.len() * 8, g.key_size as usize);
 
             let aes = AesCmacPrf::new(&tc.key);
-            let valid = tc.case.result == "valid";
+            let valid = tc.case.result == tink_testutil::WycheproofResult::Valid;
             if valid && aes.is_err() {
                 panic!(
                     "Could not create AesCmacPrf for test case {} ({})",

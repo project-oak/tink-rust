@@ -23,7 +23,7 @@ use tink::{
     Signer, Verifier,
 };
 use tink_signature::subtle::{EcdsaPrivateKey, EcdsaPublicKey};
-use tink_testutil::hex_string;
+use tink_testutil::{hex_string, WycheproofResult};
 
 #[test]
 fn test_sign_verify() {
@@ -241,8 +241,8 @@ fn wycheproof_test(filename: &str, encoding: EcdsaSignatureEncoding, panic_tests
                 tc.case.case_id, tc.case.result, tc.case.comment
             );
             let result = verifier.verify(&tc.sig, &tc.msg);
-            if (tc.case.result == "valid" && result.is_err())
-                || (tc.case.result == "invalid" && result.is_ok())
+            if (tc.case.result == WycheproofResult::Valid && result.is_err())
+                || (tc.case.result == WycheproofResult::Invalid && result.is_ok())
             {
                 panic!(
                     "failed in test case {} with result '{:?}' ",

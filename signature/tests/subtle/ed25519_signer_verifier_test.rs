@@ -18,6 +18,7 @@ use ed25519_dalek::Keypair;
 use serde::Deserialize;
 use tink::{subtle::random::get_random_bytes, Signer, TinkError, Verifier};
 use tink_signature::subtle::{Ed25519Signer, Ed25519Verifier};
+use tink_testutil::WycheproofResult;
 
 #[test]
 fn test_ed25519_deterministic() {
@@ -194,7 +195,7 @@ fn test_vectors_ed25519() {
                 tc.case.case_id, tc.case.result, tc.case.comment
             );
             let result = signer.sign(&tc.msg);
-            if tc.case.result == "valid" {
+            if tc.case.result == tink_testutil::WycheproofResult::Valid {
                 match result {
                     Err(e) => panic!(
                         "sign failed in test case {}: with error {:?}",
@@ -223,13 +224,13 @@ fn test_vectors_ed25519() {
             }
 
             let result = verifier.verify(&tc.sig, &tc.msg);
-            if tc.case.result == "valid" && result.is_err() {
+            if tc.case.result == WycheproofResult::Valid && result.is_err() {
                 panic!(
                     "verify failed in test case {}: valid signature is rejected with error {:?}",
                     tc.case.case_id, result
                 )
             }
-            if tc.case.result == "invalid" && result.is_ok() {
+            if tc.case.result == WycheproofResult::Invalid && result.is_ok() {
                 panic!(
                     "verify failed in test case {}: invalid signature is accepted",
                     tc.case.case_id

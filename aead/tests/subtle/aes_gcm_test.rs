@@ -18,6 +18,7 @@ use super::wycheproof;
 use std::collections::HashSet;
 use tink::{subtle::random::get_random_bytes, Aead};
 use tink_aead::subtle;
+use tink_testutil::WycheproofResult;
 
 const KEY_SIZES: &[usize] = &[16, 32];
 
@@ -203,14 +204,17 @@ fn test_vectors() {
             match result {
                 Err(e) => {
                     assert_ne!(
-                        tc.case.result, "valid",
+                        tc.case.result,
+                        WycheproofResult::Valid,
                         "unexpected error in test case {}: {}",
-                        tc.case.case_id, e
+                        tc.case.case_id,
+                        e
                     );
                 }
                 Ok(decrypted) => {
                     assert_ne!(
-                        tc.case.result, "invalid",
+                        tc.case.result,
+                        WycheproofResult::Invalid,
                         "decrypted invalid test case {}",
                         tc.case.case_id
                     );
