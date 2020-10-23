@@ -8,8 +8,6 @@ edition = "2018"
 ed25519-dalek = "*"
 elliptic-curve = "*"
 generic-array = "*"
-# TODO  remove this:
-hex = "*"
 p256 = { version = "*", features = ["ecdsa"] }
 prost = "*"
 rand = "*"
