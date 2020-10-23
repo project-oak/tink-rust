@@ -44,6 +44,219 @@ fn test_keyset_manager_basic() {
 }
 
 #[test]
+fn test_keyset_manager_operations() {
+    tink_aead::init();
+    let mut key_template = tink_aead::aes128_gcm_key_template();
+
+    // Create a keyset that contains a single key.
+    let mut keyset_manager = tink::keyset::Manager::new();
+    keyset_manager
+        .add(&key_template, /* as_primary= */ true)
+        .unwrap();
+    assert_eq!(1, keyset_manager.key_count());
+
+    // Verify the keyset.
+    let keyset = insecure::keyset_material(&keyset_manager.handle().unwrap());
+    let key_id_0 = keyset.key[0].key_id;
+    assert_eq!(key_id_0, keyset.primary_key_id);
+    assert_eq!(
+        keyset.key[0].status,
+        tink::proto::KeyStatusType::Enabled as i32
+    );
+    assert_eq!(
+        keyset.key[0].output_prefix_type,
+        tink::proto::OutputPrefixType::Tink as i32
+    );
+    assert_eq!(
+        keyset.key[0].key_data.as_ref().unwrap().type_url,
+        tink_testutil::AES_GCM_TYPE_URL
+    );
+    assert_eq!(
+        tink::proto::key_data::KeyMaterialType::Symmetric as i32,
+        keyset.key[0].key_data.as_ref().unwrap().key_material_type
+    );
+
+    // Add another key.
+    key_template.output_prefix_type = tink::proto::OutputPrefixType::Raw as i32;
+    let key_id_1 = keyset_manager
+        .add(&key_template, /* as_primary= */ false)
+        .unwrap();
+    assert_eq!(2, keyset_manager.key_count());
+    let keyset = insecure::keyset_material(&keyset_manager.handle().unwrap());
+    assert_eq!(2, keyset.key.len());
+    assert_eq!(key_id_0, keyset.primary_key_id);
+    assert_ne!(keyset.key[0].key_data, keyset.key[1].key_data);
+    assert_eq!(
+        keyset.key[1].status,
+        tink::proto::KeyStatusType::Enabled as i32
+    );
+    assert_eq!(
+        keyset.key[1].output_prefix_type,
+        tink::proto::OutputPrefixType::Raw as i32
+    );
+    assert_eq!(
+        keyset.key[1].key_data.as_ref().unwrap().type_url,
+        tink_testutil::AES_GCM_TYPE_URL
+    );
+    assert_eq!(
+        tink::proto::key_data::KeyMaterialType::Symmetric as i32,
+        keyset.key[1].key_data.as_ref().unwrap().key_material_type
+    );
+
+    // And another one, via rotation.
+    key_template.output_prefix_type = tink::proto::OutputPrefixType::Legacy as i32;
+    let key_id_2 = keyset_manager.rotate(&key_template).unwrap();
+    assert_eq!(3, keyset_manager.key_count());
+    let keyset = insecure::keyset_material(&keyset_manager.handle().unwrap());
+    assert_eq!(3, keyset.key.len());
+    assert_eq!(key_id_2, keyset.primary_key_id);
+    assert_ne!(keyset.key[0].key_data, keyset.key[2].key_data);
+    assert_ne!(keyset.key[1].key_data, keyset.key[2].key_data);
+    assert_eq!(
+        keyset.key[2].status,
+        tink::proto::KeyStatusType::Enabled as i32
+    );
+    assert_eq!(
+        keyset.key[2].output_prefix_type,
+        tink::proto::OutputPrefixType::Legacy as i32
+    );
+    assert_eq!(
+        keyset.key[2].key_data.as_ref().unwrap().type_url,
+        tink_testutil::AES_GCM_TYPE_URL
+    );
+    assert_eq!(
+        tink::proto::key_data::KeyMaterialType::Symmetric as i32,
+        keyset.key[2].key_data.as_ref().unwrap().key_material_type
+    );
+
+    // Change the primary.
+    keyset_manager.set_primary(key_id_1).unwrap();
+    let keyset = insecure::keyset_material(&keyset_manager.handle().unwrap());
+    assert_eq!(3, keyset_manager.key_count());
+    assert_eq!(3, keyset.key.len());
+    assert_eq!(key_id_1, keyset.primary_key_id);
+
+    // Clone a keyset via the manager, and check equality.
+    let keyset_manager_2 = tink::keyset::Manager::new_from_handle(keyset_manager.handle().unwrap());
+    let keyset_2 = insecure::keyset_material(&keyset_manager_2.handle().unwrap());
+    assert_eq!(keyset, keyset_2);
+
+    // Disable a key, and try to set it as primary.
+    assert_eq!(
+        keyset.key[2].status,
+        tink::proto::KeyStatusType::Enabled as i32
+    );
+    keyset_manager.disable(key_id_2).unwrap();
+    assert_eq!(3, keyset_manager.key_count());
+    let keyset = insecure::keyset_material(&keyset_manager.handle().unwrap());
+    assert_eq!(
+        keyset.key[2].status,
+        tink::proto::KeyStatusType::Disabled as i32
+    );
+
+    let result = keyset_manager.set_primary(key_id_2);
+    assert!(result.is_err());
+    assert!(format!("{:?}", result).contains("must be Enabled"));
+    let keyset = insecure::keyset_material(&keyset_manager.handle().unwrap());
+    assert_eq!(key_id_1, keyset.primary_key_id);
+
+    // Enable ENABLED key, disable a DISABLED one.
+    assert_eq!(
+        keyset.key[1].status,
+        tink::proto::KeyStatusType::Enabled as i32
+    );
+    keyset_manager.enable(key_id_1).unwrap();
+    let keyset = insecure::keyset_material(&keyset_manager.handle().unwrap());
+    assert_eq!(
+        keyset.key[1].status,
+        tink::proto::KeyStatusType::Enabled as i32
+    );
+
+    assert_eq!(
+        keyset.key[2].status,
+        tink::proto::KeyStatusType::Disabled as i32
+    );
+    keyset_manager.disable(key_id_2).unwrap();
+    let keyset = insecure::keyset_material(&keyset_manager.handle().unwrap());
+    assert_eq!(
+        keyset.key[2].status,
+        tink::proto::KeyStatusType::Disabled as i32
+    );
+
+    // Enable the disabled key, then destroy it, and try to re-enable.
+    keyset_manager.enable(key_id_2).unwrap();
+    let keyset = insecure::keyset_material(&keyset_manager.handle().unwrap());
+    assert_eq!(
+        keyset.key[2].status,
+        tink::proto::KeyStatusType::Enabled as i32
+    );
+    assert!(!keyset.key[2].key_data.is_none());
+
+    keyset_manager.destroy(key_id_2).unwrap();
+    assert_eq!(3, keyset_manager.key_count());
+    let keyset = insecure::keyset_material(&keyset_manager.handle().unwrap());
+    assert_eq!(
+        keyset.key[2].status,
+        tink::proto::KeyStatusType::Destroyed as i32
+    );
+    assert!(keyset.key[2].key_data.is_none());
+
+    let result = keyset_manager.enable(key_id_2);
+    assert!(result.is_err());
+    assert!(format!("{:?}", result).contains("Cannot enable"));
+    let keyset = insecure::keyset_material(&keyset_manager.handle().unwrap());
+    assert_eq!(
+        keyset.key[2].status,
+        tink::proto::KeyStatusType::Destroyed as i32
+    );
+    assert_eq!(key_id_1, keyset.primary_key_id);
+
+    // Delete the destroyed key, then try to destroy and delete it again.
+    keyset_manager.delete(key_id_2).unwrap();
+    assert_eq!(2, keyset_manager.key_count());
+    let keyset = insecure::keyset_material(&keyset_manager.handle().unwrap());
+    assert_eq!(2, keyset.key.len());
+
+    let result = keyset_manager.destroy(key_id_2);
+    assert!(result.is_err());
+    assert!(format!("{:?}", result).contains("not found"));
+
+    let result = keyset_manager.delete(key_id_2);
+    assert!(result.is_err());
+    assert!(format!("{:?}", result).contains("not found"));
+
+    // Try disabling/destroying/deleting the primary key.
+    let keyset = insecure::keyset_material(&keyset_manager.handle().unwrap());
+    assert_eq!(key_id_1, keyset.primary_key_id);
+
+    let result = keyset_manager.disable(key_id_1);
+    assert!(result.is_err());
+    assert!(format!("{:?}", result).contains("Cannot disable primary"));
+
+    let result = keyset_manager.destroy(key_id_1);
+    assert!(result.is_err());
+    assert!(format!("{:?}", result).contains("Cannot destroy primary"));
+
+    let result = keyset_manager.delete(key_id_1);
+    assert!(result.is_err());
+    assert!(format!("{:?}", result).contains("Cannot delete primary"));
+
+    let keyset = insecure::keyset_material(&keyset_manager.handle().unwrap());
+    assert_eq!(key_id_1, keyset.primary_key_id);
+
+    // Delete the first key, then try to set it as primary.
+    keyset_manager.delete(key_id_0).unwrap();
+    let keyset = insecure::keyset_material(&keyset_manager.handle().unwrap());
+    assert_eq!(1, keyset.key.len());
+    assert_eq!(key_id_1, keyset.key[0].key_id);
+
+    let result = keyset_manager.set_primary(key_id_0);
+    assert!(result.is_err());
+    assert!(format!("{:?}", result).contains("not found"));
+    assert_eq!(1, keyset_manager.key_count());
+}
+
+#[test]
 fn test_existing_keyset() {
     tink_mac::init();
     // Create a keyset that contains a single `HmacKey`.

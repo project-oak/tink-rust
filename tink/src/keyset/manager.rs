@@ -44,18 +44,19 @@ impl Manager {
     }
 
     /// Generate a fresh key using the given key template and set the new key as the primary key.
-    /// The key that was primary prior to rotation remains `Enabled`.
-    pub fn rotate(&mut self, kt: &crate::proto::KeyTemplate) -> Result<(), TinkError> {
+    /// The key that was primary prior to rotation remains `Enabled`. Returns the key ID of the
+    /// new primary key.
+    pub fn rotate(&mut self, kt: &crate::proto::KeyTemplate) -> Result<KeyId, TinkError> {
         self.add(kt, true)
     }
 
     /// Generate a fresh key using the given key template, and optionally set the new key as the
-    /// primary key.
+    /// primary key. Returns the key ID of the added key.
     pub fn add(
         &mut self,
         kt: &crate::proto::KeyTemplate,
         as_primary: bool,
-    ) -> Result<(), TinkError> {
+    ) -> Result<KeyId, TinkError> {
         let key_data = crate::registry::new_key_data(kt)
             .map_err(|e| wrap_err("keyset::Manager: cannot create KeyData", e))?;
         let key_id = self.new_key_id();
@@ -74,7 +75,7 @@ impl Manager {
             // Set the new key as the primary key
             self.ks.primary_key_id = key_id;
         }
-        Ok(())
+        Ok(key_id)
     }
 
     /// Create a new [`Handle`](super::Handle) for the managed keyset.
@@ -146,7 +147,7 @@ impl Manager {
                     | Some(KeyStatusType::Disabled)
                     | Some(KeyStatusType::Destroyed) => {
                         key.key_data = None;
-                        key.status = KeyStatusType::Disabled as i32;
+                        key.status = KeyStatusType::Destroyed as i32;
                         Ok(())
                     }
                     _ => Err(format!(
@@ -200,6 +201,11 @@ impl Manager {
             }
         }
         Err(format!("Key {} not found", key_id).into())
+    }
+
+    /// Return the count of all keys in the keyset.
+    pub fn key_count(&self) -> usize {
+        self.ks.key.len()
     }
 
     /// Generate a key id that has not been used by any key in the [`Keyset`](crate::proto::Keyset).
