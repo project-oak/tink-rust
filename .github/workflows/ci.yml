@@ -1,0 +1,80 @@
+name: CI
+on:
+  pull_request:
+    paths-ignore:
+      - README.md
+  push:
+    branches: master
+    paths-ignore:
+      - README.md
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust:
+          - stable
+          - beta
+          - nightly-2020-10-19
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.rust }}
+          components: rustfmt
+          override: true
+      - run: cargo build --release --all
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust:
+          - stable
+          - beta
+          - nightly-2020-10-19
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.rust }}
+          components: rustfmt
+          override: true
+      - run: git clone --depth 1 https://github.com/google/wycheproof
+      - run: echo "WYCHEPROOF_DIR=$PWD/wycheproof" >> $GITHUB_ENV
+      - run: cargo test --all -- --nocapture
+
+  rustfmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly-2020-10-19
+          components: rustfmt
+      - run: cargo fmt --all -- --check
+
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          components: clippy
+      - run: cargo clippy --all-features --all-targets
+
+  doc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+      - run: cargo doc --no-deps --document-private-items
