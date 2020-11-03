@@ -43,7 +43,6 @@ pub fn ecdsa_p256_key_p1363_template() -> KeyTemplate {
         tink::proto::HashType::Sha256,
         tink::proto::EllipticCurveType::NistP256,
         tink::proto::EcdsaSignatureEncoding::IeeeP1363,
-        IeeeP1363 = 1,
         tink::proto::OutputPrefixType::Tink,
     )
 }

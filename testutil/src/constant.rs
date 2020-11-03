@@ -30,9 +30,9 @@ pub const AES_GCM_KEY_VERSION: u32 = 0;
 pub const AES_GCM_TYPE_URL: &str = "type.googleapis.com/google.crypto.tink.AesGcmKey";
 
 /// Maximal version of ChaCha20Poly1305 keys that Tink supports.
-pub const CHACHA20_POLY1305_KEY_VERSION: u32 = 0;
+pub const CHA_CHA20_POLY1305_KEY_VERSION: u32 = 0;
 /// Type URL of ChaCha20Poly1305 keys.
-pub const CHACHA20_POLY1305_TYPE_URL: &str =
+pub const CHA_CHA20_POLY1305_TYPE_URL: &str =
     "type.googleapis.com/google.crypto.tink.ChaCha20Poly1305Key";
 
 /// Maximal version of KMSEnvelopeAEAD keys that Tink supports.
@@ -42,9 +42,9 @@ pub const KMS_ENVELOPE_AEAD_TYPE_URL: &str =
     "type.googleapis.com/google.crypto.tink.KmsEnvelopeAeadKey";
 
 /// Maximal version of XChaCha20Poly1305 keys that Tink supports.
-pub const XCHACHA20_POLY1305_KEY_VERSION: u32 = 0;
+pub const X_CHA_CHA20_POLY1305_KEY_VERSION: u32 = 0;
 /// Type URL of XChaCha20Poly1305 keys.
-pub const XCHACHA20_POLY1305_TYPE_URL: &str =
+pub const X_CHA_CHA20_POLY1305_TYPE_URL: &str =
     "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key";
 
 /// Maximal version of keys that this key manager supports.
