@@ -23,8 +23,9 @@ fn test_factory_multiple_keys() {
     let keyset = tink_testutil::new_test_aes_siv_keyset(tink::proto::OutputPrefixType::Tink);
     let primary_key = keyset.key[0].clone();
     let raw_key = keyset.key[1].clone();
-    assert!(
-        primary_key.output_prefix_type != tink::proto::OutputPrefixType::Raw as i32,
+    assert_ne!(
+        primary_key.output_prefix_type,
+        tink::proto::OutputPrefixType::Raw as i32,
         "expect a non-raw key"
     );
     let keyset_handle = tink::keyset::insecure::new_handle(keyset).unwrap();
@@ -50,8 +51,9 @@ fn test_factory_multiple_keys() {
     {
         let keyset2 = tink_testutil::new_test_aes_siv_keyset(tink::proto::OutputPrefixType::Tink);
         let new_pk = keyset2.key[0].clone();
-        assert!(
-            new_pk.output_prefix_type != tink::proto::OutputPrefixType::Raw as i32,
+        assert_ne!(
+            new_pk.output_prefix_type,
+            tink::proto::OutputPrefixType::Raw as i32,
             "expect a non-raw key"
         );
         let keyset_handle2 = tink::keyset::insecure::new_handle(keyset2).unwrap();
