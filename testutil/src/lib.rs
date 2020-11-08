@@ -29,6 +29,8 @@ use tink::{
 
 mod constant;
 pub use constant::*;
+mod sharedbuf;
+pub use sharedbuf::*;
 mod wycheproofutil;
 pub use wycheproofutil::*;
 
