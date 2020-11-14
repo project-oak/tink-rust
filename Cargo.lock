@@ -47,6 +47,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "aes-gcm-siv"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "202a43562bc3e159554b7590f5fd1f432d9e8de0cc2c2ce4bb8d194a34b3b0f3"
+dependencies = [
+ "aead",
+ "aes",
+ "cipher",
+ "ctr",
+ "polyval",
+ "subtle",
+ "zeroize",
+]
+
+[[package]]
 name = "aes-siv"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -65,9 +80,9 @@ dependencies = [
 
 [[package]]
 name = "aes-soft"
-version = "0.6.4"
+version = "0.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "be14c7498ea50828a38d0e24a765ed2effe92a705885b57d029cd67d45744072"
+checksum = "4e8bdbc97ba3854ecf597a3b69d7bd30a719dee72d22ce6313c84dbf2c8f2694"
 dependencies = [
  "cipher",
  "opaque-debug",
@@ -2110,6 +2125,7 @@ dependencies = [
  "aead",
  "aes-ctr",
  "aes-gcm",
+ "aes-gcm-siv",
  "base64",
  "chacha20poly1305",
  "generic-array",

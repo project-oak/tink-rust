@@ -29,6 +29,11 @@ pub const AES_GCM_KEY_VERSION: u32 = 0;
 /// Type URL of AES-GCM keys that Tink supports.
 pub const AES_GCM_TYPE_URL: &str = "type.googleapis.com/google.crypto.tink.AesGcmKey";
 
+/// Maximal version of AES-GCM-SIV keys.
+pub const AES_GCM_SIV_KEY_VERSION: u32 = 0;
+/// Type URL of AES-GCM-SIV keys that Tink supports.
+pub const AES_GCM_SIV_TYPE_URL: &str = "type.googleapis.com/google.crypto.tink.AesGcmSivKey";
+
 /// Maximal version of ChaCha20Poly1305 keys that Tink supports.
 pub const CHA_CHA20_POLY1305_KEY_VERSION: u32 = 0;
 /// Type URL of ChaCha20Poly1305 keys.

@@ -53,6 +53,30 @@ fn bench_aes256_gcm_decrypt(b: &mut Bencher) {
 }
 
 #[bench]
+fn bench_aes128_gcm_siv_encrypt(b: &mut Bencher) {
+    let (a, _ct) = setup(tink_aead::aes128_gcm_siv_key_template());
+    b.iter(|| a.encrypt(MSG, AAD).unwrap());
+}
+
+#[bench]
+fn bench_aes128_gcm_siv_decrypt(b: &mut Bencher) {
+    let (a, ct) = setup(tink_aead::aes128_gcm_siv_key_template());
+    b.iter(|| a.decrypt(&ct, AAD).unwrap());
+}
+
+#[bench]
+fn bench_aes256_gcm_siv_encrypt(b: &mut Bencher) {
+    let (a, _ct) = setup(tink_aead::aes256_gcm_siv_key_template());
+    b.iter(|| a.encrypt(MSG, AAD).unwrap());
+}
+
+#[bench]
+fn bench_aes256_gcm_siv_decrypt(b: &mut Bencher) {
+    let (a, ct) = setup(tink_aead::aes256_gcm_siv_key_template());
+    b.iter(|| a.decrypt(&ct, AAD).unwrap());
+}
+
+#[bench]
 fn bench_aes128_ctr_hmac_sha256_encrypt(b: &mut Bencher) {
     let (a, _ct) = setup(tink_aead::aes128_ctr_hmac_sha256_key_template());
     b.iter(|| a.encrypt(MSG, AAD).unwrap());

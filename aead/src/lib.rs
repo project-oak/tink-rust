@@ -32,6 +32,8 @@ mod aes_ctr_hmac_aead_key_manager;
 pub use aes_ctr_hmac_aead_key_manager::*;
 mod aes_gcm_key_manager;
 pub use aes_gcm_key_manager::*;
+mod aes_gcm_siv_key_manager;
+pub use aes_gcm_siv_key_manager::*;
 mod chacha20poly1305_key_manager;
 pub use chacha20poly1305_key_manager::*;
 mod kms_envelope_aead;
@@ -57,6 +59,8 @@ pub fn init() {
             .expect("tink_aead::init() failed"); // safe: init
         register_key_manager(std::sync::Arc::new(AesGcmKeyManager::default()))
             .expect("tink_aead::init() failed"); // safe: init
+        register_key_manager(std::sync::Arc::new(AesGcmSivKeyManager::default()))
+            .expect("tink_aead::init() failed"); // safe: init
         register_key_manager(std::sync::Arc::new(ChaCha20Poly1305KeyManager::default()))
             .expect("tink_aead::init() failed"); // safe: init
         register_key_manager(std::sync::Arc::new(XChaCha20Poly1305KeyManager::default()))
@@ -66,6 +70,8 @@ pub fn init() {
 
         tink::registry::register_template_generator("AES128_GCM", aes128_gcm_key_template);
         tink::registry::register_template_generator("AES256_GCM", aes256_gcm_key_template);
+        tink::registry::register_template_generator("AES128_GCM_SIV", aes128_gcm_siv_key_template);
+        tink::registry::register_template_generator("AES256_GCM_SIV", aes256_gcm_siv_key_template);
         tink::registry::register_template_generator(
             "AES128_CTR_HMAC_SHA256",
             aes128_ctr_hmac_sha256_key_template,

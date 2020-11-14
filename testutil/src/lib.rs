@@ -411,6 +411,41 @@ pub fn new_aes_gcm_key_format(key_size: u32) -> tink::proto::AesGcmKeyFormat {
     }
 }
 
+/// Create a randomly generated [`AesGcmSivKey`](tink::proto::AesGcmSivKey).
+pub fn new_aes_gcm_siv_key(key_version: u32, key_size: u32) -> tink::proto::AesGcmSivKey {
+    let key_value = get_random_bytes(key_size.try_into().unwrap());
+    tink::proto::AesGcmSivKey {
+        version: key_version,
+        key_value,
+    }
+}
+
+/// Create a [`KeyData`] containing a randomly generated
+/// [`AesGcmSivKey`](tink::proto::AesGcmSivKey).
+pub fn new_aes_gcm_siv_key_data(key_size: u32) -> KeyData {
+    let key = new_aes_gcm_siv_key(AES_GCM_SIV_KEY_VERSION, key_size);
+    let serialized_key = proto_encode(&key);
+    new_key_data(
+        AES_GCM_SIV_TYPE_URL,
+        &serialized_key,
+        tink::proto::key_data::KeyMaterialType::Symmetric,
+    )
+}
+
+/// Create an [`AesGcmSivKey`](tink::proto::AesGcmSivKey) with randomly generated key material.
+pub fn new_serialized_aes_gcm_siv_key(key_size: u32) -> Vec<u8> {
+    let key = new_aes_gcm_siv_key(AES_GCM_SIV_KEY_VERSION, key_size);
+    proto_encode(&key)
+}
+
+/// Return a new [`AesGcmSivKeyFormat`](tink::proto::AesGcmSivKeyFormat).
+pub fn new_aes_gcm_siv_key_format(key_size: u32) -> tink::proto::AesGcmSivKeyFormat {
+    tink::proto::AesGcmSivKeyFormat {
+        key_size,
+        version: AES_GCM_SIV_KEY_VERSION,
+    }
+}
+
 /// Create a randomly generated [`AesGcmHkdfStreamingKey`](tink::proto::AesGcmHkdfStreamingKey).
 pub fn new_aes_gcm_hkdf_key(
     key_version: u32,
