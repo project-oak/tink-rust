@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["MetadataServer","Service providing metadata about the server."],["_Inner",""]],"trait":[["Metadata","Generated trait containing gRPC methods that should be implemented for use with MetadataServer."]]});

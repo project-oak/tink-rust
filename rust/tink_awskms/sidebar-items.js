@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["AWS_PREFIX",""]],"struct":[["AwsClient","`AwsClient` represents a client that connects to the AWS KMS backend."]]});

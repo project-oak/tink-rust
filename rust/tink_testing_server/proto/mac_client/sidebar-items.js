@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["MacClient","Service to compute and verify MACs"]]});

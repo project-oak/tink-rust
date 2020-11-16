@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["MacServer","Service to compute and verify MACs"],["_Inner",""]],"trait":[["Mac","Generated trait containing gRPC methods that should be implemented for use with MacServer."]]});

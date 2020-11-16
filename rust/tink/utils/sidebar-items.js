@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["wrap_err","Wrap an error with an additional message.  This utility is intended to help with porting Go code to Rust, to cover patterns like:"]],"struct":[["TinkError","`Error` type for errors emitted by Tink. Note that errors from cryptographic operations are necessarily uninformative, to avoid information leakage."]]});

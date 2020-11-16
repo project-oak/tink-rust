@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["validate_cmac_params","Validate the parameters for an AES-CMAC against the recommended parameters."],["validate_hmac_params","Validate parameters of [`Hmac`] constructor."]],"struct":[["AesCmac","`AesCmac` represents an AES-CMAC struct that implements the [`tink::Mac`] interface."],["Hmac","Implementation of trait `tink::Mac`."]]});

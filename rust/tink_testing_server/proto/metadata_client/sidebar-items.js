@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["MetadataClient","Service providing metadata about the server."]]});
