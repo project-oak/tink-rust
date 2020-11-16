@@ -14,11 +14,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use super::xchacha20poly1305_vectors::*;
+use super::{wycheproof::*, xchacha20poly1305_vectors::*};
 use rand::{thread_rng, Rng};
 use std::collections::HashSet;
 use tink::{subtle::random::get_random_bytes, Aead};
 use tink_aead::subtle;
+use tink_testutil::WycheproofResult;
 
 #[test]
 fn test_x_cha_cha20_poly1305_encrypt_decrypt() {
@@ -196,5 +197,70 @@ fn test_x_cha_cha20_poly1305_random_nonce() {
         let ct_hex = hex::encode(&ct);
         assert!(!cts.contains(&ct_hex), "duplicate ciphertext {}", ct_hex);
         cts.insert(ct_hex);
+    }
+}
+
+#[test]
+fn test_x_cha_cha20_poly1305_wycheproof_vectors() {
+    let filename = "testvectors/xchacha20_poly1305_test.json";
+    println!("wycheproof file '{}'", filename);
+    let bytes = tink_testutil::wycheproof_data(filename);
+    let data: TestData = serde_json::from_slice(&bytes).unwrap();
+    assert_eq!("XCHACHA20-POLY1305", data.suite.algorithm);
+
+    for g in &data.test_groups {
+        if (g.key_size / 8) as usize != tink_aead::subtle::X_CHA_CHA20_KEY_SIZE {
+            println!(" skipping tests for key_size={}", g.key_size);
+            continue;
+        }
+        if (g.iv_size / 8) as usize != tink_aead::subtle::X_CHA_CHA20_NONCE_SIZE {
+            println!(" skipping tests for iv_size={}", g.iv_size);
+            continue;
+        }
+        for tc in &g.tests {
+            println!(
+                "     case {} [{}] {}",
+                tc.case.case_id, tc.case.result, tc.case.comment
+            );
+            let mut combined_ct = Vec::new();
+            combined_ct.extend_from_slice(&tc.iv);
+            combined_ct.extend_from_slice(&tc.ct);
+            combined_ct.extend_from_slice(&tc.tag);
+
+            let ca = subtle::XChaCha20Poly1305::new(&tc.key).unwrap_or_else(|e| {
+                panic!(
+                    "#{}, cannot create new instance of XChaCha20Poly1305: {}",
+                    tc.case.case_id, e
+                )
+            });
+            ca.encrypt(&tc.msg, &tc.aad).unwrap_or_else(|e| {
+                panic!("#{}, unexpected encryption error: {:?}", tc.case.case_id, e)
+            });
+            let result = ca.decrypt(&combined_ct, &tc.aad);
+            match result {
+                Err(e) => {
+                    assert_ne!(
+                        tc.case.result,
+                        WycheproofResult::Valid,
+                        "#{}, unexpected error: {}",
+                        tc.case.case_id,
+                        e
+                    );
+                }
+                Ok(decrypted) => {
+                    assert_ne!(
+                        tc.case.result,
+                        WycheproofResult::Invalid,
+                        "#{}, decrypted invalid",
+                        tc.case.case_id
+                    );
+                    assert_eq!(
+                        decrypted, tc.msg,
+                        "#{}, incorrect decryption",
+                        tc.case.case_id
+                    );
+                }
+            }
+        }
     }
 }

@@ -167,11 +167,12 @@ fn test_aes_gcm_random_nonce() {
 }
 
 #[test]
-fn test_vectors() {
+fn test_aes_gcm_vectors() {
     let filename = "testvectors/aes_gcm_test.json";
     println!("wycheproof file '{}'", filename);
     let bytes = tink_testutil::wycheproof_data(filename);
     let data: wycheproof::TestData = serde_json::from_slice(&bytes).unwrap();
+    assert_eq!("AES-GCM", data.suite.algorithm);
 
     for g in &data.test_groups {
         if subtle::validate_aes_key_size(g.key_size as usize / 8).is_err() {

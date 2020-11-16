@@ -205,6 +205,7 @@ fn test_cha_cha20_poly1305_wycheproof_vectors() {
     println!("wycheproof file '{}'", filename);
     let bytes = tink_testutil::wycheproof_data(filename);
     let data: TestData = serde_json::from_slice(&bytes).unwrap();
+    assert_eq!("CHACHA20-POLY1305", data.suite.algorithm);
 
     for g in &data.test_groups {
         if (g.key_size / 8) as usize != tink_aead::subtle::CHA_CHA20_KEY_SIZE {
