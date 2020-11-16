@@ -1,16 +1,14 @@
 # Tink for Rust HOW-TO
 
 This document contains instructions and Rust code snippets for common tasks in
-[Tink](https://github.com/tink-crypto/tink-rust).
+[Tink](https://github.com/project-oak/tink-rust).
 
-## Setup instructions
+## Setup Instructions
 
-TODO: confirm official location
-
-To install Tink locally run:
+To install the Tink-Rust repository locally run:
 
 ```sh
-git clone https://github.com/tink-crypto/tink-rust
+git clone https://github.com/project-oak/tink-rust
 cd tink-rust
 ```
 
@@ -20,19 +18,19 @@ to run all the tests locally:
 cargo test --all
 ```
 
+TODO: replace with crates.io instructions
+
 ## Rustdoc
 
-Documentation for the Tink API can be found
-[here](https://tink-crypto.github.io/tink-rust/).
+Documentation for the Tink API can be found [here](https://project-oak.github.io/tink-rust/).
 
-## Obtaining and using primitives
+## Obtaining and Using Primitives
 
-[_Primitives_](PRIMITIVES.md) represent cryptographic operations offered by
-Tink, hence they form the core of Tink API. A primitive is just a trait
-that specifies what operations are offered by the primitive. A primitive can
-have multiple implementations, and you choose a desired implementation by
-using a key of corresponding type (see the [this
-section](KEY-MANAGEMENT.md#key-keyset-and-keysethandle) for details).
+[_Primitives_](https://github.com/google/tink/blob/v1.5.0/docs/PRIMITIVES.md) represent cryptographic operations offered
+by Tink, hence they form the core of Tink API. A primitive is just a trait that specifies what operations are offered by
+the primitive. A primitive can have multiple implementations, and you choose a desired implementation by using a key of
+corresponding type (see the [this
+section](https://github.com/google/tink/blob/v1.5.0/docs/KEY-MANAGEMENT.md#key-keyset-and-keysethandle) for details).
 
 A list of primitives and their implementations currently supported by Tink in
 Rust can be found [here](PRIMITIVES.md#rust).
@@ -111,7 +109,7 @@ fn main() {
 
 ### Signature
 
-To sign data using Tink you can use ECDSA or ED25519 key templates.
+To sign data using Tink you can use ECDSA (with P-256) or ED25519 key templates.
 
 ```Rust
 fn example_ecdsa() {
@@ -170,16 +168,16 @@ MAC                | `tink_mac::hmac_sha512_tag512_key_template()`
 Signature          | `tink_signature::ecdsa_p256_key_template()`
 Signature          | `tink_signature::ed25519_key_template()`
 
-To avoid accidental leakage of sensitive key material, one should avoid mixing
-keyset generation and usage in code. To support the separation of these
-activities Tink provides a command-line tool, [Tinkey](TINKEY.md), which can be
-used for common key management tasks.
+To avoid accidental leakage of sensitive key material, one should avoid mixing keyset generation and usage in code. To
+support the separation of these activities Tink-Rust provides a command-line tool, `rinkey` that is equivalent to the
+upstream [tinkey]( https://github.com/google/tink/blob/v1.5.0/docs/TINKEY.md) tool,which can be used for common key
+management tasks.
 
 ### Storing and loading existing keysets
 
 After generating key material, you might want to persist it to a storage system.
 Tink supports persisting the keys after encryption to any `std::io::Write` and
-`std::io::Read`` implementations.
+`std::io::Read` implementations.
 
 TODO: KMS example here
 ```Rust

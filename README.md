@@ -1,18 +1,45 @@
 # Tink in Rust
 
-This repository holds an in-progress Rust port of Google's [Tink cryptography library](https://github.com/google/tink).
+This repository holds a Rust port of Google's [Tink cryptography library](https://github.com/google/tink).
 
-Note that this repository does not implement cryptographic functionality itself; the underlying cryptographic operations
-are provided by the [RustCrypto](https::github.com/github/RustCrypto) crates.  Instead, this repo focuses on making those
-cryptographic operations available via the Tink API.
+The following warnings apply to use of this repo:
 
-**This repo is under construction** and so details of the API and the code may change without warning.
+ - This is not an official port of Tink, and is **not supported** by Google's cryptography teams.
+ - **The repo is under construction** and so details of the API and the code may change without warning.
+
+Also, this repository does not implement cryptographic functionality itself; the underlying cryptographic operations are
+currently provided by the [RustCrypto](https://github.com/RustCrypto) crates &ndash; this repo focuses on making
+those cryptographic operations available via the Tink API.
+
+This means that **all of the security warnings** for the underlying RustCrypto crates apply to this repo too.
 
 ## Disclaimer
 
 This is not an officially supported Google product.
 
-## Design Goals
+## Usage Overview
+
+An introduction to working with the Tink API is [provided here](docs/RUST-HOWTO.md).
+
+## Crate Structure
+
+The core `tink` crate holds common functionality and includes the `trait` definitions for all
+[primitives](https://github.com/google/tink/blob/v1.5.0/docs/PRIMITIVES.md), but includes
+very little cryptographic functionality.
+
+Individual cryptographic primitives are implemented in `tink-<primitive>` crates, which depend on:
+
+- the `tink` crate for common types and helpers
+ - the RustCrypto crates to provide underlying cryptographic implementations.
+
+For example, the `tink-aead` crate provides code that performs authenticated encryption with additional data (AEAD),
+implementing the `tink::Aead` trait.
+
+(However, integration tests can and do include `dev-dependencies` on both core `tink` and particular primitive crates.  For
+example, `tink` tests depend on `tink-mac` and `tink-testutil`, the latter of which depends on the `insecure` feature
+of `tink` itself.)
+
+## Rust Port Design
 
 The Rust port of Tink has the following meta-goals:
 
@@ -20,78 +47,9 @@ The Rust port of Tink has the following meta-goals:
    version of upstream Tink, and aims to stay as close to it as possible so that future changes to Tink can be
    merged more easily. However, this does mean that some aspects of the port are not quite idiomatic Rust.
  - **Don't write any crypto code**: The Rust port aims to defer all cryptographic implementations to external crates
-  (currently the [RustCrypto](https::github.com/github/RustCrypto) crates).
+  (currently the [RustCrypto](https://github.com/RustCrypto) crates).
 
-## Code Structure
-
-The Rust port uses the existing Go version of Tink as its primary base.  This section describes the mapping between the
-Go packages and the equivalent Rust crates and modules, when available.
-
-### Infrastructure
-
-|  Rust Crate/Module   | Go Package |
-|----------------------|------------|
-| `tink::cryptofmt`    | `core/cryptofmt` |
-| `tink::keyset`       | `keyset` |
-| `tink::primitiveset` | `core/primitiveset` |
-| `tink::registry`     | `core/registry` |
-| `tink`               | `tink` |
-| `tink::proto`        | `*_go_proto` |
-
-### Testing
-
-|  Rust Crate/Module       | Go Package |  Notes |
-|--------------------------|------------|--------|
-| `tink::keyset::insecure` | `insecurecleartextkeyset` | Gated on (non-default) `insecure` feature |
-| `tink::keyset::insecure` | `internal` | Gated on (non-default) `insecure` feature |
-| `tink::keyset::insecure` | `testkeyset` | Gated on (non-default) `insecure` feature |
-| `tink-testutil`          | `testutil` | Depends on `insecure` feature of `tink` crate |
-| `tink-testing`           | `services` (`/testing/go/`) |
-| `tink-testing::proto`    | `testing_api_go_grpc` (`/proto/testing/`) |
-|                          | `main` (`/tools/testing/go/`) |
-
-### Key Management Systems
-
-|  Rust Crate/Module   | Go Package |
-|----------------------|------------|
-| `tink-awskms`        | `integration/awskms` |
-|                      | `integration/gcpkms` |
-|                      | `integration/hcvault` |
-
-### Common Crypto
-
-|  Rust Crate/Module     | Go Package |
-|------------------------|------------|
-|                        | `kwp` |
-| `tink::subtle::random` | `subtle/random` |
-| `tink::subtle`         | `subtle` |
-
-### Primitives
-
-|  Rust Crate/Module   | Go Package |
-|----------------------|------------|
-| `tink-aead`          | `aead` |
-| `tink-daead`         | `daead` |
-|                      | `hybrid` |
-| `tink-mac`           | `mac` |
-| `tink-prf`           | `prf` |
-| `tink-signature`     | `signature` |
-|                      | `streamingaead` |
-
-## Dependency Structure
-
-The core `tink` crate holds common functionality and includes the `trait` definitions for all primitives,
-but holds almost no cryptographic code. Individual cryptographic primitives are implemented in `tink-<primitive>` crates
-which depend on the `tink` crate and on RustCrypto crates to provide underlying cryptographic implementations.
-
-However, integration tests can and do include `dev-dependencies` on both core `tink` and particular primitive crates.  For
-example, `tink` tests depend on `tink-mac` and `tink-testutil`, the latter of which depends on the `insecure` feature
-of `tink` itself.
-
-## Implementation Notes
-
-The Rust port is primarily based on the Go version of Tink.  This section describes design decisions involved
-in the conversion from Go to Rust.
+The remainder of this section describes design decisions involved in the conversion from Go to Rust.
 
 ### The `Primitive` Type
 
@@ -258,3 +216,59 @@ initialized so any change will induce a **compile-time** error.)
 
 **TODO**: fix prost-build => serde-json generation so the field attributes are automatically
 attached and the manually-cloned `struct`s can be dropped.
+
+
+### Code Structure
+
+This section describes the mapping between the upstream Go packages and the equivalent Rust crates and modules.
+
+#### Infrastructure
+
+|  Rust Crate/Module   | Go Package |
+|----------------------|------------|
+| `tink::cryptofmt`    | `core/cryptofmt` |
+| `tink::keyset`       | `keyset` |
+| `tink::primitiveset` | `core/primitiveset` |
+| `tink::registry`     | `core/registry` |
+| `tink`               | `tink` |
+| `tink::proto`        | `*_go_proto` |
+
+#### Common Crypto
+
+|  Rust Crate/Module     | Go Package |
+|------------------------|------------|
+|                        | `kwp` |
+| `tink::subtle::random` | `subtle/random` |
+| `tink::subtle`         | `subtle` |
+
+#### Primitives
+
+|  Rust Crate/Module   | Go Package |
+|----------------------|------------|
+| `tink-aead`          | `aead` |
+| `tink-daead`         | `daead` |
+|                      | `hybrid` |
+| `tink-mac`           | `mac` |
+| `tink-prf`           | `prf` |
+| `tink-signature`     | `signature` |
+|                      | `streamingaead` |
+
+#### Testing
+
+|  Rust Crate/Module       | Go Package |  Notes |
+|--------------------------|------------|--------|
+| `tink::keyset::insecure` | `insecurecleartextkeyset` | Gated on (non-default) `insecure` feature |
+| `tink::keyset::insecure` | `internal` | Gated on (non-default) `insecure` feature |
+| `tink::keyset::insecure` | `testkeyset` | Gated on (non-default) `insecure` feature |
+| `tink-testutil`          | `testutil` | Depends on `insecure` feature of `tink` crate |
+| `tink-testing`           | `services` (`/testing/go/`) |
+| `tink-testing::proto`    | `testing_api_go_grpc` (`/proto/testing/`) |
+|                          | `main` (`/tools/testing/go/`) |
+
+#### Key Management Systems
+
+|  Rust Crate/Module   | Go Package |
+|----------------------|------------|
+| `tink-awskms`        | `integration/awskms` |
+|                      | `integration/gcpkms` |
+|                      | `integration/hcvault` |
