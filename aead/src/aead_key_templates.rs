@@ -99,7 +99,7 @@ pub fn kms_envelope_aead_key_template(uri: &str, dek_t: KeyTemplate) -> KeyTempl
 /// Return an AES-GCM key template with the given key size in bytes.
 fn create_aes_gcm_key_template(key_size: u32, output_prefix_type: OutputPrefixType) -> KeyTemplate {
     let format = tink::proto::AesGcmKeyFormat {
-        version: crate::AES_CTR_HMAC_AEAD_KEY_VERSION,
+        version: crate::AES_GCM_KEY_VERSION,
         key_size,
     };
     let mut serialized_format = Vec::new();
@@ -111,6 +111,7 @@ fn create_aes_gcm_key_template(key_size: u32, output_prefix_type: OutputPrefixTy
     }
 }
 
+/// Return an AES-CTR-HMAC key template with the given parameters.
 fn create_aes_ctr_hmac_aead_key_template(
     aes_key_size: u32,
     iv_size: u32,
