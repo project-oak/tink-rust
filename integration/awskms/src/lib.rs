@@ -25,3 +25,7 @@ pub use aws_kms_client::*;
 mod aws_kms_aead_test;
 #[cfg(test)]
 mod aws_kms_client_test;
+
+/// The [upstream Tink](https://github.com/google/tink) version that this Rust
+/// port is based on.
+pub const UPSTREAM_VERSION: &str = "1.5.0";

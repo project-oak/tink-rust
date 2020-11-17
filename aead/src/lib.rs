@@ -43,6 +43,10 @@ pub use xchacha20poly1305_key_manager::*;
 
 pub mod subtle;
 
+/// The [upstream Tink](https://github.com/google/tink) version that this Rust
+/// port is based on.
+pub const UPSTREAM_VERSION: &str = "1.5.0";
+
 static INIT: Once = Once::new();
 
 /// Initialize the `tink-aead` crate, registering its primitives so they are available via

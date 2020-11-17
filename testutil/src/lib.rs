@@ -31,6 +31,10 @@ pub use constant::*;
 mod wycheproofutil;
 pub use wycheproofutil::*;
 
+/// The [upstream Tink](https://github.com/google/tink) version that this Rust
+/// port is based on.
+pub const UPSTREAM_VERSION: &str = "1.5.0";
+
 /// Dummy implementation of the `KeyManager` trait.
 /// It returns [`DummyAead`] when `primitive()` functions are called.
 #[derive(Debug)]

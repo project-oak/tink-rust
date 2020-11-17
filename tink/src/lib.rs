@@ -30,7 +30,8 @@ pub mod subtle;
 pub mod utils;
 pub use utils::TinkError;
 
-/// The upstream Tink version that this Rust port is based on.
+/// The [upstream Tink](https://github.com/google/tink) version that this Rust
+/// port is based on.
 pub const UPSTREAM_VERSION: &str = "1.5.0";
 
 /// Type alias for `u32` values being used as key identifiers.
