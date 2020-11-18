@@ -53,10 +53,20 @@ pub struct AesCtrHmac {
     first_ciphertext_segment_offset: usize,
 }
 
+/// Calculate the header length for a given key size.  The header includes
+/// space for:
+/// - a single byte indicating header length
+/// - a salt that is the same size as the sub key
+/// - a nonce prefix.
+fn header_length_for(key_size_in_bytes: usize) -> usize {
+    1 + key_size_in_bytes + AES_CTR_HMAC_NONCE_PREFIX_SIZE_IN_BYTES
+}
+
 impl AesCtrHmac {
     /// Initialize an AES_CTR_HMAC primitive with a key derivation key and encryption parameters.
     ///
-    /// `main_key` is input keying material used to derive sub keys.
+    /// `main_key` is input keying material used to derive sub keys.  This must be
+    /// longer than the size of the sub keys (`key_size_in_bytes`).
     /// `hkdf_alg` is a MAC algorithm hash type, used for the HKDF key derivation.
     /// `key_size_in_bytes` is the key size of the sub keys.
     /// `tag_alg` is the MAC algorithm hash type, used for generating per segment tags.
@@ -83,7 +93,7 @@ impl AesCtrHmac {
         if tag_size_in_bytes > digest_size {
             return Err("tag size too big".into());
         }
-        let header_len = 1 + key_size_in_bytes + AES_CTR_HMAC_NONCE_PREFIX_SIZE_IN_BYTES;
+        let header_len = header_length_for(key_size_in_bytes);
         if ciphertext_segment_size <= first_segment_offset + header_len + tag_size_in_bytes {
             return Err("ciphertext_segment_size too small".into());
         }
@@ -102,7 +112,7 @@ impl AesCtrHmac {
 
     /// Return the length of the encryption header.
     pub fn header_length(&self) -> usize {
-        1 + self.key_size_in_bytes + AES_CTR_HMAC_NONCE_PREFIX_SIZE_IN_BYTES
+        header_length_for(self.key_size_in_bytes)
     }
 
     /// Return a key derived from the main key using` salt` and `aad` as parameters.

@@ -51,13 +51,23 @@ enum AesGcmKeyVariant {
     Aes256(Box<aes_gcm::Aes256Gcm>),
 }
 
+/// Calculate the header length for a given key size.  The header includes
+/// space for:
+/// - a single byte indicating header length
+/// - a salt that is the same size as the sub key
+/// - a nonce prefix.
+fn header_length_for(key_size_in_bytes: usize) -> usize {
+    1 + key_size_in_bytes + AES_GCM_HKDF_NONCE_PREFIX_SIZE_IN_BYTES
+}
+
 impl AesGcmHkdf {
     /// Initialize a streaming primitive with a key derivation key
     /// and encryption parameters.
     ///
-    /// `main_key` is an input keying material used to derive sub keys.
+    /// `main_key` is input keying material used to derive sub keys.  This must be
+    /// longer than the size of the sub keys (`key_size_in_bytes`).
     /// `hkdf_alg` is a MAC algorithm hash type, used for the HKDF key derivation.
-    /// `key_size_in_bytes argument` is a key size of the sub keys.
+    /// `key_size_in_bytes` argument is a key size of the sub keys.
     /// `ciphertext_segment_size` argument is the size of ciphertext segments.
     /// `first_segment_offset` argument is the offset of the first ciphertext segment.
     pub fn new(
@@ -71,7 +81,7 @@ impl AesGcmHkdf {
             return Err("main_key too short".into());
         }
         super::validate_aes_key_size(key_size_in_bytes)?;
-        let header_len = 1 + key_size_in_bytes + AES_GCM_HKDF_NONCE_PREFIX_SIZE_IN_BYTES;
+        let header_len = header_length_for(key_size_in_bytes);
         if ciphertext_segment_size
             <= first_segment_offset + header_len + AES_GCM_HKDF_TAG_SIZE_IN_BYTES
         {
@@ -90,7 +100,7 @@ impl AesGcmHkdf {
 
     /// Return the length of the encryption header.
     pub fn header_length(&self) -> usize {
-        1 + self.key_size_in_bytes + AES_GCM_HKDF_NONCE_PREFIX_SIZE_IN_BYTES
+        header_length_for(self.key_size_in_bytes)
     }
 
     /// Return a key derived from the given main key using `salt` and `aad` parameters.

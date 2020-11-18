@@ -41,6 +41,8 @@ mod prf_set_service;
 use prf_set_service::*;
 mod signature_service;
 use signature_service::*;
+mod streaming_service;
+use streaming_service::*;
 
 /// Command-line options for Tink Rust testing server.
 #[derive(Debug, StructOpt)]
@@ -60,6 +62,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tink_mac::init();
     tink_prf::init();
     tink_signature::init();
+    tink_streaming_aead::init();
 
     info!("Running testing server");
 
@@ -70,6 +73,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mac_handler = MacServerImpl {};
     let prf_set_handler = PrfSetServerImpl {};
     let signature_handler = SignatureServerImpl {};
+    let streaming_handler = StreamingAeadServerImpl {};
 
     let address = format!("[::]:{}", opt.port).parse()?;
     info!("Starting gRPC server at {:?}", address);
@@ -84,6 +88,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .add_service(proto::prf_set_server::PrfSetServer::new(prf_set_handler))
         .add_service(proto::signature_server::SignatureServer::new(
             signature_handler,
+        ))
+        .add_service(proto::streaming_aead_server::StreamingAeadServer::new(
+            streaming_handler,
         ))
         .serve_with_shutdown(address, tokio::signal::ctrl_c().map(|r| r.unwrap()))
         .await?;
