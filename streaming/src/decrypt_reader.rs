@@ -62,12 +62,12 @@ impl io::Read for DecryptReader {
                 ))
             }
             State::Pending(_) => {}
-        };
+        }
         // Move the underlying raw reader out of self and into a `SharedCopyReader`
         let state = std::mem::replace(&mut self.state, State::Failed);
         let raw_reader = match state {
             State::Pending(reader) => reader,
-            _ => unreachable!(),
+            _ => unreachable!(), // safe: checked above
         };
         let mut copy_reader = SharedCopyReader::new(raw_reader);
 

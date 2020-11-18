@@ -52,6 +52,7 @@ bazel test --cache_test_results=no --test_output=errors \
       :mac_test \
       :prf_set_test \
       :signature_test \
+      :streaming_aead_test \
       --test_env testing_dir="${TINK_TESTING_DIR}" \
       --test_env TINK_RUST_DIR="${TINK_RUST_DIR}" \
       "$@"

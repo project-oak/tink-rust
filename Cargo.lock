@@ -2251,6 +2251,8 @@ dependencies = [
  "tink-mac",
  "tink-prf",
  "tink-signature",
+ "tink-streaming-aead",
+ "tink-testutil",
  "tokio",
  "tonic",
  "tonic-build",

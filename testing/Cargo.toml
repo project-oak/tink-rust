@@ -20,6 +20,8 @@ tink-daead = "^0.1"
 tink-mac = "^0.1"
 tink-prf = "^0.1"
 tink-signature = "^0.1"
+tink-streaming-aead = "^0.1"
+tink-testutil = "^0.1"
 tokio = { version = "^0.2.22", features = [
   "macros",
   "rt-threaded",
