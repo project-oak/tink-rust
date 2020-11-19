@@ -168,7 +168,7 @@ fn test_wycheproof_vectors() {
             encoding: EcdsaSignatureEncoding::IeeeP1363,
             panic_tests: HashSet::new(),
         },
-        /* TODO: more ECDSA curves
+        /* TODO(#16): more ECDSA curves
                 TestVector {
                     filename: "ecdsa_secp384r1_sha512_p1363_test.json",
                     encoding: EcdsaSignatureEncoding::IeeeP1363,
@@ -203,7 +203,7 @@ fn wycheproof_test(filename: &str, encoding: EcdsaSignatureEncoding, panic_tests
             }
             continue;
         }
-        // TODO: more ECDSA curves
+        // TODO(#16): more ECDSA curves
         // if curve == EllipticCurveType::UnknownCurve {
         if curve != EllipticCurveType::NistP256 {
             if !skipped_curves.contains(&g.key.curve) {

@@ -16,7 +16,7 @@
 
 use tink::subtle::random::get_random_bytes;
 
-// TODO: more ECDSA curves
+// TODO(#16): more ECDSA curves
 #[test]
 #[ignore]
 fn test_signer_verify_factory() {

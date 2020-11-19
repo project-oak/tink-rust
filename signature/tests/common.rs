@@ -27,7 +27,7 @@ pub fn gen_valid_ecdsa_params() -> Vec<EcdsaParams> {
             hash_type: HashType::Sha256,
             curve: EllipticCurveType::NistP256,
         },
-        /* TODO: more ECDSA curves
+        /* TODO(#16): more ECDSA curves
         EcdsaParams {
             hash_type: HashType::Sha384,
             curve: EllipticCurveType::NistP384,
@@ -50,7 +50,7 @@ pub fn gen_invalid_ecdsa_params() -> Vec<EcdsaParams> {
             hash_type: HashType::Sha1,
             curve: EllipticCurveType::NistP256,
         },
-        /* TODO: more ECDSA curves
+        /* TODO(#16): more ECDSA curves
         EcdsaParams {
             hash_type: HashType::Sha1,
             curve: EllipticCurveType::NistP384,
