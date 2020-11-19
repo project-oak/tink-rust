@@ -1,5 +1,8 @@
 # Tink in Rust
 
+[![Build Status](https://img.shields.io/github/workflow/status/project-oak/tink-rust/CI?color=blue&style=for-the-badge)](https://github.com/project-oak/tink-rust/actions)
+[![Docs](https://img.shields.io/badge/docs-rust-brightgreen?style=for-the-badge)](https://project-oak.github.io/tink-rust)
+
 This repository holds a Rust port of Google's [Tink cryptography library](https://github.com/google/tink).
 
 The following warnings apply to use of this repo:
