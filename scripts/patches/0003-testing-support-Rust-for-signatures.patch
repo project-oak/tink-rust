@@ -19,7 +19,7 @@ index a887b9b274ed..fa7e3e12d15e 100644
       'java'),
      ('EciesAeadHkdfPrivateKey(NIST_P521,UNCOMPRESSED,SHA384,AesGcmKey(16))',
       'java'),
-+    # TODO: Rust does not support Ecdsa with NIST_P384 nor NIST_P512.
++    # TODO: Rust does not support Ecdsa with NIST_P384 nor NIST_P521.
 +    ('EcdsaPrivateKey(SHA384,NIST_P384,IEEE_P1363)', 'rust'),
 +    ('EcdsaPrivateKey(SHA384,NIST_P384,DER)', 'rust'),
 +    ('EcdsaPrivateKey(SHA512,NIST_P384,IEEE_P1363)', 'rust'),
@@ -36,10 +36,10 @@ index 0087aeb91217..afee8cdb22e1 100644
 @@ -41,6 +41,16 @@ def key_rotation_test_cases(
          for new_key_tmpl in KEY_ROTATION_TEMPLATES:
            yield (enc_lang, dec_lang, old_key_tmpl, new_key_tmpl)
- 
+
 +# Test cases that fail in a language but should succeed
 +FAILS_BUT_SHOULD_SUCCEED = [
-+    # TODO: Rust does not support Ecdsa with NIST_P384 nor NIST_P512.
++    # TODO: Rust does not support Ecdsa with NIST_P384 nor NIST_P521.
 +    ('ECDSA_P384', 'rust'),
 +    ('ECDSA_P384_IEEE_P1363', 'rust'),
 +    ('ECDSA_P384_SHA384', 'rust'),
