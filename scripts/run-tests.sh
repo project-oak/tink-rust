@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+set -o errexit
+
 readonly SCRIPTS_DIR="$(dirname "$0")"
 
 # Location of upstream Tink repo.
@@ -20,7 +22,7 @@ readonly TINK_DIR=${TINK_DIR:-${SCRIPTS_DIR}/../../tink}
 
 cargo build --package=tink-testing-server
 
-cd ${TINK_DIR}/testing/cross_language
+cd "${TINK_DIR}/testing/cross_language"
 (
     cd ../cc
     bazel build :testing_server
@@ -42,5 +44,5 @@ bazel test --cache_test_results=no \
       :mac_test \
       :prf_set_test \
       :signature_test \
-      --test_env testing_dir=${PWD}/.. \
-      $@
+      --test_env testing_dir="${PWD}/.." \
+      "$@"
