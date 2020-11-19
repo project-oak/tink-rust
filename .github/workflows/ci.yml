@@ -49,7 +49,7 @@ jobs:
       - run: rustc --version
       - run: cargo test --all -- --nocapture
 
-  rustfmt:
+  formatting:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -61,6 +61,7 @@ jobs:
           components: rustfmt
       - run: rustc --version
       - run: cargo fmt --all -- --check
+      - run: scripts/check-format.sh
 
   clippy:
     runs-on: ubuntu-latest
