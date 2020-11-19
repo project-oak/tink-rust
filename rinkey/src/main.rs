@@ -280,6 +280,7 @@ fn main() {
     tink_mac::init();
     tink_prf::init();
     tink_signature::init();
+    tink_streaming_aead::init();
 
     match Command::from_args() {
         Command::AddKey(opts) => add_key(opts),
