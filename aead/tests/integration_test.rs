@@ -21,7 +21,7 @@ fn example() {
     tink_aead::init();
     let kh = tink::keyset::Handle::new(&tink_aead::aes256_gcm_key_template()).unwrap();
 
-    // TODO: save the keyset to a safe location. DO NOT hardcode it in source code.
+    // NOTE: save the keyset to a safe location. DO NOT hardcode it in source code.
     // Consider encrypting it with a remote key in Cloud KMS, AWS KMS or HashiCorp Vault.
     // See https://github.com/google/tink/blob/master/docs/GOLANG-HOWTO.md#storing-and-loading-existing-keysets.
 

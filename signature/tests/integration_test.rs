@@ -32,7 +32,7 @@ fn example_ecdsa() {
     // Other key templates can also be used.
     let kh = tink::keyset::Handle::new(&tink_signature::ecdsa_p256_key_template()).unwrap();
 
-    // TODO: save the private keyset to a safe location. DO NOT hardcode it in source code.
+    // NOTE: save the private keyset to a safe location. DO NOT hardcode it in source code.
     // Consider encrypting it with a remote key in Cloud KMS, AWS KMS or HashiCorp Vault.
     // See https://github.com/google/tink/blob/master/docs/GOLANG-HOWTO.md#storing-and-loading-existing-keysets.
 
@@ -43,7 +43,7 @@ fn example_ecdsa() {
 
     let pubkh = kh.public().unwrap();
 
-    // TODO: share the public key with the verifier.
+    // share the public key with the verifier.
 
     let v = tink_signature::new_verifier(&pubkh).unwrap();
     assert!(v.verify(&sig, msg).is_ok());
