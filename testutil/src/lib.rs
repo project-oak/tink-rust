@@ -124,26 +124,14 @@ impl tink::registry::KmsClient for DummyKmsClient {
 pub fn new_test_aes_gcm_keyset(
     primary_output_prefix_type: tink::proto::OutputPrefixType,
 ) -> Keyset {
-    let key_data = new_aes_gcm_key_data(16);
-    new_test_keyset(key_data, primary_output_prefix_type)
+    new_test_keyset(|| new_aes_gcm_key_data(16), primary_output_prefix_type)
 }
 
 /// Create a new [`Keyset`] containing an [`AesSivKey`](tink::proto::AesSivKey).
 pub fn new_test_aes_siv_keyset(
     primary_output_prefix_type: tink::proto::OutputPrefixType,
 ) -> Keyset {
-    let key_value = get_random_bytes(tink_daead::subtle::AES_SIV_KEY_SIZE);
-    let key = &tink::proto::AesSivKey {
-        version: AES_SIV_KEY_VERSION,
-        key_value,
-    };
-    let serialized_key = proto_encode(key);
-    let key_data = new_key_data(
-        AES_SIV_TYPE_URL,
-        &serialized_key,
-        tink::proto::key_data::KeyMaterialType::Symmetric,
-    );
-    new_test_keyset(key_data, primary_output_prefix_type)
+    new_test_keyset(new_aes_siv_key_data, primary_output_prefix_type)
 }
 
 /// Create a new [`Keyset`] containing an [`HmacKey`](tink::proto::HmacKey).
@@ -151,8 +139,10 @@ pub fn new_test_hmac_keyset(
     tag_size: u32,
     primary_output_prefix_type: tink::proto::OutputPrefixType,
 ) -> Keyset {
-    let key_data = new_hmac_key_data(HashType::Sha256, tag_size);
-    new_test_keyset(key_data, primary_output_prefix_type)
+    new_test_keyset(
+        || new_hmac_key_data(HashType::Sha256, tag_size),
+        primary_output_prefix_type,
+    )
 }
 
 /// Create a new [`Keyset`] containing an [`AesGcmHkdfKey`](tink::proto::AesGcmHkdfStreamingKey).
@@ -160,46 +150,54 @@ pub fn new_test_aes_gcm_hkdf_keyset() -> Keyset {
     const KEY_SIZE: u32 = 16;
     const DERIVED_KEY_SIZE: u32 = 16;
     const CIPHERTEXT_SEGMENT_SIZE: u32 = 4096;
-    let key_data = new_aes_gcm_hkdf_key_data(
-        KEY_SIZE,
-        DERIVED_KEY_SIZE,
-        HashType::Sha256,
-        CIPHERTEXT_SEGMENT_SIZE,
-    );
-    new_test_keyset(key_data, tink::proto::OutputPrefixType::Raw)
+    new_test_keyset(
+        || {
+            new_aes_gcm_hkdf_key_data(
+                KEY_SIZE,
+                DERIVED_KEY_SIZE,
+                HashType::Sha256,
+                CIPHERTEXT_SEGMENT_SIZE,
+            )
+        },
+        tink::proto::OutputPrefixType::Raw,
+    )
 }
 
-/// Create a new test [`Keyset`].
-pub fn new_test_keyset(
-    key_data: KeyData,
+/// Create a new test [`Keyset`], generating fresh [`KeyData`] for each key using the provided
+/// `key_data_generator`.
+pub fn new_test_keyset<T>(
+    key_data_generator: T,
     primary_output_prefix_type: tink::proto::OutputPrefixType,
-) -> Keyset {
+) -> Keyset
+where
+    T: Fn() -> KeyData,
+{
     let primary_key = new_key(
-        &key_data,
+        &key_data_generator(),
         tink::proto::KeyStatusType::Enabled,
         42,
         primary_output_prefix_type,
     );
     let raw_key = new_key(
-        &key_data,
+        &key_data_generator(),
         tink::proto::KeyStatusType::Enabled,
         43,
         tink::proto::OutputPrefixType::Raw,
     );
     let legacy_key = new_key(
-        &key_data,
+        &key_data_generator(),
         tink::proto::KeyStatusType::Enabled,
         44,
         tink::proto::OutputPrefixType::Legacy,
     );
     let tink_key = new_key(
-        &key_data,
+        &key_data_generator(),
         tink::proto::KeyStatusType::Enabled,
         45,
         tink::proto::OutputPrefixType::Tink,
     );
     let crunchy_key = new_key(
-        &key_data,
+        &key_data_generator(),
         tink::proto::KeyStatusType::Enabled,
         46,
         tink::proto::OutputPrefixType::Crunchy,
@@ -363,6 +361,21 @@ pub fn new_ed25519_public_key() -> tink::proto::Ed25519PublicKey {
     new_ed25519_private_key().public_key.unwrap()
 }
 
+/// Create a [`KeyData`] containing a randomly generated [`AesSivKey`](tink::proto::AesSivKey).
+fn new_aes_siv_key_data() -> tink::proto::KeyData {
+    let key_value = get_random_bytes(tink_daead::subtle::AES_SIV_KEY_SIZE);
+    let key = &tink::proto::AesSivKey {
+        version: AES_SIV_KEY_VERSION,
+        key_value,
+    };
+    let serialized_key = proto_encode(key);
+    new_key_data(
+        AES_SIV_TYPE_URL,
+        &serialized_key,
+        tink::proto::key_data::KeyMaterialType::Symmetric,
+    )
+}
+
 /// Create a randomly generated [`AesGcmKey`](tink::proto::AesGcmKey).
 pub fn new_aes_gcm_key(key_version: u32, key_size: u32) -> tink::proto::AesGcmKey {
     let key_value = get_random_bytes(key_size.try_into().unwrap());
@@ -372,8 +385,7 @@ pub fn new_aes_gcm_key(key_version: u32, key_size: u32) -> tink::proto::AesGcmKe
     }
 }
 
-/// Create a [`KeyData`] containing a randomly generated
-/// [`AesGcmKey`](tink::proto::AesGcmKey).
+/// Create a [`KeyData`] containing a randomly generated [`AesGcmKey`](tink::proto::AesGcmKey).
 pub fn new_aes_gcm_key_data(key_size: u32) -> KeyData {
     let key = new_aes_gcm_key(AES_GCM_KEY_VERSION, key_size);
     let serialized_key = proto_encode(&key);
