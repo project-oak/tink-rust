@@ -261,7 +261,7 @@ pub fn new_random_ecdsa_private_key(
                 pk_data[point_len + 1..].to_vec(),
             )
         }
-        /* TODO: more ECDSA curves
+        /* TODO(#16): more ECDSA curves
         EllipticCurveType::NistP384 => {
             let sk = p384::SecretKey::generate(&mut csprng);
             let pk = p384::PublicKey::from_secret_key(&sk, /* compressed= */ false).unwrap();
@@ -921,7 +921,7 @@ pub fn generate_ecies_aead_hkdf_private_key(
     dek_t: tink::proto::KeyTemplate,
     salt: &[u8],
 ) -> Result<tink::proto::EciesAeadHkdfPrivateKey, TinkError> {
-    // TODO: implementation via ECC library
+    // TODO(#17): implementation via ECC library
     /*
     let curve = subtlehybrid.get_curve(format!("{:?}", c))?;
     let pvt = subtlehybrid.generate_ecdh_key_pair(curve)?;
