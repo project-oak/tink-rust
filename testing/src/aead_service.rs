@@ -28,22 +28,18 @@ impl proto::aead_server::Aead for AeadServerImpl {
         request: tonic::Request<proto::AeadEncryptRequest>,
     ) -> Result<tonic::Response<proto::AeadEncryptResponse>, tonic::Status> {
         let req = request.into_inner(); // discard metadata
-        let cursor = std::io::Cursor::new(req.keyset);
-        let mut reader = tink::keyset::BinaryReader::new(cursor);
-        let handle = match tink::keyset::insecure::read(&mut reader) {
-            Err(e) => return encrypt_rsp_from_err(e),
-            Ok(v) => v,
-        };
-        let cipher = match tink_aead::new(&handle) {
-            Err(e) => return encrypt_rsp_from_err(e),
-            Ok(v) => v,
-        };
-        let ciphertext = match cipher.encrypt(&req.plaintext, &req.associated_data) {
-            Err(e) => return encrypt_rsp_from_err(e),
-            Ok(v) => v,
+        let closure = move || {
+            let cursor = std::io::Cursor::new(req.keyset);
+            let mut reader = tink::keyset::BinaryReader::new(cursor);
+            let handle = tink::keyset::insecure::read(&mut reader)?;
+            let cipher = tink_aead::new(&handle)?;
+            cipher.encrypt(&req.plaintext, &req.associated_data)
         };
         Ok(tonic::Response::new(proto::AeadEncryptResponse {
-            result: Some(proto::aead_encrypt_response::Result::Ciphertext(ciphertext)),
+            result: Some(match closure() {
+                Ok(ct) => proto::aead_encrypt_response::Result::Ciphertext(ct),
+                Err(e) => proto::aead_encrypt_response::Result::Err(format!("{:?}", e)),
+            }),
         }))
     }
 
@@ -52,47 +48,18 @@ impl proto::aead_server::Aead for AeadServerImpl {
         request: tonic::Request<proto::AeadDecryptRequest>,
     ) -> Result<tonic::Response<proto::AeadDecryptResponse>, tonic::Status> {
         let req = request.into_inner(); // discard metadata
-        let cursor = std::io::Cursor::new(req.keyset);
-        let mut reader = tink::keyset::BinaryReader::new(cursor);
-        let handle = match tink::keyset::insecure::read(&mut reader) {
-            Err(e) => return decrypt_rsp_from_err(e),
-            Ok(v) => v,
-        };
-        let cipher = match tink_aead::new(&handle) {
-            Err(e) => return decrypt_rsp_from_err(e),
-            Ok(v) => v,
-        };
-        let plaintext = match cipher.decrypt(&req.ciphertext, &req.associated_data) {
-            Err(e) => return decrypt_rsp_from_err(e),
-            Ok(v) => v,
+        let closure = move || {
+            let cursor = std::io::Cursor::new(req.keyset);
+            let mut reader = tink::keyset::BinaryReader::new(cursor);
+            let handle = tink::keyset::insecure::read(&mut reader)?;
+            let cipher = tink_aead::new(&handle)?;
+            cipher.decrypt(&req.ciphertext, &req.associated_data)
         };
         Ok(tonic::Response::new(proto::AeadDecryptResponse {
-            result: Some(proto::aead_decrypt_response::Result::Plaintext(plaintext)),
+            result: Some(match closure() {
+                Ok(pt) => proto::aead_decrypt_response::Result::Plaintext(pt),
+                Err(e) => proto::aead_decrypt_response::Result::Err(format!("{:?}", e)),
+            }),
         }))
     }
-}
-
-// The testing infrastructure expects errors to be included in the response,
-// rather than using the gRPC error reporting mechanism.  Include helpers to
-// make it easy to map `TinkError` instances to this.
-
-fn encrypt_rsp_from_err(
-    e: tink::TinkError,
-) -> Result<tonic::Response<proto::AeadEncryptResponse>, tonic::Status> {
-    Ok(tonic::Response::new(proto::AeadEncryptResponse {
-        result: Some(proto::aead_encrypt_response::Result::Err(format!(
-            "{:?}",
-            e
-        ))),
-    }))
-}
-fn decrypt_rsp_from_err(
-    e: tink::TinkError,
-) -> Result<tonic::Response<proto::AeadDecryptResponse>, tonic::Status> {
-    Ok(tonic::Response::new(proto::AeadDecryptResponse {
-        result: Some(proto::aead_decrypt_response::Result::Err(format!(
-            "{:?}",
-            e
-        ))),
-    }))
 }

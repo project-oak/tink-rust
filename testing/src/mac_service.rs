@@ -28,22 +28,18 @@ impl proto::mac_server::Mac for MacServerImpl {
         request: tonic::Request<proto::ComputeMacRequest>,
     ) -> Result<tonic::Response<proto::ComputeMacResponse>, tonic::Status> {
         let req = request.into_inner(); // discard metadata
-        let cursor = std::io::Cursor::new(req.keyset);
-        let mut reader = tink::keyset::BinaryReader::new(cursor);
-        let handle = match tink::keyset::insecure::read(&mut reader) {
-            Err(e) => return compute_rsp_from_err(e),
-            Ok(v) => v,
-        };
-        let primitive = match tink_mac::new(&handle) {
-            Err(e) => return compute_rsp_from_err(e),
-            Ok(v) => v,
-        };
-        let mac_value = match primitive.compute_mac(&req.data) {
-            Err(e) => return compute_rsp_from_err(e),
-            Ok(v) => v,
+        let closure = move || {
+            let cursor = std::io::Cursor::new(req.keyset.clone());
+            let mut reader = tink::keyset::BinaryReader::new(cursor);
+            let handle = tink::keyset::insecure::read(&mut reader)?;
+            let primitive = tink_mac::new(&handle)?;
+            primitive.compute_mac(&req.data)
         };
         Ok(tonic::Response::new(proto::ComputeMacResponse {
-            result: Some(proto::compute_mac_response::Result::MacValue(mac_value)),
+            result: Some(match closure() {
+                Ok(mac) => proto::compute_mac_response::Result::MacValue(mac),
+                Err(e) => proto::compute_mac_response::Result::Err(format!("{:?}", e)),
+            }),
         }))
     }
     async fn verify_mac(
@@ -51,42 +47,18 @@ impl proto::mac_server::Mac for MacServerImpl {
         request: tonic::Request<proto::VerifyMacRequest>,
     ) -> Result<tonic::Response<proto::VerifyMacResponse>, tonic::Status> {
         let req = request.into_inner(); // discard metadata
-        let cursor = std::io::Cursor::new(req.keyset);
-        let mut reader = tink::keyset::BinaryReader::new(cursor);
-        let handle = match tink::keyset::insecure::read(&mut reader) {
-            Err(e) => return verify_rsp_from_err(e),
-            Ok(v) => v,
-        };
-        let primitive = match tink_mac::new(&handle) {
-            Err(e) => return verify_rsp_from_err(e),
-            Ok(v) => v,
-        };
-        match primitive.verify_mac(&req.mac_value, &req.data) {
-            Err(e) => return verify_rsp_from_err(e),
-            Ok(()) => {}
+        let closure = move || {
+            let cursor = std::io::Cursor::new(req.keyset.clone());
+            let mut reader = tink::keyset::BinaryReader::new(cursor);
+            let handle = tink::keyset::insecure::read(&mut reader)?;
+            let primitive = tink_mac::new(&handle)?;
+            primitive.verify_mac(&req.mac_value, &req.data)
         };
         Ok(tonic::Response::new(proto::VerifyMacResponse {
-            err: "".to_string(),
+            err: match closure() {
+                Ok(_) => "".to_string(),
+                Err(e) => format!("{:?}", e),
+            },
         }))
     }
-}
-
-// The testing infrastructure expects errors to be included in the response,
-// rather than using the gRPC error reporting mechanism.  Include helpers to
-// make it easy to map `TinkError` instances to this.
-
-fn compute_rsp_from_err(
-    e: tink::TinkError,
-) -> Result<tonic::Response<proto::ComputeMacResponse>, tonic::Status> {
-    Ok(tonic::Response::new(proto::ComputeMacResponse {
-        result: Some(proto::compute_mac_response::Result::Err(format!("{:?}", e))),
-    }))
-}
-
-fn verify_rsp_from_err(
-    e: tink::TinkError,
-) -> Result<tonic::Response<proto::VerifyMacResponse>, tonic::Status> {
-    Ok(tonic::Response::new(proto::VerifyMacResponse {
-        err: format!("{:?}", e),
-    }))
 }

@@ -18,6 +18,7 @@
 
 use crate::proto;
 use prost::Message;
+use tink::{utils::wrap_err, TinkError};
 
 #[derive(Debug, Default)]
 pub struct KeysetServerImpl {}
@@ -29,24 +30,23 @@ impl proto::keyset_server::Keyset for KeysetServerImpl {
         request: tonic::Request<proto::KeysetGenerateRequest>,
     ) -> Result<tonic::Response<proto::KeysetGenerateResponse>, tonic::Status> {
         let req = request.into_inner(); // discard metadata
-        let template = match tink::proto::KeyTemplate::decode(req.template.as_ref()) {
-            Err(e) => return generate_rsp_from_err(e),
-            Ok(v) => v,
-        };
-        let handle = match tink::keyset::Handle::new(&template) {
-            Err(e) => return generate_rsp_from_err(e),
-            Ok(v) => v,
-        };
-        let mut buf = Vec::new();
-        {
-            let mut writer = tink::keyset::BinaryWriter::new(&mut buf);
-            match tink::keyset::insecure::write(&handle, &mut writer) {
-                Err(e) => return generate_rsp_from_err(e),
-                Ok(()) => {}
+        let closure = move || -> Result<_, TinkError> {
+            let template = tink::proto::KeyTemplate::decode(req.template.as_ref())
+                .map_err(|e| wrap_err("decode failed", e))?;
+            let handle = tink::keyset::Handle::new(&template)?;
+            let mut buf = Vec::new();
+            {
+                let mut writer = tink::keyset::BinaryWriter::new(&mut buf);
+                tink::keyset::insecure::write(&handle, &mut writer)
+                    .map_err(|e| wrap_err("write failed", e))?;
             }
-        }
+            Ok(buf)
+        };
         Ok(tonic::Response::new(proto::KeysetGenerateResponse {
-            result: Some(proto::keyset_generate_response::Result::Keyset(buf)),
+            result: Some(match closure() {
+                Ok(buf) => proto::keyset_generate_response::Result::Keyset(buf),
+                Err(e) => proto::keyset_generate_response::Result::Err(format!("{:?}", e)),
+            }),
         }))
     }
     async fn public(
@@ -54,26 +54,25 @@ impl proto::keyset_server::Keyset for KeysetServerImpl {
         request: tonic::Request<proto::KeysetPublicRequest>,
     ) -> Result<tonic::Response<proto::KeysetPublicResponse>, tonic::Status> {
         let req = request.into_inner(); // discard metadata
-        let cursor = std::io::Cursor::new(req.private_keyset);
-        let mut reader = tink::keyset::BinaryReader::new(cursor);
-        let private_handle = match tink::keyset::insecure::read(&mut reader) {
-            Err(e) => return public_rsp_from_err(e),
-            Ok(v) => v,
-        };
-        let public_handle = match private_handle.public() {
-            Err(e) => return public_rsp_from_err(e),
-            Ok(v) => v,
-        };
-        let mut buf = Vec::new();
-        {
-            let mut writer = tink::keyset::BinaryWriter::new(&mut buf);
-            match tink::keyset::insecure::write(&public_handle, &mut writer) {
-                Err(e) => return public_rsp_from_err(e),
-                Ok(()) => {}
+        let closure = move || -> Result<_, TinkError> {
+            let cursor = std::io::Cursor::new(req.private_keyset);
+            let mut reader = tink::keyset::BinaryReader::new(cursor);
+            let private_handle = tink::keyset::insecure::read(&mut reader)
+                .map_err(|e| wrap_err("read failed", e))?;
+            let public_handle = private_handle.public()?;
+            let mut buf = Vec::new();
+            {
+                let mut writer = tink::keyset::BinaryWriter::new(&mut buf);
+                tink::keyset::insecure::write(&public_handle, &mut writer)
+                    .map_err(|e| wrap_err("write failed", e))?;
             }
-        }
+            Ok(buf)
+        };
         Ok(tonic::Response::new(proto::KeysetPublicResponse {
-            result: Some(proto::keyset_public_response::Result::PublicKeyset(buf)),
+            result: Some(match closure() {
+                Ok(buf) => proto::keyset_public_response::Result::PublicKeyset(buf),
+                Err(e) => proto::keyset_public_response::Result::Err(format!("{:?}", e)),
+            }),
         }))
     }
     async fn to_json(
@@ -81,28 +80,25 @@ impl proto::keyset_server::Keyset for KeysetServerImpl {
         request: tonic::Request<proto::KeysetToJsonRequest>,
     ) -> Result<tonic::Response<proto::KeysetToJsonResponse>, tonic::Status> {
         let req = request.into_inner(); // discard metadata
-        let cursor = std::io::Cursor::new(req.keyset);
-        let mut reader = tink::keyset::BinaryReader::new(cursor);
-        let handle = match tink::keyset::insecure::read(&mut reader) {
-            Err(e) => return to_json_rsp_from_err(e),
-            Ok(v) => v,
-        };
-        let mut buf = Vec::new();
-        {
-            let mut writer = tink::keyset::JsonWriter::new(&mut buf);
-            match tink::keyset::insecure::write(&handle, &mut writer) {
-                Err(e) => return to_json_rsp_from_err(e),
-                Ok(()) => {}
+        let closure = move || -> Result<_, TinkError> {
+            let cursor = std::io::Cursor::new(req.keyset);
+            let mut reader = tink::keyset::BinaryReader::new(cursor);
+            let handle = tink::keyset::insecure::read(&mut reader)
+                .map_err(|e| wrap_err("read failed", e))?;
+            let mut buf = Vec::new();
+            {
+                let mut writer = tink::keyset::JsonWriter::new(&mut buf);
+                tink::keyset::insecure::write(&handle, &mut writer)
+                    .map_err(|e| wrap_err("write failed", e))?;
             }
-        }
-        let json = match std::str::from_utf8(&buf) {
-            Err(e) => return to_json_rsp_from_err(e),
-            Ok(v) => v,
+            let json = std::str::from_utf8(&buf).map_err(|e| wrap_err("utf8 failed", e))?;
+            Ok(json.to_string())
         };
         Ok(tonic::Response::new(proto::KeysetToJsonResponse {
-            result: Some(proto::keyset_to_json_response::Result::JsonKeyset(
-                json.to_string(),
-            )),
+            result: Some(match closure() {
+                Ok(json) => proto::keyset_to_json_response::Result::JsonKeyset(json),
+                Err(e) => proto::keyset_to_json_response::Result::Err(format!("{:?}", e)),
+            }),
         }))
     }
     async fn from_json(
@@ -110,82 +106,24 @@ impl proto::keyset_server::Keyset for KeysetServerImpl {
         request: tonic::Request<proto::KeysetFromJsonRequest>,
     ) -> Result<tonic::Response<proto::KeysetFromJsonResponse>, tonic::Status> {
         let req = request.into_inner(); // discard metadata
-        let cursor = std::io::Cursor::new(req.json_keyset.as_bytes());
-        let mut reader = tink::keyset::JsonReader::new(cursor);
-        let handle = match tink::keyset::insecure::read(&mut reader) {
-            Err(e) => return from_json_rsp_from_err(e),
-            Ok(v) => v,
-        };
-        let mut buf = Vec::new();
-        {
-            let mut writer = tink::keyset::BinaryWriter::new(&mut buf);
-            match tink::keyset::insecure::write(&handle, &mut writer) {
-                Err(e) => return from_json_rsp_from_err(e),
-                Ok(()) => {}
+        let closure = move || -> Result<_, TinkError> {
+            let cursor = std::io::Cursor::new(req.json_keyset.as_bytes());
+            let mut reader = tink::keyset::JsonReader::new(cursor);
+            let handle = tink::keyset::insecure::read(&mut reader)
+                .map_err(|e| wrap_err("read failed", e))?;
+            let mut buf = Vec::new();
+            {
+                let mut writer = tink::keyset::BinaryWriter::new(&mut buf);
+                tink::keyset::insecure::write(&handle, &mut writer)
+                    .map_err(|e| wrap_err("write failed", e))?;
             }
-        }
+            Ok(buf)
+        };
         Ok(tonic::Response::new(proto::KeysetFromJsonResponse {
-            result: Some(proto::keyset_from_json_response::Result::Keyset(buf)),
+            result: Some(match closure() {
+                Ok(buf) => proto::keyset_from_json_response::Result::Keyset(buf),
+                Err(e) => proto::keyset_from_json_response::Result::Err(format!("{:?}", e)),
+            }),
         }))
     }
-}
-
-// The testing infrastructure expects errors to be included in the response,
-// rather than using the gRPC error reporting mechanism.  Include helpers to
-// make it easy to map `TinkError` instances to this.
-
-fn generate_rsp_from_err<T>(
-    e: T,
-) -> Result<tonic::Response<proto::KeysetGenerateResponse>, tonic::Status>
-where
-    T: std::fmt::Debug,
-{
-    Ok(tonic::Response::new(proto::KeysetGenerateResponse {
-        result: Some(proto::keyset_generate_response::Result::Err(format!(
-            "{:?}",
-            e
-        ))),
-    }))
-}
-
-fn public_rsp_from_err<T>(
-    e: T,
-) -> Result<tonic::Response<proto::KeysetPublicResponse>, tonic::Status>
-where
-    T: std::fmt::Debug,
-{
-    Ok(tonic::Response::new(proto::KeysetPublicResponse {
-        result: Some(proto::keyset_public_response::Result::Err(format!(
-            "{:?}",
-            e
-        ))),
-    }))
-}
-
-fn to_json_rsp_from_err<T>(
-    e: T,
-) -> Result<tonic::Response<proto::KeysetToJsonResponse>, tonic::Status>
-where
-    T: std::fmt::Debug,
-{
-    Ok(tonic::Response::new(proto::KeysetToJsonResponse {
-        result: Some(proto::keyset_to_json_response::Result::Err(format!(
-            "{:?}",
-            e
-        ))),
-    }))
-}
-
-fn from_json_rsp_from_err<T>(
-    e: T,
-) -> Result<tonic::Response<proto::KeysetFromJsonResponse>, tonic::Status>
-where
-    T: std::fmt::Debug,
-{
-    Ok(tonic::Response::new(proto::KeysetFromJsonResponse {
-        result: Some(proto::keyset_from_json_response::Result::Err(format!(
-            "{:?}",
-            e
-        ))),
-    }))
 }

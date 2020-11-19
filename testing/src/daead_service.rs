@@ -28,26 +28,21 @@ impl proto::deterministic_aead_server::DeterministicAead for DaeadServerImpl {
         request: tonic::Request<proto::DeterministicAeadEncryptRequest>,
     ) -> Result<tonic::Response<proto::DeterministicAeadEncryptResponse>, tonic::Status> {
         let req = request.into_inner(); // discard metadata
-        let cursor = std::io::Cursor::new(req.keyset);
-        let mut reader = tink::keyset::BinaryReader::new(cursor);
-        let handle = match tink::keyset::insecure::read(&mut reader) {
-            Err(e) => return encrypt_rsp_from_err(e),
-            Ok(v) => v,
+        let closure = move || {
+            let cursor = std::io::Cursor::new(req.keyset);
+            let mut reader = tink::keyset::BinaryReader::new(cursor);
+            let handle = tink::keyset::insecure::read(&mut reader)?;
+            let cipher = tink_daead::new(&handle)?;
+            cipher.encrypt_deterministically(&req.plaintext, &req.associated_data)
         };
-        let cipher = match tink_daead::new(&handle) {
-            Err(e) => return encrypt_rsp_from_err(e),
-            Ok(v) => v,
-        };
-        let ciphertext =
-            match cipher.encrypt_deterministically(&req.plaintext, &req.associated_data) {
-                Err(e) => return encrypt_rsp_from_err(e),
-                Ok(v) => v,
-            };
         Ok(tonic::Response::new(
             proto::DeterministicAeadEncryptResponse {
-                result: Some(
-                    proto::deterministic_aead_encrypt_response::Result::Ciphertext(ciphertext),
-                ),
+                result: Some(match closure() {
+                    Ok(ct) => proto::deterministic_aead_encrypt_response::Result::Ciphertext(ct),
+                    Err(e) => {
+                        proto::deterministic_aead_encrypt_response::Result::Err(format!("{:?}", e))
+                    }
+                }),
             },
         ))
     }
@@ -57,54 +52,23 @@ impl proto::deterministic_aead_server::DeterministicAead for DaeadServerImpl {
         request: tonic::Request<proto::DeterministicAeadDecryptRequest>,
     ) -> Result<tonic::Response<proto::DeterministicAeadDecryptResponse>, tonic::Status> {
         let req = request.into_inner(); // discard metadata
-        let cursor = std::io::Cursor::new(req.keyset);
-        let mut reader = tink::keyset::BinaryReader::new(cursor);
-        let handle = match tink::keyset::insecure::read(&mut reader) {
-            Err(e) => return decrypt_rsp_from_err(e),
-            Ok(v) => v,
+        let closure = move || {
+            let cursor = std::io::Cursor::new(req.keyset);
+            let mut reader = tink::keyset::BinaryReader::new(cursor);
+            let handle = tink::keyset::insecure::read(&mut reader)?;
+            let cipher = tink_daead::new(&handle)?;
+            cipher.decrypt_deterministically(&req.ciphertext, &req.associated_data)
         };
-        let cipher = match tink_daead::new(&handle) {
-            Err(e) => return decrypt_rsp_from_err(e),
-            Ok(v) => v,
-        };
-        let plaintext =
-            match cipher.decrypt_deterministically(&req.ciphertext, &req.associated_data) {
-                Err(e) => return decrypt_rsp_from_err(e),
-                Ok(v) => v,
-            };
+
         Ok(tonic::Response::new(
             proto::DeterministicAeadDecryptResponse {
-                result: Some(
-                    proto::deterministic_aead_decrypt_response::Result::Plaintext(plaintext),
-                ),
+                result: Some(match closure() {
+                    Ok(pt) => proto::deterministic_aead_decrypt_response::Result::Plaintext(pt),
+                    Err(e) => {
+                        proto::deterministic_aead_decrypt_response::Result::Err(format!("{:?}", e))
+                    }
+                }),
             },
         ))
     }
-}
-
-// The testing infrastructure expects errors to be included in the response,
-// rather than using the gRPC error reporting mechanism.  Include helpers to
-// make it easy to map `TinkError` instances to this.
-
-fn encrypt_rsp_from_err(
-    e: tink::TinkError,
-) -> Result<tonic::Response<proto::DeterministicAeadEncryptResponse>, tonic::Status> {
-    Ok(tonic::Response::new(
-        proto::DeterministicAeadEncryptResponse {
-            result: Some(proto::deterministic_aead_encrypt_response::Result::Err(
-                format!("{:?}", e),
-            )),
-        },
-    ))
-}
-fn decrypt_rsp_from_err(
-    e: tink::TinkError,
-) -> Result<tonic::Response<proto::DeterministicAeadDecryptResponse>, tonic::Status> {
-    Ok(tonic::Response::new(
-        proto::DeterministicAeadDecryptResponse {
-            result: Some(proto::deterministic_aead_decrypt_response::Result::Err(
-                format!("{:?}", e),
-            )),
-        },
-    ))
 }
