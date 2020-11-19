@@ -57,6 +57,7 @@ jobs:
         with:
           profile: minimal
           toolchain: nightly-2020-10-19
+          override: true
           components: rustfmt
       - run: rustc --version
       - run: cargo fmt --all -- --check
