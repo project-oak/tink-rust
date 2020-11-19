@@ -25,6 +25,7 @@ jobs:
           toolchain: ${{ matrix.rust }}
           components: rustfmt
           override: true
+      - run: rustc --version
       - run: cargo build --release --all
 
   test:
@@ -45,6 +46,7 @@ jobs:
           override: true
       - run: git clone --depth 1 https://github.com/google/wycheproof
       - run: echo "WYCHEPROOF_DIR=$PWD/wycheproof" >> $GITHUB_ENV
+      - run: rustc --version
       - run: cargo test --all -- --nocapture
 
   rustfmt:
@@ -56,6 +58,7 @@ jobs:
           profile: minimal
           toolchain: nightly-2020-10-19
           components: rustfmt
+      - run: rustc --version
       - run: cargo fmt --all -- --check
 
   clippy:
@@ -67,6 +70,7 @@ jobs:
           profile: minimal
           toolchain: stable
           components: clippy
+      - run: rustc --version
       - run: cargo clippy --all-features --all-targets
 
   doc:
@@ -77,4 +81,5 @@ jobs:
         with:
           profile: minimal
           toolchain: stable
+      - run: rustc --version
       - run: cargo doc --no-deps --document-private-items
