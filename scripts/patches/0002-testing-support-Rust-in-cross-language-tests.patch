@@ -86,7 +86,7 @@ index aaebef3af28e..2202100050be 100644
          'python/testing_server',
 +    ],
 +    'rust': [
-+        '../../tink-rust/target/debug/tink-testing-server',
++        '%s/target/debug/tink-testing-server' % os.environ['TINK_RUST_DIR'],
      ]
  }
  
