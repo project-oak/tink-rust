@@ -1,0 +1,28 @@
+name: crosstest
+on:
+  push:
+    branches: main
+    paths-ignore:
+      - README.md
+
+jobs:
+  crosstest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          components: rustfmt
+      - run: git clone --depth 1 --branch v1.5.0 https://github.com/google/tink upstream
+      - run: (cd upstream && git apply ../scripts/patches/*)
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.7'
+      - run: python --version
+      - uses: abhinavsingh/setup-bazel@v3
+        with:
+          version: 3.1.0
+      - run: bazel --version
+      - run: TINK_TESTING_DIR=$PWD/upstream/testing scripts/run-tests.sh
