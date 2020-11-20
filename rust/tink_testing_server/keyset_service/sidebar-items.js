@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["from_json_rsp_from_err",""],["generate_rsp_from_err",""],["public_rsp_from_err",""],["to_json_rsp_from_err",""]],"struct":[["KeysetServerImpl",""]]});
+initSidebarItems({"struct":[["KeysetServerImpl",""]]});

@@ -1,4 +1,8 @@
 var N = null;var sourcesIndex = {};
+sourcesIndex["example_aead"] = {"name":"","files":["main.rs"]};
+sourcesIndex["example_daead"] = {"name":"","files":["main.rs"]};
+sourcesIndex["example_mac"] = {"name":"","files":["main.rs"]};
+sourcesIndex["example_signature"] = {"name":"","files":["main.rs"]};
 sourcesIndex["rinkey"] = {"name":"","files":["main.rs"]};
 sourcesIndex["tink"] = {"name":"","dirs":[{"name":"codegen","files":["google.crypto.tink.rs"]},{"name":"cryptofmt","files":["mod.rs"]},{"name":"keyset","files":["binary_io.rs","handle.rs","insecure.rs","json_io.rs","manager.rs","mem_io.rs","mod.rs","reader.rs","validation.rs","writer.rs"]},{"name":"primitiveset","files":["mod.rs"]},{"name":"registry","files":["key_manager.rs","key_templates.rs","kms_client.rs","mod.rs"]},{"name":"subtle","files":["hkdf.rs","mod.rs","random.rs"]}],"files":["aead.rs","deterministic_aead.rs","hybrid_decrypt.rs","hybrid_encrypt.rs","lib.rs","mac.rs","prf.rs","signer.rs","streamingaead.rs","utils.rs","verifier.rs"]};
 sourcesIndex["tink_aead"] = {"name":"","dirs":[{"name":"subtle","files":["aead.rs","aes_ctr.rs","aes_gcm.rs","chacha20poly1305.rs","encrypt_then_authenticate.rs","ind_cpa.rs","mod.rs","xchacha20poly1305.rs"]}],"files":["aead_factory.rs","aead_key_templates.rs","aes_ctr_hmac_aead_key_manager.rs","aes_gcm_key_manager.rs","chacha20poly1305_key_manager.rs","kms_envelope_aead.rs","kms_envelope_aead_key_manager.rs","lib.rs","xchacha20poly1305_key_manager.rs"]};
