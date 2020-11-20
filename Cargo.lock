@@ -586,6 +586,42 @@ dependencies = [
 ]
 
 [[package]]
+name = "example-aead"
+version = "0.1.0"
+dependencies = [
+ "hex",
+ "tink",
+ "tink-aead",
+]
+
+[[package]]
+name = "example-daead"
+version = "0.1.0"
+dependencies = [
+ "hex",
+ "tink",
+ "tink-daead",
+]
+
+[[package]]
+name = "example-mac"
+version = "0.1.0"
+dependencies = [
+ "hex",
+ "tink",
+ "tink-mac",
+]
+
+[[package]]
+name = "example-signature"
+version = "0.1.0"
+dependencies = [
+ "hex",
+ "tink",
+ "tink-signature",
+]
+
+[[package]]
 name = "ff"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

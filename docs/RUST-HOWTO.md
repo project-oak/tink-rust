@@ -40,27 +40,24 @@ Rust can be found [here](PRIMITIVES.md#rust).
 AEAD encryption assures the confidentiality and authenticity of the data. This
 primitive is CPA secure.
 
+<!-- prettier-ignore-start -->
+[embedmd]:# (../examples/aead/src/main.rs Rust /fn main/ /^}/)
 ```Rust
 fn main() {
     tink_aead::init();
     let kh = tink::keyset::Handle::new(&tink_aead::aes256_gcm_key_template()).unwrap();
     let a = tink_aead::new(&kh).unwrap();
-    let ct = a
-        .encrypt(
-            b"this data needs to be encrypted",
-            b"this data needs to be authenticated, but not encrypted",
-        )
-        .unwrap();
-    let pt = a
-        .decrypt(
-            &ct,
-            b"this data needs to be authenticated, but not encrypted",
-        )
-        .unwrap();
 
-    assert_eq!(b"this data needs to be encrypted".to_vec(), pt);
+    let pt = b"this data needs to be encrypted";
+    let aad = b"this data needs to be authenticated, but not encrypted";
+    let ct = a.encrypt(pt, aad).unwrap();
+    println!("'{}' => {}", String::from_utf8_lossy(pt), hex::encode(&ct));
+
+    let pt2 = a.decrypt(&ct, aad).unwrap();
+    assert_eq!(&pt[..], pt2);
 }
 ```
+<!-- prettier-ignore-end -->
 
 ### MAC
 
@@ -68,63 +65,76 @@ MAC computes a tag for a given message that can be used to authenticate a
 message. MAC protects data integrity as well as provides for authenticity of the
 message.
 
+<!-- prettier-ignore-start -->
+[embedmd]:# (../examples/mac/src/main.rs Rust /fn main/ /^}/)
 ```Rust
 fn main() {
     tink_mac::init();
-    let kh = tink::keyset::Handle::new(tink_mac::hmac_sha256_tag256_key_template()).unwrap();
+    let kh = tink::keyset::Handle::new(&tink_mac::hmac_sha256_tag256_key_template()).unwrap();
     let m = tink_mac::new(&kh).unwrap();
 
-    let mac = m.compute_mac(b"this data needs to be MACed").unwrap();
+    let pt = b"this data needs to be MACed";
+    let mac = m.compute_mac(pt).unwrap();
+    println!("'{}' => {}", String::from_utf8_lossy(pt), hex::encode(&mac));
 
-    assert!(m.verify_mac(mac, b"this data needs to be MACed").is_ok());
-
-    // Output:
+    assert!(m.verify_mac(&mac, b"this data needs to be MACed").is_ok());
     println!("MAC verification succeeded.");
 }
 ```
+<!-- prettier-ignore-end -->
 
 ### Deterministic AEAD
 
 Unlike AEAD, implementations of this interface are not semantically secure,
 because encrypting the same plaintext always yields the same ciphertext.
 
+<!-- prettier-ignore-start -->
+[embedmd]:# (../examples/daead/src/main.rs Rust /fn main/ /^}/)
 ```Rust
 fn main() {
     tink_daead::init();
     let kh = tink::keyset::Handle::new(&tink_daead::aes_siv_key_template()).unwrap();
     let d = tink_daead::new(&kh).unwrap();
+
     let pt = b"this data needs to be encrypted";
     let ad = b"additional data";
     let ct1 = d.encrypt_deterministically(pt, ad).unwrap();
-    let ct2 = d.encrypt_deterministically(pt, ad).unwrap();
+    println!("'{}' => {}", String::from_utf8_lossy(pt), hex::encode(&ct1));
 
+    let ct2 = d.encrypt_deterministically(pt, ad).unwrap();
     assert_eq!(ct1, ct2, "cipher texts are not equal");
     println!("Cipher texts are equal.");
 
     let pt2 = d.decrypt_deterministically(&ct1, ad).unwrap();
-
-    println!("Plain text: {}", String::from_utf8_lossy(pt));
+    assert_eq!(&pt[..], pt2);
 }
 ```
+<!-- prettier-ignore-end -->
 
 ### Signature
 
 To sign data using Tink you can use ECDSA (with P-256) or ED25519 key templates.
 
+<!-- prettier-ignore-start -->
+[embedmd]:# (../examples/signature/src/main.rs Rust /fn main/ /^}/)
 ```Rust
-fn example_ecdsa() {
+fn main() {
     tink_signature::init();
     // Other key templates can also be used.
     let kh = tink::keyset::Handle::new(&tink_signature::ecdsa_p256_key_template()).unwrap();
     let s = tink_signature::new_signer(&kh).unwrap();
 
-    let a = s.sign(b"this data needs to be signed").unwrap();
+    let pt = b"this data needs to be signed";
+    let a = s.sign(pt).unwrap();
+    println!("'{}' => {}", String::from_utf8_lossy(pt), hex::encode(&a));
 
     let pubkh = kh.public().unwrap();
     let v = tink_signature::new_verifier(&pubkh).unwrap();
     assert!(v.verify(&a, b"this data needs to be signed").is_ok());
+    println!("Signature verified.");
 }
 ```
+<!-- prettier-ignore-end -->
 
 ## Key management
 
