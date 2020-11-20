@@ -25,6 +25,7 @@ cargo test --all --exclude tink-testing-server
 grcov ./target/debug/ \
       --source-dir=. \
       --ignore-not-existing \
+      --ignore="tink/src/codegen/*rs" \
       --excl-line="(panic!|unreachable!|#\\[derive\\()" \
       --excl-start=LCOV_EXCL_START \
       --excl-stop=LCOV_EXCL_STOP \
