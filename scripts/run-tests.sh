@@ -15,14 +15,22 @@
 
 set -o errexit
 
-readonly SCRIPTS_DIR="$(dirname "$0")"
+realpath() {
+    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
+}
 
-# Location of upstream Tink repo.
-readonly TINK_DIR=${TINK_DIR:-${SCRIPTS_DIR}/../../tink}
+readonly SCRIPTS_DIR=$(realpath "$(dirname "$0")")
+readonly TINK_RUST_DIR=${TINK_RUST_DIR:-${SCRIPTS_DIR}/..}
+
+# Location of upstream Tink testing directory.
+readonly TINK_TESTING_DIR=${TINK_TESTING_DIR:-${SCRIPTS_DIR}/../../tink/testing}
+
+echo "Upstream Tink testing code expected in ${TINK_TESTING_DIR}"
+echo "Tink Rust code expected in ${TINK_RUST_DIR}"
 
 cargo build --package=tink-testing-server
 
-cd "${TINK_DIR}/testing/cross_language"
+cd "${TINK_TESTING_DIR}/cross_language"
 (
     cd ../cc
     bazel build :testing_server
@@ -34,7 +42,7 @@ cd "${TINK_DIR}/testing/cross_language"
     bazel build :testing_server
 )
 
-bazel test --cache_test_results=no \
+bazel test --cache_test_results=no --test_output=errors \
       :aead_test \
       :aead_consistency_test \
       :deterministic_aead_test \
@@ -44,5 +52,6 @@ bazel test --cache_test_results=no \
       :mac_test \
       :prf_set_test \
       :signature_test \
-      --test_env testing_dir="${PWD}/.." \
+      --test_env testing_dir="${TINK_TESTING_DIR}" \
+      --test_env TINK_RUST_DIR="${TINK_RUST_DIR}" \
       "$@"
