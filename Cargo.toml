@@ -2,6 +2,10 @@
 members = [
   "aead",
   "daead",
+  "examples/aead",
+  "examples/daead",
+  "examples/mac",
+  "examples/signature",
   "integration/awskms",
   "mac",
   "prf",

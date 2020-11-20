@@ -54,6 +54,11 @@ for f in "${CODE_FILES[@]}"; do
   # errcount=$((errcount + $?))
 done
 
+for f in "${MD_FILES[@]}"; do
+  go run github.com/campoy/embedmd -d "$f"
+  errcount=$((errcount + $?))
+done
+
 if [ $errcount -gt 0 ]; then
   echo "$errcount errors detected"
   exit 1
