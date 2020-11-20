@@ -101,3 +101,24 @@ jobs:
           crate: cargo-udeps
           use-tool-cache: true
       - run: cargo udeps
+
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly-2020-10-19
+          override: true
+          components: rustfmt
+      - uses: actions-rs/install@v0.1.2
+        with:
+          crate: grcov
+          use-tool-cache: true
+      - run: git clone --depth 1 https://github.com/google/wycheproof
+      - run: echo "WYCHEPROOF_DIR=$PWD/wycheproof" >> $GITHUB_ENV
+      - run: scripts/test-coverage.sh
+      - name: Upload to codecov.io
+        run: |
+          bash <(curl -s https://codecov.io/bash) -f ./target/debug/lcov.info
