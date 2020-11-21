@@ -100,7 +100,7 @@ fn test_aes_gcm_long_messages() {
                 key_size, pt_size
             );
         }
-        pt_size += 5 * pt_size / 11
+        pt_size += 9 * pt_size / 11
     }
 }
 

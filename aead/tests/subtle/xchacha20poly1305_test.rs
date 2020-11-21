@@ -143,7 +143,7 @@ fn test_x_cha_cha20_poly1305_long_messages() {
             hex::encode(&aad)
         );
 
-        data_size += 5 * data_size / 11;
+        data_size += 9 * data_size / 11;
     }
 }
 
