@@ -6,11 +6,11 @@ edition = "2018"
 license = "Apache-2.0"
 
 [dependencies]
-structopt = "*"
-tink = { version = "*", features = ["insecure"] }
-tink-aead = "*"
-tink-awskms = "*"
-tink-daead = "*"
-tink-mac = "*"
-tink-prf = "*"
-tink-signature = "*"
+structopt = "^0.3.18"
+tink = { version = "^0.1", features = ["insecure"] }
+tink-aead = "^0.1"
+tink-awskms = "^0.1"
+tink-daead = "^0.1"
+tink-mac = "^0.1"
+tink-prf = "^0.1"
+tink-signature = "^0.1"

@@ -12,23 +12,23 @@ json = ["base64", "serde", "serde_json"]
 
 [dependencies]
 base64 = { version = "^0.12", optional = true }
-digest = "*"
-hkdf = "*"
-lazy_static = "*"
-prost = "*"
-rand = "*"
-serde = { version = "*", features = ["derive"], optional = true }
-serde_json = { version = "*", optional = true }
-sha-1 = "*"
-sha2 = "*"
-subtle = "*"
+digest = "^0.9"
+hkdf = "^0.9"
+lazy_static = "^1.4"
+prost = "^0.6.1"
+rand = "^0.7"
+serde = { version = "^1.0.116", features = ["derive"], optional = true }
+serde_json = { version = "^1.0.58", optional = true }
+sha-1 = "^0.9.1"
+sha2 = "^0.9.1"
+subtle = "^2.3"
 
 [build-dependencies]
-prost-build = "*"
+prost-build = "^0.6.1"
 
 [dev-dependencies]
 base64 = "^0.12"
-hex = "*"
-tink-aead = "*"
-tink-mac = "*"
-tink-testutil = "*"
+hex = "^0.4.2"
+tink-aead = "^0.1"
+tink-mac = "^0.1"
+tink-testutil = "^0.1"
