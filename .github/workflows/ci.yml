@@ -104,6 +104,22 @@ jobs:
           use-tool-cache: true
       - run: cargo udeps
 
+  deny:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly-2020-10-19
+          override: true
+          components: rustfmt
+      - uses: actions-rs/install@v0.1.2
+        with:
+          crate: cargo-deny
+          use-tool-cache: true
+      - run: cargo deny check
+
   coverage:
     runs-on: ubuntu-latest
     steps:
