@@ -6,6 +6,6 @@ edition = "2018"
 license = "Apache-2.0"
 
 [dependencies]
-hex = "*"
-tink = "*"
-tink-aead = "*"
+hex = "^0.4.2"
+tink = "^0.1"
+tink-aead = "^0.1"
