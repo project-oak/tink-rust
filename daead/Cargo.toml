@@ -12,7 +12,7 @@ prost = "*"
 tink = "*"
 
 [dev-dependencies]
-base64 = "*"
+base64 = "^0.12"
 hex = "*"
 serde = { version = "*", features = ["derive"] }
 serde_json = "*"

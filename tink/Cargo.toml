@@ -11,7 +11,7 @@ insecure = []
 json = ["base64", "serde", "serde_json"]
 
 [dependencies]
-base64 = { version = "*", optional = true }
+base64 = { version = "^0.12", optional = true }
 digest = "*"
 hkdf = "*"
 lazy_static = "*"
@@ -27,7 +27,7 @@ subtle = "*"
 prost-build = "*"
 
 [dev-dependencies]
-base64 = "*"
+base64 = "^0.12"
 hex = "*"
 tink-aead = "*"
 tink-mac = "*"

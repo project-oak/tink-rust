@@ -17,7 +17,7 @@ sha2 = "*"
 tink = "*"
 
 [dev-dependencies]
-base64 = "*"
+base64 = "^0.12"
 hex = "*"
 maplit = "*"
 serde = { version = "*", features = ["derive"] }
