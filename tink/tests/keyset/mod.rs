@@ -20,6 +20,3 @@ mod handle_test;
 mod json_io_test;
 mod manager_test;
 mod validation_test;
-
-mod utils;
-pub use utils::SharedBuf;
