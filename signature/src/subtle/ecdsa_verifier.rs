@@ -110,15 +110,8 @@ fn element_from_padded_slice<C: elliptic_curve::Curve>(
 impl tink::Verifier for EcdsaVerifier {
     fn verify(&self, signature: &[u8], data: &[u8]) -> Result<(), tink::TinkError> {
         let signature = match self.encoding {
-            super::SignatureEncoding::Der => {
-                // The ecdsa::asn1 module panics on too-small inputs, so filter them here.
-                // TODO(#33): remove when ecdsa crate includes https://github.com/RustCrypto/signatures/pull/192
-                if signature.len() < 6 {
-                    return Err("EcdsaVerifier: signature too small".into());
-                }
-                Signature::from_asn1(signature)
-                    .map_err(|e| wrap_err("EcdsaVerifier: invalid ASN.1 signature", e))?
-            }
+            super::SignatureEncoding::Der => Signature::from_asn1(signature)
+                .map_err(|e| wrap_err("EcdsaVerifier: invalid ASN.1 signature", e))?,
             super::SignatureEncoding::IeeeP1363 => Signature::from_bytes(signature)
                 .map_err(|e| wrap_err("EcdsaVerifier: invalid IEEE-P1363 signature", e))?,
         };

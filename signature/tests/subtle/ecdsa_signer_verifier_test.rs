@@ -180,20 +180,15 @@ fn test_wycheproof_vectors() {
     struct TestVector {
         filename: &'static str,
         encoding: EcdsaSignatureEncoding,
-        panic_tests: HashSet<i32>,
     }
     let vectors = vec![
         TestVector {
             filename: "ecdsa_test.json",
             encoding: EcdsaSignatureEncoding::Der,
-            // Test 4 uses ASN.1 long form encoding of sequence length, which is not DER.
-            // TODO(#33): remove when ecdsa crate includes https://github.com/RustCrypto/signatures/pull/192
-            panic_tests: vec![4].into_iter().collect(),
         },
         TestVector {
             filename: "ecdsa_secp256r1_sha256_p1363_test.json",
             encoding: EcdsaSignatureEncoding::IeeeP1363,
-            panic_tests: HashSet::new(),
         },
         /* TODO(#16): more ECDSA curves
                 TestVector {
@@ -207,11 +202,11 @@ fn test_wycheproof_vectors() {
         */
     ];
     for v in vectors {
-        wycheproof_test(v.filename, v.encoding, v.panic_tests)
+        wycheproof_test(v.filename, v.encoding)
     }
 }
 
-fn wycheproof_test(filename: &str, encoding: EcdsaSignatureEncoding, panic_tests: HashSet<i32>) {
+fn wycheproof_test(filename: &str, encoding: EcdsaSignatureEncoding) {
     println!(
         "wycheproof file 'testvectors/{}', encoding '{:?}'",
         filename, encoding
@@ -256,13 +251,6 @@ fn wycheproof_test(filename: &str, encoding: EcdsaSignatureEncoding, panic_tests
             }
         };
         for tc in &g.tests {
-            if panic_tests.contains(&tc.case.case_id) {
-                println!(
-                    "     SKIP case {} [{}] {}",
-                    tc.case.case_id, tc.case.result, tc.case.comment
-                );
-                continue;
-            }
             println!(
                 "     case {} [{}] {}",
                 tc.case.case_id, tc.case.result, tc.case.comment
