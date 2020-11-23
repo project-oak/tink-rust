@@ -204,6 +204,9 @@ fn test_keyset_manager_operations() {
     let result = keyset_manager.enable(key_id_2);
     assert!(result.is_err());
     assert!(format!("{:?}", result).contains("Cannot enable"));
+    let result = keyset_manager.disable(key_id_2);
+    assert!(result.is_err());
+    assert!(format!("{:?}", result).contains("Cannot disable"));
     let keyset = insecure::keyset_material(&keyset_manager.handle().unwrap());
     assert_eq!(
         keyset.key[2].status,
@@ -254,6 +257,14 @@ fn test_keyset_manager_operations() {
     assert!(result.is_err());
     assert!(format!("{:?}", result).contains("not found"));
     assert_eq!(1, keyset_manager.key_count());
+
+    // Operations with invalid key ID fail
+    let invalid_key_id = 99999; // assume this doesn't accidentally clash
+    assert!(keyset_manager.set_primary(invalid_key_id).is_err());
+    assert!(keyset_manager.enable(invalid_key_id).is_err());
+    assert!(keyset_manager.disable(invalid_key_id).is_err());
+    assert!(keyset_manager.destroy(invalid_key_id).is_err());
+    assert!(keyset_manager.delete(invalid_key_id).is_err());
 }
 
 #[test]
