@@ -42,7 +42,7 @@ fn test_sign_verify() {
         let (priv_key, pub_key) = match curve {
             EllipticCurveType::NistP256 => {
                 let secret_key = p256::ecdsa::SigningKey::random(&mut csprng);
-                let public_key = p256::ecdsa::VerifyKey::from(&secret_key);
+                let public_key = p256::ecdsa::VerifyingKey::from(&secret_key);
                 (
                     EcdsaPrivateKey::NistP256(secret_key),
                     EcdsaPublicKey::NistP256(public_key),
@@ -55,7 +55,8 @@ fn test_sign_verify() {
         };
         let (pub_x, pub_y) = match &pub_key {
             EcdsaPublicKey::NistP256(public_key) => {
-                let point_len = <p256::NistP256 as elliptic_curve::Curve>::FieldSize::to_usize();
+                let point_len =
+                    <p256::NistP256 as p256::elliptic_curve::Curve>::FieldSize::to_usize();
                 let pub_key_point = public_key.to_encoded_point(/* compress= */ false);
                 let pub_key_data = pub_key_point.as_bytes();
                 assert_eq!(

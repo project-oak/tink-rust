@@ -14,9 +14,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use elliptic_curve::sec1::EncodedPoint;
 use generic_array::typenum::Unsigned;
-use p256::ecdsa::{signature::Verifier, Signature};
+use p256::{
+    ecdsa::{signature::Verifier, Signature},
+    elliptic_curve,
+    elliptic_curve::sec1::EncodedPoint,
+};
 use signature::Signature as _;
 use tink::{
     proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType},
@@ -27,7 +30,7 @@ use tink::{
 /// An ECDSA public key.
 #[derive(Clone)]
 pub enum EcdsaPublicKey {
-    NistP256(p256::ecdsa::VerifyKey),
+    NistP256(p256::ecdsa::VerifyingKey),
 }
 
 // `EcdsaVerifier` is an implementation of [`tink::Verifier`] for ECDSA.
@@ -52,7 +55,7 @@ impl EcdsaVerifier {
                 let x = element_from_padded_slice::<p256::NistP256>(x)?;
                 let y = element_from_padded_slice::<p256::NistP256>(y)?;
                 let pt = EncodedPoint::from_affine_coordinates(&x, &y, /* compress= */ false);
-                let verify_key = p256::ecdsa::VerifyKey::from_encoded_point(&pt)
+                let verify_key = p256::ecdsa::VerifyingKey::from_encoded_point(&pt)
                     .map_err(|e| wrap_err("EcdsaVerifier: invalid point", e))?;
                 EcdsaPublicKey::NistP256(verify_key)
             }
