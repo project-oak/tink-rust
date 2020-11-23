@@ -14,22 +14,23 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use super::SharedBuf;
 use tink::keyset::{Reader, Writer};
 
 #[test]
 fn test_binary_io_unencrypted() {
     tink_mac::init();
-    let buf = SharedBuf::new();
-    let mut w = tink::keyset::BinaryWriter::new(buf.clone());
-    let mut r = tink::keyset::BinaryReader::new(buf);
 
     let manager = tink_testutil::new_hmac_keyset_manager();
     let h = manager.handle().expect("cannot get keyset handle");
-
     let ks1 = tink::keyset::insecure::keyset_material(&h);
-    w.write(&ks1).expect("cannot write keyset");
 
+    let mut buf = Vec::new();
+    {
+        let mut w = tink::keyset::BinaryWriter::new(&mut buf);
+        w.write(&ks1).expect("cannot write keyset");
+    }
+
+    let mut r = tink::keyset::BinaryReader::new(&buf[..]);
     let ks2 = r.read().expect("cannot read keyset");
     assert_eq!(
         ks1, ks2,
@@ -40,17 +41,19 @@ fn test_binary_io_unencrypted() {
 
 #[test]
 fn test_binary_io_encrypted() {
-    let buf = SharedBuf::new();
-    let mut w = tink::keyset::BinaryWriter::new(buf.clone());
-    let mut r = tink::keyset::BinaryReader::new(buf);
-
     let kse1 = tink::proto::EncryptedKeyset {
         encrypted_keyset: vec![b'A'; 32],
         keyset_info: None,
     };
-    w.write_encrypted(&kse1)
-        .expect("cannot write encrypted keyset");
 
+    let mut buf = Vec::new();
+    {
+        let mut w = tink::keyset::BinaryWriter::new(&mut buf);
+        w.write_encrypted(&kse1)
+            .expect("cannot write encrypted keyset");
+    }
+
+    let mut r = tink::keyset::BinaryReader::new(&buf[..]);
     let kse2 = r.read_encrypted().expect("cannot read encrypted keyset");
     assert_eq!(
         kse1, kse2,
