@@ -20,9 +20,6 @@ ignore = [
   "RUSTSEC-2020-0016",
   # TODO: Remove when rusoto-* no longer depends on dirs.
   "RUSTSEC-2020-0053",
-  # TODO: upgrade RustCrypto crates
-  "RUSTSEC-2020-0057",
-  "RUSTSEC-2020-0058",
 ]
 
 # Deny multiple versions unless explicitly skipped.

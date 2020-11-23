@@ -7,14 +7,13 @@ license = "Apache-2.0"
 
 [dependencies]
 # Need the `std` feature for Error type conversion
-aead = { version = "^0.3", features = ["std"] }
-aes-ctr = "^0.5"
-aes-gcm = "^0.7"
-chacha20poly1305 = "^0.6"
+aead = { version = "^0.3.2", features = ["std"] }
+aes-ctr = "^0.6"
+aes-gcm = "^0.8"
+chacha20poly1305 = "^0.7"
 generic-array = "^0.14"
 prost = "^0.6.1"
 rand = "^0.7"
-stream-cipher = "^0.7"
 tink = "^0.1"
 tink-mac = "^0.1"
 

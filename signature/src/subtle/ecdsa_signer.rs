@@ -15,7 +15,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use generic_array::typenum::Unsigned;
-use p256::ecdsa::signature::{RandomizedSigner, Signature};
+use p256::{
+    ecdsa::signature::{RandomizedSigner, Signature},
+    elliptic_curve,
+};
 use tink::{
     proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType},
     utils::wrap_err,
@@ -32,7 +35,9 @@ impl Clone for EcdsaPrivateKey {
     fn clone(&self) -> Self {
         match self {
             EcdsaPrivateKey::NistP256(k) => {
-                EcdsaPrivateKey::NistP256(p256::ecdsa::SigningKey::new(&k.to_bytes()).unwrap()) // safe: round-trip
+                EcdsaPrivateKey::NistP256(
+                    p256::ecdsa::SigningKey::from_bytes(&k.to_bytes()).unwrap(), /* safe: round-trip */
+                )
             }
         }
     }
@@ -61,9 +66,10 @@ impl EcdsaSigner {
                 {
                     return Err("EcdsaSigner: invalid private key len".into());
                 }
-                let secret_key = p256::SecretKey::from_bytes(key_value)
-                    .map_err(|e| wrap_err("EcdsaSigner: invalid private key", e))?;
-                EcdsaPrivateKey::NistP256(p256::ecdsa::SigningKey::from(&secret_key))
+                EcdsaPrivateKey::NistP256(
+                    p256::ecdsa::SigningKey::from_bytes(key_value)
+                        .map_err(|e| wrap_err("EcdsaSigner: invalid private key", e))?,
+                )
             }
             _ => return Err(format!("EcdsaSigner: unsupported curve {:?}", curve).into()),
         };

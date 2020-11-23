@@ -17,6 +17,7 @@
 //! Key manager for ECDSA signing keys.
 
 use generic_array::typenum::Unsigned;
+use p256::elliptic_curve;
 use prost::Message;
 use tink::{proto::EllipticCurveType, utils::wrap_err, TinkError};
 
@@ -66,7 +67,7 @@ impl tink::registry::KeyManager for EcdsaSignerKeyManager {
                 Some(EllipticCurveType::NistP256) => {
                     // Generate a new keypair.
                     let secret_key = p256::ecdsa::SigningKey::random(&mut csprng);
-                    let public_key = p256::ecdsa::VerifyKey::from(&secret_key);
+                    let public_key = p256::ecdsa::VerifyingKey::from(&secret_key);
                     let public_key_point = public_key.to_encoded_point(/* compress= */ false);
                     let public_key_data = public_key_point.as_bytes();
 

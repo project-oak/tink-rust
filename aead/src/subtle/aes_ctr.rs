@@ -17,7 +17,7 @@
 //! AES-CTR implementation of [`IndCpaCipher`](super::IndCpaCipher).
 
 use super::IndCpaCipher;
-use aes_ctr::stream_cipher::{
+use aes_ctr::cipher::stream::{
     consts::U16, generic_array::GenericArray, Key, NewStreamCipher, SyncStreamCipher,
 };
 use tink::{utils::wrap_err, TinkError};
