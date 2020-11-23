@@ -214,16 +214,10 @@ impl Manager {
 
         loop {
             let ret = rng.gen::<u32>();
-            let mut ok = true;
-            for key in &self.ks.key {
-                if key.key_id == ret {
-                    ok = false;
-                    break;
-                }
+            if self.ks.key.iter().any(|x| x.key_id == ret) {
+                continue;
             }
-            if ok {
-                return ret;
-            }
+            return ret;
         }
     }
 }
