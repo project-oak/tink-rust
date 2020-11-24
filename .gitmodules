@@ -1,0 +1,3 @@
+[submodule "wycheproof"]
+	path = wycheproof
+	url = https://github.com/google/wycheproof

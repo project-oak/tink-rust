@@ -80,15 +80,17 @@ pub struct WycheproofCase {
     pub flags: Vec<String>,
 }
 
-/// Retrieve Wycheproof test vectors from the given filename, assuming that
-/// the location of the Wycheproof repository is given by the `WYCHEPROOF_DIR`
-/// environment variable.
+/// Retrieve Wycheproof test vectors from the given filename.  The location of the Wycheproof
+/// repository is assumed to be "../wycheproof/" relative to the crate manifest file, but this can
+/// be overridden with the the `WYCHEPROOF_DIR` environment variable.
 pub fn wycheproof_data(filename: &str) -> Vec<u8> {
-    let wycheproof_dir = std::env::var("WYCHEPROOF_DIR")
-        .expect("**TEST VECTORS NOT FOUND**: Please set WYCHEPROOF_DIR to the location of the Wycheproof repo.");
+    let wycheproof_dir = match std::env::var("WYCHEPROOF_DIR") {
+        Ok(d) => d,
+        Err(_) => concat!(env!("CARGO_MANIFEST_DIR"), "/../wycheproof").to_string(),
+    };
     std::fs::read(std::path::Path::new(&wycheproof_dir).join(filename)).unwrap_or_else(|_| {
         panic!(
-            "Test vector file {} not found under $WYCHEPROOF_DIR={}",
+            "Test vector file {} not found under $WYCHEPROOF_DIR={}; `git submodule update --init` needed?",
             filename, wycheproof_dir
         )
     })

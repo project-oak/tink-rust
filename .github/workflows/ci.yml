@@ -38,14 +38,14 @@ jobs:
           - nightly-2020-10-19
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: true
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
           toolchain: ${{ matrix.rust }}
           components: rustfmt
           override: true
-      - run: git clone --depth 1 https://github.com/google/wycheproof
-      - run: echo "WYCHEPROOF_DIR=$PWD/wycheproof" >> $GITHUB_ENV
       - run: rustc --version
       - run: cargo test --all -- --nocapture
 
@@ -124,6 +124,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: true
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
@@ -134,8 +136,6 @@ jobs:
         with:
           crate: cargo-tarpaulin
           use-tool-cache: true
-      - run: git clone --depth 1 https://github.com/google/wycheproof
-      - run: echo "WYCHEPROOF_DIR=$PWD/wycheproof" >> $GITHUB_ENV
       - run: cargo tarpaulin --verbose --ignore-tests --timeout=600 --out Xml
       - name: Upload to codecov.io
         run: |
