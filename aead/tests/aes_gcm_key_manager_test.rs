@@ -26,6 +26,11 @@ fn test_aes_gcm_get_primitive_basic() {
     tink_aead::init();
     let key_manager = tink::registry::get_key_manager(tink_testutil::AES_GCM_TYPE_URL)
         .expect("cannot obtain AES-GCM key manager");
+    assert_eq!(key_manager.type_url(), tink_testutil::AES_GCM_TYPE_URL);
+    assert_eq!(
+        key_manager.key_material_type(),
+        tink::proto::key_data::KeyMaterialType::Symmetric
+    );
     for key_size in KEY_SIZES {
         let key = tink_testutil::new_aes_gcm_key(tink_testutil::AES_GCM_KEY_VERSION, *key_size);
         let serialized_key = proto_encode(&key);

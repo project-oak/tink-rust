@@ -23,6 +23,11 @@ fn test_cha_cha20_poly1305_get_primitive() {
     tink_aead::init();
     let km = tink::registry::get_key_manager(tink_testutil::CHA_CHA20_POLY1305_TYPE_URL)
         .expect("cannot obtain ChaCha20Poly1305 key manager");
+    assert_eq!(km.type_url(), tink_testutil::CHA_CHA20_POLY1305_TYPE_URL);
+    assert_eq!(
+        km.key_material_type(),
+        tink::proto::key_data::KeyMaterialType::Symmetric
+    );
     let serialized_key = km.new_key(&[]).unwrap();
     let p = km.primitive(&serialized_key).unwrap();
     let key = tink::proto::ChaCha20Poly1305Key::decode(serialized_key.as_ref()).unwrap();
@@ -39,6 +44,7 @@ fn test_cha_cha20_poly1305_get_primitive_with_invalid_keys() {
         let serialized_key = tink_testutil::proto_encode(&key);
         assert!(km.primitive(&serialized_key).is_err());
     }
+    assert!(km.primitive(&[]).is_err());
 }
 
 #[test]
