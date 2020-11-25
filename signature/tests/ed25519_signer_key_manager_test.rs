@@ -15,7 +15,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use prost::Message;
-use tink::{subtle::random::get_random_bytes, utils::wrap_err, Signer, TinkError, Verifier};
+use tink::{
+    proto::{Ed25519PrivateKey, Ed25519PublicKey},
+    subtle::random::get_random_bytes,
+    utils::wrap_err,
+    Signer, TinkError, Verifier,
+};
 
 #[test]
 fn test_ed25519_signer_get_primitive_basic() {
@@ -177,4 +182,92 @@ fn validate_ed25519_private_key(key: &tink::proto::Ed25519PrivateKey) -> Result<
             .map_err(|e| wrap_err("unexpected error when verifying signature", e))?;
     }
     Ok(())
+}
+
+#[test]
+fn test_key_manager_params() {
+    tink_signature::init();
+    let km = tink::registry::get_key_manager(tink_testutil::ED25519_SIGNER_TYPE_URL).unwrap();
+
+    assert_eq!(km.type_url(), tink_testutil::ED25519_SIGNER_TYPE_URL);
+    assert_eq!(
+        km.key_material_type(),
+        tink::proto::key_data::KeyMaterialType::AsymmetricPrivate
+    );
+    assert!(km.supports_private_keys());
+}
+
+#[test]
+fn test_primitive_with_invalid_key() {
+    tink_signature::init();
+    let km = tink::registry::get_key_manager(tink_testutil::ED25519_SIGNER_TYPE_URL).unwrap();
+
+    let invalid_keys = vec![
+        Ed25519PrivateKey {
+            version: 9999, // invalid
+            key_value: vec![0; 32],
+            public_key: Some(Ed25519PublicKey {
+                version: tink_signature::ED25519_VERIFIER_KEY_VERSION,
+                key_value: vec![0; 32],
+            }),
+        },
+        Ed25519PrivateKey {
+            version: tink_signature::ED25519_SIGNER_KEY_VERSION,
+            key_value: vec![0; 2], // invalid
+            public_key: Some(Ed25519PublicKey {
+                version: tink_signature::ED25519_VERIFIER_KEY_VERSION,
+                key_value: vec![0; 32],
+            }),
+        },
+        Ed25519PrivateKey {
+            version: tink_signature::ED25519_SIGNER_KEY_VERSION,
+            key_value: vec![], // invalid
+            public_key: Some(Ed25519PublicKey {
+                version: tink_signature::ED25519_VERIFIER_KEY_VERSION,
+                key_value: vec![0; 32],
+            }),
+        },
+        Ed25519PrivateKey {
+            version: tink_signature::ED25519_SIGNER_KEY_VERSION,
+            key_value: vec![0; 32],
+            public_key: Some(Ed25519PublicKey {
+                version: 9999, // invalid
+                key_value: vec![0; 32],
+            }),
+        },
+        Ed25519PrivateKey {
+            version: tink_signature::ED25519_SIGNER_KEY_VERSION,
+            key_value: vec![0; 32],
+            public_key: Some(Ed25519PublicKey {
+                version: tink_signature::ED25519_VERIFIER_KEY_VERSION,
+                key_value: vec![0; 2], // invalid
+            }),
+        },
+        Ed25519PrivateKey {
+            version: tink_signature::ED25519_SIGNER_KEY_VERSION,
+            key_value: vec![0; 32],
+            public_key: Some(Ed25519PublicKey {
+                version: tink_signature::ED25519_VERIFIER_KEY_VERSION,
+                key_value: vec![], // invalid
+            }),
+        },
+        /* All based on this valid key:
+        Ed25519PrivateKey {
+            version: tink_signature::ED25519_SIGNER_KEY_VERSION,
+            key_value: vec![0; 32],
+            public_key: Some(Ed25519PublicKey {
+                version: tink_signature::ED25519_VERIFIER_KEY_VERSION,
+                key_value: vec![0; 32],
+            }),
+        },
+         */
+    ];
+    for key in &invalid_keys {
+        let serialized_key = tink_testutil::proto_encode(key);
+        assert!(
+            km.primitive(&serialized_key).is_err(),
+            "unexpected success with {:?}",
+            key
+        );
+    }
 }

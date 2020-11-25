@@ -36,7 +36,7 @@ impl tink::registry::KeyManager for EcdsaVerifierKeyManager {
         }
         let key = tink::proto::EcdsaPublicKey::decode(serialized_key)
             .map_err(|e| wrap_err("EcdsaVerifierKeyManager: invalid key", e))?;
-        validate_key(&key)?;
+        validate_ecdsa_public_key(&key).map_err(|e| wrap_err("EcdsaVerifierKeyManager", e))?;
         let params = match key.params {
             Some(params) => params,
             None => return Err("EcdsaVerifierKeyManager: no public key parameters".into()),
@@ -60,23 +60,17 @@ impl tink::registry::KeyManager for EcdsaVerifierKeyManager {
     fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {
         tink::proto::key_data::KeyMaterialType::AsymmetricPublic
     }
-
-    fn new_key_data(
-        &self,
-        _serialized_key_format: &[u8],
-    ) -> Result<tink::proto::KeyData, TinkError> {
-        Err("EcdsaVerifierKeyManager: not implemented".into())
-    }
 }
 
 /// Validate the given [`EcdsaPublicKey`](tink::proto::EcdsaPublicKey).
-fn validate_key(key: &tink::proto::EcdsaPublicKey) -> Result<(), TinkError> {
-    tink::keyset::validate_key_version(key.version, ECDSA_VERIFIER_KEY_VERSION)
-        .map_err(|e| wrap_err("EcdsaVerifierKeyManager", e))?;
-    let params = match &key.params {
-        Some(params) => params,
-        None => return Err("no public key parameters".into()),
-    };
+pub(crate) fn validate_ecdsa_public_key(
+    key: &tink::proto::EcdsaPublicKey,
+) -> Result<(), TinkError> {
+    tink::keyset::validate_key_version(key.version, ECDSA_VERIFIER_KEY_VERSION)?;
+    let params = key
+        .params
+        .as_ref()
+        .ok_or_else(|| TinkError::new("no public key parameters"))?;
     let (hash, curve, encoding) = crate::get_ecdsa_param_ids(&params);
     crate::subtle::validate_ecdsa_params(hash, curve, encoding)
 }
