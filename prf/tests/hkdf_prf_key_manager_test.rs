@@ -194,6 +194,11 @@ fn test_hkdf_type_url() {
         tink_testutil::HKDF_PRF_TYPE_URL,
         "incorrect key_type()"
     );
+    assert_eq!(
+        km.key_material_type(),
+        tink::proto::key_data::KeyMaterialType::Symmetric
+    );
+    assert!(!km.supports_private_keys());
 }
 
 fn gen_invalid_hkdf_keys() -> Vec<Vec<u8>> {

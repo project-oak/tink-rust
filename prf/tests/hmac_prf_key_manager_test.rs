@@ -189,6 +189,11 @@ fn test_hmac_type_url() {
         tink_testutil::HMAC_PRF_TYPE_URL,
         "incorrect key_type()"
     );
+    assert_eq!(
+        km.key_material_type(),
+        tink::proto::key_data::KeyMaterialType::Symmetric
+    );
+    assert!(!km.supports_private_keys());
 }
 
 fn gen_invalid_hmac_prf_keys() -> Vec<Vec<u8>> {
