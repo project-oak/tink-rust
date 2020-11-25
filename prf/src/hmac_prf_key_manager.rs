@@ -97,13 +97,10 @@ fn validate_key(key: &tink::proto::HmacPrfKey) -> Result<(), TinkError> {
 
 /// Validates the given [`HmacPrfKeyFormat`](tink::proto::HmacPrfKeyFormat).
 fn validate_key_format(format: &tink::proto::HmacPrfKeyFormat) -> Result<(), TinkError> {
-    if format.params.is_none() {
-        return Err("null HMAC params".into());
-    }
-    let hash_val = match format.params.as_ref() {
-        None => return Err("HmacPrfKeyManager: no key format params".into()),
-        Some(params) => params.hash,
-    };
-    let hash = HashType::from_i32(hash_val).unwrap_or(HashType::UnknownHash);
+    let params = format
+        .params
+        .as_ref()
+        .ok_or_else(|| TinkError::new("no params"))?;
+    let hash = HashType::from_i32(params.hash).unwrap_or(HashType::UnknownHash);
     subtle::validate_hmac_prf_params(hash, format.key_size as usize)
 }

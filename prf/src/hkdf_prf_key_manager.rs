@@ -99,13 +99,10 @@ fn validate_key(key: &tink::proto::HkdfPrfKey) -> Result<(), TinkError> {
 
 /// Validate the given [`HkdfPrfKeyFormat`](tink::proto::HkdfPrfKeyFormat).
 fn validate_key_format(format: &tink::proto::HkdfPrfKeyFormat) -> Result<(), TinkError> {
-    if format.params.is_none() {
-        return Err("null HKDF params".into());
-    }
-    let params = match format.params.as_ref() {
-        None => return Err("HkdfPrfKeyManager: no key format params".into()),
-        Some(p) => p,
-    };
+    let params = format
+        .params
+        .as_ref()
+        .ok_or_else(|| TinkError::new("no params"))?;
     let hash = HashType::from_i32(params.hash).unwrap_or(HashType::UnknownHash);
     subtle::validate_hkdf_prf_params(hash, format.key_size as usize, &params.salt)
 }
