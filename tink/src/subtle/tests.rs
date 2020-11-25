@@ -89,6 +89,23 @@ fn test_hkdf_basic() {
             tag_size: 42,
             expected_kdf: "2c91117204d745f3500d636a62f64f0ab3bae548aa53d423b0d1f27ebba6f5e5673a081d70cce7acfc48",
         },
+        // Extra tests for Rust port:
+        Case {
+            hash_alg:     HashType::Sha384,
+            key:         "0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b",
+            salt:        "000102030405060708090a0b0c",
+            info:        "f0f1f2f3f4f5f6f7f8f9",
+            tag_size:     42,
+            expected_kdf: "9b5097a86038b805309076a44b3a9f38063e25b516dcbf369f394cfab43685f748b6457763e4f0204fc5",
+        },
+        Case {
+            hash_alg:     HashType::Sha512,
+            key:         "0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b",
+            salt:        "000102030405060708090a0b0c",
+            info:        "f0f1f2f3f4f5f6f7f8f9",
+            tag_size:     42,
+            expected_kdf: "832390086cda71fb47625bb5ceb168e4c8e26a1a16ed34d9fc7fe92c1481579338da362cb8d9f925d7cb",
+        },
     ];
 
     for (ti, test) in hkdf_tests.iter().enumerate() {

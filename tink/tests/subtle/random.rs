@@ -23,3 +23,10 @@ fn test_get_random_bytes() {
         assert_eq!(i, buf.len(), "length of the output doesn't match the input")
     }
 }
+
+#[test]
+fn test_random_uint() {
+    let v1 = random::get_random_uint32();
+    let v2 = random::get_random_uint32();
+    assert_ne!(v1, v2, "Just unlucky?");
+}
