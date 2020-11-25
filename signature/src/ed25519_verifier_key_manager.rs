@@ -37,7 +37,7 @@ impl tink::registry::KeyManager for Ed25519VerifierKeyManager {
         }
         let key = tink::proto::Ed25519PublicKey::decode(serialized_key)
             .map_err(|e| wrap_err("Ed25519VerifierKeyManager: invalid key", e))?;
-        validate_key(&key)?;
+        validate_ed25519_public_key(&key).map_err(|e| wrap_err("Ed25519VerifierKeyManager", e))?;
 
         match crate::subtle::Ed25519Verifier::new(&key.key_value) {
             Ok(p) => Ok(tink::Primitive::Verifier(Box::new(p))),
@@ -56,23 +56,17 @@ impl tink::registry::KeyManager for Ed25519VerifierKeyManager {
     fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {
         tink::proto::key_data::KeyMaterialType::AsymmetricPublic
     }
-
-    fn new_key_data(
-        &self,
-        _serialized_key_format: &[u8],
-    ) -> Result<tink::proto::KeyData, TinkError> {
-        Err("Ed25519VerifierKeyManager: not implemented".into())
-    }
 }
 
 /// Validate the given [`Ed25519PublicKey`](tink::proto::Ed25519PublicKey).
-fn validate_key(key: &tink::proto::Ed25519PublicKey) -> Result<(), TinkError> {
-    tink::keyset::validate_key_version(key.version, ED25519_VERIFIER_KEY_VERSION)
-        .map_err(|e| wrap_err("Ed25519VerifierKeyManager", e))?;
+pub(crate) fn validate_ed25519_public_key(
+    key: &tink::proto::Ed25519PublicKey,
+) -> Result<(), TinkError> {
+    tink::keyset::validate_key_version(key.version, ED25519_VERIFIER_KEY_VERSION)?;
 
     if key.key_value.len() != ed25519_dalek::PUBLIC_KEY_LENGTH {
         Err(format!(
-            "Ed25519VerifierKeyManager: invalid key length, required: {}",
+            "invalid key length, required: {}",
             ed25519_dalek::PUBLIC_KEY_LENGTH
         )
         .into())

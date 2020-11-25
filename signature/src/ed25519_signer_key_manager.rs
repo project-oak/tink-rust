@@ -102,12 +102,15 @@ fn validate_key(key: &tink::proto::Ed25519PrivateKey) -> Result<(), TinkError> {
         .map_err(|e| wrap_err("Ed25519SignerKeyManager", e))?;
 
     if key.key_value.len() != ed25519_dalek::SECRET_KEY_LENGTH {
-        Err(format!(
+        return Err(format!(
             "Ed25519SignerKeyManager: invalid key length: {}",
             key.key_value.len()
         )
-        .into())
-    } else {
-        Ok(())
+        .into());
     }
+    let pub_key = key
+        .public_key
+        .as_ref()
+        .ok_or_else(|| TinkError::new("Ed25519SignerKeyManager: no public key"))?;
+    crate::validate_ed25519_public_key(pub_key)
 }

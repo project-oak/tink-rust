@@ -14,6 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+use generic_array::typenum::Unsigned;
 use p256::ecdsa::signature::{RandomizedSigner, Signature};
 use tink::{
     proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType},
@@ -55,6 +56,11 @@ impl EcdsaSigner {
     ) -> Result<Self, TinkError> {
         let priv_key = match curve {
             EllipticCurveType::NistP256 => {
+                if key_value.len()
+                    != <p256::NistP256 as elliptic_curve::Curve>::FieldSize::to_usize()
+                {
+                    return Err("EcdsaSigner: invalid private key len".into());
+                }
                 let secret_key = p256::SecretKey::from_bytes(key_value)
                     .map_err(|e| wrap_err("EcdsaSigner: invalid private key", e))?;
                 EcdsaPrivateKey::NistP256(p256::ecdsa::SigningKey::from(&secret_key))
