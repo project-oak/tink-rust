@@ -22,7 +22,7 @@ fn test_register_key_manager() {
     tink_mac::init();
     tink_aead::init();
     // get HMACKeyManager
-    tink::registry::get_key_manager(tink_testutil::HMAC_TYPE_URL).unwrap();
+    let km = tink::registry::get_key_manager(tink_testutil::HMAC_TYPE_URL).unwrap();
     // get AESGCMKeyManager
     tink::registry::get_key_manager(tink_testutil::AES_GCM_TYPE_URL).unwrap();
     // some random typeurl
@@ -30,6 +30,10 @@ fn test_register_key_manager() {
         tink::registry::get_key_manager("some url").is_err(),
         "expect an error when a type url doesn't exist in the registry"
     );
+
+    // HMACKeyManager is symmetric
+    assert!(!km.supports_private_keys());
+    assert!(km.public_key_data(&[]).is_err());
 }
 
 #[test]
@@ -175,4 +179,22 @@ fn test_register_kms_client() {
     tink::registry::register_kms_client(kms);
 
     tink::registry::get_kms_client("dummy").expect("error fetching dummy kms client");
+}
+
+fn dummy_key_generator() -> tink::proto::KeyTemplate {
+    tink::proto::KeyTemplate {
+        type_url: "TEST".to_string(),
+        value: vec![],
+        output_prefix_type: 0,
+    }
+}
+
+#[test]
+fn test_get_template_generator() {
+    let dummy_name = "TEST".to_string();
+    tink::registry::register_template_generator(&dummy_name, dummy_key_generator);
+    let generator = tink::registry::get_template_generator(&dummy_name).unwrap();
+    assert_eq!(generator().type_url, "TEST");
+    let names = tink::registry::template_names();
+    assert!(names.contains(&dummy_name));
 }
