@@ -82,21 +82,6 @@ impl KeyManager for AesSivKeyManager {
     fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {
         tink::proto::key_data::KeyMaterialType::Symmetric
     }
-
-    /// Create a new [`KeyData`](tink::proto::KeyData). `serialized_key_format` is not required,
-    /// because there is only one valid key format.  It should be used solely by the key
-    /// management API.
-    fn new_key_data(
-        &self,
-        serialized_key_format: &[u8],
-    ) -> Result<tink::proto::KeyData, TinkError> {
-        let serialized_key = self.new_key(serialized_key_format)?;
-        Ok(tink::proto::KeyData {
-            type_url: self.type_url().to_string(),
-            value: serialized_key,
-            key_material_type: tink::proto::key_data::KeyMaterialType::Symmetric as i32,
-        })
-    }
 }
 
 /// Validate the given [`AesSivKey`](tink::proto::AesSivKey).

@@ -38,6 +38,7 @@ fn test_aes_siv_primitive_with_invalid_keys() {
         key.encode(&mut serialized_key).unwrap();
         assert!(km.primitive(&serialized_key).is_err());
     }
+    assert!(km.primitive(&[]).is_err());
 }
 
 #[test]
@@ -103,6 +104,13 @@ fn test_aes_siv_type_url() {
     let km = tink::registry::get_key_manager(tink_testutil::AES_SIV_TYPE_URL)
         .expect("cannot obtain AESSIV key manager");
     assert_eq!(km.type_url(), tink_testutil::AES_SIV_TYPE_URL);
+
+    // Also check other parameters.
+    assert_eq!(
+        km.key_material_type(),
+        tink::proto::key_data::KeyMaterialType::Symmetric
+    );
+    assert!(!km.supports_private_keys());
 }
 
 fn validate_aes_siv_primitive(p: tink::Primitive) -> Result<(), TinkError> {
