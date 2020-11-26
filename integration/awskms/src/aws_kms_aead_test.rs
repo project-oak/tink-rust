@@ -43,7 +43,7 @@ fn setup_kms(cf: &str) {
 }
 
 fn basic_aead_test(a: Box<dyn tink::Aead>) -> Result<(), TinkError> {
-    for _ in 0..100 {
+    for _ in 0..10 {
         let pt = get_random_bytes(20);
         let ad = get_random_bytes(20);
         let ct = a.encrypt(&pt, &ad)?;

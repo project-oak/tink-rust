@@ -17,19 +17,18 @@
 //! AEAD functionality via AWS Cloud KMS.
 
 use rusoto_kms::Kms;
-use std::{
-    collections::HashMap,
-    sync::{Arc, Mutex},
-};
+use std::{cell::RefCell, collections::HashMap, rc::Rc};
 use tink::utils::wrap_err;
 
-/// `AwsEad` represents a AWS KMS service to a particular URI.
+/// `AwsAead` represents a AWS KMS service to a particular URI.
 #[derive(Clone)]
 pub struct AwsAead {
     key_uri: String,
     kms: rusoto_kms::KmsClient,
-    // TODO: add a version where `async` is exposed to the library user
-    runtime: Arc<Mutex<tokio::runtime::Runtime>>,
+    // The Tokio runtime to execute KMS requests on, wrapped in:
+    //  - a `RefCell` for interior mutability (the [`tink::Aead`] trait's methods take `&self`)
+    //  - an `Rc` to allow `Clone`, as required by the trait bound on [`tink::Aead`].
+    runtime: Rc<RefCell<tokio::runtime::Runtime>>,
 }
 
 impl AwsAead {
@@ -40,7 +39,7 @@ impl AwsAead {
         AwsAead {
             key_uri: key_uri.to_string(),
             kms,
-            runtime: Arc::new(Mutex::new(
+            runtime: Rc::new(RefCell::new(
                 tokio::runtime::Builder::new()
                     .basic_scheduler()
                     .enable_all()
@@ -74,8 +73,7 @@ impl tink::Aead for AwsAead {
         };
         let rsp = self
             .runtime
-            .lock()
-            .unwrap()
+            .borrow_mut()
             .block_on(self.kms.encrypt(req))
             .map_err(|e| wrap_err("request failed", e))?;
 
@@ -107,8 +105,7 @@ impl tink::Aead for AwsAead {
         };
         let rsp = self
             .runtime
-            .lock()
-            .unwrap()
+            .borrow_mut()
             .block_on(self.kms.decrypt(req))
             .map_err(|e| wrap_err("request failed", e))?;
         if let Some(key_id) = rsp.key_id {
