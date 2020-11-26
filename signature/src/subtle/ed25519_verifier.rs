@@ -26,7 +26,9 @@ pub struct Ed25519Verifier {
 impl Ed25519Verifier {
     /// Create a new instance of `Ed25519Verifier` from a compressed point on the curve.
     pub fn new(pub_key: &[u8]) -> Result<Self, TinkError> {
-        // TODO: check pub_key is a compressed point on the curve?
+        // The docs for [`ed25519_dalek::PublicKey`] state that the caller is responsible
+        // for ensuring that `pub_key` is a compressed point on the curve; however, the
+        // implementation does appear to check this.
         let public_key = ed25519_dalek::PublicKey::from_bytes(pub_key)
             .map_err(|e| wrap_err("Ed25519Verifier: invalid key", e))?;
         Self::new_from_public_key(public_key)
