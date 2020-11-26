@@ -248,3 +248,24 @@ fn new_signer_verifier(
     let verifier = Ed25519Verifier::new_from_public_key(pub_key)?;
     Ok((signer, verifier))
 }
+
+#[test]
+fn test_ed25519_point_on_curve() {
+    // Point taken from ed25519_dalek::PublicKey docs.
+    let public_key_bytes: [u8; 32] = [
+        215, 90, 152, 1, 130, 177, 10, 183, 213, 75, 254, 211, 201, 100, 7, 58, 14, 225, 114, 243,
+        218, 166, 35, 37, 175, 2, 26, 104, 247, 7, 81, 26,
+    ];
+    assert!(ed25519_dalek::PublicKey::from_bytes(&public_key_bytes).is_ok());
+    assert!(Ed25519Verifier::new(&public_key_bytes).is_ok());
+
+    // Change final byte, and confirm that a point not on the curve is rejected.
+    let public_key_bytes: [u8; 32] = [
+        215, 90, 152, 1, 130, 177, 10, 183, 213, 75, 254, 211, 201, 100, 7, 58, 14, 225, 114, 243,
+        218, 166, 35, 37, 175, 2, 26, 104, 247, 7, 81, 24,
+    ];
+    let result = ed25519_dalek::PublicKey::from_bytes(&public_key_bytes);
+    assert!(result.is_err());
+    assert!(format!("{:?}", result).contains("Cannot decompress"));
+    assert!(Ed25519Verifier::new(&public_key_bytes).is_err());
+}
