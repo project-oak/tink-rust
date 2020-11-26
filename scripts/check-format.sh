@@ -10,7 +10,7 @@ done < <(find . -not \( -path '*/target' -prune \) -and -name '*.rs' -print0)
 MD_FILES=()
 while IFS=  read -r -d $'\0'; do
   MD_FILES+=("$REPLY")
-done < <(find . -not \( -path '*/target' -prune \) -and -name '*.md' -print0)
+done < <(find . -not \( -path '*/target' -prune \) -and -not \( -path '*/wycheproof' -prune \) -and -name '*.md' -print0)
 
 # Check that source files have the Apache License header.
 # Automatically skips generated files.
