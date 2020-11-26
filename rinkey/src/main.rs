@@ -280,7 +280,6 @@ fn main() {
     tink_mac::init();
     tink_prf::init();
     tink_signature::init();
-    // TODO: register AWS/GBP KMS clients here
 
     match Command::from_args() {
         Command::AddKey(opts) => add_key(opts),
