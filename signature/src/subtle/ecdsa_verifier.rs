@@ -80,17 +80,22 @@ impl EcdsaVerifier {
 fn element_from_padded_slice<C: elliptic_curve::Curve>(
     data: &[u8],
 ) -> Result<elliptic_curve::FieldBytes<C>, TinkError> {
-    // TODO: reduce copies here
     let point_len = C::FieldSize::to_usize();
     if data.len() >= point_len {
         let offset = data.len() - point_len;
         for v in data.iter().take(offset) {
+            // Check that any excess bytes on the left over and above
+            // the field size are all zeroes.
             if *v != 0 {
                 return Err("EcdsaVerifier: point too large".into());
             }
         }
-        Ok(elliptic_curve::FieldBytes::<C>::from_slice(&data[offset..]).clone())
+        Ok(elliptic_curve::FieldBytes::<C>::clone_from_slice(
+            &data[offset..],
+        ))
     } else {
+        // We have been given data that is too short for the field size.
+        // Left-pad it with zero bytes up to the field size.
         let mut data_copy = vec![0; point_len];
         data_copy[(point_len - data.len())..].copy_from_slice(data);
         Ok(elliptic_curve::FieldBytes::<C>::clone_from_slice(
@@ -119,6 +124,47 @@ impl tink::Verifier for EcdsaVerifier {
             EcdsaPublicKey::NistP256(verify_key) => verify_key
                 .verify(&data, &signature)
                 .map_err(|e| wrap_err("EcdsaVerifier: invalid signature", e)),
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_element_from_padded_slice() {
+        let testcases = vec![
+            (
+                "b10512bae3eddcfe467828128bad2903269919f7086069c8c4df6c732838",
+                true, // two bytes skipped at start
+            ),
+            (
+                "00b10512bae3eddcfe467828128bad2903269919f7086069c8c4df6c732838",
+                true, // one byte skipped, one byte zeroed
+            ),
+            (
+                "0000b10512bae3eddcfe467828128bad2903269919f7086069c8c4df6c732838",
+                true, // first two bytes zeroed
+            ),
+            (
+                "2927b10512bae3eddcfe467828128bad2903269919f7086069c8c4df6c732838",
+                true, // correct 32-byte field element
+            ),
+            (
+                "00002927b10512bae3eddcfe467828128bad2903269919f7086069c8c4df6c732838",
+                true, // extra leading zero bytes ('0000')
+            ),
+            (
+                "00012927b10512bae3eddcfe467828128bad2903269919f7086069c8c4df6c732838",
+                false, // extra leading non-zero byte ('0001')
+            ),
+        ];
+        for (value, valid) in testcases {
+            let x = hex::decode(value).unwrap();
+            if valid {
+                assert!(super::element_from_padded_slice::<p256::NistP256>(&x).is_ok());
+            } else {
+                assert!(super::element_from_padded_slice::<p256::NistP256>(&x).is_err());
+            }
         }
     }
 }
