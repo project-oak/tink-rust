@@ -20,6 +20,7 @@ ignore:
   - "examples/"
   - "rinkey/"
   - "testing/"
+  - "testutil/"
   - "**/build.rs"  # Ignore build scripts
   - "**/tests/"
   - "**/codegen/"
