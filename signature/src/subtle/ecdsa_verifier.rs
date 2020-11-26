@@ -104,8 +104,8 @@ impl tink::Verifier for EcdsaVerifier {
         let signature = match self.encoding {
             EcdsaSignatureEncoding::Der => {
                 // The ecdsa::asn1 module panics on too-small inputs, so filter them here.
+                // TODO: remove when ecdsa crate includes https://github.com/RustCrypto/signatures/pull/192
                 if signature.len() < 6 {
-                    // TODO: raise and fix upstream in ecdsa::asn1.
                     return Err("EcdsaVerifier: signature too small".into());
                 }
                 Signature::from_asn1(signature)
