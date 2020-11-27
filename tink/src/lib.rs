@@ -23,7 +23,10 @@ pub mod keyset;
 pub mod primitiveset;
 pub mod proto {
     //! Auto-generated code from protocol buffer message definitions.
+    #[cfg(not(feature = "json"))]
     include!("codegen/google.crypto.tink.rs");
+    #[cfg(feature = "json")]
+    include!("codegen/serde/google.crypto.tink.rs");
 }
 pub mod registry;
 pub mod subtle;

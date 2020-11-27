@@ -55,9 +55,60 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         println!("cargo:rerun-if-changed={}", proto_file.display());
     }
 
-    // Emit generated code into the source directory, so it can be checked in.
     prost_build::Config::new()
+        // Emit generated code into the source directory, so it can be checked in.
         .out_dir("src/codegen")
+        .compile_protos(&proto_files, &[PathBuf::from("..")])?;
+
+    // Separate variant with serde-related annotations
+    prost_build::Config::new()
+        // Emit generated code into the source directory, so it can be checked in.
+        .out_dir("src/codegen/serde")
+        // Set up serde-json options for Keyset-related messages
+        .type_attribute(
+            "EncryptedKeyset",
+            "#[derive(serde::Deserialize, serde::Serialize)]",
+        )
+        .type_attribute("EncryptedKeyset", "#[serde(rename_all = \"camelCase\")]")
+        .type_attribute("Keyset", "#[derive(serde::Deserialize, serde::Serialize)]")
+        .type_attribute("Keyset", "#[serde(rename_all = \"camelCase\")]")
+        .type_attribute(
+            "KeysetInfo",
+            "#[derive(serde::Deserialize, serde::Serialize)]",
+        )
+        .type_attribute("KeysetInfo", "#[serde(rename_all = \"camelCase\")]")
+        .type_attribute("Key", "#[derive(serde::Serialize, serde::Deserialize)]")
+        .type_attribute("Key", "#[serde(rename_all = \"camelCase\")]")
+        .type_attribute("KeyInfo", "#[derive(serde::Serialize, serde::Deserialize)]")
+        .type_attribute("KeyInfo", "#[serde(rename_all = \"camelCase\")]")
+        .type_attribute("KeyData", "#[derive(serde::Deserialize, serde::Serialize)]")
+        .type_attribute("KeyData", "#[serde(rename_all = \"camelCase\")]")
+        // Set up serde-json options for fields that need special parsing
+        .field_attribute(
+            "Key.status",
+            "#[serde(with = \"crate::keyset::key_status_type\")]",
+        )
+        .field_attribute(
+            "KeyInfo.status",
+            "#[serde(with = \"crate::keyset::key_status_type\")]",
+        )
+        .field_attribute(
+            "Key.output_prefix_type",
+            "#[serde(with = \"crate::keyset::output_prefix_type\")]",
+        )
+        .field_attribute(
+            "KeyInfo.output_prefix_type",
+            "#[serde(with = \"crate::keyset::output_prefix_type\")]",
+        )
+        .field_attribute(
+            "KeyData.key_material_type",
+            "#[serde(with = \"crate::keyset::key_material_type\")]",
+        )
+        .field_attribute("KeyData.value", "#[serde(with = \"crate::keyset::b64\")]")
+        .field_attribute(
+            "EncryptedKeyset.encrypted_keyset",
+            "#[serde(with = \"crate::keyset::b64\")]",
+        )
         .compile_protos(&proto_files, &[PathBuf::from("..")])?;
 
     Ok(())

@@ -202,24 +202,10 @@ Tink supports the encoding of `Keyset` and `EncryptedKeyset` types as JSON, with
  - Values of type `bytes` are serialized to base64-encoded strings (standard encoding).
  - Enum values are serialized as capitalized strings (e.g. `"ASYMMETRIC_PRIVATE"`).
 
-The `tink::keyset::json_io` module includes `serde` serialization code which matches these conventions.
-
-However, in Rust, the `Keyset` types are derived from protobuf message definitions (via
-[prost-build](https://crates.io/crates/prost-build), which makes it difficult to invoke these
-conventions via [`serde-json` attributes](https://serde.rs/field-attrs.html).
-
-The `tink::keyset::json_io` module therefore also includes manual copies of these data structure definitions, together
-with:
- - `serde-json` annotations to invoke the relevant serialization code
- - implementations of the `From` trait to ensure that the base structures and the copies can be
-   converted into each other.
-
-This has the obvious disadvantage that any changes to the `Keyset`-related protobuf definitions will need
-to be manually synced with the copy data structures.  (However, note that Rust requires all `struct` fields to be
-initialized so any change will induce a **compile-time** error.)
-
-**TODO**: fix prost-build => serde-json generation so the field attributes are automatically
-attached and the manually-cloned `struct`s can be dropped.
+The `tink::keyset::json_io` module includes `serde` serialization code which matches these conventions, and
+the [prost-build](https://crates.io/crates/prost-build) invocation that creates the Rust protobuf message
+definitions includes a collection of extra options to force the generation of the appropriate `serde`
+attributes.
 
 
 ### Code Structure
