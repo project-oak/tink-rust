@@ -49,6 +49,7 @@ impl KmsEnvelopeAead {
 
 impl tink::Aead for KmsEnvelopeAead {
     fn encrypt(&self, pt: &[u8], aad: &[u8]) -> Result<Vec<u8>, TinkError> {
+        // Create a new key for each encryption operation.
         let dek = tink::registry::new_key(&self.dek_template)?;
         let encrypted_dek = self.remote.encrypt(&dek, &[])?;
 
@@ -95,7 +96,8 @@ impl tink::Aead for KmsEnvelopeAead {
     }
 }
 
-/// Build the cipher text by appending the length DEK, encrypted DEK and the encrypted payload.
+/// Build the cipher text by appending the length of the DEK, the encrypted DEK, and the encrypted
+/// payload.
 fn build_cipher_text(encrypted_dek: &[u8], payload: &[u8]) -> Result<Vec<u8>, TinkError> {
     let mut b = Vec::with_capacity(LEN_DEK + encrypted_dek.len() + payload.len());
 
