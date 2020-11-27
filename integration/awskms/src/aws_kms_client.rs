@@ -129,7 +129,7 @@ impl tink::registry::KmsClient for AwsClient {
         } else {
             key_uri
         };
-        Ok(Box::new(crate::AwsAead::new(uri, self.kms.clone())))
+        Ok(Box::new(crate::AwsAead::new(uri, self.kms.clone())?))
     }
 }
 

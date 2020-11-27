@@ -35,8 +35,11 @@ impl AwsAead {
     /// Return a new AWS KMS service.
     /// `key_uri` must have the following format: `arn:<partition>:kms:<region>:[:path]`.
     /// See http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html.
-    pub(crate) fn new(key_uri: &str, kms: rusoto_kms::KmsClient) -> AwsAead {
-        AwsAead {
+    pub(crate) fn new(
+        key_uri: &str,
+        kms: rusoto_kms::KmsClient,
+    ) -> Result<AwsAead, tink::TinkError> {
+        Ok(AwsAead {
             key_uri: key_uri.to_string(),
             kms,
             runtime: Rc::new(RefCell::new(
@@ -44,9 +47,9 @@ impl AwsAead {
                     .basic_scheduler()
                     .enable_all()
                     .build()
-                    .unwrap(),
+                    .map_err(|e| wrap_err("failed to build tokio runtime", e))?,
             )),
-        }
+        })
     }
 }
 
