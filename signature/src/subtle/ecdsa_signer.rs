@@ -32,7 +32,7 @@ impl Clone for EcdsaPrivateKey {
     fn clone(&self) -> Self {
         match self {
             EcdsaPrivateKey::NistP256(k) => {
-                EcdsaPrivateKey::NistP256(p256::ecdsa::SigningKey::new(&k.to_bytes()).unwrap())
+                EcdsaPrivateKey::NistP256(p256::ecdsa::SigningKey::new(&k.to_bytes()).unwrap()) // safe: round-trip
             }
         }
     }

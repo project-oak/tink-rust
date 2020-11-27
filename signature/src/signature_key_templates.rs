@@ -137,7 +137,7 @@ fn create_ecdsa_key_template(
         params: Some(params),
     };
     let mut serialized_format = Vec::new();
-    format.encode(&mut serialized_format).unwrap();
+    format.encode(&mut serialized_format).unwrap(); // safe: proto-encode
     KeyTemplate {
         type_url: crate::ECDSA_SIGNER_TYPE_URL.to_string(),
         value: serialized_format,

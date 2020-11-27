@@ -31,20 +31,20 @@ lazy_static! {
 pub fn register_template_generator(name: &str, generator: KeyTemplateGenerator) {
     TEMPLATE_GENERATORS
         .write()
-        .unwrap()
+        .unwrap() // safe: lock
         .insert(name.to_string(), generator);
 }
 
 /// Find a key template generator function by name.
 pub fn get_template_generator(name: &str) -> Option<KeyTemplateGenerator> {
-    TEMPLATE_GENERATORS.read().unwrap().get(name).copied()
+    TEMPLATE_GENERATORS.read().unwrap().get(name).copied() // safe: lock
 }
 
 /// Return all available key template generator names.
 pub fn template_names() -> Vec<String> {
     TEMPLATE_GENERATORS
         .read()
-        .unwrap()
+        .unwrap() // safe: lock
         .keys()
         .cloned()
         .collect()

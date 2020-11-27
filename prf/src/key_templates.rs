@@ -58,7 +58,7 @@ fn create_hmac_prf_key_template(key_size: u32, hash_type: tink::proto::HashType)
         version: super::HMAC_PRF_KEY_VERSION,
     };
     let mut serialized_format = Vec::new();
-    format.encode(&mut serialized_format).unwrap();
+    format.encode(&mut serialized_format).unwrap(); // safe: proto-encode
     KeyTemplate {
         type_url: super::HMAC_PRF_TYPE_URL.to_string(),
         output_prefix_type: tink::proto::OutputPrefixType::Raw as i32,
@@ -82,7 +82,7 @@ fn create_hkdf_prf_key_template(
         version: super::HKDF_PRF_KEY_VERSION,
     };
     let mut serialized_format = Vec::new();
-    format.encode(&mut serialized_format).unwrap();
+    format.encode(&mut serialized_format).unwrap(); // safe: proto-encode
     KeyTemplate {
         type_url: super::HKDF_PRF_TYPE_URL.to_string(),
         output_prefix_type: tink::proto::OutputPrefixType::Raw as i32,
@@ -97,7 +97,7 @@ fn create_aes_cmac_prf_key_template(key_size: u32) -> KeyTemplate {
         version: super::AES_CMAC_PRF_KEY_VERSION,
     };
     let mut serialized_format = Vec::new();
-    format.encode(&mut serialized_format).unwrap();
+    format.encode(&mut serialized_format).unwrap(); // safe: proto-encode
     KeyTemplate {
         type_url: super::AES_CMAC_PRF_TYPE_URL.to_string(),
         output_prefix_type: tink::proto::OutputPrefixType::Raw as i32,

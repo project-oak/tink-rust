@@ -54,15 +54,15 @@ static INIT: Once = Once::new();
 pub fn init() {
     INIT.call_once(|| {
         register_key_manager(std::sync::Arc::new(AesCtrHmacAeadKeyManager::default()))
-            .expect("tink_aead::init() failed");
+            .expect("tink_aead::init() failed"); // safe: init
         register_key_manager(std::sync::Arc::new(AesGcmKeyManager::default()))
-            .expect("tink_aead::init() failed");
+            .expect("tink_aead::init() failed"); // safe: init
         register_key_manager(std::sync::Arc::new(ChaCha20Poly1305KeyManager::default()))
-            .expect("tink_aead::init() failed");
+            .expect("tink_aead::init() failed"); // safe: init
         register_key_manager(std::sync::Arc::new(XChaCha20Poly1305KeyManager::default()))
-            .expect("tink_aead::init() failed");
+            .expect("tink_aead::init() failed"); // safe: init
         register_key_manager(std::sync::Arc::new(KmsEnvelopeAeadKeyManager::default()))
-            .expect("tink_aead::init() failed");
+            .expect("tink_aead::init() failed"); // safe:init
 
         tink::registry::register_template_generator("AES128_GCM", aes128_gcm_key_template);
         tink::registry::register_template_generator("AES256_GCM", aes256_gcm_key_template);

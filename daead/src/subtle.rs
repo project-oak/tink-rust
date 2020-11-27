@@ -74,7 +74,7 @@ impl tink::DeterministicAead for AesSiv {
     ) -> Result<Vec<u8>, TinkError> {
         self.cipher
             .lock()
-            .expect(E)
+            .expect(E) // safe: lock
             .encrypt(&[additional_data], plaintext)
             .map_err(|e| wrap_err("AesSiv: encrypt failed", e))
     }
@@ -89,7 +89,7 @@ impl tink::DeterministicAead for AesSiv {
         }
         self.cipher
             .lock()
-            .expect(E)
+            .expect(E) // safe: lock
             .decrypt(&[additional_data], ciphertext)
             .map_err(|e| wrap_err("AesSiv: decrypt failed", e))
     }

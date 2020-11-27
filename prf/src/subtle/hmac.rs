@@ -101,7 +101,7 @@ impl tink::Prf for HmacPrf {
             match self
                 .mac
                 .lock()
-                .expect("internal lock corrupted")
+                .expect("internal lock corrupted") // safe: lock
                 .deref_mut()
             {
                 HmacPrfVariant::Sha1(mac) => {
