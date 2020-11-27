@@ -46,17 +46,40 @@ check_todo() {
   return 0
 }
 
+# Check that any calls that might panic have a comment noting why they're safe
+check_panic() {
+  local path="$1"
+  if [[ $path =~ "test" || $path =~ "examples/" || $path =~ "rinkey/" ]]; then
+    return 0
+  fi
+  for needle in "panic!(" "unwrap(" "expect(" "unwrap_err(" "expect_err(" "unwrap_none(" "expect_none("; do
+    local result
+    result=$(grep --with-filename --line-number "$needle" "$path" | grep --invert-match --regexp='safe:')
+    if [[ -n $result ]]; then
+      echo "$result"
+      return 1
+    fi
+  done
+  return 0
+}
+
 errcount=0
 for f in "${CODE_FILES[@]}"; do
   check_license "$f"
   errcount=$((errcount + $?))
-  # check_todo "$f"
+  check_todo "$f"
+  # TODO: make unadorned TODOs trigger a script failure
   # errcount=$((errcount + $?))
+  check_panic "$f"
+  errcount=$((errcount + $?))
 done
 
 for f in "${MD_FILES[@]}"; do
   go run github.com/campoy/embedmd -d "$f"
   errcount=$((errcount + $?))
+  check_todo "$f"
+  # TODO: make unadorned TODOs trigger a script failure
+  # errcount=$((errcount + $?))
 done
 
 if [ $errcount -gt 0 ]; then
