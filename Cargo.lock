@@ -598,6 +598,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "example-keygen"
+version = "0.1.0"
+dependencies = [
+ "tink",
+ "tink-daead",
+]
+
+[[package]]
 name = "example-mac"
 version = "0.1.0"
 dependencies = [

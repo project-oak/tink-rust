@@ -1,0 +1,10 @@
+[package]
+name = "example-keygen"
+version = "0.1.0"
+authors = ["David Drysdale <drysdale@google.com>"]
+edition = "2018"
+license = "Apache-2.0"
+
+[dependencies]
+tink = "^0.1"
+tink-daead = "^0.1"
