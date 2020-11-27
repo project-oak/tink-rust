@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-//! JSON I/O for keysets.
+//! JSON I/O for keysets (requires activation of the `json` feature).
 
 use crate::{utils::wrap_err, TinkError};
 use serde::Deserialize;
@@ -49,7 +49,7 @@ impl<T: Read> super::Reader for JsonReader<T> {
     }
 }
 
-/// `JsonWriter` serializes a keyset into binary proto format.
+/// `JsonWriter` serializes a keyset into JSON format.
 pub struct JsonWriter<T: Write> {
     w: T,
 }
