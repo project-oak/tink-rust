@@ -19,13 +19,13 @@
 use crate::TinkError;
 
 /// Create a [`Handle`](super::Handle) from cleartext key material.
-pub fn keyset_handle(ks: crate::proto::Keyset) -> super::Handle {
-    super::Handle { ks }
+fn keyset_handle(ks: crate::proto::Keyset) -> super::Handle {
+    super::Handle::from_keyset(ks)
 }
 
 /// Return the key material contained in a [`Handle`](super::Handle).
 pub fn keyset_material(h: &super::Handle) -> crate::proto::Keyset {
-    h.ks.clone()
+    h.clone_keyset()
 }
 
 /// Create a new instance of [`Handle`](super::Handle) using the given
