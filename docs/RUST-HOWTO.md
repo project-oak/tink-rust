@@ -18,7 +18,7 @@ to run all the tests locally:
 cargo test --all
 ```
 
-TODO: replace with crates.io instructions
+TODO(#32): replace with crates.io instructions
 
 ## Rustdoc
 
