@@ -606,6 +606,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "example-kms"
+version = "0.1.0"
+dependencies = [
+ "hex",
+ "tink",
+ "tink-aead",
+ "tink-awskms",
+]
+
+[[package]]
 name = "example-mac"
 version = "0.1.0"
 dependencies = [

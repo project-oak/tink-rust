@@ -112,7 +112,7 @@ impl tink::registry::KmsClient for AwsClient {
         key_uri.starts_with(&self.key_uri_prefix)
     }
 
-    /// Get an AEAD backend by `key_uri`.
+    /// Get an AEAD backed by `key_uri`.
     /// `key_uri` must have the following format: `aws-kms://arn:<partition>:kms:<region>:[:path]`.
     /// See http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html.
     fn get_aead(&self, key_uri: &str) -> Result<Box<dyn tink::Aead>, tink::TinkError> {
