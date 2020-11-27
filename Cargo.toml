@@ -4,6 +4,7 @@ members = [
   "daead",
   "examples/aead",
   "examples/daead",
+  "examples/keygen",
   "examples/mac",
   "examples/signature",
   "integration/awskms",

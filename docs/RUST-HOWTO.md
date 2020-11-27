@@ -149,9 +149,12 @@ keysets via a wrapper called keyset handle. You can generate a new keyset and
 obtain its handle using a KeyTemplate. KeysetHandle objects enforce certain
 restrictions that prevent accidental leakage of the sensitive key material.
 
+<!-- prettier-ignore-start -->
+[embedmd]:# (../examples/keygen/src/main.rs Rust /fn main/ /^}/)
 ```Rust
 fn main() {
     tink_daead::init();
+
     // Other key templates can also be used, if the relevant primitive crate
     // is initialized.
     let kh = tink::keyset::Handle::new(&tink_daead::aes_siv_key_template()).unwrap();
@@ -159,6 +162,7 @@ fn main() {
     println!("{:?}", kh);
 }
 ```
+<!-- prettier-ignore-end -->
 
 Key templates are available for MAC and DAEAD encryption.
 
