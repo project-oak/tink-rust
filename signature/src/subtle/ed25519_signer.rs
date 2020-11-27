@@ -26,7 +26,7 @@ pub struct Ed25519Signer {
 impl Clone for Ed25519Signer {
     fn clone(&self) -> Self {
         Self {
-            keypair: ed25519_dalek::Keypair::from_bytes(&self.keypair.to_bytes()).unwrap(),
+            keypair: ed25519_dalek::Keypair::from_bytes(&self.keypair.to_bytes()).unwrap(), /* safe: round-trip */
         }
     }
 }

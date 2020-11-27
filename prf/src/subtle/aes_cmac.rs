@@ -93,7 +93,7 @@ impl tink::Prf for AesCmacPrf {
             match self
                 .mac
                 .lock()
-                .expect("internal lock corrupted")
+                .expect("internal lock corrupted") // safe: lock
                 .deref_mut()
             {
                 AesCmacVariant::Aes128(mac) => {

@@ -58,7 +58,7 @@ pub fn register_key_manager<T>(km: Arc<T>) -> Result<(), TinkError>
 where
     T: 'static + KeyManager,
 {
-    let mut key_mgrs = KEY_MANAGERS.write().expect(MERR);
+    let mut key_mgrs = KEY_MANAGERS.write().expect(MERR); // safe: lock
 
     let type_url = km.type_url();
     if key_mgrs.contains_key(type_url) {
@@ -74,7 +74,7 @@ where
 
 /// Return the key manager for the given `type_url` if it exists.
 pub fn get_key_manager(type_url: &str) -> Result<Arc<dyn KeyManager>, TinkError> {
-    let key_mgrs = KEY_MANAGERS.read().expect(MERR);
+    let key_mgrs = KEY_MANAGERS.read().expect(MERR); // safe: lock
     let km = key_mgrs.get(type_url).ok_or_else(|| {
         TinkError::new(&format!(
             "registry::get_key_manager: unsupported key type: {}",
@@ -113,13 +113,13 @@ pub fn register_kms_client<T>(k: T)
 where
     T: 'static + KmsClient,
 {
-    let mut kms_clients = KMS_CLIENTS.write().expect(CERR);
+    let mut kms_clients = KMS_CLIENTS.write().expect(CERR); // safe: lock
     kms_clients.push(Arc::new(k));
 }
 
 /// Fetches a [`KmsClient`] by a given URI.
 pub fn get_kms_client(key_uri: &str) -> Result<Arc<dyn KmsClient>, TinkError> {
-    let kms_clients = KMS_CLIENTS.read().expect(CERR);
+    let kms_clients = KMS_CLIENTS.read().expect(CERR); // safe: lock
     for k in kms_clients.iter() {
         if k.supported(key_uri) {
             return Ok(k.clone());

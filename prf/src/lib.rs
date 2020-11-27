@@ -45,11 +45,11 @@ static INIT: Once = Once::new();
 pub fn init() {
     INIT.call_once(|| {
         register_key_manager(std::sync::Arc::new(HmacPrfKeyManager::default()))
-            .expect("tink_prf::init() failed");
+            .expect("tink_prf::init() failed"); // safe: init
         register_key_manager(std::sync::Arc::new(HkdfPrfKeyManager::default()))
-            .expect("tink_prf::init() failed");
+            .expect("tink_prf::init() failed"); // safe: init
         register_key_manager(std::sync::Arc::new(AesCmacPrfKeyManager::default()))
-            .expect("tink_prf::init() failed");
+            .expect("tink_prf::init() failed"); // safe: init
 
         tink::registry::register_template_generator("HKDF_SHA256", hkdf_sha256_prf_key_template);
         tink::registry::register_template_generator(

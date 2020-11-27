@@ -88,7 +88,7 @@ pub fn kms_envelope_aead_key_template(uri: &str, dek_t: KeyTemplate) -> KeyTempl
         dek_template: Some(dek_t),
     };
     let mut serialized_format = Vec::new();
-    f.encode(&mut serialized_format).unwrap();
+    f.encode(&mut serialized_format).unwrap(); // safe: proto-encode
     KeyTemplate {
         value: serialized_format,
         type_url: crate::KMS_ENVELOPE_AEAD_TYPE_URL.to_string(),
@@ -103,7 +103,7 @@ fn create_aes_gcm_key_template(key_size: u32, output_prefix_type: OutputPrefixTy
         key_size,
     };
     let mut serialized_format = Vec::new();
-    format.encode(&mut serialized_format).unwrap();
+    format.encode(&mut serialized_format).unwrap(); // safe: proto-encode
     KeyTemplate {
         type_url: crate::AES_GCM_TYPE_URL.to_string(),
         value: serialized_format,
@@ -134,7 +134,7 @@ fn create_aes_ctr_hmac_aead_key_template(
         }),
     };
     let mut serialized_format = Vec::new();
-    format.encode(&mut serialized_format).unwrap();
+    format.encode(&mut serialized_format).unwrap(); // safe: proto-encode
     KeyTemplate {
         value: serialized_format,
         type_url: crate::AES_CTR_HMAC_AEAD_TYPE_URL.to_string(),

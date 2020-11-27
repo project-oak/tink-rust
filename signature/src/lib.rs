@@ -54,14 +54,15 @@ pub fn init() {
     INIT.call_once(|| {
         // ECDSA
         register_key_manager(std::sync::Arc::new(EcdsaSignerKeyManager::default()))
-            .expect("tink_signature::init() failed");
+            .expect("tink_signature::init() failed"); // safe: init
         register_key_manager(std::sync::Arc::new(EcdsaVerifierKeyManager::default()))
-            .expect("tink_signature::init() failed");
+            .expect("tink_signature::init() failed"); // safe: init
+
         // Ed25519
         register_key_manager(std::sync::Arc::new(Ed25519SignerKeyManager::default()))
-            .expect("tink_signature::init() failed");
+            .expect("tink_signature::init() failed"); // safe: init
         register_key_manager(std::sync::Arc::new(Ed25519VerifierKeyManager::default()))
-            .expect("tink_signature::init() failed");
+            .expect("tink_signature::init() failed"); // safe: init
 
         tink::registry::register_template_generator("ECDSA_P256", ecdsa_p256_key_template);
         tink::registry::register_template_generator(

@@ -159,7 +159,7 @@ mod tests {
             ),
         ];
         for (value, valid) in testcases {
-            let x = hex::decode(value).unwrap();
+            let x = hex::decode(value).unwrap(); // safe: test
             if valid {
                 assert!(super::element_from_padded_slice::<p256::NistP256>(&x).is_ok());
             } else {

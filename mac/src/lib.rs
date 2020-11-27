@@ -46,9 +46,9 @@ static INIT: Once = Once::new();
 pub fn init() {
     INIT.call_once(|| {
         tink::registry::register_key_manager(std::sync::Arc::new(HmacKeyManager::default()))
-            .expect("tink_mac::init() failed");
+            .expect("tink_mac::init() failed"); // safe: init
         tink::registry::register_key_manager(std::sync::Arc::new(AesCmacKeyManager::default()))
-            .expect("tink_mac::init() failed");
+            .expect("tink_mac::init() failed"); // safe: init
 
         tink::registry::register_template_generator(
             "HMAC_SHA256_128BITTAG",

@@ -67,7 +67,7 @@ impl tink::Aead for KmsEnvelopeAead {
         }
 
         // Extract length of encrypted DEK and advance past that length.
-        let ed = u32::from_be_bytes(ct[..LEN_DEK].try_into().unwrap()) as usize;
+        let ed = u32::from_be_bytes(ct[..LEN_DEK].try_into().unwrap()) as usize; // safe: checked above
         let ct = &ct[LEN_DEK..];
 
         // Verify we have enough bytes for the encrypted DEK.

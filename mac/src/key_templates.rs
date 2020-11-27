@@ -74,7 +74,7 @@ fn create_hmac_key_template(
         key_size,
     };
     let mut serialized_format = Vec::new();
-    format.encode(&mut serialized_format).unwrap();
+    format.encode(&mut serialized_format).unwrap(); // safe: proto-encode
     KeyTemplate {
         type_url: crate::HMAC_TYPE_URL.to_string(),
         value: serialized_format,
@@ -90,7 +90,7 @@ fn create_cmac_key_template(key_size: u32, tag_size: u32) -> KeyTemplate {
         key_size,
     };
     let mut serialized_format = Vec::new();
-    format.encode(&mut serialized_format).unwrap();
+    format.encode(&mut serialized_format).unwrap(); // safe: proto-encode
     KeyTemplate {
         type_url: crate::CMAC_TYPE_URL.to_string(),
         value: serialized_format,
