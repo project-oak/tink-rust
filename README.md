@@ -97,9 +97,6 @@ This registry allows an arbitrary `Key` to be converted to a `Primitive` of the 
    checks that the relevant enum variant is returned.
      - The global registry has to be manually populated by calling `tink_<primitive>::init()` methods before use.
 
-**TODO**: Investigate whether there's a safe way in Rust to have a global registry of `KeyManager` instances that are
-typed to a particular primitive (rather than the catchall `enum Primitive`)
-
 ### Error Handling
 
 Many Go functions return values of form `(ReturnType, error)`; the Rust equivalent of this is a `Result<ReturnType, E>`,

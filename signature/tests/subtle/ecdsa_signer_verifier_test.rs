@@ -160,7 +160,7 @@ fn test_wycheproof_vectors() {
             filename: "ecdsa_test.json",
             encoding: EcdsaSignatureEncoding::Der,
             // Test 4 uses ASN.1 long form encoding of sequence length, which is not DER.
-            // TODO: remove when ecdsa crate includes https://github.com/RustCrypto/signatures/pull/192
+            // TODO(#33): remove when ecdsa crate includes https://github.com/RustCrypto/signatures/pull/192
             panic_tests: vec![4].into_iter().collect(),
         },
         TestVector {
