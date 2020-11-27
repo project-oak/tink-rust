@@ -40,7 +40,9 @@ impl Manager {
 
     /// Create a new instance from the given [`Handle`](super::Handle).
     pub fn new_from_handle(kh: super::Handle) -> Self {
-        Self { ks: kh.ks }
+        Self {
+            ks: kh.into_inner(),
+        }
     }
 
     /// Generate a fresh key using the given key template and set the new key as the primary key.
@@ -80,9 +82,7 @@ impl Manager {
 
     /// Create a new [`Handle`](super::Handle) for the managed keyset.
     pub fn handle(&self) -> Result<super::Handle, TinkError> {
-        Ok(super::Handle {
-            ks: self.ks.clone(),
-        })
+        Ok(super::Handle::from_keyset(self.ks.clone()))
     }
 
     /// Sets the status of the specified key to [`KeyStatusType::Enabled`].  Succeeds only if before

@@ -16,14 +16,18 @@
 
 //! Handle wrapper for keysets.
 
-use crate::{proto::key_data::KeyMaterialType, utils::wrap_err, TinkError};
+use crate::{
+    proto::{key_data::KeyMaterialType, Keyset, KeysetInfo},
+    utils::wrap_err,
+    TinkError,
+};
 use prost::Message;
 use std::sync::Arc;
 
-/// `Handle` provides access to a [`Keyset`](crate::proto::Keyset) protobuf, to limit the exposure
+/// `Handle` provides access to a [`Keyset`] protobuf, to limit the exposure
 /// of actual protocol buffers that hold sensitive key material.
 pub struct Handle {
-    pub(crate) ks: crate::proto::Keyset,
+    ks: Keyset,
 }
 
 impl Handle {
@@ -37,9 +41,9 @@ impl Handle {
             .map_err(|e| wrap_err("keyset::Handle: cannot get keyset handle", e))
     }
 
-    /// Create a new instance of [`Handle`] using the given [`Keyset`](crate::proto::Keyset) which
-    /// does not contain any secret key material.
-    pub fn new_with_no_secrets(ks: crate::proto::Keyset) -> Result<Self, TinkError> {
+    /// Create a new instance of [`Handle`] using the given [`Keyset`] which does not contain any
+    /// secret key material.
+    pub fn new_with_no_secrets(ks: Keyset) -> Result<Self, TinkError> {
         let h = Handle { ks };
         if h.has_secrets() {
             // If you need to do this, you have to use `tink::keyset::insecure::read()` instead.
@@ -74,10 +78,10 @@ impl Handle {
         let priv_keys = &self.ks.key;
         let mut pub_keys = Vec::with_capacity(priv_keys.len());
         for priv_key in priv_keys {
-            let priv_key_data = match &priv_key.key_data {
-                None => return Err("keyset::Handle: invalid keyset".into()),
-                Some(kd) => kd,
-            };
+            let priv_key_data = priv_key
+                .key_data
+                .as_ref()
+                .ok_or_else(|| TinkError::new("keyset::Handle: invalid keyset"))?;
             let pub_key_data =
                 public_key_data(priv_key_data).map_err(|e| wrap_err("keyset::Handle", e))?;
             pub_keys.push(crate::proto::keyset::Key {
@@ -87,14 +91,14 @@ impl Handle {
                 output_prefix_type: priv_key.output_prefix_type,
             });
         }
-        let ks = crate::proto::Keyset {
+        let ks = Keyset {
             primary_key_id: self.ks.primary_key_id,
             key: pub_keys,
         };
         Ok(Handle { ks })
     }
 
-    /// Encrypts and writes the enclosed [`Keyset`](crate::proto::Keyset).
+    /// Encrypts and writes the enclosed [`Keyset`].
     pub fn write<T>(
         &self,
         writer: &mut T,
@@ -178,9 +182,9 @@ impl Handle {
         Ok(primitive_set)
     }
 
-    /// Check if the keyset handle contains any key material considered secret.
-    /// Both symmetric keys and the private key of an asymmetric crypto system are considered secret
-    /// keys. Also returns true when encountering any errors.
+    /// Check if the keyset handle contains any key material considered secret.  Both symmetric keys
+    /// and the private key of an asymmetric crypto system are considered secret keys. Also
+    /// returns true when encountering any errors.
     fn has_secrets(&self) -> bool {
         for k in &self.ks.key {
             match &k.key_data {
@@ -198,10 +202,27 @@ impl Handle {
         false
     }
 
-    /// Return [`KeysetInfo`](crate::proto::KeysetInfo) representation of the managed
-    /// keyset. The result does not contain any sensitive key material.
-    pub fn keyset_info(&self) -> crate::proto::KeysetInfo {
+    /// Return [`KeysetInfo`] representation of the managed keyset. The result does not
+    /// contain any sensitive key material.
+    pub fn keyset_info(&self) -> KeysetInfo {
         get_keyset_info(&self.ks)
+    }
+
+    /// Consume the `Handle` and return the enclosed [`Keyset`].
+    pub(crate) fn into_inner(self) -> Keyset {
+        self.ks
+    }
+
+    /// Return a copy of the enclosed [`Keyset`]; for internal
+    /// use only.
+    pub(crate) fn clone_keyset(&self) -> Keyset {
+        self.ks.clone()
+    }
+
+    /// Create a `Handle` from a [`Keyset`].  Implemented as a standalone method rather than
+    /// as an `impl` of the `From` trait so visibility can be restricted.
+    pub(crate) fn from_keyset(ks: Keyset) -> Self {
+        Handle { ks }
     }
 }
 
@@ -230,17 +251,16 @@ fn public_key_data(
 fn decrypt(
     encrypted_keyset: &crate::proto::EncryptedKeyset,
     master_key: Box<dyn crate::Aead>,
-) -> Result<crate::proto::Keyset, TinkError> {
+) -> Result<Keyset, TinkError> {
     let decrypted = master_key
         .decrypt(&encrypted_keyset.encrypted_keyset, &[])
         .map_err(|e| wrap_err("keyset::Handle: decryption failed", e))?;
-    crate::proto::Keyset::decode(&decrypted[..])
-        .map_err(|_| TinkError::new("keyset::Handle:: invalid keyset"))
+    Keyset::decode(&decrypted[..]).map_err(|_| TinkError::new("keyset::Handle:: invalid keyset"))
 }
 
 /// Encrypt a keyset with a master key.
 fn encrypt(
-    keyset: &crate::proto::Keyset,
+    keyset: &Keyset,
     master_key: Box<dyn crate::Aead>,
 ) -> Result<crate::proto::EncryptedKeyset, TinkError> {
     let mut serialized_keyset = vec![];
@@ -256,15 +276,14 @@ fn encrypt(
     })
 }
 
-/// Return a [`KeysetInfo`](crate::proto::KeysetInfo) from a [`Keyset`](crate::proto::Keyset)
-/// protobuf.
-fn get_keyset_info(keyset: &crate::proto::Keyset) -> crate::proto::KeysetInfo {
+/// Return a [`KeysetInfo`] from a [`Keyset`] protobuf.
+fn get_keyset_info(keyset: &Keyset) -> KeysetInfo {
     let n_key = keyset.key.len();
     let mut key_infos = Vec::with_capacity(n_key);
     for key in &keyset.key {
         key_infos.push(get_key_info(key));
     }
-    crate::proto::KeysetInfo {
+    KeysetInfo {
         primary_key_id: keyset.primary_key_id,
         key_info: key_infos,
     }

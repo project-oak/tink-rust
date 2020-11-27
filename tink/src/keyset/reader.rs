@@ -19,7 +19,7 @@
 /// `Reader` knows how to read a [`Keyset`](crate::proto::Keyset) or an
 /// [`EncryptedKeyset`](crate::proto::EncryptedKeyset) from some source. In order to turn a `Reader`
 /// into a [`keyset::Handle`](crate::keyset::Handle) for use, callers must use
-/// [`insecure::keyset_handle`](super::insecure::keyset_handle) or
+/// [`insecure::new_handle`](super::insecure::new_handle) or
 /// [`Handle::read`](super::Handle::read) (with encryption).
 pub trait Reader {
     /// Return a (cleartext) `Keyset` object from the underlying source.
