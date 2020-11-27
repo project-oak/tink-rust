@@ -216,3 +216,34 @@ fn test_keyset_info() {
     let info = kh.keyset_info();
     assert_eq!(info.primary_key_id, info.key_info[0].key_id);
 }
+
+#[test]
+fn test_invalid_keyset() {
+    tink_mac::init();
+    let kt = tink_mac::hmac_sha256_tag128_key_template();
+    let kh = Handle::new(&kt).unwrap();
+
+    let mut invalid_ks = insecure::keyset_material(&kh);
+    invalid_ks.key[0].key_data = None;
+    assert!(insecure::new_handle(invalid_ks).is_err());
+
+    let mut invalid_ks = insecure::keyset_material(&kh);
+    invalid_ks.key.clear();
+    assert!(insecure::new_handle(invalid_ks).is_err());
+}
+
+#[test]
+fn test_destroyed_key_keyset() {
+    tink_mac::init();
+    let kt = tink_mac::hmac_sha256_tag128_key_template();
+    let kh = Handle::new(&kt).unwrap();
+
+    let mut ks = insecure::keyset_material(&kh);
+    ks.key[0].key_data = None;
+    ks.key[0].status = tink::proto::KeyStatusType::Destroyed as i32;
+    let kh = insecure::new_handle(ks).unwrap();
+    let info = kh.keyset_info();
+    assert_eq!(info.primary_key_id, info.key_info[0].key_id);
+    // The type_url for a destroyed key is not available.
+    assert_eq!(info.key_info[0].type_url, "");
+}

@@ -44,8 +44,10 @@ impl Handle {
     /// Create a new instance of [`Handle`] using the given [`Keyset`] which does not contain any
     /// secret key material.
     pub fn new_with_no_secrets(ks: Keyset) -> Result<Self, TinkError> {
-        let h = Handle { ks };
-        if h.has_secrets() {
+        let h = Handle {
+            ks: validate_keyset(ks)?,
+        };
+        if h.has_secrets()? {
             // If you need to do this, you have to use `tink::keyset::insecure::read()` instead.
             return Err("importing unencrypted secret key material is forbidden".into());
         }
@@ -60,7 +62,9 @@ impl Handle {
     {
         let encrypted_keyset = reader.read_encrypted()?;
         let ks = decrypt(&encrypted_keyset, master_key)?;
-        Ok(Handle { ks })
+        Ok(Handle {
+            ks: validate_keyset(ks)?,
+        })
     }
 
     /// Attempt to create a [`Handle`] from a keyset obtained via a
@@ -117,7 +121,7 @@ impl Handle {
     where
         T: super::Writer,
     {
-        if self.has_secrets() {
+        if self.has_secrets()? {
             Err("exporting unencrypted secret key material is forbidden".into())
         } else {
             w.write(&self.ks)
@@ -185,21 +189,22 @@ impl Handle {
     /// Check if the keyset handle contains any key material considered secret.  Both symmetric keys
     /// and the private key of an asymmetric crypto system are considered secret keys. Also
     /// returns true when encountering any errors.
-    fn has_secrets(&self) -> bool {
+    fn has_secrets(&self) -> Result<bool, TinkError> {
+        let mut result = false;
         for k in &self.ks.key {
             match &k.key_data {
-                None => continue,
+                None => return Err("invalid keyset".into()),
                 Some(kd) => match KeyMaterialType::from_i32(kd.key_material_type) {
-                    Some(KeyMaterialType::UnknownKeymaterial) => return true,
-                    Some(KeyMaterialType::Symmetric) => return true,
-                    Some(KeyMaterialType::AsymmetricPrivate) => return true,
-                    Some(KeyMaterialType::AsymmetricPublic) => continue,
-                    Some(KeyMaterialType::Remote) => continue,
-                    None => return true,
+                    Some(KeyMaterialType::UnknownKeymaterial) => result = true,
+                    Some(KeyMaterialType::Symmetric) => result = true,
+                    Some(KeyMaterialType::AsymmetricPrivate) => result = true,
+                    Some(KeyMaterialType::AsymmetricPublic) => {}
+                    Some(KeyMaterialType::Remote) => {}
+                    None => return Err("invalid key material type".into()),
                 },
             }
         }
-        false
+        Ok(result)
     }
 
     /// Return [`KeysetInfo`] representation of the managed keyset. The result does not
@@ -221,9 +226,26 @@ impl Handle {
 
     /// Create a `Handle` from a [`Keyset`].  Implemented as a standalone method rather than
     /// as an `impl` of the `From` trait so visibility can be restricted.
-    pub(crate) fn from_keyset(ks: Keyset) -> Self {
-        Handle { ks }
+    pub(crate) fn from_keyset(ks: Keyset) -> Result<Self, TinkError> {
+        Ok(Handle {
+            ks: validate_keyset(ks)?,
+        })
     }
+}
+
+/// Check that a [`Keyset`] is valid.
+fn validate_keyset(ks: Keyset) -> Result<Keyset, TinkError> {
+    for k in &ks.key {
+        match &k.key_data {
+            None if k.status == crate::proto::KeyStatusType::Destroyed as i32 => {}
+            None => return Err("invalid keyset".into()),
+            Some(kd) => match KeyMaterialType::from_i32(kd.key_material_type) {
+                Some(_) => {}
+                None => return Err("invalid key material type".into()),
+            },
+        }
+    }
+    Ok(ks)
 }
 
 /// Extract the public key data corresponding to private key data.
@@ -293,12 +315,10 @@ fn get_keyset_info(keyset: &Keyset) -> KeysetInfo {
 /// [`Key`](crate::proto::keyset::Key) protobuf.
 fn get_key_info(key: &crate::proto::keyset::Key) -> crate::proto::keyset_info::KeyInfo {
     crate::proto::keyset_info::KeyInfo {
-        type_url: key
-            .key_data
-            .as_ref()
-            .expect("key with no key_data")
-            .type_url
-            .clone(),
+        type_url: match &key.key_data {
+            Some(kd) => kd.type_url.clone(),
+            None => "".to_string(),
+        },
         status: key.status,
         key_id: key.key_id,
         output_prefix_type: key.output_prefix_type,

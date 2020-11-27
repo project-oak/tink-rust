@@ -19,7 +19,7 @@
 use crate::TinkError;
 
 /// Create a [`Handle`](super::Handle) from cleartext key material.
-fn keyset_handle(ks: crate::proto::Keyset) -> super::Handle {
+fn keyset_handle(ks: crate::proto::Keyset) -> Result<super::Handle, TinkError> {
     super::Handle::from_keyset(ks)
 }
 
@@ -34,7 +34,7 @@ pub fn new_handle(ks: crate::proto::Keyset) -> Result<super::Handle, TinkError> 
     if ks.key.is_empty() {
         Err("insecure: invalid keyset".into())
     } else {
-        Ok(keyset_handle(ks))
+        keyset_handle(ks)
     }
 }
 
@@ -47,7 +47,7 @@ where
     if ks.key.is_empty() {
         Err("insecure: invalid keyset".into())
     } else {
-        Ok(keyset_handle(ks))
+        keyset_handle(ks)
     }
 }
 
