@@ -82,7 +82,7 @@ impl Manager {
 
     /// Create a new [`Handle`](super::Handle) for the managed keyset.
     pub fn handle(&self) -> Result<super::Handle, TinkError> {
-        Ok(super::Handle::from_keyset(self.ks.clone()))
+        super::Handle::from_keyset(self.ks.clone())
     }
 
     /// Sets the status of the specified key to [`KeyStatusType::Enabled`].  Succeeds only if before
