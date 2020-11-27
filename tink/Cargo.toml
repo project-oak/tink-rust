@@ -6,8 +6,10 @@ edition = "2018"
 license = "Apache-2.0"
 
 [features]
-default = ["json"]
+default = []
+# The `insecure` feature enables methods that expose unencrypted key material
 insecure = []
+# The `json` feature enables methods for serializing keysets to/from JSON.
 json = ["base64", "serde", "serde_json"]
 
 [dependencies]
