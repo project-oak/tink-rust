@@ -68,8 +68,7 @@ for f in "${CODE_FILES[@]}"; do
   check_license "$f"
   errcount=$((errcount + $?))
   check_todo "$f"
-  # TODO: make unadorned TODOs trigger a script failure
-  # errcount=$((errcount + $?))
+  errcount=$((errcount + $?))
   check_panic "$f"
   errcount=$((errcount + $?))
 done
@@ -78,8 +77,7 @@ for f in "${MD_FILES[@]}"; do
   go run github.com/campoy/embedmd -d "$f"
   errcount=$((errcount + $?))
   check_todo "$f"
-  # TODO: make unadorned TODOs trigger a script failure
-  # errcount=$((errcount + $?))
+  errcount=$((errcount + $?))
 done
 
 if [ $errcount -gt 0 ]; then
