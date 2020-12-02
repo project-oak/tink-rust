@@ -9,7 +9,7 @@ license = "Apache-2.0"
 # Need the `std` feature for Error type conversion
 aead = { version = "^0.3", features = ["std"] }
 aes-ctr = "^0.5"
-aes-gcm = "^0.7"
+aes-gcm = "^0.8"
 chacha20poly1305 = "^0.6"
 generic-array = "^0.14"
 prost = "^0.6.1"
