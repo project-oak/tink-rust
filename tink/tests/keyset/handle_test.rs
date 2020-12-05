@@ -14,7 +14,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::keyset::{insecure, Handle};
+use std::sync::Arc;
+use tink::{
+    keyset::{insecure, Handle},
+    proto::{key_data::KeyMaterialType, KeyData},
+    TinkError,
+};
 
 #[test]
 fn test_new_handle() {
@@ -55,8 +60,8 @@ fn test_read() {
     // Create a keyset
     let key_data = tink_testutil::new_key_data(
         "some type url",
-        &[0],
-        tink::proto::key_data::KeyMaterialType::Symmetric,
+        &[42, 42, 0x42, 0x42, 0o42, 0o42], // 42 in all possible formats
+        KeyMaterialType::Symmetric,
     );
     let key = tink_testutil::new_key(
         &key_data,
@@ -66,6 +71,10 @@ fn test_read() {
     );
     let ks = tink_testutil::new_keyset(1, vec![key]);
     let h = insecure::new_handle(ks).unwrap();
+
+    // Also check that debug output of handle doesn't include key material.
+    let debug_output = format!("{:?}", h);
+    assert!(!debug_output.contains("42"));
 
     let mem_keyset = &mut tink::keyset::MemReaderWriter::default();
     assert!(h.write(mem_keyset, master_key.clone()).is_ok());
@@ -82,11 +91,8 @@ fn test_read() {
 #[test]
 fn test_read_with_no_secrets() {
     // Create a keyset containing public key material
-    let key_data = tink_testutil::new_key_data(
-        "some type url",
-        &[0],
-        tink::proto::key_data::KeyMaterialType::AsymmetricPublic,
-    );
+    let key_data =
+        tink_testutil::new_key_data("some type url", &[0], KeyMaterialType::AsymmetricPublic);
     let key = tink_testutil::new_key(
         &key_data,
         tink::proto::KeyStatusType::Enabled,
@@ -112,11 +118,7 @@ fn test_read_with_no_secrets() {
 #[test]
 fn test_with_no_secrets_functions_fail_when_handling_secret_key_material() {
     // Create a keyset containing secret key material (symmetric)
-    let key_data = tink_testutil::new_key_data(
-        "some type url",
-        &[0],
-        tink::proto::key_data::KeyMaterialType::Symmetric,
-    );
+    let key_data = tink_testutil::new_key_data("some type url", &[0], KeyMaterialType::Symmetric);
     let key = tink_testutil::new_key(
         &key_data,
         tink::proto::KeyStatusType::Enabled,
@@ -145,11 +147,8 @@ fn test_with_no_secrets_functions_fail_when_handling_secret_key_material() {
 #[test]
 fn test_with_no_secrets_functions_fail_when_unknown_key_material() {
     // Create a keyset containing secret key material (symmetric)
-    let key_data = tink_testutil::new_key_data(
-        "some type url",
-        &[0],
-        tink::proto::key_data::KeyMaterialType::UnknownKeymaterial,
-    );
+    let key_data =
+        tink_testutil::new_key_data("some type url", &[0], KeyMaterialType::UnknownKeymaterial);
     let key = tink_testutil::new_key(
         &key_data,
         tink::proto::KeyStatusType::Enabled,
@@ -178,11 +177,8 @@ fn test_with_no_secrets_functions_fail_when_unknown_key_material() {
 #[test]
 fn test_with_no_secrets_functions_fail_with_asymmetric_private_key_material() {
     // Create a keyset containing secret key material (asymmetric)
-    let key_data = tink_testutil::new_key_data(
-        "some type url",
-        &[0],
-        tink::proto::key_data::KeyMaterialType::AsymmetricPrivate,
-    );
+    let key_data =
+        tink_testutil::new_key_data("some type url", &[0], KeyMaterialType::AsymmetricPrivate);
     let key = tink_testutil::new_key(
         &key_data,
         tink::proto::KeyStatusType::Enabled,
@@ -233,6 +229,46 @@ fn test_invalid_keyset() {
 }
 
 #[test]
+fn test_invalid_keyset_from_manager() {
+    // Use a key manager that generates invalid `KeyData`.
+    pub struct InvalidKeyManager {}
+
+    impl tink::registry::KeyManager for InvalidKeyManager {
+        fn primitive(&self, _serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
+            Err("not implemented".into())
+        }
+
+        fn new_key(&self, _serialized_key_format: &[u8]) -> Result<Vec<u8>, TinkError> {
+            Err("not implemented".into())
+        }
+
+        fn type_url(&self) -> &'static str {
+            "InvalidKeyGenerator"
+        }
+
+        fn key_material_type(&self) -> KeyMaterialType {
+            KeyMaterialType::Symmetric
+        }
+
+        fn new_key_data(&self, _serialized_key_format: &[u8]) -> Result<KeyData, TinkError> {
+            Ok(KeyData {
+                key_material_type: 9999,
+                type_url: self.type_url().to_string(),
+                value: vec![],
+            })
+        }
+    }
+    tink::registry::register_key_manager(Arc::new(InvalidKeyManager {})).unwrap();
+    let kt = tink::proto::KeyTemplate {
+        output_prefix_type: tink::proto::OutputPrefixType::Tink as i32,
+        type_url: "InvalidKeyGenerator".to_string(),
+        value: vec![],
+    };
+
+    assert!(tink::keyset::Handle::new(&kt).is_err());
+}
+
+#[test]
 fn test_destroyed_key_keyset() {
     tink_mac::init();
     let kt = tink_mac::hmac_sha256_tag128_key_template();
@@ -246,4 +282,57 @@ fn test_destroyed_key_keyset() {
     assert_eq!(info.primary_key_id, info.key_info[0].key_id);
     // The type_url for a destroyed key is not available.
     assert_eq!(info.key_info[0].type_url, "");
+}
+
+#[test]
+fn test_handle_public() {
+    tink_signature::init();
+    let kh = Handle::new(&tink_signature::ecdsa_p256_key_template()).unwrap();
+
+    let kh_public = kh.public().unwrap();
+
+    let ks = insecure::keyset_material(&kh_public);
+    assert_eq!(
+        ks.key[0].key_data.as_ref().unwrap().key_material_type,
+        KeyMaterialType::AsymmetricPublic as i32
+    );
+
+    // handle.public() only works for asymmetric private keys.
+    let result = kh_public.public();
+    tink_testutil::expect_err(result, "contains a non-private key");
+}
+
+#[test]
+fn test_handle_public_destroyed_key() {
+    tink_signature::init();
+
+    let mut ksm = tink::keyset::Manager::new();
+    ksm.rotate(&tink_signature::ecdsa_p256_key_template())
+        .unwrap();
+    let key_id = ksm
+        .add(
+            &tink_signature::ecdsa_p256_key_template(),
+            /* primary= */ false,
+        )
+        .unwrap();
+    ksm.destroy(key_id).unwrap();
+    let kh = ksm.handle().unwrap();
+
+    let result = kh.public();
+    tink_testutil::expect_err(result, "invalid keyset");
+}
+
+#[test]
+fn test_handle_public_wrong_keymanager() {
+    tink_mac::init();
+    tink_signature::init();
+    let kh = Handle::new(&tink_signature::ecdsa_p256_key_template()).unwrap();
+
+    // Manually corrupt the keyset to refer to the wrong key manager.
+    let mut ks = insecure::keyset_material(&kh);
+    ks.key[0].key_data.as_mut().unwrap().type_url = tink_testutil::HMAC_TYPE_URL.to_string();
+    let invalid_kh = insecure::new_handle(ks).unwrap();
+
+    let result = invalid_kh.public();
+    tink_testutil::expect_err(result, "handles private keys");
 }
