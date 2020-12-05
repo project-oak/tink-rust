@@ -17,7 +17,7 @@
 //! Provides subtle implementations of the `DeterministicAEAD` primitive using AES-SIV.
 
 use aes_siv::{aead::generic_array::GenericArray, siv::Aes256Siv};
-use std::sync::{Arc, Mutex};
+use std::{cell::RefCell, rc::Rc};
 use tink::{utils::wrap_err, TinkError};
 
 /// `AesSiv` is an implementation of AES-SIV-CMAC as defined in
@@ -45,13 +45,11 @@ use tink::{utils::wrap_err, TinkError};
 pub struct AesSiv {
     // Need to use interior mutability because `aes_siv::siv::Siv` operations
     // take a `&mut self` parameter.
-    cipher: Arc<Mutex<Aes256Siv>>,
+    cipher: Rc<RefCell<Aes256Siv>>,
 }
 
 /// Key size in bytes.
 pub const AES_SIV_KEY_SIZE: usize = 64; // 512 bits
-
-const E: &str = "internal lock corrupted";
 
 impl AesSiv {
     /// Return an [`AesSiv`] instance.
@@ -61,7 +59,7 @@ impl AesSiv {
         }
 
         Ok(AesSiv {
-            cipher: Arc::new(Mutex::new(Aes256Siv::new(*GenericArray::from_slice(key)))),
+            cipher: Rc::new(RefCell::new(Aes256Siv::new(*GenericArray::from_slice(key)))),
         })
     }
 }
@@ -73,8 +71,7 @@ impl tink::DeterministicAead for AesSiv {
         additional_data: &[u8],
     ) -> Result<Vec<u8>, TinkError> {
         self.cipher
-            .lock()
-            .expect(E) // safe: lock
+            .borrow_mut()
             .encrypt(&[additional_data], plaintext)
             .map_err(|e| wrap_err("AesSiv: encrypt failed", e))
     }
@@ -88,8 +85,7 @@ impl tink::DeterministicAead for AesSiv {
             return Err("AesSiv: ciphertext is too short".into());
         }
         self.cipher
-            .lock()
-            .expect(E) // safe: lock
+            .borrow_mut()
             .decrypt(&[additional_data], ciphertext)
             .map_err(|e| wrap_err("AesSiv: decrypt failed", e))
     }
