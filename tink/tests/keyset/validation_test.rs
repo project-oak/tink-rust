@@ -161,5 +161,19 @@ fn generate_invalid_keys() -> Vec<tink::proto::keyset::Key> {
             1,
             tink::proto::OutputPrefixType::UnknownPrefix,
         ),
+        // zero key id
+        tink_testutil::new_key(
+            &tink::proto::KeyData::default(),
+            tink::proto::KeyStatusType::Enabled,
+            0,
+            tink::proto::OutputPrefixType::Tink,
+        ),
+        // no key_data
+        tink::proto::keyset::Key {
+            key_data: None,
+            status: tink::proto::KeyStatusType::Enabled as i32,
+            key_id: 1,
+            output_prefix_type: tink::proto::OutputPrefixType::Tink as i32,
+        },
     ]
 }
