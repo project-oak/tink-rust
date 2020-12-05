@@ -28,7 +28,7 @@ fn test_aes_siv_encrypt_decrypt() {
 
     let a = tink_daead::subtle::AesSiv::new(&key).unwrap();
 
-    let ct = a.encrypt_deterministically(&msg[..], &aad[..]).unwrap();
+    let ct = a.encrypt_deterministically(msg, aad).unwrap();
 
     let pt = a
         .decrypt_deterministically(&ct, aad)
@@ -46,10 +46,10 @@ fn test_aes_siv_empty_plaintext() {
     let a = tink_daead::subtle::AesSiv::new(&key).unwrap();
 
     let ct = a
-        .encrypt_deterministically(&[], &aad[..])
+        .encrypt_deterministically(&[], aad)
         .expect("Unexpected encryption error");
     let pt = a
-        .decrypt_deterministically(&ct, &aad[..])
+        .decrypt_deterministically(&ct, aad)
         .expect("Unexpected decryption error");
     assert!(pt.is_empty(), "Mismatched plaintexts");
 }
@@ -104,10 +104,10 @@ fn test_aes_siv_message_sizes() {
     for i in 0..1024 {
         let msg = get_random_bytes(i);
         let ct = a
-            .encrypt_deterministically(&msg, &aad[..])
+            .encrypt_deterministically(&msg, aad)
             .expect("Unexpected encryption error");
         let pt = a
-            .decrypt_deterministically(&ct, &aad[..])
+            .decrypt_deterministically(&ct, aad)
             .expect("Unexpected decryption error");
         assert_eq!(pt, msg, "Mismatched plaintexts");
     }
@@ -115,10 +115,10 @@ fn test_aes_siv_message_sizes() {
     for i in (1024..100000).step_by(5000) {
         let msg = get_random_bytes(i);
         let ct = a
-            .encrypt_deterministically(&msg, &aad[..])
+            .encrypt_deterministically(&msg, aad)
             .expect("Unexpected encryption error");
         let pt = a
-            .decrypt_deterministically(&ct, &aad[..])
+            .decrypt_deterministically(&ct, aad)
             .expect("Unexpected decryption error");
         assert_eq!(pt, msg, "Mismatched plaintexts");
     }
@@ -135,7 +135,7 @@ fn test_aes_siv_additional_data_sizes() {
 
     for i in 0..1024 {
         let aad = get_random_bytes(i);
-        let ct = a.encrypt_deterministically(&msg[..], &aad).unwrap();
+        let ct = a.encrypt_deterministically(msg, &aad).unwrap();
         let pt = a
             .decrypt_deterministically(&ct, &aad)
             .expect("Unexpected decryption error");
@@ -154,12 +154,12 @@ fn test_aes_siv_ciphertext_modifications() {
 
     for i in 0..50 {
         let msg = get_random_bytes(i);
-        let mut ct = a.encrypt_deterministically(&msg, &aad[..]).unwrap();
+        let mut ct = a.encrypt_deterministically(&msg, aad).unwrap();
         for j in 0..ct.len() {
             for b in 0..8 {
                 ct[j] ^= 1 << b;
                 assert!(
-                    a.decrypt_deterministically(&ct, &aad[..]).is_err(),
+                    a.decrypt_deterministically(&ct, aad).is_err(),
                     "Modified ciphertext decrypted: byte {}, bit {}",
                     j,
                     b
@@ -168,6 +168,21 @@ fn test_aes_siv_ciphertext_modifications() {
             }
         }
     }
+}
+
+#[test]
+fn test_aes_siv_ciphertext_too_short() {
+    let key_str =
+        "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f00112233445566778899aabbccddeefff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff";
+    let key = hex::decode(key_str).unwrap();
+    let msg = b"Some data to encrypt.";
+    let aad = b"additional data";
+
+    let a = tink_daead::subtle::AesSiv::new(&key).unwrap();
+    let ct = a.encrypt_deterministically(msg, aad).unwrap();
+
+    let result = a.decrypt_deterministically(&ct[..2], aad);
+    tink_testutil::expect_err(result, "too short");
 }
 
 #[derive(Debug, Deserialize)]
