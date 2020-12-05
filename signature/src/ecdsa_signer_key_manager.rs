@@ -41,14 +41,7 @@ impl tink::registry::KeyManager for EcdsaSignerKeyManager {
         }
         let key = tink::proto::EcdsaPrivateKey::decode(serialized_key)
             .map_err(|e| wrap_err("EcdsaSignerKeyManager: invalid key", e))?;
-        validate_key(&key)?;
-        let params = match &key.public_key {
-            Some(pub_key) => match &pub_key.params {
-                Some(params) => params,
-                None => return Err("EcdsaSignerKeyManager: no public key parameters".into()),
-            },
-            None => return Err("EcdsaSignerKeyManager: no public key".into()),
-        };
+        let params = validate_key(&key)?;
 
         let (hash, curve, encoding) = crate::get_ecdsa_param_ids(&params);
         match crate::subtle::EcdsaSigner::new(hash, curve, encoding, &key.key_value) {
@@ -63,13 +56,9 @@ impl tink::registry::KeyManager for EcdsaSignerKeyManager {
         }
         let key_format = tink::proto::EcdsaKeyFormat::decode(serialized_key_format)
             .map_err(|e| wrap_err("EcdsaSignerKeyManager: invalid key", e))?;
-        validate_key_format(&key_format)?;
+        let params = validate_key_format(&key_format)?;
 
         // generate key
-        let params = match key_format.params {
-            Some(p) => p,
-            None => return Err("EcdsaSignerKeyManager: no params".into()),
-        };
         let mut csprng = rand::rngs::OsRng {};
 
         let (secret_key_data, pub_x_data, pub_y_data) =
@@ -160,32 +149,35 @@ impl tink::registry::KeyManager for EcdsaSignerKeyManager {
     }
 }
 
-/// Validate the given [`EcdsaPrivateKey`](tink::proto::EcdsaPrivateKey).
-fn validate_key(key: &tink::proto::EcdsaPrivateKey) -> Result<(), TinkError> {
+/// Validate the given [`EcdsaPrivateKey`](tink::proto::EcdsaPrivateKey) and return
+/// the parameters.
+fn validate_key(key: &tink::proto::EcdsaPrivateKey) -> Result<tink::proto::EcdsaParams, TinkError> {
     tink::keyset::validate_key_version(key.version, ECDSA_SIGNER_KEY_VERSION)
         .map_err(|e| wrap_err("EcdsaSignerKeyManager", e))?;
     let pub_key = key
         .public_key
         .as_ref()
         .ok_or_else(|| TinkError::new("EcdsaSignerKeyManager: no public key"))?;
-    crate::validate_ecdsa_public_key(pub_key).map_err(|e| wrap_err("EcdsaSignerKeyManager", e))?;
-    let params = pub_key
-        .params
-        .as_ref()
-        .ok_or_else(|| TinkError::new("EcdsaSignerKeyManager: no public key parameters"))?;
+    let params = crate::validate_ecdsa_public_key(pub_key)
+        .map_err(|e| wrap_err("EcdsaSignerKeyManager", e))?;
     let (hash, curve, encoding) = crate::get_ecdsa_param_ids(&params);
     // Check the public key points are on the curve by creating a verifier.
     crate::subtle::EcdsaVerifier::new(hash, curve, encoding, &pub_key.x, &pub_key.y)
         .map_err(|e| wrap_err("EcdsaVerifierKeyManager: invalid key", e))?;
-    crate::subtle::validate_ecdsa_params(hash, curve, encoding)
+    crate::subtle::validate_ecdsa_params(hash, curve, encoding)?;
+    Ok(params)
 }
 
-/// Validate the given [`EcdsaKeyFormat`](tink::proto::EcdsaKeyFormat).
-fn validate_key_format(key_format: &tink::proto::EcdsaKeyFormat) -> Result<(), TinkError> {
+/// Validate the given [`EcdsaKeyFormat`](tink::proto::EcdsaKeyFormat) and return
+/// the parameters.
+fn validate_key_format(
+    key_format: &tink::proto::EcdsaKeyFormat,
+) -> Result<tink::proto::EcdsaParams, TinkError> {
     let params = key_format
         .params
         .as_ref()
         .ok_or_else(|| TinkError::new("no public key parameters"))?;
     let (hash, curve, encoding) = crate::get_ecdsa_param_ids(&params);
-    crate::subtle::validate_ecdsa_params(hash, curve, encoding)
+    crate::subtle::validate_ecdsa_params(hash, curve, encoding)?;
+    Ok(params.clone())
 }

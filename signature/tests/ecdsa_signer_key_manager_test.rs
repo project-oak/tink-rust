@@ -413,30 +413,42 @@ fn test_new_key_with_invalid_format() {
     let km = tink::registry::get_key_manager(tink_testutil::ECDSA_SIGNER_TYPE_URL).unwrap();
 
     let invalid_formats = vec![
-        EcdsaKeyFormat {
-            params: Some(EcdsaParams {
-                hash_type: 9999, // invalid
-                curve: EllipticCurveType::NistP256 as i32,
-                encoding: EcdsaSignatureEncoding::Der as i32,
-            }),
-        },
-        EcdsaKeyFormat {
-            params: Some(EcdsaParams {
-                hash_type: HashType::Sha256 as i32,
-                curve: 9999, // invalid
-                encoding: EcdsaSignatureEncoding::Der as i32,
-            }),
-        },
-        EcdsaKeyFormat {
-            params: Some(EcdsaParams {
-                hash_type: HashType::Sha256 as i32,
-                curve: EllipticCurveType::NistP256 as i32,
-                encoding: 9999, // invalid
-            }),
-        },
-        EcdsaKeyFormat {
-            params: None, // invalid
-        },
+        (
+            "invalid hash type",
+            EcdsaKeyFormat {
+                params: Some(EcdsaParams {
+                    hash_type: 9999, // invalid
+                    curve: EllipticCurveType::NistP256 as i32,
+                    encoding: EcdsaSignatureEncoding::Der as i32,
+                }),
+            },
+        ),
+        (
+            "unsupported curve",
+            EcdsaKeyFormat {
+                params: Some(EcdsaParams {
+                    hash_type: HashType::Sha256 as i32,
+                    curve: 9999, // invalid
+                    encoding: EcdsaSignatureEncoding::Der as i32,
+                }),
+            },
+        ),
+        (
+            "unsupported encoding",
+            EcdsaKeyFormat {
+                params: Some(EcdsaParams {
+                    hash_type: HashType::Sha256 as i32,
+                    curve: EllipticCurveType::NistP256 as i32,
+                    encoding: 9999, // invalid
+                }),
+            },
+        ),
+        (
+            "invalid key format",
+            EcdsaKeyFormat {
+                params: None, // invalid
+            },
+        ),
         /* All based on this valid key format:
         EcdsaKeyFormat {
             params: Some(EcdsaParams {
@@ -447,9 +459,10 @@ fn test_new_key_with_invalid_format() {
         },
          */
     ];
-    for format in &invalid_formats {
+    for (err_msg, format) in &invalid_formats {
         let serialized_format = tink_testutil::proto_encode(format);
-        assert!(km.new_key(&serialized_format).is_err());
+        let result = km.new_key(&serialized_format);
+        tink_testutil::expect_err(result, err_msg);
     }
 }
 
@@ -465,133 +478,163 @@ fn test_primitive_with_invalid_key() {
         hex::decode("2fa00a02762046c8797d5cc62cd1ba41ecf11f0996e3c5169ca8c891af8055c3").unwrap();
 
     let invalid_keys = vec![
-        EcdsaPrivateKey {
-            version: 9999, // invalid
-            public_key: Some(EcdsaPublicKey {
-                version: tink_signature::ECDSA_VERIFIER_KEY_VERSION,
-                params: Some(EcdsaParams {
-                    hash_type: HashType::Sha256 as i32,
-                    curve: EllipticCurveType::NistP256 as i32,
-                    encoding: EcdsaSignatureEncoding::Der as i32,
-                }),
-                x: pub_x_data.clone(),
-                y: pub_y_data.clone(),
-            }),
-            key_value: secret_key_data.clone(),
-        },
-        EcdsaPrivateKey {
-            version: tink_signature::ECDSA_SIGNER_KEY_VERSION,
-            public_key: Some(EcdsaPublicKey {
+        (
+            "only keys with version in range",
+            EcdsaPrivateKey {
                 version: 9999, // invalid
-                params: Some(EcdsaParams {
-                    hash_type: HashType::Sha256 as i32,
-                    curve: EllipticCurveType::NistP256 as i32,
-                    encoding: EcdsaSignatureEncoding::Der as i32,
+                public_key: Some(EcdsaPublicKey {
+                    version: tink_signature::ECDSA_VERIFIER_KEY_VERSION,
+                    params: Some(EcdsaParams {
+                        hash_type: HashType::Sha256 as i32,
+                        curve: EllipticCurveType::NistP256 as i32,
+                        encoding: EcdsaSignatureEncoding::Der as i32,
+                    }),
+                    x: pub_x_data.clone(),
+                    y: pub_y_data.clone(),
                 }),
-                x: pub_x_data.clone(),
-                y: pub_y_data.clone(),
-            }),
-            key_value: secret_key_data.clone(),
-        },
-        EcdsaPrivateKey {
-            version: tink_signature::ECDSA_SIGNER_KEY_VERSION,
-            public_key: Some(EcdsaPublicKey {
-                version: tink_signature::ECDSA_VERIFIER_KEY_VERSION,
-                params: Some(EcdsaParams {
-                    hash_type: 9999, // invalid
-                    curve: EllipticCurveType::NistP256 as i32,
-                    encoding: EcdsaSignatureEncoding::Der as i32,
+                key_value: secret_key_data.clone(),
+            },
+        ),
+        (
+            "only keys with version in range",
+            EcdsaPrivateKey {
+                version: tink_signature::ECDSA_SIGNER_KEY_VERSION,
+                public_key: Some(EcdsaPublicKey {
+                    version: 9999, // invalid
+                    params: Some(EcdsaParams {
+                        hash_type: HashType::Sha256 as i32,
+                        curve: EllipticCurveType::NistP256 as i32,
+                        encoding: EcdsaSignatureEncoding::Der as i32,
+                    }),
+                    x: pub_x_data.clone(),
+                    y: pub_y_data.clone(),
                 }),
-                x: pub_x_data.clone(),
-                y: pub_y_data.clone(),
-            }),
-            key_value: secret_key_data.clone(),
-        },
-        EcdsaPrivateKey {
-            version: tink_signature::ECDSA_SIGNER_KEY_VERSION,
-            public_key: Some(EcdsaPublicKey {
-                version: tink_signature::ECDSA_VERIFIER_KEY_VERSION,
-                params: Some(EcdsaParams {
-                    hash_type: HashType::Sha256 as i32,
-                    curve: 9999, // invalid
-                    encoding: EcdsaSignatureEncoding::Der as i32,
+                key_value: secret_key_data.clone(),
+            },
+        ),
+        (
+            "invalid hash type",
+            EcdsaPrivateKey {
+                version: tink_signature::ECDSA_SIGNER_KEY_VERSION,
+                public_key: Some(EcdsaPublicKey {
+                    version: tink_signature::ECDSA_VERIFIER_KEY_VERSION,
+                    params: Some(EcdsaParams {
+                        hash_type: 9999, // invalid
+                        curve: EllipticCurveType::NistP256 as i32,
+                        encoding: EcdsaSignatureEncoding::Der as i32,
+                    }),
+                    x: pub_x_data.clone(),
+                    y: pub_y_data.clone(),
                 }),
-                x: pub_x_data.clone(),
-                y: pub_y_data.clone(),
-            }),
-            key_value: secret_key_data.clone(),
-        },
-        EcdsaPrivateKey {
-            version: tink_signature::ECDSA_SIGNER_KEY_VERSION,
-            public_key: Some(EcdsaPublicKey {
-                version: tink_signature::ECDSA_VERIFIER_KEY_VERSION,
-                params: Some(EcdsaParams {
-                    hash_type: HashType::Sha256 as i32,
-                    curve: EllipticCurveType::NistP256 as i32,
-                    encoding: 9999, // invalid
+                key_value: secret_key_data.clone(),
+            },
+        ),
+        (
+            "unsupported curve",
+            EcdsaPrivateKey {
+                version: tink_signature::ECDSA_SIGNER_KEY_VERSION,
+                public_key: Some(EcdsaPublicKey {
+                    version: tink_signature::ECDSA_VERIFIER_KEY_VERSION,
+                    params: Some(EcdsaParams {
+                        hash_type: HashType::Sha256 as i32,
+                        curve: 9999, // invalid
+                        encoding: EcdsaSignatureEncoding::Der as i32,
+                    }),
+                    x: pub_x_data.clone(),
+                    y: pub_y_data.clone(),
                 }),
-                x: pub_x_data.clone(),
-                y: pub_y_data.clone(),
-            }),
-            key_value: secret_key_data.clone(),
-        },
-        EcdsaPrivateKey {
-            version: tink_signature::ECDSA_SIGNER_KEY_VERSION,
-            public_key: Some(EcdsaPublicKey {
-                version: tink_signature::ECDSA_VERIFIER_KEY_VERSION,
-                params: Some(EcdsaParams {
-                    hash_type: HashType::Sha256 as i32,
-                    curve: EllipticCurveType::NistP256 as i32,
-                    encoding: EcdsaSignatureEncoding::Der as i32,
+                key_value: secret_key_data.clone(),
+            },
+        ),
+        (
+            "unsupported encoding",
+            EcdsaPrivateKey {
+                version: tink_signature::ECDSA_SIGNER_KEY_VERSION,
+                public_key: Some(EcdsaPublicKey {
+                    version: tink_signature::ECDSA_VERIFIER_KEY_VERSION,
+                    params: Some(EcdsaParams {
+                        hash_type: HashType::Sha256 as i32,
+                        curve: EllipticCurveType::NistP256 as i32,
+                        encoding: 9999, // invalid
+                    }),
+                    x: pub_x_data.clone(),
+                    y: pub_y_data.clone(),
                 }),
-                x: vec![], // invalid
-                y: pub_y_data.clone(),
-            }),
-            key_value: secret_key_data.clone(),
-        },
-        EcdsaPrivateKey {
-            version: tink_signature::ECDSA_SIGNER_KEY_VERSION,
-            public_key: Some(EcdsaPublicKey {
-                version: tink_signature::ECDSA_VERIFIER_KEY_VERSION,
-                params: Some(EcdsaParams {
-                    hash_type: HashType::Sha256 as i32,
-                    curve: EllipticCurveType::NistP256 as i32,
-                    encoding: EcdsaSignatureEncoding::Der as i32,
+                key_value: secret_key_data.clone(),
+            },
+        ),
+        (
+            "invalid key",
+            EcdsaPrivateKey {
+                version: tink_signature::ECDSA_SIGNER_KEY_VERSION,
+                public_key: Some(EcdsaPublicKey {
+                    version: tink_signature::ECDSA_VERIFIER_KEY_VERSION,
+                    params: Some(EcdsaParams {
+                        hash_type: HashType::Sha256 as i32,
+                        curve: EllipticCurveType::NistP256 as i32,
+                        encoding: EcdsaSignatureEncoding::Der as i32,
+                    }),
+                    x: vec![], // invalid
+                    y: pub_y_data.clone(),
                 }),
-                x: pub_x_data.clone(),
-                y: vec![], // invalid
-            }),
-            key_value: secret_key_data.clone(),
-        },
-        EcdsaPrivateKey {
-            version: tink_signature::ECDSA_SIGNER_KEY_VERSION,
-            public_key: Some(EcdsaPublicKey {
-                version: tink_signature::ECDSA_VERIFIER_KEY_VERSION,
-                params: Some(EcdsaParams {
-                    hash_type: HashType::Sha256 as i32,
-                    curve: EllipticCurveType::NistP256 as i32,
-                    encoding: EcdsaSignatureEncoding::Der as i32,
+                key_value: secret_key_data.clone(),
+            },
+        ),
+        (
+            "invalid key",
+            EcdsaPrivateKey {
+                version: tink_signature::ECDSA_SIGNER_KEY_VERSION,
+                public_key: Some(EcdsaPublicKey {
+                    version: tink_signature::ECDSA_VERIFIER_KEY_VERSION,
+                    params: Some(EcdsaParams {
+                        hash_type: HashType::Sha256 as i32,
+                        curve: EllipticCurveType::NistP256 as i32,
+                        encoding: EcdsaSignatureEncoding::Der as i32,
+                    }),
+                    x: pub_x_data.clone(),
+                    y: vec![], // invalid
                 }),
-                x: pub_x_data.clone(),
-                y: pub_y_data.clone(),
-            }),
-            key_value: vec![], // invalid
-        },
-        EcdsaPrivateKey {
-            version: tink_signature::ECDSA_SIGNER_KEY_VERSION,
-            public_key: Some(EcdsaPublicKey {
-                version: tink_signature::ECDSA_VERIFIER_KEY_VERSION,
-                params: None, // invalid
-                x: pub_x_data,
-                y: pub_y_data,
-            }),
-            key_value: secret_key_data.clone(),
-        },
-        EcdsaPrivateKey {
-            version: tink_signature::ECDSA_SIGNER_KEY_VERSION,
-            public_key: None,
-            key_value: secret_key_data,
-        },
+                key_value: secret_key_data.clone(),
+            },
+        ),
+        (
+            "invalid private key",
+            EcdsaPrivateKey {
+                version: tink_signature::ECDSA_SIGNER_KEY_VERSION,
+                public_key: Some(EcdsaPublicKey {
+                    version: tink_signature::ECDSA_VERIFIER_KEY_VERSION,
+                    params: Some(EcdsaParams {
+                        hash_type: HashType::Sha256 as i32,
+                        curve: EllipticCurveType::NistP256 as i32,
+                        encoding: EcdsaSignatureEncoding::Der as i32,
+                    }),
+                    x: pub_x_data.clone(),
+                    y: pub_y_data.clone(),
+                }),
+                key_value: vec![], // invalid
+            },
+        ),
+        (
+            "no public key parameters",
+            EcdsaPrivateKey {
+                version: tink_signature::ECDSA_SIGNER_KEY_VERSION,
+                public_key: Some(EcdsaPublicKey {
+                    version: tink_signature::ECDSA_VERIFIER_KEY_VERSION,
+                    params: None, // invalid
+                    x: pub_x_data,
+                    y: pub_y_data,
+                }),
+                key_value: secret_key_data.clone(),
+            },
+        ),
+        (
+            "no public key",
+            EcdsaPrivateKey {
+                version: tink_signature::ECDSA_SIGNER_KEY_VERSION,
+                public_key: None,
+                key_value: secret_key_data,
+            },
+        ),
         /* All based on this valid key:
         EcdsaPrivateKey {
             version: tink_signature::ECDSA_SIGNER_KEY_VERSION,
@@ -609,12 +652,9 @@ fn test_primitive_with_invalid_key() {
         },
          */
     ];
-    for key in &invalid_keys {
+    for (err_msg, key) in &invalid_keys {
         let serialized_key = tink_testutil::proto_encode(key);
-        assert!(
-            km.primitive(&serialized_key).is_err(),
-            "unexpected success with {:?}",
-            key
-        );
+        let result = km.primitive(&serialized_key);
+        tink_testutil::expect_err(result, err_msg);
     }
 }
