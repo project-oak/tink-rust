@@ -36,7 +36,7 @@ impl tink::registry::KeyManager for KmsEnvelopeAeadKeyManager {
     /// [`tink::proto::KmsEnvelopeAeadKey`].
     fn primitive(&self, serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
         if serialized_key.is_empty() {
-            return Err("KmsEnvelopeAeadKeyManager: invalid key".into());
+            return Err("KmsEnvelopeAeadKeyManager: empty key".into());
         }
         let key = tink::proto::KmsEnvelopeAeadKey::decode(serialized_key)
             .map_err(|e| wrap_err("KmsEnvelopeAeadKeyManager: invalid key", e))?;

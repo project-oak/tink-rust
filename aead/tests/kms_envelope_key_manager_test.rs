@@ -18,6 +18,23 @@ use prost::Message;
 use tink_testutil::proto_encode;
 
 #[test]
+fn test_kms_envelope_get_primitive() {
+    tink_aead::init();
+
+    let key_uri = "aws-kms://arn:aws:kms:us-east-2:1234:key/abcd-1234";
+    let ini_file = "../testdata/credentials_aws.ini";
+    let g = tink_awskms::AwsClient::new_with_credentials(key_uri, ini_file).unwrap();
+    tink::registry::register_kms_client(g);
+
+    let dek = tink_aead::aes128_ctr_hmac_sha256_key_template();
+    let kh = tink::keyset::Handle::new(&tink_aead::kms_envelope_aead_key_template(key_uri, dek))
+        .expect("error getting a new keyset handle");
+    let _a = tink_aead::new(&kh).expect("error getting the primitive");
+
+    // No real KEK so can't exercise the AEAD.
+}
+
+#[test]
 fn test_kms_envelope_get_primitive_no_client() {
     tink_aead::init();
     let key_manager = tink::registry::get_key_manager(tink_testutil::KMS_ENVELOPE_AEAD_TYPE_URL)
@@ -49,14 +66,21 @@ fn test_kms_envelope_get_primitive_invalid() {
     let km = tink::registry::get_key_manager(tink_testutil::KMS_ENVELOPE_AEAD_TYPE_URL)
         .expect("cannot obtain KMS envelope key manager");
 
-    assert!(km.primitive(&[]).is_err());
-    assert!(km.primitive(&[0; 5]).is_err());
+    let result = km.primitive(&[]);
+    tink_testutil::expect_err(result, "empty key");
+
+    let result = km.primitive(&[0; 5]);
+    tink_testutil::expect_err(result, "invalid key");
+
     let key_without_params = tink::proto::KmsEnvelopeAeadKey {
         version: tink_testutil::KMS_ENVELOPE_AEAD_KEY_VERSION,
         params: None,
     };
     let serialized_key = proto_encode(&key_without_params);
-    assert!(km.primitive(&serialized_key).is_err());
+    // This is actually a repeat of the empty-key test above, as `key_without_params`
+    // happens to only contain default values for fields in the protobuf.
+    let result = km.primitive(&serialized_key);
+    assert!(result.is_err());
 
     let key_wrong_version = tink::proto::KmsEnvelopeAeadKey {
         version: 9999,
@@ -66,7 +90,8 @@ fn test_kms_envelope_get_primitive_invalid() {
         }),
     };
     let serialized_key = proto_encode(&key_wrong_version);
-    assert!(km.primitive(&serialized_key).is_err());
+    let result = km.primitive(&serialized_key);
+    tink_testutil::expect_err(result, "version in range");
 }
 
 #[test]
@@ -91,4 +116,32 @@ fn test_kms_envelope_new_key_invalid() {
         .expect("cannot obtain KMS envelope key manager");
     assert!(km.new_key(&[]).is_err());
     assert!(km.new_key(&[0; 5]).is_err());
+}
+
+#[test]
+fn test_kms_envelope_template() {
+    tink_aead::init();
+    let dek_template = tink_aead::aes128_ctr_hmac_sha256_key_template();
+    let key_template = tink_aead::kms_envelope_aead_key_template("some-uri", dek_template);
+    assert_eq!(key_template.type_url, tink_aead::KMS_ENVELOPE_AEAD_TYPE_URL);
+    let key_format =
+        tink::proto::KmsEnvelopeAeadKeyFormat::decode(key_template.value.as_ref()).unwrap();
+    assert_eq!(key_format.kek_uri, "some-uri");
+}
+
+#[test]
+fn test_kms_envelope_key_manager_params() {
+    tink_aead::init();
+    let key_manager =
+        tink::registry::get_key_manager(tink_testutil::KMS_ENVELOPE_AEAD_TYPE_URL).unwrap();
+
+    assert_eq!(
+        key_manager.type_url(),
+        tink_testutil::KMS_ENVELOPE_AEAD_TYPE_URL
+    );
+    assert_eq!(
+        key_manager.key_material_type(),
+        tink::proto::key_data::KeyMaterialType::Remote
+    );
+    assert!(!key_manager.supports_private_keys());
 }

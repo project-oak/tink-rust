@@ -2114,6 +2114,7 @@ dependencies = [
  "serde_json",
  "stream-cipher",
  "tink",
+ "tink-awskms",
  "tink-mac",
  "tink-signature",
  "tink-testutil",

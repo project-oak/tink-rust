@@ -14,13 +14,11 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use std::sync::Arc;
-
-fn create_kms_envelope_aead() -> Arc<dyn tink::Aead> {
+fn create_kms_envelope_aead() -> Box<dyn tink::Aead> {
     let kh = tink::keyset::Handle::new(&tink_aead::aes256_gcm_key_template())
         .expect("failed to create new handle");
     let parent_aead = tink_aead::new(&kh).expect("failed to create parent AEAD");
-    Arc::new(tink_aead::KmsEnvelopeAead::new(
+    Box::new(tink_aead::KmsEnvelopeAead::new(
         tink_aead::aes256_gcm_key_template(),
         parent_aead,
     ))
@@ -36,6 +34,7 @@ fn test_kms_envelope_roundtrip() {
     let ciphertext = a
         .encrypt(original_plaintext, &[])
         .expect("failed to encrypt");
+
     let plaintext = a.decrypt(&ciphertext, &[]).expect("failed to decrypt");
 
     assert_eq!(
@@ -46,6 +45,11 @@ fn test_kms_envelope_roundtrip() {
         hex::encode(&plaintext),
         hex::encode(&original_plaintext)
     );
+
+    // Can clone the boxed AEAD.
+    let a2 = a.box_clone();
+    let plaintext = a2.decrypt(&ciphertext, &[]).expect("failed to decrypt");
+    assert_eq!(plaintext, original_plaintext,);
 }
 
 #[test]
@@ -53,6 +57,9 @@ fn test_kms_envelope_short_ciphertext() {
     tink_aead::init();
     let a = create_kms_envelope_aead();
 
-    a.decrypt(&[1], &[])
-        .expect_err("Decrypt(&[1]) worked, but should've errored out");
+    let result = a.decrypt(&[1], &[]); // not enough data for a 4-byte length header
+    tink_testutil::expect_err(result, "invalid ciphertext");
+
+    let result = a.decrypt(&[0, 0, 0, 3, 1], &[]); // length of 3, only 1 byte available
+    tink_testutil::expect_err(result, "invalid ciphertext");
 }
