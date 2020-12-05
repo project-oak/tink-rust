@@ -55,7 +55,7 @@ fn test_new_handle_with_invalid_input() {
 
 #[test]
 fn test_read() {
-    let master_key = Box::new(tink_aead::subtle::AesGcm::new(&[b'A'; 32]).unwrap());
+    let main_key = Box::new(tink_aead::subtle::AesGcm::new(&[b'A'; 32]).unwrap());
 
     // Create a keyset
     let key_data = tink_testutil::new_key_data(
@@ -77,8 +77,8 @@ fn test_read() {
     assert!(!debug_output.contains("42"));
 
     let mem_keyset = &mut tink::keyset::MemReaderWriter::default();
-    assert!(h.write(mem_keyset, master_key.clone()).is_ok());
-    let h2 = Handle::read(mem_keyset, master_key).unwrap();
+    assert!(h.write(mem_keyset, main_key.clone()).is_ok());
+    let h2 = Handle::read(mem_keyset, main_key).unwrap();
     assert_eq!(
         insecure::keyset_material(&h),
         insecure::keyset_material(&h2),
@@ -335,4 +335,17 @@ fn test_handle_public_wrong_keymanager() {
 
     let result = invalid_kh.public();
     tink_testutil::expect_err(result, "handles private keys");
+}
+
+#[test]
+fn test_mem_read_with_no_secrets_empty() {
+    let result = Handle::read_with_no_secrets(&mut tink::keyset::MemReaderWriter::default());
+    tink_testutil::expect_err(result, "no keyset available");
+}
+
+#[test]
+fn test_mem_read_empty() {
+    let main_key = Box::new(tink_aead::subtle::AesGcm::new(&[b'A'; 32]).unwrap());
+    let result = Handle::read(&mut tink::keyset::MemReaderWriter::default(), main_key);
+    tink_testutil::expect_err(result, "no keyset available");
 }
