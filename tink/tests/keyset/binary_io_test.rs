@@ -61,3 +61,28 @@ fn test_binary_io_encrypted() {
         kse1, kse2
     );
 }
+
+#[test]
+fn test_binary_io_read_fail() {
+    let mut r = tink::keyset::BinaryReader::new(tink_testutil::IoFailure {});
+    let result = r.read();
+    tink_testutil::expect_err(result, "read failed");
+
+    let buf = vec![1, 2, 3];
+    let mut r = tink::keyset::BinaryReader::new(&buf[..]);
+    let result = r.read();
+    tink_testutil::expect_err(result, "decode failed");
+}
+
+#[test]
+fn test_binary_io_write_fail() {
+    tink_mac::init();
+    let manager = tink_testutil::new_hmac_keyset_manager();
+    let h = manager.handle().expect("cannot get keyset handle");
+    let ks = tink::keyset::insecure::keyset_material(&h);
+
+    let mut failing_writer = tink_testutil::IoFailure {};
+    let mut w = tink::keyset::BinaryWriter::new(&mut failing_writer);
+    let result = w.write(&ks);
+    tink_testutil::expect_err(result, "write failed");
+}
