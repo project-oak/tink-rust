@@ -349,3 +349,29 @@ fn test_mem_read_empty() {
     let result = Handle::read(&mut tink::keyset::MemReaderWriter::default(), main_key);
     tink_testutil::expect_err(result, "no keyset available");
 }
+
+#[test]
+fn test_insecure_read_write() {
+    tink_signature::init();
+    let kh = Handle::new(&tink_signature::ecdsa_p256_key_template()).unwrap();
+    let mut mem_keyset = tink::keyset::MemReaderWriter::default();
+    insecure::write(&kh, &mut mem_keyset).unwrap();
+
+    let kh2 = insecure::read(&mut mem_keyset).unwrap();
+    let ks = insecure::keyset_material(&kh);
+    let ks2 = insecure::keyset_material(&kh2);
+    assert_eq!(ks, ks2);
+}
+
+#[test]
+fn test_insecure_read_empty() {
+    let mut mem_keyset = tink::keyset::MemReaderWriter {
+        keyset: Some(tink::proto::Keyset {
+            key: vec![],
+            primary_key_id: 1,
+        }),
+        ..Default::default()
+    };
+    let result = insecure::read(&mut mem_keyset);
+    tink_testutil::expect_err(result, "insecure: invalid keyset");
+}
