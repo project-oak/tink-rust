@@ -2093,6 +2093,7 @@ dependencies = [
  "subtle",
  "tink-aead",
  "tink-mac",
+ "tink-signature",
  "tink-testutil",
 ]
 
