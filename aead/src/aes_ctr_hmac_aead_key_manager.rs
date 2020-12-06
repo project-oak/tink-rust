@@ -44,25 +44,12 @@ impl tink::registry::KeyManager for AesCtrHmacAeadKeyManager {
         }
         let key = tink::proto::AesCtrHmacAeadKey::decode(serialized_key)
             .map_err(|e| wrap_err("AesCtrHmacAeadKeyManager: invalid key", e))?;
-        validate_key(&key)?;
 
-        let aes_ctr_key = key
-            .aes_ctr_key
-            .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: no key"))?;
-        let aes_params = aes_ctr_key
-            .params
-            .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: no params"))?;
+        let (aes_ctr_key, aes_params) = validate_aes_key(&key)?;
+        let (hmac_key, hmac_params, hash) = validate_hmac_key(&key)?;
+
         let ctr = subtle::AesCtr::new(&aes_ctr_key.key_value, aes_params.iv_size as usize)
             .map_err(|e| wrap_err("AesCtrHmacAeadKeyManager: cannot create new AES-CTR", e))?;
-
-        let hmac_key = key
-            .hmac_key
-            .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: no key"))?;
-        let hmac_params = hmac_key
-            .params
-            .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: no params"))?;
-        let hash = HashType::from_i32(hmac_params.hash)
-            .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: unknown hash"))?;
         let hmac =
             tink_mac::subtle::Hmac::new(hash, &hmac_key.key_value, hmac_params.tag_size as usize)
                 .map_err(|e| {
@@ -85,14 +72,8 @@ impl tink::registry::KeyManager for AesCtrHmacAeadKeyManager {
         }
         let key_format = tink::proto::AesCtrHmacAeadKeyFormat::decode(serialized_key_format)
             .map_err(|e| wrap_err("AesCtrHmacAeadKeyManager: invalid key format", e))?;
-        validate_key_format(&key_format)
-            .map_err(|e| wrap_err("AesCtrHmacAeadKeyManager: invalid key format", e))?;
-        let aes_ctr_key_format = key_format
-            .aes_ctr_key_format
-            .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: no key format"))?;
-        let hmac_key_format = key_format
-            .hmac_key_format
-            .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: no key format"))?;
+
+        let (aes_ctr_key_format, hmac_key_format) = validate_key_format(&key_format)?;
         let key = tink::proto::AesCtrHmacAeadKey {
             version: AES_CTR_HMAC_AEAD_KEY_VERSION,
             aes_ctr_key: Some(tink::proto::AesCtrKey {
@@ -125,51 +106,76 @@ impl tink::registry::KeyManager for AesCtrHmacAeadKeyManager {
     }
 }
 
-/// Validate the given [`tink::proto::AesCtrHmacAeadKey`].
-fn validate_key(key: &tink::proto::AesCtrHmacAeadKey) -> Result<(), TinkError> {
+/// Validate and extract the AES parts of the given [`tink::proto::AesCtrHmacAeadKey`].
+fn validate_aes_key(
+    key: &tink::proto::AesCtrHmacAeadKey,
+) -> Result<(&tink::proto::AesCtrKey, &tink::proto::AesCtrParams), TinkError> {
     tink::keyset::validate_key_version(key.version, AES_CTR_HMAC_AEAD_KEY_VERSION)
         .map_err(|e| wrap_err("AesCtrHmacAeadKeyManager", e))?;
     let aes_ctr_key = key
         .aes_ctr_key
         .as_ref()
-        .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: no key"))?;
+        .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: no AES key"))?;
     tink::keyset::validate_key_version(aes_ctr_key.version, AES_CTR_HMAC_AEAD_KEY_VERSION)
         .map_err(|e| wrap_err("AesCtrHmacAeadKeyManager", e))?;
-    let hmac_key = key
-        .hmac_key
-        .as_ref()
-        .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: no key"))?;
-    tink::keyset::validate_key_version(hmac_key.version, AES_CTR_HMAC_AEAD_KEY_VERSION)
-        .map_err(|e| wrap_err("AesCtrHmacAeadKeyManager", e))?;
 
-    // Validate AesCtrKey.
+    // Validate `AesCtrKey`.
     let key_size = aes_ctr_key.key_value.len();
     subtle::validate_aes_key_size(key_size).map_err(|e| wrap_err("AesCtrHmacAeadKeyManager", e))?;
     let params = aes_ctr_key
         .params
         .as_ref()
-        .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: no key params"))?;
+        .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: no AES key params"))?;
     if (params.iv_size as usize) < subtle::AES_CTR_MIN_IV_SIZE || params.iv_size > 16 {
         return Err(
             "AesCtrHmacAeadKeyManager: invalid AesCtrHmacAeadKey: IV size out of range".into(),
         );
     }
-    Ok(())
+    Ok((aes_ctr_key, params))
+}
+
+/// Validate and extract the HMAC parts of the given [`tink::proto::AesCtrHmacAeadKey`].
+fn validate_hmac_key(
+    key: &tink::proto::AesCtrHmacAeadKey,
+) -> Result<
+    (
+        &tink::proto::HmacKey,
+        &tink::proto::HmacParams,
+        tink::proto::HashType,
+    ),
+    TinkError,
+> {
+    let hmac_key = key
+        .hmac_key
+        .as_ref()
+        .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: no HMAC key"))?;
+    tink::keyset::validate_key_version(hmac_key.version, AES_CTR_HMAC_AEAD_KEY_VERSION)
+        .map_err(|e| wrap_err("AesCtrHmacAeadKeyManager", e))?;
+    let hmac_params = hmac_key
+        .params
+        .as_ref()
+        .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: no HMAC params"))?;
+    let hash = HashType::from_i32(hmac_params.hash)
+        .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: unknown hash"))?;
+
+    Ok((hmac_key, hmac_params, hash))
 }
 
 /// Validate the given [`tink::proto::AesCtrHmacAeadKeyFormat`].
-fn validate_key_format(format: &tink::proto::AesCtrHmacAeadKeyFormat) -> Result<(), TinkError> {
+fn validate_key_format(
+    format: &tink::proto::AesCtrHmacAeadKeyFormat,
+) -> Result<(tink::proto::AesCtrKeyFormat, tink::proto::HmacKeyFormat), TinkError> {
     // Validate AesCtrKeyFormat.
     let aes_ctr_format = format
         .aes_ctr_key_format
         .as_ref()
-        .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: no key format"))?;
+        .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: no AES key format"))?;
     subtle::validate_aes_key_size(aes_ctr_format.key_size as usize)
         .map_err(|e| wrap_err("AesCtrHmacAeadKeyManager", e))?;
     let aes_params = aes_ctr_format
         .params
         .as_ref()
-        .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: no key params"))?;
+        .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: no AES key params"))?;
     if (aes_params.iv_size as usize) < subtle::AES_CTR_MIN_IV_SIZE || aes_params.iv_size > 16 {
         return Err(
             "AesCtrHmacAeadKeyManager: invalid AesCtrHmacAeadKeyFormat: IV size out of range"
@@ -181,14 +187,14 @@ fn validate_key_format(format: &tink::proto::AesCtrHmacAeadKeyFormat) -> Result<
     let hmac_key_format = format
         .hmac_key_format
         .as_ref()
-        .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: no key format"))?;
+        .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: no HMAC key format"))?;
     if (hmac_key_format.key_size as usize) < MIN_HMAC_KEY_SIZE_IN_BYTES {
-        return Err("AesCtrHmacAeadKeyManager: HMAC KeySize is too small".into());
+        return Err("AesCtrHmacAeadKeyManager: HMAC key_size is too small".into());
     }
     let hmac_params = hmac_key_format
         .params
         .as_ref()
-        .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: no key params"))?;
+        .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: no HMAC key params"))?;
     if (hmac_params.tag_size as usize) < MIN_TAG_SIZE_IN_BYTES {
         return Err(format!(
             "AesCtrHmacAeadKeyManager: invalid HmacParams: tag_size {} is too small",
@@ -217,5 +223,5 @@ fn validate_key_format(format: &tink::proto::AesCtrHmacAeadKeyFormat) -> Result<
         )
         .into());
     }
-    Ok(())
+    Ok((aes_ctr_format.clone(), hmac_key_format.clone()))
 }
