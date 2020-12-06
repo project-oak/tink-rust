@@ -121,7 +121,9 @@ fn test_eta_encrypt_decrypt() {
         "invalid ciphertext size"
     );
 
+    // Use a clone of the object to decrypt
     let plaintext = cipher
+        .box_clone()
         .decrypt(&ciphertext, &aad[..])
         .expect("decryption failed");
     assert_eq!(plaintext, message, "invalid plaintext");
@@ -183,10 +185,14 @@ fn test_eta_invalid_tag_size() {
     let iv_size = 12;
     let mac_key_size = 16;
     let tag_size = 9; // Invalid!
-    assert!(
-        create_aead(key_size, iv_size, HashType::Sha1, mac_key_size, tag_size).is_err(),
-        "got: success, want: error invalid tag size"
-    );
+    let result = create_aead(key_size, iv_size, HashType::Sha1, mac_key_size, tag_size);
+    tink_testutil::expect_err(result, "tag size too small");
+
+    // Repeat but with a direct call to `EncryptThenAuthenticate::new`.
+    let ctr = subtle::AesCtr::new(&[0; 16], iv_size).unwrap();
+    let mac = tink_mac::subtle::Hmac::new(HashType::Sha1, &[0; 16], 16).unwrap();
+    let result = subtle::EncryptThenAuthenticate::new(Box::new(ctr), Box::new(mac), tag_size);
+    tink_testutil::expect_err(result, "tag size too small");
 }
 
 #[test]

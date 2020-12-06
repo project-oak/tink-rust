@@ -95,6 +95,11 @@ fn test_x_cha_cha20_poly1305_type_url() {
     let km = tink::registry::get_key_manager(tink_testutil::X_CHA_CHA20_POLY1305_TYPE_URL)
         .expect("cannot obtain XChaCha20Poly1305 key manager");
     assert_eq!(km.type_url(), tink_testutil::X_CHA_CHA20_POLY1305_TYPE_URL);
+    assert_eq!(
+        km.key_material_type(),
+        tink::proto::key_data::KeyMaterialType::Symmetric
+    );
+    assert!(!km.supports_private_keys());
 }
 
 fn gen_invalid_x_cha_cha20_poly1305_keys() -> Vec<tink::proto::XChaCha20Poly1305Key> {
