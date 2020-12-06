@@ -35,7 +35,7 @@ pub enum EcdsaPublicKey {
 #[derive(Clone)]
 pub struct EcdsaVerifier {
     public_key: EcdsaPublicKey,
-    encoding: EcdsaSignatureEncoding,
+    encoding: super::SignatureEncoding,
 }
 
 impl EcdsaVerifier {
@@ -68,7 +68,7 @@ impl EcdsaVerifier {
         encoding: EcdsaSignatureEncoding,
         public_key: EcdsaPublicKey,
     ) -> Result<Self, TinkError> {
-        super::validate_ecdsa_params(hash_alg, curve, encoding)
+        let encoding = super::validate_ecdsa_params(hash_alg, curve, encoding)
             .map_err(|e| wrap_err("EcdsaVerifier", e))?;
         Ok(EcdsaVerifier {
             public_key,
@@ -107,7 +107,7 @@ fn element_from_padded_slice<C: elliptic_curve::Curve>(
 impl tink::Verifier for EcdsaVerifier {
     fn verify(&self, signature: &[u8], data: &[u8]) -> Result<(), tink::TinkError> {
         let signature = match self.encoding {
-            EcdsaSignatureEncoding::Der => {
+            super::SignatureEncoding::Der => {
                 // The ecdsa::asn1 module panics on too-small inputs, so filter them here.
                 // TODO(#33): remove when ecdsa crate includes https://github.com/RustCrypto/signatures/pull/192
                 if signature.len() < 6 {
@@ -116,9 +116,8 @@ impl tink::Verifier for EcdsaVerifier {
                 Signature::from_asn1(signature)
                     .map_err(|e| wrap_err("EcdsaVerifier: invalid ASN.1 signature", e))?
             }
-            EcdsaSignatureEncoding::IeeeP1363 => Signature::from_bytes(signature)
+            super::SignatureEncoding::IeeeP1363 => Signature::from_bytes(signature)
                 .map_err(|e| wrap_err("EcdsaVerifier: invalid IEEE-P1363 signature", e))?,
-            _ => return Err("EcdsaVerifier: unknown encoding".into()),
         };
         match &self.public_key {
             EcdsaPublicKey::NistP256(verify_key) => verify_key

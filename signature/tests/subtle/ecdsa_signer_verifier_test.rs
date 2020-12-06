@@ -22,7 +22,10 @@ use tink::{
     subtle::random::get_random_bytes,
     Signer, Verifier,
 };
-use tink_signature::subtle::{EcdsaPrivateKey, EcdsaPublicKey};
+use tink_signature::{
+    subtle,
+    subtle::{EcdsaPrivateKey, EcdsaPublicKey},
+};
 use tink_testutil::{hex_string, WycheproofResult};
 
 #[test]
@@ -94,6 +97,29 @@ fn test_sign_verify() {
             "unexpected error when verifying"
         );
     }
+}
+
+#[test]
+fn test_ecdsa_invalid_params() {
+    let mut csprng = rand::thread_rng();
+    let secret_key = p256::ecdsa::SigningKey::random(&mut csprng);
+    let priv_key_bytes = secret_key.to_bytes().to_vec();
+
+    let result = subtle::EcdsaSigner::new(
+        HashType::Sha256,
+        EllipticCurveType::UnknownCurve,
+        EcdsaSignatureEncoding::Der,
+        &priv_key_bytes,
+    );
+    tink_testutil::expect_err(result, "unsupported curve");
+
+    let result = subtle::EcdsaSigner::new(
+        HashType::Sha256,
+        EllipticCurveType::NistP256,
+        EcdsaSignatureEncoding::UnknownEncoding,
+        &priv_key_bytes,
+    );
+    tink_testutil::expect_err(result, "unsupported encoding");
 }
 
 #[derive(Debug, Deserialize)]

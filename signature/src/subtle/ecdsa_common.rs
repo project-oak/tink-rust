@@ -19,6 +19,14 @@ use tink::{
     TinkError,
 };
 
+/// Supported signature encodings.  This is a precise subset of the protobuf enum,
+/// allowing exact `match`es.
+#[derive(Clone, Debug)]
+pub enum SignatureEncoding {
+    Der,
+    IeeeP1363,
+}
+
 /// Validate ECDSA parameters.
 /// The hash's strength must not be weaker than the curve's strength.
 /// Only DER encoding is supported now.
@@ -26,11 +34,12 @@ pub fn validate_ecdsa_params(
     hash_alg: tink::proto::HashType,
     curve: tink::proto::EllipticCurveType,
     encoding: tink::proto::EcdsaSignatureEncoding,
-) -> Result<(), TinkError> {
-    match encoding {
-        EcdsaSignatureEncoding::IeeeP1363 | EcdsaSignatureEncoding::Der => {}
+) -> Result<SignatureEncoding, TinkError> {
+    let encoding = match encoding {
+        EcdsaSignatureEncoding::IeeeP1363 => SignatureEncoding::IeeeP1363,
+        EcdsaSignatureEncoding::Der => SignatureEncoding::Der,
         _ => return Err("ecdsa: unsupported encoding".into()),
-    }
+    };
     match curve {
         EllipticCurveType::NistP256 => {
             if hash_alg != HashType::Sha256 {
@@ -49,5 +58,5 @@ pub fn validate_ecdsa_params(
         }
         _ => return Err(format!("unsupported curve: {:?}", curve).into()),
     }
-    Ok(())
+    Ok(encoding)
 }
