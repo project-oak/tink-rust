@@ -69,6 +69,23 @@ fn test_ed25519_verify_modified_signature() {
         }
     }
 }
+
+#[test]
+fn test_ed25519_verify_truncated_signature() {
+    let data = get_random_bytes(20);
+    let mut csprng = rand::thread_rng();
+    let keypair = Keypair::generate(&mut csprng);
+
+    // Use the private key and public key directly to create new instances
+    let (signer, verifier) =
+        new_signer_verifier(keypair).expect("failed to create new signer verifier");
+
+    let sign = signer.sign(&data).expect("unexpected error when signing");
+
+    let result = verifier.verify(&sign[..sign.len() - 1], &data);
+    tink_testutil::expect_err(result, "length of the signature");
+}
+
 #[test]
 fn test_ed25519_verify_modified_message() {
     let mut data = get_random_bytes(20);

@@ -43,7 +43,7 @@ impl Clone for EcdsaPrivateKey {
 #[derive(Clone)]
 pub struct EcdsaSigner {
     private_key: EcdsaPrivateKey,
-    encoding: EcdsaSignatureEncoding,
+    encoding: super::SignatureEncoding,
 }
 
 impl EcdsaSigner {
@@ -77,7 +77,7 @@ impl EcdsaSigner {
         encoding: EcdsaSignatureEncoding,
         private_key: EcdsaPrivateKey,
     ) -> Result<Self, TinkError> {
-        super::validate_ecdsa_params(hash_alg, curve, encoding)
+        let encoding = super::ecdsa_common::validate_ecdsa_params(hash_alg, curve, encoding)
             .map_err(|e| wrap_err("EcdsaSigner", e))?;
         Ok(EcdsaSigner {
             private_key,
@@ -91,15 +91,14 @@ impl tink::Signer for EcdsaSigner {
         let mut csprng = rand::rngs::OsRng {};
         match &self.private_key {
             EcdsaPrivateKey::NistP256(secret_key) => match self.encoding {
-                EcdsaSignatureEncoding::Der => {
+                super::SignatureEncoding::Der => {
                     let signature = secret_key.sign_with_rng(&mut csprng, data).to_asn1();
                     Ok(signature.as_bytes().to_vec())
                 }
-                EcdsaSignatureEncoding::IeeeP1363 => {
+                super::SignatureEncoding::IeeeP1363 => {
                     let signature = secret_key.sign_with_rng(&mut csprng, data);
                     Ok(signature.as_bytes().to_vec())
                 }
-                _ => Err("EcdsaSigner: unknown encoding".into()),
             },
         }
     }
