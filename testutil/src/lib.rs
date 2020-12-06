@@ -953,3 +953,15 @@ where
         .expect("failed to encode proto message");
     data
 }
+
+/// Check for an expected error.
+pub fn expect_err<T>(result: Result<T, TinkError>, err_msg: &str) {
+    assert!(result.is_err());
+    let err = result.err();
+    assert!(
+        format!("{:?}", err).contains(err_msg),
+        "unexpected error {:?}, doesn't contain '{}'",
+        err,
+        err_msg
+    );
+}
