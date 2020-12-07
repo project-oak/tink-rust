@@ -965,3 +965,27 @@ pub fn expect_err<T>(result: Result<T, TinkError>, err_msg: &str) {
         err_msg
     );
 }
+
+/// An object that implements [`std::io::Read`] and [`std::io::Write`] by always failing.
+pub struct IoFailure {}
+
+impl std::io::Read for IoFailure {
+    fn read(&mut self, _buf: &mut [u8]) -> std::io::Result<usize> {
+        Err(std::io::Error::new(
+            std::io::ErrorKind::Other,
+            "failure object",
+        ))
+    }
+}
+
+impl std::io::Write for IoFailure {
+    fn write(&mut self, _buf: &[u8]) -> std::io::Result<usize> {
+        Err(std::io::Error::new(
+            std::io::ErrorKind::Other,
+            "failure object",
+        ))
+    }
+    fn flush(&mut self) -> std::io::Result<()> {
+        Ok(())
+    }
+}
