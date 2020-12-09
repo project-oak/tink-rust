@@ -38,7 +38,7 @@ version = "0.8.1"
 # tokio(v0.2.22) => mio-named-pipes(v0.1.7) => {miow (v0.3.5), mio (v0.6.22) => miow (v0.2.2)}
 [[bans.skip]]
 name = "miow"
-version = "=0.2.1"
+version = "=0.2.2"
 
 # rusoto_*(v0.45.0) => pin-project-*(v0.4.x)
 [[bans.skip]]
