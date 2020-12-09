@@ -21,7 +21,8 @@ ignore:
   - "rinkey/"
   - "testing/"
   - "testutil/"
-  - "**/build.rs"  # Ignore build scripts
+  - "**/build.rs"
+  - "**/benches/"
   - "**/tests/"
   - "**/codegen/"
   - "**/*_test.rs"

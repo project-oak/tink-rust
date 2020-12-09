@@ -67,6 +67,18 @@ jobs:
       - run: cargo fmt --all -- --check
       - run: scripts/check-format.sh
 
+  bench:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly-2020-10-19
+          override: true
+          components: rustfmt
+      - run: cargo bench --all-targets
+
   clippy:
     runs-on: ubuntu-latest
     steps:
@@ -74,8 +86,9 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: stable
-          components: clippy
+          toolchain: nightly-2020-10-19
+          override: true
+          components: rustfmt, clippy
       - run: rustc --version
       - run: cargo clippy --all-features --all-targets
 

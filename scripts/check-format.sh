@@ -49,7 +49,7 @@ check_todo() {
 # Check that any calls that might panic have a comment noting why they're safe
 check_panic() {
   local path="$1"
-  if [[ $path =~ "test" || $path =~ "examples/" || $path =~ "rinkey/" ]]; then
+  if [[ $path =~ "test" || $path =~ "examples/" || $path =~ "rinkey/" || $path =~ "benches/" ]]; then
     return 0
   fi
   for needle in "panic!(" "unwrap(" "expect(" "unwrap_err(" "expect_err(" "unwrap_none(" "expect_none("; do
