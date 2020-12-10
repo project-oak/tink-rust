@@ -1,0 +1,25 @@
+From af88d639420410d706c684ff6c1f4a00dcb12c8c Mon Sep 17 00:00:00 2001
+From: David Drysdale <drysdale@google.com>
+Date: Sat, 14 Nov 2020 16:06:01 +0000
+Subject: [PATCH] testing: support Rust with AES-GCM-SIV
+
+---
+ testing/cross_language/util/supported_key_types.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/testing/cross_language/util/supported_key_types.py b/testing/cross_language/util/supported_key_types.py
+index 5390c94c3de8..956d12677161 100644
+--- a/testing/cross_language/util/supported_key_types.py
++++ b/testing/cross_language/util/supported_key_types.py
+@@ -65,7 +65,7 @@ ALL_KEY_TYPES = (
+ SUPPORTED_LANGUAGES = {
+     'AesEaxKey': ['cc', 'java', 'python'],
+     'AesGcmKey': ['cc', 'java', 'go', 'python', 'rust'],
+-    'AesGcmSivKey': ['cc', 'python'],
++    'AesGcmSivKey': ['cc', 'python', 'rust'],
+     'AesCtrHmacAeadKey': ['cc', 'java', 'go', 'python', 'rust'],
+     'ChaCha20Poly1305Key': ['java', 'go', 'rust'],
+     'XChaCha20Poly1305Key': ['cc', 'java', 'go', 'python', 'rust'],
+-- 
+2.26.2
+

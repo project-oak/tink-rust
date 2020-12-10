@@ -22,6 +22,8 @@ mod aes_ctr;
 pub use self::aes_ctr::*;
 mod aes_gcm;
 pub use self::aes_gcm::*;
+mod aes_gcm_siv;
+pub use self::aes_gcm_siv::*;
 mod chacha20poly1305;
 pub use self::chacha20poly1305::*;
 mod encrypt_then_authenticate;

@@ -41,6 +41,27 @@ pub fn aes256_gcm_no_prefix_key_template() -> KeyTemplate {
     create_aes_gcm_key_template(32, OutputPrefixType::Raw)
 }
 
+/// Return a [`KeyTemplate`] that generates an AES-GCM-SIV key with the following parameters:
+///   - Key size: 16 bytes
+///   - Output prefix type: TINK
+pub fn aes128_gcm_siv_key_template() -> KeyTemplate {
+    create_aes_gcm_siv_key_template(16, OutputPrefixType::Tink)
+}
+
+/// Return a [`KeyTemplate`] that generates an AES-GCM-SIV key with the following parameters:
+///   - Key size: 32 bytes
+///   - Output prefix type: TINK
+pub fn aes256_gcm_siv_key_template() -> KeyTemplate {
+    create_aes_gcm_siv_key_template(32, OutputPrefixType::Tink)
+}
+
+/// Return a [`KeyTemplate`] that generates an AES-GCM-SIV key with the following parameters:
+///   - Key size: 32 bytes
+///   - Output prefix type: RAW
+pub fn aes256_gcm_siv_no_prefix_key_template() -> KeyTemplate {
+    create_aes_gcm_siv_key_template(32, OutputPrefixType::Raw)
+}
+
 /// Return a [`KeyTemplate`] that generates an AES-CTR-HMAC-AEAD key with the following parameters:
 ///  - AES key size: 16 bytes
 ///  - AES CTR IV size: 16 bytes
@@ -106,6 +127,24 @@ fn create_aes_gcm_key_template(key_size: u32, output_prefix_type: OutputPrefixTy
     format.encode(&mut serialized_format).unwrap(); // safe: proto-encode
     KeyTemplate {
         type_url: crate::AES_GCM_TYPE_URL.to_string(),
+        value: serialized_format,
+        output_prefix_type: output_prefix_type as i32,
+    }
+}
+
+/// Return an AES-GCM-SIV key template with the given key size in bytes.
+fn create_aes_gcm_siv_key_template(
+    key_size: u32,
+    output_prefix_type: OutputPrefixType,
+) -> KeyTemplate {
+    let format = tink::proto::AesGcmSivKeyFormat {
+        version: crate::AES_GCM_SIV_KEY_VERSION,
+        key_size,
+    };
+    let mut serialized_format = Vec::new();
+    format.encode(&mut serialized_format).unwrap(); // safe: proto-encode
+    KeyTemplate {
+        type_url: crate::AES_GCM_SIV_TYPE_URL.to_string(),
         value: serialized_format,
         output_prefix_type: output_prefix_type as i32,
     }
