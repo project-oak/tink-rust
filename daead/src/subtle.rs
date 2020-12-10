@@ -20,6 +20,8 @@ use aes_siv::{aead::generic_array::GenericArray, siv::Aes256Siv};
 use std::{cell::RefCell, rc::Rc};
 use tink::{utils::wrap_err, TinkError};
 
+const AES_BLOCK_SIZE: usize = 16;
+
 /// `AesSiv` is an implementation of AES-SIV-CMAC as defined in
 /// [RFC 5297](https://tools.ietf.org/html/rfc5297).
 ///
@@ -70,6 +72,9 @@ impl tink::DeterministicAead for AesSiv {
         plaintext: &[u8],
         additional_data: &[u8],
     ) -> Result<Vec<u8>, TinkError> {
+        if plaintext.len() > (isize::MAX as usize) - AES_BLOCK_SIZE {
+            return Err("AesSiv: plaintext too long".into());
+        }
         self.cipher
             .borrow_mut()
             .encrypt(&[additional_data], plaintext)

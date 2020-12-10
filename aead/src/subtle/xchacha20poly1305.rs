@@ -19,8 +19,12 @@
 use chacha20poly1305::aead::{Aead, NewAead, Payload};
 use tink::{utils::wrap_err, TinkError};
 
+/// Size of an XChaCh20 key in bytes.
 pub const X_CHA_CHA20_KEY_SIZE: usize = 32;
+/// Size of an XChaCh20 nonce in bytes.
 pub const X_CHA_CHA20_NONCE_SIZE: usize = 24;
+/// Size of a Poly1305 tag in bytes.
+const POLY1305_TAG_SIZE: usize = 16;
 
 /// `XChaCha20Poly1305` is an implementation of the [`tink::Aead`] trait.
 #[derive(Clone)]
@@ -47,6 +51,9 @@ impl tink::Aead for XChaCha20Poly1305 {
     /// authenticated data. The resulting ciphertext consists of two parts:
     /// (1) the nonce used for encryption and (2) the actual ciphertext.
     fn encrypt(&self, pt: &[u8], aad: &[u8]) -> Result<Vec<u8>, TinkError> {
+        if pt.len() > (isize::MAX as usize) - X_CHA_CHA20_NONCE_SIZE - POLY1305_TAG_SIZE {
+            return Err("XChaCha20Poly1305: plaintext too long".into());
+        }
         let cipher = chacha20poly1305::XChaCha20Poly1305::new(&self.key);
         let n = new_nonce();
         let ct = cipher
@@ -61,6 +68,10 @@ impl tink::Aead for XChaCha20Poly1305 {
 
     /// Decrypt `ct` with `aad` as the additional authenticated data.
     fn decrypt(&self, ct: &[u8], aad: &[u8]) -> Result<Vec<u8>, TinkError> {
+        if ct.len() < X_CHA_CHA20_NONCE_SIZE + POLY1305_TAG_SIZE {
+            return Err("XChaCha20Poly1305: ciphertext too short".into());
+        }
+
         let cipher = chacha20poly1305::XChaCha20Poly1305::new(&self.key);
         let n = chacha20poly1305::XNonce::from_slice(&ct[..X_CHA_CHA20_NONCE_SIZE]);
         cipher

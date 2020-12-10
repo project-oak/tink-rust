@@ -23,6 +23,9 @@ use tink::{utils::wrap_err, TinkError};
 pub const AES_GCM_SIV_IV_SIZE: usize = 12;
 /// The only tag size that this implementation supports.
 pub const AES_GCM_SIV_TAG_SIZE: usize = 16;
+// TODO(#47): check whether this limit is needed and correct.
+/// The maximum supported plaintext size.
+const MAX_AES_GCM_SIV_PLAINTEXT_SIZE: usize = (1 << 36) - 32;
 
 #[derive(Clone)]
 enum AesGcmSivVariant {
@@ -61,8 +64,7 @@ impl tink::Aead for AesGcmSiv {
     /// Note: AES-GCM-SIV implementation of crypto library always returns ciphertext with 128-bit
     /// tag.
     fn encrypt(&self, pt: &[u8], aad: &[u8]) -> Result<Vec<u8>, TinkError> {
-        // TODO(#47): check whether this limit is needed.
-        if pt.len() > (1 << 36) - 32 {
+        if pt.len() > max_pt_size() {
             return Err("AesGcmSiv: plaintext too long".into());
         }
         let iv = new_iv();
@@ -101,4 +103,10 @@ impl tink::Aead for AesGcmSiv {
 fn new_iv() -> GenericArray<u8, U12> {
     let iv = tink::subtle::random::get_random_bytes(AES_GCM_SIV_IV_SIZE);
     *GenericArray::<u8, U12>::from_slice(&iv)
+}
+
+/// Maximum plaintext size.
+fn max_pt_size() -> usize {
+    let x = (isize::MAX as usize) - AES_GCM_SIV_IV_SIZE - AES_GCM_SIV_TAG_SIZE;
+    std::cmp::min(x, MAX_AES_GCM_SIV_PLAINTEXT_SIZE)
 }
