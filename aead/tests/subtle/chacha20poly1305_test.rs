@@ -147,6 +147,18 @@ fn test_cha_cha20_poly1305_long_messages() {
 }
 
 #[test]
+fn test_cha_cha20_poly1305_short_ciphertext() {
+    let pt = get_random_bytes(20);
+    let key = get_random_bytes(tink_aead::subtle::CHA_CHA20_KEY_SIZE);
+
+    let ca = subtle::ChaCha20Poly1305::new(&key).unwrap();
+
+    let ct = ca.encrypt(&pt, &[]).unwrap();
+    let result = ca.decrypt(&ct[..2], &[]);
+    tink_testutil::expect_err(result, "ciphertext too short");
+}
+
+#[test]
 fn test_cha_cha20_poly1305_modify_ciphertext() {
     for (i, test) in CHA_CHA20_POLY1305_TESTS.iter().enumerate() {
         let key = hex::decode(&test.key).unwrap();

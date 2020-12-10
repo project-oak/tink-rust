@@ -79,6 +79,9 @@ impl IndCpaCipher for AesCtr {
     /// The resulting ciphertext consists of two parts:
     /// (1) the IV used for encryption and (2) the actual ciphertext.
     fn encrypt(&self, plaintext: &[u8]) -> Result<Vec<u8>, TinkError> {
+        if plaintext.len() > ((isize::MAX as usize) - self.iv_size) {
+            return Err("AesCtr: plaintext too long".into());
+        }
         let iv = self.new_iv();
         let mut ciphertext = Vec::with_capacity(self.iv_size + plaintext.len());
         ciphertext.extend_from_slice(&iv[..self.iv_size]);
