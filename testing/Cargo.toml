@@ -6,7 +6,7 @@ edition = "2018"
 license = "Apache-2.0"
 
 [dependencies]
-env_logger = "^0.7.1"
+env_logger = "^0.8.2"
 futures = "^0.3.8"
 log = "^0.4.11"
 prost = "^0.6.1"
