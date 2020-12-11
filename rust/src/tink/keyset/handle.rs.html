@@ -296,6 +296,46 @@
 <span id="293">293</span>
 <span id="294">294</span>
 <span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2020 The Tink-Rust Authors</span>
 <span class="comment">//</span>
@@ -315,14 +355,18 @@
 
 <span class="doccomment">//! Handle wrapper for keysets.</span>
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">proto</span>::<span class="ident">key_data</span>::<span class="ident">KeyMaterialType</span>, <span class="ident">utils</span>::<span class="ident">wrap_err</span>, <span class="ident">TinkError</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::{
+    <span class="ident">proto</span>::{<span class="ident">key_data</span>::<span class="ident">KeyMaterialType</span>, <span class="ident">Keyset</span>, <span class="ident">KeysetInfo</span>},
+    <span class="ident">utils</span>::<span class="ident">wrap_err</span>,
+    <span class="ident">TinkError</span>,
+};
 <span class="kw">use</span> <span class="ident">prost</span>::<span class="ident">Message</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>;
 
-<span class="doccomment">/// `Handle` provides access to a [`Keyset`](crate::proto::Keyset) protobuf, to limit the exposure</span>
+<span class="doccomment">/// `Handle` provides access to a [`Keyset`] protobuf, to limit the exposure</span>
 <span class="doccomment">/// of actual protocol buffers that hold sensitive key material.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Handle</span> {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">ks</span>: <span class="kw">crate</span>::<span class="ident">proto</span>::<span class="ident">Keyset</span>,
+    <span class="ident">ks</span>: <span class="ident">Keyset</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Handle</span> {
@@ -336,11 +380,13 @@
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;keyset::Handle: cannot get keyset handle&quot;</span>, <span class="ident">e</span>))
     }
 
-    <span class="doccomment">/// Create a new instance of [`Handle`] using the given [`Keyset`](crate::proto::Keyset) which</span>
-    <span class="doccomment">/// does not contain any secret key material.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_with_no_secrets</span>(<span class="ident">ks</span>: <span class="kw">crate</span>::<span class="ident">proto</span>::<span class="ident">Keyset</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">h</span> <span class="op">=</span> <span class="ident">Handle</span> { <span class="ident">ks</span> };
-        <span class="kw">if</span> <span class="ident">h</span>.<span class="ident">has_secrets</span>() {
+    <span class="doccomment">/// Create a new instance of [`Handle`] using the given [`Keyset`] which does not contain any</span>
+    <span class="doccomment">/// secret key material.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_with_no_secrets</span>(<span class="ident">ks</span>: <span class="ident">Keyset</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">h</span> <span class="op">=</span> <span class="ident">Handle</span> {
+            <span class="ident">ks</span>: <span class="ident">validate_keyset</span>(<span class="ident">ks</span>)<span class="question-mark">?</span>,
+        };
+        <span class="kw">if</span> <span class="ident">h</span>.<span class="ident">has_secrets</span>()<span class="question-mark">?</span> {
             <span class="comment">// If you need to do this, you have to use `tink::keyset::insecure::read()` instead.</span>
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="string">&quot;importing unencrypted secret key material is forbidden&quot;</span>.<span class="ident">into</span>());
         }
@@ -355,7 +401,9 @@
     {
         <span class="kw">let</span> <span class="ident">encrypted_keyset</span> <span class="op">=</span> <span class="ident">reader</span>.<span class="ident">read_encrypted</span>()<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">ks</span> <span class="op">=</span> <span class="ident">decrypt</span>(<span class="kw-2">&amp;</span><span class="ident">encrypted_keyset</span>, <span class="ident">master_key</span>)<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(<span class="ident">Handle</span> { <span class="ident">ks</span> })
+        <span class="prelude-val">Ok</span>(<span class="ident">Handle</span> {
+            <span class="ident">ks</span>: <span class="ident">validate_keyset</span>(<span class="ident">ks</span>)<span class="question-mark">?</span>,
+        })
     }
 
     <span class="doccomment">/// Attempt to create a [`Handle`] from a keyset obtained via a</span>
@@ -373,10 +421,10 @@
         <span class="kw">let</span> <span class="ident">priv_keys</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">ks</span>.<span class="ident">key</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pub_keys</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="ident">priv_keys</span>.<span class="ident">len</span>());
         <span class="kw">for</span> <span class="ident">priv_key</span> <span class="kw">in</span> <span class="ident">priv_keys</span> {
-            <span class="kw">let</span> <span class="ident">priv_key_data</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">priv_key</span>.<span class="ident">key_data</span> {
-                <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="string">&quot;keyset::Handle: invalid keyset&quot;</span>.<span class="ident">into</span>()),
-                <span class="prelude-val">Some</span>(<span class="ident">kd</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">kd</span>,
-            };
+            <span class="kw">let</span> <span class="ident">priv_key_data</span> <span class="op">=</span> <span class="ident">priv_key</span>
+                .<span class="ident">key_data</span>
+                .<span class="ident">as_ref</span>()
+                .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;keyset::Handle: invalid keyset&quot;</span>))<span class="question-mark">?</span>;
             <span class="kw">let</span> <span class="ident">pub_key_data</span> <span class="op">=</span>
                 <span class="ident">public_key_data</span>(<span class="ident">priv_key_data</span>).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;keyset::Handle&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
             <span class="ident">pub_keys</span>.<span class="ident">push</span>(<span class="kw">crate</span>::<span class="ident">proto</span>::<span class="ident">keyset</span>::<span class="ident">Key</span> {
@@ -386,14 +434,14 @@
                 <span class="ident">output_prefix_type</span>: <span class="ident">priv_key</span>.<span class="ident">output_prefix_type</span>,
             });
         }
-        <span class="kw">let</span> <span class="ident">ks</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">proto</span>::<span class="ident">Keyset</span> {
+        <span class="kw">let</span> <span class="ident">ks</span> <span class="op">=</span> <span class="ident">Keyset</span> {
             <span class="ident">primary_key_id</span>: <span class="self">self</span>.<span class="ident">ks</span>.<span class="ident">primary_key_id</span>,
             <span class="ident">key</span>: <span class="ident">pub_keys</span>,
         };
         <span class="prelude-val">Ok</span>(<span class="ident">Handle</span> { <span class="ident">ks</span> })
     }
 
-    <span class="doccomment">/// Encrypts and writes the enclosed [`Keyset`](crate::proto::Keyset).</span>
+    <span class="doccomment">/// Encrypts and writes the enclosed [`Keyset`].</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">writer</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">T</span>,
@@ -412,7 +460,7 @@
     <span class="kw">where</span>
         <span class="ident">T</span>: <span class="kw">super</span>::<span class="ident">Writer</span>,
     {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">has_secrets</span>() {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">has_secrets</span>()<span class="question-mark">?</span> {
             <span class="prelude-val">Err</span>(<span class="string">&quot;exporting unencrypted secret key material is forbidden&quot;</span>.<span class="ident">into</span>())
         } <span class="kw">else</span> {
             <span class="ident">w</span>.<span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">ks</span>)
@@ -477,31 +525,67 @@
         <span class="prelude-val">Ok</span>(<span class="ident">primitive_set</span>)
     }
 
-    <span class="doccomment">/// Check if the keyset handle contains any key material considered secret.</span>
-    <span class="doccomment">/// Both symmetric keys and the private key of an asymmetric crypto system are considered secret</span>
-    <span class="doccomment">/// keys. Also returns true when encountering any errors.</span>
-    <span class="kw">fn</span> <span class="ident">has_secrets</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+    <span class="doccomment">/// Check if the keyset handle contains any key material considered secret.  Both symmetric keys</span>
+    <span class="doccomment">/// and the private key of an asymmetric crypto system are considered secret keys. Also</span>
+    <span class="doccomment">/// returns true when encountering any errors.</span>
+    <span class="kw">fn</span> <span class="ident">has_secrets</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">bool</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="bool-val">false</span>;
         <span class="kw">for</span> <span class="ident">k</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">ks</span>.<span class="ident">key</span> {
             <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">k</span>.<span class="ident">key_data</span> {
-                <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">continue</span>,
+                <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="string">&quot;invalid keyset&quot;</span>.<span class="ident">into</span>()),
                 <span class="prelude-val">Some</span>(<span class="ident">kd</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="ident">KeyMaterialType</span>::<span class="ident">from_i32</span>(<span class="ident">kd</span>.<span class="ident">key_material_type</span>) {
-                    <span class="prelude-val">Some</span>(<span class="ident">KeyMaterialType</span>::<span class="ident">UnknownKeymaterial</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="bool-val">true</span>,
-                    <span class="prelude-val">Some</span>(<span class="ident">KeyMaterialType</span>::<span class="ident">Symmetric</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="bool-val">true</span>,
-                    <span class="prelude-val">Some</span>(<span class="ident">KeyMaterialType</span>::<span class="ident">AsymmetricPrivate</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="bool-val">true</span>,
-                    <span class="prelude-val">Some</span>(<span class="ident">KeyMaterialType</span>::<span class="ident">AsymmetricPublic</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">continue</span>,
-                    <span class="prelude-val">Some</span>(<span class="ident">KeyMaterialType</span>::<span class="ident">Remote</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">continue</span>,
-                    <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="bool-val">true</span>,
+                    <span class="prelude-val">Some</span>(<span class="ident">KeyMaterialType</span>::<span class="ident">UnknownKeymaterial</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span> <span class="op">=</span> <span class="bool-val">true</span>,
+                    <span class="prelude-val">Some</span>(<span class="ident">KeyMaterialType</span>::<span class="ident">Symmetric</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span> <span class="op">=</span> <span class="bool-val">true</span>,
+                    <span class="prelude-val">Some</span>(<span class="ident">KeyMaterialType</span>::<span class="ident">AsymmetricPrivate</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span> <span class="op">=</span> <span class="bool-val">true</span>,
+                    <span class="prelude-val">Some</span>(<span class="ident">KeyMaterialType</span>::<span class="ident">AsymmetricPublic</span>) <span class="op">=</span><span class="op">&gt;</span> {}
+                    <span class="prelude-val">Some</span>(<span class="ident">KeyMaterialType</span>::<span class="ident">Remote</span>) <span class="op">=</span><span class="op">&gt;</span> {}
+                    <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="string">&quot;invalid key material type&quot;</span>.<span class="ident">into</span>()),
                 },
             }
         }
-        <span class="bool-val">false</span>
+        <span class="prelude-val">Ok</span>(<span class="ident">result</span>)
     }
 
-    <span class="doccomment">/// Return [`KeysetInfo`](crate::proto::KeysetInfo) representation of the managed</span>
-    <span class="doccomment">/// keyset. The result does not contain any sensitive key material.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">keyset_info</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw">crate</span>::<span class="ident">proto</span>::<span class="ident">KeysetInfo</span> {
+    <span class="doccomment">/// Return [`KeysetInfo`] representation of the managed keyset. The result does not</span>
+    <span class="doccomment">/// contain any sensitive key material.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">keyset_info</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeysetInfo</span> {
         <span class="ident">get_keyset_info</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">ks</span>)
     }
+
+    <span class="doccomment">/// Consume the `Handle` and return the enclosed [`Keyset`].</span>
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">into_inner</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Keyset</span> {
+        <span class="self">self</span>.<span class="ident">ks</span>
+    }
+
+    <span class="doccomment">/// Return a copy of the enclosed [`Keyset`]; for internal</span>
+    <span class="doccomment">/// use only.</span>
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;insecure&quot;</span>)]</span>
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">clone_keyset</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Keyset</span> {
+        <span class="self">self</span>.<span class="ident">ks</span>.<span class="ident">clone</span>()
+    }
+
+    <span class="doccomment">/// Create a `Handle` from a [`Keyset`].  Implemented as a standalone method rather than</span>
+    <span class="doccomment">/// as an `impl` of the `From` trait so visibility can be restricted.</span>
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">from_keyset</span>(<span class="ident">ks</span>: <span class="ident">Keyset</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
+        <span class="prelude-val">Ok</span>(<span class="ident">Handle</span> {
+            <span class="ident">ks</span>: <span class="ident">validate_keyset</span>(<span class="ident">ks</span>)<span class="question-mark">?</span>,
+        })
+    }
+}
+
+<span class="doccomment">/// Check that a [`Keyset`] is valid.</span>
+<span class="kw">fn</span> <span class="ident">validate_keyset</span>(<span class="ident">ks</span>: <span class="ident">Keyset</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Keyset</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
+    <span class="kw">for</span> <span class="ident">k</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">ks</span>.<span class="ident">key</span> {
+        <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">k</span>.<span class="ident">key_data</span> {
+            <span class="prelude-val">None</span> <span class="kw">if</span> <span class="ident">k</span>.<span class="ident">status</span> <span class="op">=</span><span class="op">=</span> <span class="kw">crate</span>::<span class="ident">proto</span>::<span class="ident">KeyStatusType</span>::<span class="ident">Destroyed</span> <span class="kw">as</span> <span class="ident">i32</span> <span class="op">=</span><span class="op">&gt;</span> {}
+            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="string">&quot;invalid keyset&quot;</span>.<span class="ident">into</span>()),
+            <span class="prelude-val">Some</span>(<span class="ident">kd</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="ident">KeyMaterialType</span>::<span class="ident">from_i32</span>(<span class="ident">kd</span>.<span class="ident">key_material_type</span>) {
+                <span class="prelude-val">Some</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> {}
+                <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="string">&quot;invalid key material type&quot;</span>.<span class="ident">into</span>()),
+            },
+        }
+    }
+    <span class="prelude-val">Ok</span>(<span class="ident">ks</span>)
 }
 
 <span class="doccomment">/// Extract the public key data corresponding to private key data.</span>
@@ -529,17 +613,16 @@
 <span class="kw">fn</span> <span class="ident">decrypt</span>(
     <span class="ident">encrypted_keyset</span>: <span class="kw-2">&amp;</span><span class="kw">crate</span>::<span class="ident">proto</span>::<span class="ident">EncryptedKeyset</span>,
     <span class="ident">master_key</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="kw">crate</span>::<span class="ident">Aead</span><span class="op">&gt;</span>,
-) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw">crate</span>::<span class="ident">proto</span>::<span class="ident">Keyset</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
+) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Keyset</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">decrypted</span> <span class="op">=</span> <span class="ident">master_key</span>
         .<span class="ident">decrypt</span>(<span class="kw-2">&amp;</span><span class="ident">encrypted_keyset</span>.<span class="ident">encrypted_keyset</span>, <span class="kw-2">&amp;</span>[])
         .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;keyset::Handle: decryption failed&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
-    <span class="kw">crate</span>::<span class="ident">proto</span>::<span class="ident">Keyset</span>::<span class="ident">decode</span>(<span class="kw-2">&amp;</span><span class="ident">decrypted</span>[..])
-        .<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;keyset::Handle:: invalid keyset&quot;</span>))
+    <span class="ident">Keyset</span>::<span class="ident">decode</span>(<span class="kw-2">&amp;</span><span class="ident">decrypted</span>[..]).<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;keyset::Handle:: invalid keyset&quot;</span>))
 }
 
 <span class="doccomment">/// Encrypt a keyset with a master key.</span>
 <span class="kw">fn</span> <span class="ident">encrypt</span>(
-    <span class="ident">keyset</span>: <span class="kw-2">&amp;</span><span class="kw">crate</span>::<span class="ident">proto</span>::<span class="ident">Keyset</span>,
+    <span class="ident">keyset</span>: <span class="kw-2">&amp;</span><span class="ident">Keyset</span>,
     <span class="ident">master_key</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="kw">crate</span>::<span class="ident">Aead</span><span class="op">&gt;</span>,
 ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw">crate</span>::<span class="ident">proto</span>::<span class="ident">EncryptedKeyset</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">serialized_keyset</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
@@ -555,15 +638,14 @@
     })
 }
 
-<span class="doccomment">/// Return a [`KeysetInfo`](crate::proto::KeysetInfo) from a [`Keyset`](crate::proto::Keyset)</span>
-<span class="doccomment">/// protobuf.</span>
-<span class="kw">fn</span> <span class="ident">get_keyset_info</span>(<span class="ident">keyset</span>: <span class="kw-2">&amp;</span><span class="kw">crate</span>::<span class="ident">proto</span>::<span class="ident">Keyset</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw">crate</span>::<span class="ident">proto</span>::<span class="ident">KeysetInfo</span> {
+<span class="doccomment">/// Return a [`KeysetInfo`] from a [`Keyset`] protobuf.</span>
+<span class="kw">fn</span> <span class="ident">get_keyset_info</span>(<span class="ident">keyset</span>: <span class="kw-2">&amp;</span><span class="ident">Keyset</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeysetInfo</span> {
     <span class="kw">let</span> <span class="ident">n_key</span> <span class="op">=</span> <span class="ident">keyset</span>.<span class="ident">key</span>.<span class="ident">len</span>();
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">key_infos</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="ident">n_key</span>);
     <span class="kw">for</span> <span class="ident">key</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">keyset</span>.<span class="ident">key</span> {
         <span class="ident">key_infos</span>.<span class="ident">push</span>(<span class="ident">get_key_info</span>(<span class="ident">key</span>));
     }
-    <span class="kw">crate</span>::<span class="ident">proto</span>::<span class="ident">KeysetInfo</span> {
+    <span class="ident">KeysetInfo</span> {
         <span class="ident">primary_key_id</span>: <span class="ident">keyset</span>.<span class="ident">primary_key_id</span>,
         <span class="ident">key_info</span>: <span class="ident">key_infos</span>,
     }
@@ -573,12 +655,10 @@
 <span class="doccomment">/// [`Key`](crate::proto::keyset::Key) protobuf.</span>
 <span class="kw">fn</span> <span class="ident">get_key_info</span>(<span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="kw">crate</span>::<span class="ident">proto</span>::<span class="ident">keyset</span>::<span class="ident">Key</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw">crate</span>::<span class="ident">proto</span>::<span class="ident">keyset_info</span>::<span class="ident">KeyInfo</span> {
     <span class="kw">crate</span>::<span class="ident">proto</span>::<span class="ident">keyset_info</span>::<span class="ident">KeyInfo</span> {
-        <span class="ident">type_url</span>: <span class="ident">key</span>
-            .<span class="ident">key_data</span>
-            .<span class="ident">as_ref</span>()
-            .<span class="ident">expect</span>(<span class="string">&quot;key with no key_data&quot;</span>)
-            .<span class="ident">type_url</span>
-            .<span class="ident">clone</span>(),
+        <span class="ident">type_url</span>: <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">key</span>.<span class="ident">key_data</span> {
+            <span class="prelude-val">Some</span>(<span class="ident">kd</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">kd</span>.<span class="ident">type_url</span>.<span class="ident">clone</span>(),
+            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;&quot;</span>.<span class="ident">to_string</span>(),
+        },
         <span class="ident">status</span>: <span class="ident">key</span>.<span class="ident">status</span>,
         <span class="ident">key_id</span>: <span class="ident">key</span>.<span class="ident">key_id</span>,
         <span class="ident">output_prefix_type</span>: <span class="ident">key</span>.<span class="ident">output_prefix_type</span>,

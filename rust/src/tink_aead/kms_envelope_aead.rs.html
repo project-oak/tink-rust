@@ -108,6 +108,8 @@
 <span id="105">105</span>
 <span id="106">106</span>
 <span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2020 The Tink-Rust Authors</span>
 <span class="comment">//</span>
@@ -160,6 +162,7 @@
 
 <span class="kw">impl</span> <span class="ident">tink</span>::<span class="ident">Aead</span> <span class="kw">for</span> <span class="ident">KmsEnvelopeAead</span> {
     <span class="kw">fn</span> <span class="ident">encrypt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">pt</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">aad</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
+        <span class="comment">// Create a new key for each encryption operation.</span>
         <span class="kw">let</span> <span class="ident">dek</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">new_key</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">dek_template</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">encrypted_dek</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">remote</span>.<span class="ident">encrypt</span>(<span class="kw-2">&amp;</span><span class="ident">dek</span>, <span class="kw-2">&amp;</span>[])<span class="question-mark">?</span>;
 
@@ -178,7 +181,7 @@
         }
 
         <span class="comment">// Extract length of encrypted DEK and advance past that length.</span>
-        <span class="kw">let</span> <span class="ident">ed</span> <span class="op">=</span> <span class="ident">u32</span>::<span class="ident">from_be_bytes</span>(<span class="ident">ct</span>[..<span class="ident">LEN_DEK</span>].<span class="ident">try_into</span>().<span class="ident">unwrap</span>()) <span class="kw">as</span> <span class="ident">usize</span>;
+        <span class="kw">let</span> <span class="ident">ed</span> <span class="op">=</span> <span class="ident">u32</span>::<span class="ident">from_be_bytes</span>(<span class="ident">ct</span>[..<span class="ident">LEN_DEK</span>].<span class="ident">try_into</span>().<span class="ident">unwrap</span>()) <span class="kw">as</span> <span class="ident">usize</span>; <span class="comment">// safe: checked above</span>
         <span class="kw">let</span> <span class="ident">ct</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">ct</span>[<span class="ident">LEN_DEK</span>..];
 
         <span class="comment">// Verify we have enough bytes for the encrypted DEK.</span>
@@ -206,7 +209,8 @@
     }
 }
 
-<span class="doccomment">/// Build the cipher text by appending the length DEK, encrypted DEK and the encrypted payload.</span>
+<span class="doccomment">/// Build the cipher text by appending the length of the DEK, the encrypted DEK, and the encrypted</span>
+<span class="doccomment">/// payload.</span>
 <span class="kw">fn</span> <span class="ident">build_cipher_text</span>(<span class="ident">encrypted_dek</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">payload</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">b</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="ident">LEN_DEK</span> <span class="op">+</span> <span class="ident">encrypted_dek</span>.<span class="ident">len</span>() <span class="op">+</span> <span class="ident">payload</span>.<span class="ident">len</span>());
 

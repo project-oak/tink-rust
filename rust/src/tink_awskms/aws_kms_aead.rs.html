@@ -147,37 +147,39 @@
 <span class="doccomment">//! AEAD functionality via AWS Cloud KMS.</span>
 
 <span class="kw">use</span> <span class="ident">rusoto_kms</span>::<span class="ident">Kms</span>;
-<span class="kw">use</span> <span class="ident">std</span>::{
-    <span class="ident">collections</span>::<span class="ident">HashMap</span>,
-    <span class="ident">sync</span>::{<span class="ident">Arc</span>, <span class="ident">Mutex</span>},
-};
+<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">cell</span>::<span class="ident">RefCell</span>, <span class="ident">collections</span>::<span class="ident">HashMap</span>, <span class="ident">rc</span>::<span class="ident">Rc</span>};
 <span class="kw">use</span> <span class="ident">tink</span>::<span class="ident">utils</span>::<span class="ident">wrap_err</span>;
 
-<span class="doccomment">/// `AwsEad` represents a AWS KMS service to a particular URI.</span>
+<span class="doccomment">/// `AwsAead` represents a AWS KMS service to a particular URI.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">AwsAead</span> {
     <span class="ident">key_uri</span>: <span class="ident">String</span>,
     <span class="ident">kms</span>: <span class="ident">rusoto_kms</span>::<span class="ident">KmsClient</span>,
-    <span class="comment">// TODO: add a version where `async` is exposed to the library user</span>
-    <span class="ident">runtime</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">tokio</span>::<span class="ident">runtime</span>::<span class="ident">Runtime</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="comment">// The Tokio runtime to execute KMS requests on, wrapped in:</span>
+    <span class="comment">//  - a `RefCell` for interior mutability (the [`tink::Aead`] trait&#39;s methods take `&amp;self`)</span>
+    <span class="comment">//  - an `Rc` to allow `Clone`, as required by the trait bound on [`tink::Aead`].</span>
+    <span class="ident">runtime</span>: <span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">tokio</span>::<span class="ident">runtime</span>::<span class="ident">Runtime</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">AwsAead</span> {
     <span class="doccomment">/// Return a new AWS KMS service.</span>
     <span class="doccomment">/// `key_uri` must have the following format: `arn:&lt;partition&gt;:kms:&lt;region&gt;:[:path]`.</span>
     <span class="doccomment">/// See http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html.</span>
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">key_uri</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">kms</span>: <span class="ident">rusoto_kms</span>::<span class="ident">KmsClient</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">AwsAead</span> {
-        <span class="ident">AwsAead</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">new</span>(
+        <span class="ident">key_uri</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>,
+        <span class="ident">kms</span>: <span class="ident">rusoto_kms</span>::<span class="ident">KmsClient</span>,
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">AwsAead</span>, <span class="ident">tink</span>::<span class="ident">TinkError</span><span class="op">&gt;</span> {
+        <span class="prelude-val">Ok</span>(<span class="ident">AwsAead</span> {
             <span class="ident">key_uri</span>: <span class="ident">key_uri</span>.<span class="ident">to_string</span>(),
             <span class="ident">kms</span>,
-            <span class="ident">runtime</span>: <span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">Mutex</span>::<span class="ident">new</span>(
+            <span class="ident">runtime</span>: <span class="ident">Rc</span>::<span class="ident">new</span>(<span class="ident">RefCell</span>::<span class="ident">new</span>(
                 <span class="ident">tokio</span>::<span class="ident">runtime</span>::<span class="ident">Builder</span>::<span class="ident">new</span>()
                     .<span class="ident">basic_scheduler</span>()
                     .<span class="ident">enable_all</span>()
                     .<span class="ident">build</span>()
-                    .<span class="ident">unwrap</span>(),
+                    .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;failed to build tokio runtime&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>,
             )),
-        }
+        })
     }
 }
 
@@ -204,8 +206,7 @@
         };
         <span class="kw">let</span> <span class="ident">rsp</span> <span class="op">=</span> <span class="self">self</span>
             .<span class="ident">runtime</span>
-            .<span class="ident">lock</span>()
-            .<span class="ident">unwrap</span>()
+            .<span class="ident">borrow_mut</span>()
             .<span class="ident">block_on</span>(<span class="self">self</span>.<span class="ident">kms</span>.<span class="ident">encrypt</span>(<span class="ident">req</span>))
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;request failed&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
 
@@ -237,8 +238,7 @@
         };
         <span class="kw">let</span> <span class="ident">rsp</span> <span class="op">=</span> <span class="self">self</span>
             .<span class="ident">runtime</span>
-            .<span class="ident">lock</span>()
-            .<span class="ident">unwrap</span>()
+            .<span class="ident">borrow_mut</span>()
             .<span class="ident">block_on</span>(<span class="self">self</span>.<span class="ident">kms</span>.<span class="ident">decrypt</span>(<span class="ident">req</span>))
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;request failed&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">key_id</span>) <span class="op">=</span> <span class="ident">rsp</span>.<span class="ident">key_id</span> {

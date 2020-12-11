@@ -9,6 +9,8 @@ At the moment, the implementation only accepts DER encoding.</p>
 </td></tr><tr class="module-item"><td><a class="struct" href="struct.Ed25519Verifier.html" title="tink_signature::subtle::Ed25519Verifier struct">Ed25519Verifier</a></td><td class="docblock-short"><p>A <a href="../../tink/verifier/trait.Verifier.html" title="tink::Verifier"><code>tink::Verifier</code></a> for ED25519.</p>
 </td></tr></table><h2 id="enums" class="section-header"><a href="#enums">Enums</a></h2>
 <table><tr class="module-item"><td><a class="enum" href="enum.EcdsaPrivateKey.html" title="tink_signature::subtle::EcdsaPrivateKey enum">EcdsaPrivateKey</a></td><td class="docblock-short"></td></tr><tr class="module-item"><td><a class="enum" href="enum.EcdsaPublicKey.html" title="tink_signature::subtle::EcdsaPublicKey enum">EcdsaPublicKey</a></td><td class="docblock-short"><p>An ECDSA public key.</p>
+</td></tr><tr class="module-item"><td><a class="enum" href="enum.SignatureEncoding.html" title="tink_signature::subtle::SignatureEncoding enum">SignatureEncoding</a></td><td class="docblock-short"><p>Supported signature encodings.  This is a precise subset of the protobuf enum,
+allowing exact <code>match</code>es.</p>
 </td></tr></table><h2 id="functions" class="section-header"><a href="#functions">Functions</a></h2>
 <table><tr class="module-item"><td><a class="fn" href="fn.validate_ecdsa_params.html" title="tink_signature::subtle::validate_ecdsa_params fn">validate_ecdsa_params</a></td><td class="docblock-short"><p>Validate ECDSA parameters.
 The hash's strength must not be weaker than the curve's strength.

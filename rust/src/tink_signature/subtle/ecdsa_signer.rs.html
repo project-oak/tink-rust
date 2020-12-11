@@ -101,6 +101,17 @@
 <span id="98"> 98</span>
 <span id="99"> 99</span>
 <span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2020 The Tink-Rust Authors</span>
 <span class="comment">//</span>
@@ -118,7 +129,11 @@
 <span class="comment">//</span>
 <span class="comment">////////////////////////////////////////////////////////////////////////////////</span>
 
-<span class="kw">use</span> <span class="ident">p256</span>::<span class="ident">ecdsa</span>::<span class="ident">signature</span>::{<span class="ident">RandomizedSigner</span>, <span class="ident">Signature</span>};
+<span class="kw">use</span> <span class="ident">generic_array</span>::<span class="ident">typenum</span>::<span class="ident">Unsigned</span>;
+<span class="kw">use</span> <span class="ident">p256</span>::{
+    <span class="ident">ecdsa</span>::<span class="ident">signature</span>::{<span class="ident">RandomizedSigner</span>, <span class="ident">Signature</span>},
+    <span class="ident">elliptic_curve</span>,
+};
 <span class="kw">use</span> <span class="ident">tink</span>::{
     <span class="ident">proto</span>::{<span class="ident">EcdsaSignatureEncoding</span>, <span class="ident">EllipticCurveType</span>, <span class="ident">HashType</span>},
     <span class="ident">utils</span>::<span class="ident">wrap_err</span>,
@@ -135,7 +150,9 @@
     <span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">EcdsaPrivateKey</span>::<span class="ident">NistP256</span>(<span class="ident">k</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="ident">EcdsaPrivateKey</span>::<span class="ident">NistP256</span>(<span class="ident">p256</span>::<span class="ident">ecdsa</span>::<span class="ident">SigningKey</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="ident">k</span>.<span class="ident">to_bytes</span>()).<span class="ident">unwrap</span>())
+                <span class="ident">EcdsaPrivateKey</span>::<span class="ident">NistP256</span>(
+                    <span class="ident">p256</span>::<span class="ident">ecdsa</span>::<span class="ident">SigningKey</span>::<span class="ident">from_bytes</span>(<span class="kw-2">&amp;</span><span class="ident">k</span>.<span class="ident">to_bytes</span>()).<span class="ident">unwrap</span>(), <span class="comment">/* safe: round-trip */</span>
+                )
             }
         }
     }
@@ -146,7 +163,7 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">EcdsaSigner</span> {
     <span class="ident">private_key</span>: <span class="ident">EcdsaPrivateKey</span>,
-    <span class="ident">encoding</span>: <span class="ident">EcdsaSignatureEncoding</span>,
+    <span class="ident">encoding</span>: <span class="kw">super</span>::<span class="ident">SignatureEncoding</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">EcdsaSigner</span> {
@@ -159,9 +176,15 @@
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">priv_key</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">curve</span> {
             <span class="ident">EllipticCurveType</span>::<span class="ident">NistP256</span> <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="kw">let</span> <span class="ident">secret_key</span> <span class="op">=</span> <span class="ident">p256</span>::<span class="ident">SecretKey</span>::<span class="ident">from_bytes</span>(<span class="ident">key_value</span>)
-                    .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;EcdsaSigner: invalid private key&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
-                <span class="ident">EcdsaPrivateKey</span>::<span class="ident">NistP256</span>(<span class="ident">p256</span>::<span class="ident">ecdsa</span>::<span class="ident">SigningKey</span>::<span class="ident">from</span>(<span class="kw-2">&amp;</span><span class="ident">secret_key</span>))
+                <span class="kw">if</span> <span class="ident">key_value</span>.<span class="ident">len</span>()
+                    <span class="op">!</span><span class="op">=</span> <span class="op">&lt;</span><span class="ident">p256</span>::<span class="ident">NistP256</span> <span class="kw">as</span> <span class="ident">elliptic_curve</span>::<span class="ident">Curve</span><span class="op">&gt;</span>::<span class="ident">FieldSize</span>::<span class="ident">to_usize</span>()
+                {
+                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="string">&quot;EcdsaSigner: invalid private key len&quot;</span>.<span class="ident">into</span>());
+                }
+                <span class="ident">EcdsaPrivateKey</span>::<span class="ident">NistP256</span>(
+                    <span class="ident">p256</span>::<span class="ident">ecdsa</span>::<span class="ident">SigningKey</span>::<span class="ident">from_bytes</span>(<span class="ident">key_value</span>)
+                        .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;EcdsaSigner: invalid private key&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>,
+                )
             }
             <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;EcdsaSigner: unsupported curve {:?}&quot;</span>, <span class="ident">curve</span>).<span class="ident">into</span>()),
         };
@@ -175,7 +198,7 @@
         <span class="ident">encoding</span>: <span class="ident">EcdsaSignatureEncoding</span>,
         <span class="ident">private_key</span>: <span class="ident">EcdsaPrivateKey</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
-        <span class="kw">super</span>::<span class="ident">validate_ecdsa_params</span>(<span class="ident">hash_alg</span>, <span class="ident">curve</span>, <span class="ident">encoding</span>)
+        <span class="kw">let</span> <span class="ident">encoding</span> <span class="op">=</span> <span class="kw">super</span>::<span class="ident">ecdsa_common</span>::<span class="ident">validate_ecdsa_params</span>(<span class="ident">hash_alg</span>, <span class="ident">curve</span>, <span class="ident">encoding</span>)
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;EcdsaSigner&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(<span class="ident">EcdsaSigner</span> {
             <span class="ident">private_key</span>,
@@ -189,15 +212,14 @@
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">csprng</span> <span class="op">=</span> <span class="ident">rand</span>::<span class="ident">rngs</span>::<span class="ident">OsRng</span> {};
         <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">private_key</span> {
             <span class="ident">EcdsaPrivateKey</span>::<span class="ident">NistP256</span>(<span class="ident">secret_key</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">encoding</span> {
-                <span class="ident">EcdsaSignatureEncoding</span>::<span class="ident">Der</span> <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="kw">super</span>::<span class="ident">SignatureEncoding</span>::<span class="ident">Der</span> <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="kw">let</span> <span class="ident">signature</span> <span class="op">=</span> <span class="ident">secret_key</span>.<span class="ident">sign_with_rng</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">csprng</span>, <span class="ident">data</span>).<span class="ident">to_asn1</span>();
                     <span class="prelude-val">Ok</span>(<span class="ident">signature</span>.<span class="ident">as_bytes</span>().<span class="ident">to_vec</span>())
                 }
-                <span class="ident">EcdsaSignatureEncoding</span>::<span class="ident">IeeeP1363</span> <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="kw">super</span>::<span class="ident">SignatureEncoding</span>::<span class="ident">IeeeP1363</span> <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="kw">let</span> <span class="ident">signature</span> <span class="op">=</span> <span class="ident">secret_key</span>.<span class="ident">sign_with_rng</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">csprng</span>, <span class="ident">data</span>);
                     <span class="prelude-val">Ok</span>(<span class="ident">signature</span>.<span class="ident">as_bytes</span>().<span class="ident">to_vec</span>())
                 }
-                <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="string">&quot;EcdsaSigner: unknown encoding&quot;</span>.<span class="ident">into</span>()),
             },
         }
     }

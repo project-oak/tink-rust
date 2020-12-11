@@ -12,10 +12,10 @@ enums.</p>
 </td></tr></table><h2 id="structs" class="section-header"><a href="#structs">Structs</a></h2>
 <table><tr class="module-item"><td><a class="struct" href="struct.BinaryReader.html" title="tink::keyset::BinaryReader struct">BinaryReader</a></td><td class="docblock-short"><p><code>BinaryReader</code> deserializes a keyset from binary proto format.</p>
 </td></tr><tr class="module-item"><td><a class="struct" href="struct.BinaryWriter.html" title="tink::keyset::BinaryWriter struct">BinaryWriter</a></td><td class="docblock-short"><p><code>BinaryWriter</code> serializes a keyset into binary proto format.</p>
-</td></tr><tr class="module-item"><td><a class="struct" href="struct.Handle.html" title="tink::keyset::Handle struct">Handle</a></td><td class="docblock-short"><p><code>Handle</code> provides access to a <a href="../../tink/proto/struct.Keyset.html"><code>Keyset</code></a> protobuf, to limit the exposure
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.Handle.html" title="tink::keyset::Handle struct">Handle</a></td><td class="docblock-short"><p><code>Handle</code> provides access to a <a href="../../tink/proto/struct.Keyset.html" title="Keyset"><code>Keyset</code></a> protobuf, to limit the exposure
 of actual protocol buffers that hold sensitive key material.</p>
 </td></tr><tr class="module-item"><td><a class="struct" href="struct.JsonReader.html" title="tink::keyset::JsonReader struct">JsonReader</a></td><td class="docblock-short"><p><code>JsonReader</code> deserializes a keyset from JSON format.</p>
-</td></tr><tr class="module-item"><td><a class="struct" href="struct.JsonWriter.html" title="tink::keyset::JsonWriter struct">JsonWriter</a></td><td class="docblock-short"><p><code>JsonWriter</code> serializes a keyset into binary proto format.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.JsonWriter.html" title="tink::keyset::JsonWriter struct">JsonWriter</a></td><td class="docblock-short"><p><code>JsonWriter</code> serializes a keyset into JSON format.</p>
 </td></tr><tr class="module-item"><td><a class="struct" href="struct.Manager.html" title="tink::keyset::Manager struct">Manager</a></td><td class="docblock-short"><p>Manager manages a <a href="../../tink/proto/struct.Keyset.html"><code>Keyset</code></a>-proto, with convenience methods that rotate,
 disable, enable or destroy keys. Note: It is not thread-safe.</p>
 </td></tr><tr class="module-item"><td><a class="struct" href="struct.MemReaderWriter.html" title="tink::keyset::MemReaderWriter struct">MemReaderWriter</a></td><td class="docblock-short"><p><code>MemReaderWriter</code> implements <a href="../../tink/keyset/trait.Reader.html"><code>keyset::Reader</code></a> and
@@ -24,7 +24,7 @@ disable, enable or destroy keys. Note: It is not thread-safe.</p>
 <table><tr class="module-item"><td><a class="trait" href="trait.Reader.html" title="tink::keyset::Reader trait">Reader</a></td><td class="docblock-short"><p><code>Reader</code> knows how to read a <a href="../../tink/proto/struct.Keyset.html"><code>Keyset</code></a> or an
 <a href="../../tink/proto/struct.EncryptedKeyset.html"><code>EncryptedKeyset</code></a> from some source. In order to turn a <code>Reader</code>
 into a <a href="../../tink/keyset/struct.Handle.html"><code>keyset::Handle</code></a> for use, callers must use
-<a href="../../tink/keyset/insecure/fn.keyset_handle.html"><code>insecure::keyset_handle</code></a> or
+<a href="../../tink/keyset/insecure/fn.new_handle.html"><code>insecure::new_handle</code></a> or
 <a href="../../tink/keyset/struct.Handle.html#method.read"><code>Handle::read</code></a> (with encryption).</p>
 </td></tr><tr class="module-item"><td><a class="trait" href="trait.Writer.html" title="tink::keyset::Writer trait">Writer</a></td><td class="docblock-short"><p><code>Writer</code> knows how to write a <a href="../../tink/proto/struct.Keyset.html"><code>Keyset</code></a> or an
 <a href="../../tink/proto/struct.EncryptedKeyset.html"><code>EncryptedKeyset</code></a> to some source.</p>

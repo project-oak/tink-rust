@@ -78,6 +78,7 @@
 <span id="75">75</span>
 <span id="76">76</span>
 <span id="77">77</span>
+<span id="78">78</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2020 The Tink-Rust Authors</span>
 <span class="comment">//</span>
@@ -135,14 +136,15 @@
     <span class="ident">INIT</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> {
         <span class="comment">// ECDSA</span>
         <span class="ident">register_key_manager</span>(<span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">EcdsaSignerKeyManager</span>::<span class="ident">default</span>()))
-            .<span class="ident">expect</span>(<span class="string">&quot;tink_signature::init() failed&quot;</span>);
+            .<span class="ident">expect</span>(<span class="string">&quot;tink_signature::init() failed&quot;</span>); <span class="comment">// safe: init</span>
         <span class="ident">register_key_manager</span>(<span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">EcdsaVerifierKeyManager</span>::<span class="ident">default</span>()))
-            .<span class="ident">expect</span>(<span class="string">&quot;tink_signature::init() failed&quot;</span>);
+            .<span class="ident">expect</span>(<span class="string">&quot;tink_signature::init() failed&quot;</span>); <span class="comment">// safe: init</span>
+
         <span class="comment">// Ed25519</span>
         <span class="ident">register_key_manager</span>(<span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">Ed25519SignerKeyManager</span>::<span class="ident">default</span>()))
-            .<span class="ident">expect</span>(<span class="string">&quot;tink_signature::init() failed&quot;</span>);
+            .<span class="ident">expect</span>(<span class="string">&quot;tink_signature::init() failed&quot;</span>); <span class="comment">// safe: init</span>
         <span class="ident">register_key_manager</span>(<span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">Ed25519VerifierKeyManager</span>::<span class="ident">default</span>()))
-            .<span class="ident">expect</span>(<span class="string">&quot;tink_signature::init() failed&quot;</span>);
+            .<span class="ident">expect</span>(<span class="string">&quot;tink_signature::init() failed&quot;</span>); <span class="comment">// safe: init</span>
 
         <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(<span class="string">&quot;ECDSA_P256&quot;</span>, <span class="ident">ecdsa_p256_key_template</span>);
         <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(

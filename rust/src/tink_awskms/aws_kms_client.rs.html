@@ -308,7 +308,7 @@
         <span class="ident">key_uri</span>.<span class="ident">starts_with</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">key_uri_prefix</span>)
     }
 
-    <span class="doccomment">/// Get an AEAD backend by `key_uri`.</span>
+    <span class="doccomment">/// Get an AEAD backed by `key_uri`.</span>
     <span class="doccomment">/// `key_uri` must have the following format: `aws-kms://arn:&lt;partition&gt;:kms:&lt;region&gt;:[:path]`.</span>
     <span class="doccomment">/// See http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html.</span>
     <span class="kw">fn</span> <span class="ident">get_aead</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">key_uri</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">tink</span>::<span class="ident">Aead</span><span class="op">&gt;</span>, <span class="ident">tink</span>::<span class="ident">TinkError</span><span class="op">&gt;</span> {
@@ -325,7 +325,7 @@
         } <span class="kw">else</span> {
             <span class="ident">key_uri</span>
         };
-        <span class="prelude-val">Ok</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="kw">crate</span>::<span class="ident">AwsAead</span>::<span class="ident">new</span>(<span class="ident">uri</span>, <span class="self">self</span>.<span class="ident">kms</span>.<span class="ident">clone</span>())))
+        <span class="prelude-val">Ok</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="kw">crate</span>::<span class="ident">AwsAead</span>::<span class="ident">new</span>(<span class="ident">uri</span>, <span class="self">self</span>.<span class="ident">kms</span>.<span class="ident">clone</span>())<span class="question-mark">?</span>))
     }
 }
 

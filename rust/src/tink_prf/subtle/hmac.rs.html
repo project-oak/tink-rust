@@ -235,7 +235,7 @@
             <span class="kw">match</span> <span class="self">self</span>
                 .<span class="ident">mac</span>
                 .<span class="ident">lock</span>()
-                .<span class="ident">expect</span>(<span class="string">&quot;internal lock corrupted&quot;</span>)
+                .<span class="ident">expect</span>(<span class="string">&quot;internal lock corrupted&quot;</span>) <span class="comment">// safe: lock</span>
                 .<span class="ident">deref_mut</span>()
             {
                 <span class="ident">HmacPrfVariant</span>::<span class="ident">Sha1</span>(<span class="ident">mac</span>) <span class="op">=</span><span class="op">&gt;</span> {

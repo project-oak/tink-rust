@@ -53,7 +53,7 @@
 <span class="doccomment">/// `Reader` knows how to read a [`Keyset`](crate::proto::Keyset) or an</span>
 <span class="doccomment">/// [`EncryptedKeyset`](crate::proto::EncryptedKeyset) from some source. In order to turn a `Reader`</span>
 <span class="doccomment">/// into a [`keyset::Handle`](crate::keyset::Handle) for use, callers must use</span>
-<span class="doccomment">/// [`insecure::keyset_handle`](super::insecure::keyset_handle) or</span>
+<span class="doccomment">/// [`insecure::new_handle`](super::insecure::new_handle) or</span>
 <span class="doccomment">/// [`Handle::read`](super::Handle::read) (with encryption).</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Reader</span> {
     <span class="doccomment">/// Return a (cleartext) `Keyset` object from the underlying source.</span>

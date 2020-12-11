@@ -121,9 +121,9 @@
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>() {
     <span class="ident">INIT</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> {
         <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_key_manager</span>(<span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">HmacKeyManager</span>::<span class="ident">default</span>()))
-            .<span class="ident">expect</span>(<span class="string">&quot;tink_mac::init() failed&quot;</span>);
+            .<span class="ident">expect</span>(<span class="string">&quot;tink_mac::init() failed&quot;</span>); <span class="comment">// safe: init</span>
         <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_key_manager</span>(<span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">AesCmacKeyManager</span>::<span class="ident">default</span>()))
-            .<span class="ident">expect</span>(<span class="string">&quot;tink_mac::init() failed&quot;</span>);
+            .<span class="ident">expect</span>(<span class="string">&quot;tink_mac::init() failed&quot;</span>); <span class="comment">// safe: init</span>
 
         <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
             <span class="string">&quot;HMAC_SHA256_128BITTAG&quot;</span>,

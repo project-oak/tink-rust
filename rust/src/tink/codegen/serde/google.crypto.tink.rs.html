@@ -1,7 +1,7 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `tink/src/codegen/google.crypto.tink.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>google.crypto.tink.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
-<link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../tink/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><span class="help-button">?</span>
-                <a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `tink/src/codegen/serde/google.crypto.tink.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>google.crypto.tink.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../../ayu.css" disabled ><script src="../../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../../favicon.svg">
+<link rel="alternate icon" type="image/png" href="../../../../favicon-16x16.png">
+<link rel="alternate icon" type="image/png" href="../../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../../tink/index.html'><div class='logo-container rust-logo'><img src='../../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><span class="help-button">?</span>
+                <a id="settings-menu" href="../../../../settings.html"><img src="../../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -1028,6 +1028,25 @@
 <span id="1025">1025</span>
 <span id="1026">1026</span>
 <span id="1027">1027</span>
+<span id="1028">1028</span>
+<span id="1029">1029</span>
+<span id="1030">1030</span>
+<span id="1031">1031</span>
+<span id="1032">1032</span>
+<span id="1033">1033</span>
+<span id="1034">1034</span>
+<span id="1035">1035</span>
+<span id="1036">1036</span>
+<span id="1037">1037</span>
+<span id="1038">1038</span>
+<span id="1039">1039</span>
+<span id="1040">1040</span>
+<span id="1041">1041</span>
+<span id="1042">1042</span>
+<span id="1043">1043</span>
+<span id="1044">1044</span>
+<span id="1045">1045</span>
+<span id="1046">1046</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">PartialEq</span>, ::<span class="ident">prost</span>::<span class="ident">Message</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">AesCmacParams</span> {
@@ -1476,6 +1495,8 @@
 <span class="doccomment">/// definition of *Key-proto (as in KeyFormat-message), and some extra metadata</span>
 <span class="doccomment">/// about the type key material.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">PartialEq</span>, ::<span class="ident">prost</span>::<span class="ident">Message</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">serde</span>::<span class="ident">Deserialize</span>, <span class="ident">serde</span>::<span class="ident">Serialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename_all</span> <span class="op">=</span> <span class="string">&quot;camelCase&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">KeyData</span> {
     <span class="doccomment">/// Required.</span>
     <span class="doccomment">///</span>
@@ -1486,9 +1507,11 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// contains specific serialized *Key proto</span>
     <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">bytes</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;2&quot;</span>)]</span>
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">with</span> <span class="op">=</span> <span class="string">&quot;crate::keyset::b64&quot;</span>)]</span>
     <span class="kw">pub</span> <span class="ident">value</span>: <span class="ident">std</span>::<span class="ident">vec</span>::<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
     <span class="doccomment">/// Required.</span>
     <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">enumeration</span><span class="op">=</span><span class="string">&quot;key_data::KeyMaterialType&quot;</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;3&quot;</span>)]</span>
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">with</span> <span class="op">=</span> <span class="string">&quot;crate::keyset::key_material_type&quot;</span>)]</span>
     <span class="kw">pub</span> <span class="ident">key_material_type</span>: <span class="ident">i32</span>,
 }
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">key_data</span> {
@@ -1508,6 +1531,8 @@
 <span class="doccomment">/// implementations/key types, but must all implement the same primitive.</span>
 <span class="doccomment">/// Any given keyset (and any given key) can be used for one primitive only.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">PartialEq</span>, ::<span class="ident">prost</span>::<span class="ident">Message</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">serde</span>::<span class="ident">Deserialize</span>, <span class="ident">serde</span>::<span class="ident">Serialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename_all</span> <span class="op">=</span> <span class="string">&quot;camelCase&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Keyset</span> {
     <span class="doccomment">/// Identifies key used to generate new crypto data (encrypt, sign).</span>
     <span class="doccomment">/// Required.</span>
@@ -1520,12 +1545,15 @@
 }
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">keyset</span> {
     <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">PartialEq</span>, ::<span class="ident">prost</span>::<span class="ident">Message</span>)]</span>
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">serde</span>::<span class="ident">Serialize</span>, <span class="ident">serde</span>::<span class="ident">Deserialize</span>)]</span>
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename_all</span> <span class="op">=</span> <span class="string">&quot;camelCase&quot;</span>)]</span>
     <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Key</span> {
         <span class="doccomment">/// Contains the actual, instantiation specific key proto.</span>
         <span class="doccomment">/// By convention, each key proto contains a version field.</span>
         <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">message</span>, <span class="ident">optional</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;1&quot;</span>)]</span>
         <span class="kw">pub</span> <span class="ident">key_data</span>: ::<span class="ident">std</span>::<span class="ident">option</span>::<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">super</span>::<span class="ident">KeyData</span><span class="op">&gt;</span>,
         <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">enumeration</span><span class="op">=</span><span class="string">&quot;super::KeyStatusType&quot;</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;2&quot;</span>)]</span>
+        <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">with</span> <span class="op">=</span> <span class="string">&quot;crate::keyset::key_status_type&quot;</span>)]</span>
         <span class="kw">pub</span> <span class="ident">status</span>: <span class="ident">i32</span>,
         <span class="doccomment">/// Identifies a key within a keyset, is a part of metadata</span>
         <span class="doccomment">/// of a ciphertext/signature.</span>
@@ -1534,6 +1562,7 @@
         <span class="doccomment">/// Determines the prefix of the ciphertexts/signatures produced by this key.</span>
         <span class="doccomment">/// This value is copied verbatim from the key template.</span>
         <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">enumeration</span><span class="op">=</span><span class="string">&quot;super::OutputPrefixType&quot;</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;4&quot;</span>)]</span>
+        <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">with</span> <span class="op">=</span> <span class="string">&quot;crate::keyset::output_prefix_type&quot;</span>)]</span>
         <span class="kw">pub</span> <span class="ident">output_prefix_type</span>: <span class="ident">i32</span>,
     }
 }
@@ -1541,6 +1570,8 @@
 <span class="doccomment">/// thus can be used for logging or monitoring. Most fields are copied from</span>
 <span class="doccomment">/// Keyset.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">PartialEq</span>, ::<span class="ident">prost</span>::<span class="ident">Message</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">serde</span>::<span class="ident">Deserialize</span>, <span class="ident">serde</span>::<span class="ident">Serialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename_all</span> <span class="op">=</span> <span class="string">&quot;camelCase&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">KeysetInfo</span> {
     <span class="doccomment">/// See Keyset.primary_key_id.</span>
     <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">uint32</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;1&quot;</span>)]</span>
@@ -1552,6 +1583,8 @@
 }
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">keyset_info</span> {
     <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">PartialEq</span>, ::<span class="ident">prost</span>::<span class="ident">Message</span>)]</span>
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">serde</span>::<span class="ident">Serialize</span>, <span class="ident">serde</span>::<span class="ident">Deserialize</span>)]</span>
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename_all</span> <span class="op">=</span> <span class="string">&quot;camelCase&quot;</span>)]</span>
     <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">KeyInfo</span> {
         <span class="doccomment">/// the type url of this key,</span>
         <span class="doccomment">/// e.g., type.googleapis.com/google.crypto.tink.HmacKey.</span>
@@ -1559,20 +1592,25 @@
         <span class="kw">pub</span> <span class="ident">type_url</span>: <span class="ident">std</span>::<span class="ident">string</span>::<span class="ident">String</span>,
         <span class="doccomment">/// See Keyset.Key.status.</span>
         <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">enumeration</span><span class="op">=</span><span class="string">&quot;super::KeyStatusType&quot;</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;2&quot;</span>)]</span>
+        <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">with</span> <span class="op">=</span> <span class="string">&quot;crate::keyset::key_status_type&quot;</span>)]</span>
         <span class="kw">pub</span> <span class="ident">status</span>: <span class="ident">i32</span>,
         <span class="doccomment">/// See Keyset.Key.key_id.</span>
         <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">uint32</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;3&quot;</span>)]</span>
         <span class="kw">pub</span> <span class="ident">key_id</span>: <span class="ident">u32</span>,
         <span class="doccomment">/// See Keyset.Key.output_prefix_type.</span>
         <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">enumeration</span><span class="op">=</span><span class="string">&quot;super::OutputPrefixType&quot;</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;4&quot;</span>)]</span>
+        <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">with</span> <span class="op">=</span> <span class="string">&quot;crate::keyset::output_prefix_type&quot;</span>)]</span>
         <span class="kw">pub</span> <span class="ident">output_prefix_type</span>: <span class="ident">i32</span>,
     }
 }
 <span class="doccomment">/// Represents a keyset that is encrypted with a master key.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">PartialEq</span>, ::<span class="ident">prost</span>::<span class="ident">Message</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">serde</span>::<span class="ident">Deserialize</span>, <span class="ident">serde</span>::<span class="ident">Serialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename_all</span> <span class="op">=</span> <span class="string">&quot;camelCase&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">EncryptedKeyset</span> {
     <span class="doccomment">/// Required.</span>
     <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">bytes</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;2&quot;</span>)]</span>
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">with</span> <span class="op">=</span> <span class="string">&quot;crate::keyset::b64&quot;</span>)]</span>
     <span class="kw">pub</span> <span class="ident">encrypted_keyset</span>: <span class="ident">std</span>::<span class="ident">vec</span>::<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
     <span class="doccomment">/// Optional.</span>
     <span class="attribute">#[<span class="ident">prost</span>(<span class="ident">message</span>, <span class="ident">optional</span>, <span class="ident">tag</span><span class="op">=</span><span class="string">&quot;3&quot;</span>)]</span>
@@ -2057,4 +2095,4 @@
     <span class="kw">pub</span> <span class="ident">key_value</span>: <span class="ident">std</span>::<span class="ident">vec</span>::<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../../";window.currentCrate = "tink";</script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../../../";window.currentCrate = "tink";</script><script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script><script defer src="../../../../search-index.js"></script></body></html>

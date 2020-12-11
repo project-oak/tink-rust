@@ -191,7 +191,7 @@
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="lifetime">&#39;static</span> <span class="op">+</span> <span class="ident">KeyManager</span>,
 {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">key_mgrs</span> <span class="op">=</span> <span class="ident">KEY_MANAGERS</span>.<span class="ident">write</span>().<span class="ident">expect</span>(<span class="ident">MERR</span>);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">key_mgrs</span> <span class="op">=</span> <span class="ident">KEY_MANAGERS</span>.<span class="ident">write</span>().<span class="ident">expect</span>(<span class="ident">MERR</span>); <span class="comment">// safe: lock</span>
 
     <span class="kw">let</span> <span class="ident">type_url</span> <span class="op">=</span> <span class="ident">km</span>.<span class="ident">type_url</span>();
     <span class="kw">if</span> <span class="ident">key_mgrs</span>.<span class="ident">contains_key</span>(<span class="ident">type_url</span>) {
@@ -207,7 +207,7 @@
 
 <span class="doccomment">/// Return the key manager for the given `type_url` if it exists.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_key_manager</span>(<span class="ident">type_url</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">KeyManager</span><span class="op">&gt;</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">key_mgrs</span> <span class="op">=</span> <span class="ident">KEY_MANAGERS</span>.<span class="ident">read</span>().<span class="ident">expect</span>(<span class="ident">MERR</span>);
+    <span class="kw">let</span> <span class="ident">key_mgrs</span> <span class="op">=</span> <span class="ident">KEY_MANAGERS</span>.<span class="ident">read</span>().<span class="ident">expect</span>(<span class="ident">MERR</span>); <span class="comment">// safe: lock</span>
     <span class="kw">let</span> <span class="ident">km</span> <span class="op">=</span> <span class="ident">key_mgrs</span>.<span class="ident">get</span>(<span class="ident">type_url</span>).<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> {
         <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(
             <span class="string">&quot;registry::get_key_manager: unsupported key type: {}&quot;</span>,
@@ -246,13 +246,13 @@
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="lifetime">&#39;static</span> <span class="op">+</span> <span class="ident">KmsClient</span>,
 {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">kms_clients</span> <span class="op">=</span> <span class="ident">KMS_CLIENTS</span>.<span class="ident">write</span>().<span class="ident">expect</span>(<span class="ident">CERR</span>);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">kms_clients</span> <span class="op">=</span> <span class="ident">KMS_CLIENTS</span>.<span class="ident">write</span>().<span class="ident">expect</span>(<span class="ident">CERR</span>); <span class="comment">// safe: lock</span>
     <span class="ident">kms_clients</span>.<span class="ident">push</span>(<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">k</span>));
 }
 
 <span class="doccomment">/// Fetches a [`KmsClient`] by a given URI.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_kms_client</span>(<span class="ident">key_uri</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">KmsClient</span><span class="op">&gt;</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">kms_clients</span> <span class="op">=</span> <span class="ident">KMS_CLIENTS</span>.<span class="ident">read</span>().<span class="ident">expect</span>(<span class="ident">CERR</span>);
+    <span class="kw">let</span> <span class="ident">kms_clients</span> <span class="op">=</span> <span class="ident">KMS_CLIENTS</span>.<span class="ident">read</span>().<span class="ident">expect</span>(<span class="ident">CERR</span>); <span class="comment">// safe: lock</span>
     <span class="kw">for</span> <span class="ident">k</span> <span class="kw">in</span> <span class="ident">kms_clients</span>.<span class="ident">iter</span>() {
         <span class="kw">if</span> <span class="ident">k</span>.<span class="ident">supported</span>(<span class="ident">key_uri</span>) {
             <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">k</span>.<span class="ident">clone</span>());

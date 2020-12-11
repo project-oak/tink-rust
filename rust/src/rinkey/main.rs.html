@@ -524,7 +524,6 @@
 <span id="521">521</span>
 <span id="522">522</span>
 <span id="523">523</span>
-<span id="524">524</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2020 The Tink-Rust Authors</span>
 <span class="comment">//</span>
@@ -808,7 +807,6 @@
     <span class="ident">tink_mac</span>::<span class="ident">init</span>();
     <span class="ident">tink_prf</span>::<span class="ident">init</span>();
     <span class="ident">tink_signature</span>::<span class="ident">init</span>();
-    <span class="comment">// TODO: register AWS/GBP KMS clients here</span>
 
     <span class="kw">match</span> <span class="ident">Command</span>::<span class="ident">from_args</span>() {
         <span class="ident">Command</span>::<span class="ident">AddKey</span>(<span class="ident">opts</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">add_key</span>(<span class="ident">opts</span>),

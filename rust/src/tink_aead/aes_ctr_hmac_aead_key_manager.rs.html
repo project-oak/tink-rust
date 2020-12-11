@@ -222,6 +222,12 @@
 <span id="219">219</span>
 <span id="220">220</span>
 <span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2020 The Tink-Rust Authors</span>
 <span class="comment">//</span>
@@ -269,25 +275,12 @@
         }
         <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCtrHmacAeadKey</span>::<span class="ident">decode</span>(<span class="ident">serialized_key</span>)
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: invalid key&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
-        <span class="ident">validate_key</span>(<span class="kw-2">&amp;</span><span class="ident">key</span>)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">aes_ctr_key</span> <span class="op">=</span> <span class="ident">key</span>
-            .<span class="ident">aes_ctr_key</span>
-            .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: no key&quot;</span>))<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">aes_params</span> <span class="op">=</span> <span class="ident">aes_ctr_key</span>
-            .<span class="ident">params</span>
-            .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: no params&quot;</span>))<span class="question-mark">?</span>;
+        <span class="kw">let</span> (<span class="ident">aes_ctr_key</span>, <span class="ident">aes_params</span>) <span class="op">=</span> <span class="ident">validate_aes_key</span>(<span class="kw-2">&amp;</span><span class="ident">key</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> (<span class="ident">hmac_key</span>, <span class="ident">hmac_params</span>, <span class="ident">hash</span>) <span class="op">=</span> <span class="ident">validate_hmac_key</span>(<span class="kw-2">&amp;</span><span class="ident">key</span>)<span class="question-mark">?</span>;
+
         <span class="kw">let</span> <span class="ident">ctr</span> <span class="op">=</span> <span class="ident">subtle</span>::<span class="ident">AesCtr</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="ident">aes_ctr_key</span>.<span class="ident">key_value</span>, <span class="ident">aes_params</span>.<span class="ident">iv_size</span> <span class="kw">as</span> <span class="ident">usize</span>)
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: cannot create new AES-CTR&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
-
-        <span class="kw">let</span> <span class="ident">hmac_key</span> <span class="op">=</span> <span class="ident">key</span>
-            .<span class="ident">hmac_key</span>
-            .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: no key&quot;</span>))<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">hmac_params</span> <span class="op">=</span> <span class="ident">hmac_key</span>
-            .<span class="ident">params</span>
-            .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: no params&quot;</span>))<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">hash</span> <span class="op">=</span> <span class="ident">HashType</span>::<span class="ident">from_i32</span>(<span class="ident">hmac_params</span>.<span class="ident">hash</span>)
-            .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: unknown hash&quot;</span>))<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">hmac</span> <span class="op">=</span>
             <span class="ident">tink_mac</span>::<span class="ident">subtle</span>::<span class="ident">Hmac</span>::<span class="ident">new</span>(<span class="ident">hash</span>, <span class="kw-2">&amp;</span><span class="ident">hmac_key</span>.<span class="ident">key_value</span>, <span class="ident">hmac_params</span>.<span class="ident">tag_size</span> <span class="kw">as</span> <span class="ident">usize</span>)
                 .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
@@ -310,14 +303,8 @@
         }
         <span class="kw">let</span> <span class="ident">key_format</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCtrHmacAeadKeyFormat</span>::<span class="ident">decode</span>(<span class="ident">serialized_key_format</span>)
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: invalid key format&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
-        <span class="ident">validate_key_format</span>(<span class="kw-2">&amp;</span><span class="ident">key_format</span>)
-            .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: invalid key format&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">aes_ctr_key_format</span> <span class="op">=</span> <span class="ident">key_format</span>
-            .<span class="ident">aes_ctr_key_format</span>
-            .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: no key format&quot;</span>))<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">hmac_key_format</span> <span class="op">=</span> <span class="ident">key_format</span>
-            .<span class="ident">hmac_key_format</span>
-            .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: no key format&quot;</span>))<span class="question-mark">?</span>;
+
+        <span class="kw">let</span> (<span class="ident">aes_ctr_key_format</span>, <span class="ident">hmac_key_format</span>) <span class="op">=</span> <span class="ident">validate_key_format</span>(<span class="kw-2">&amp;</span><span class="ident">key_format</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCtrHmacAeadKey</span> {
             <span class="ident">version</span>: <span class="ident">AES_CTR_HMAC_AEAD_KEY_VERSION</span>,
             <span class="ident">aes_ctr_key</span>: <span class="prelude-val">Some</span>(<span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCtrKey</span> {
@@ -350,51 +337,76 @@
     }
 }
 
-<span class="doccomment">/// Validate the given [`tink::proto::AesCtrHmacAeadKey`].</span>
-<span class="kw">fn</span> <span class="ident">validate_key</span>(<span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCtrHmacAeadKey</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TinkError</span><span class="op">&gt;</span> {
+<span class="doccomment">/// Validate and extract the AES parts of the given [`tink::proto::AesCtrHmacAeadKey`].</span>
+<span class="kw">fn</span> <span class="ident">validate_aes_key</span>(
+    <span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCtrHmacAeadKey</span>,
+) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="kw-2">&amp;</span><span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCtrKey</span>, <span class="kw-2">&amp;</span><span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCtrParams</span>), <span class="ident">TinkError</span><span class="op">&gt;</span> {
     <span class="ident">tink</span>::<span class="ident">keyset</span>::<span class="ident">validate_key_version</span>(<span class="ident">key</span>.<span class="ident">version</span>, <span class="ident">AES_CTR_HMAC_AEAD_KEY_VERSION</span>)
         .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">aes_ctr_key</span> <span class="op">=</span> <span class="ident">key</span>
         .<span class="ident">aes_ctr_key</span>
         .<span class="ident">as_ref</span>()
-        .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: no key&quot;</span>))<span class="question-mark">?</span>;
+        .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: no AES key&quot;</span>))<span class="question-mark">?</span>;
     <span class="ident">tink</span>::<span class="ident">keyset</span>::<span class="ident">validate_key_version</span>(<span class="ident">aes_ctr_key</span>.<span class="ident">version</span>, <span class="ident">AES_CTR_HMAC_AEAD_KEY_VERSION</span>)
         .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
-    <span class="kw">let</span> <span class="ident">hmac_key</span> <span class="op">=</span> <span class="ident">key</span>
-        .<span class="ident">hmac_key</span>
-        .<span class="ident">as_ref</span>()
-        .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: no key&quot;</span>))<span class="question-mark">?</span>;
-    <span class="ident">tink</span>::<span class="ident">keyset</span>::<span class="ident">validate_key_version</span>(<span class="ident">hmac_key</span>.<span class="ident">version</span>, <span class="ident">AES_CTR_HMAC_AEAD_KEY_VERSION</span>)
-        .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
 
-    <span class="comment">// Validate AesCtrKey.</span>
+    <span class="comment">// Validate `AesCtrKey`.</span>
     <span class="kw">let</span> <span class="ident">key_size</span> <span class="op">=</span> <span class="ident">aes_ctr_key</span>.<span class="ident">key_value</span>.<span class="ident">len</span>();
     <span class="ident">subtle</span>::<span class="ident">validate_aes_key_size</span>(<span class="ident">key_size</span>).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="ident">aes_ctr_key</span>
         .<span class="ident">params</span>
         .<span class="ident">as_ref</span>()
-        .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: no key params&quot;</span>))<span class="question-mark">?</span>;
+        .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: no AES key params&quot;</span>))<span class="question-mark">?</span>;
     <span class="kw">if</span> (<span class="ident">params</span>.<span class="ident">iv_size</span> <span class="kw">as</span> <span class="ident">usize</span>) <span class="op">&lt;</span> <span class="ident">subtle</span>::<span class="ident">AES_CTR_MIN_IV_SIZE</span> <span class="op">|</span><span class="op">|</span> <span class="ident">params</span>.<span class="ident">iv_size</span> <span class="op">&gt;</span> <span class="number">16</span> {
         <span class="kw">return</span> <span class="prelude-val">Err</span>(
             <span class="string">&quot;AesCtrHmacAeadKeyManager: invalid AesCtrHmacAeadKey: IV size out of range&quot;</span>.<span class="ident">into</span>(),
         );
     }
-    <span class="prelude-val">Ok</span>(())
+    <span class="prelude-val">Ok</span>((<span class="ident">aes_ctr_key</span>, <span class="ident">params</span>))
+}
+
+<span class="doccomment">/// Validate and extract the HMAC parts of the given [`tink::proto::AesCtrHmacAeadKey`].</span>
+<span class="kw">fn</span> <span class="ident">validate_hmac_key</span>(
+    <span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCtrHmacAeadKey</span>,
+) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>
+    (
+        <span class="kw-2">&amp;</span><span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HmacKey</span>,
+        <span class="kw-2">&amp;</span><span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HmacParams</span>,
+        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HashType</span>,
+    ),
+    <span class="ident">TinkError</span>,
+<span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="ident">hmac_key</span> <span class="op">=</span> <span class="ident">key</span>
+        .<span class="ident">hmac_key</span>
+        .<span class="ident">as_ref</span>()
+        .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: no HMAC key&quot;</span>))<span class="question-mark">?</span>;
+    <span class="ident">tink</span>::<span class="ident">keyset</span>::<span class="ident">validate_key_version</span>(<span class="ident">hmac_key</span>.<span class="ident">version</span>, <span class="ident">AES_CTR_HMAC_AEAD_KEY_VERSION</span>)
+        .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
+    <span class="kw">let</span> <span class="ident">hmac_params</span> <span class="op">=</span> <span class="ident">hmac_key</span>
+        .<span class="ident">params</span>
+        .<span class="ident">as_ref</span>()
+        .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: no HMAC params&quot;</span>))<span class="question-mark">?</span>;
+    <span class="kw">let</span> <span class="ident">hash</span> <span class="op">=</span> <span class="ident">HashType</span>::<span class="ident">from_i32</span>(<span class="ident">hmac_params</span>.<span class="ident">hash</span>)
+        .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: unknown hash&quot;</span>))<span class="question-mark">?</span>;
+
+    <span class="prelude-val">Ok</span>((<span class="ident">hmac_key</span>, <span class="ident">hmac_params</span>, <span class="ident">hash</span>))
 }
 
 <span class="doccomment">/// Validate the given [`tink::proto::AesCtrHmacAeadKeyFormat`].</span>
-<span class="kw">fn</span> <span class="ident">validate_key_format</span>(<span class="ident">format</span>: <span class="kw-2">&amp;</span><span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCtrHmacAeadKeyFormat</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TinkError</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">validate_key_format</span>(
+    <span class="ident">format</span>: <span class="kw-2">&amp;</span><span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCtrHmacAeadKeyFormat</span>,
+) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCtrKeyFormat</span>, <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HmacKeyFormat</span>), <span class="ident">TinkError</span><span class="op">&gt;</span> {
     <span class="comment">// Validate AesCtrKeyFormat.</span>
     <span class="kw">let</span> <span class="ident">aes_ctr_format</span> <span class="op">=</span> <span class="ident">format</span>
         .<span class="ident">aes_ctr_key_format</span>
         .<span class="ident">as_ref</span>()
-        .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: no key format&quot;</span>))<span class="question-mark">?</span>;
+        .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: no AES key format&quot;</span>))<span class="question-mark">?</span>;
     <span class="ident">subtle</span>::<span class="ident">validate_aes_key_size</span>(<span class="ident">aes_ctr_format</span>.<span class="ident">key_size</span> <span class="kw">as</span> <span class="ident">usize</span>)
         .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">aes_params</span> <span class="op">=</span> <span class="ident">aes_ctr_format</span>
         .<span class="ident">params</span>
         .<span class="ident">as_ref</span>()
-        .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: no key params&quot;</span>))<span class="question-mark">?</span>;
+        .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: no AES key params&quot;</span>))<span class="question-mark">?</span>;
     <span class="kw">if</span> (<span class="ident">aes_params</span>.<span class="ident">iv_size</span> <span class="kw">as</span> <span class="ident">usize</span>) <span class="op">&lt;</span> <span class="ident">subtle</span>::<span class="ident">AES_CTR_MIN_IV_SIZE</span> <span class="op">|</span><span class="op">|</span> <span class="ident">aes_params</span>.<span class="ident">iv_size</span> <span class="op">&gt;</span> <span class="number">16</span> {
         <span class="kw">return</span> <span class="prelude-val">Err</span>(
             <span class="string">&quot;AesCtrHmacAeadKeyManager: invalid AesCtrHmacAeadKeyFormat: IV size out of range&quot;</span>
@@ -406,14 +418,14 @@
     <span class="kw">let</span> <span class="ident">hmac_key_format</span> <span class="op">=</span> <span class="ident">format</span>
         .<span class="ident">hmac_key_format</span>
         .<span class="ident">as_ref</span>()
-        .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: no key format&quot;</span>))<span class="question-mark">?</span>;
+        .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: no HMAC key format&quot;</span>))<span class="question-mark">?</span>;
     <span class="kw">if</span> (<span class="ident">hmac_key_format</span>.<span class="ident">key_size</span> <span class="kw">as</span> <span class="ident">usize</span>) <span class="op">&lt;</span> <span class="ident">MIN_HMAC_KEY_SIZE_IN_BYTES</span> {
-        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: HMAC KeySize is too small&quot;</span>.<span class="ident">into</span>());
+        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: HMAC key_size is too small&quot;</span>.<span class="ident">into</span>());
     }
     <span class="kw">let</span> <span class="ident">hmac_params</span> <span class="op">=</span> <span class="ident">hmac_key_format</span>
         .<span class="ident">params</span>
         .<span class="ident">as_ref</span>()
-        .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: no key params&quot;</span>))<span class="question-mark">?</span>;
+        .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;AesCtrHmacAeadKeyManager: no HMAC key params&quot;</span>))<span class="question-mark">?</span>;
     <span class="kw">if</span> (<span class="ident">hmac_params</span>.<span class="ident">tag_size</span> <span class="kw">as</span> <span class="ident">usize</span>) <span class="op">&lt;</span> <span class="ident">MIN_TAG_SIZE_IN_BYTES</span> {
         <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format</span><span class="macro">!</span>(
             <span class="string">&quot;AesCtrHmacAeadKeyManager: invalid HmacParams: tag_size {} is too small&quot;</span>,
@@ -442,7 +454,7 @@
         )
         .<span class="ident">into</span>());
     }
-    <span class="prelude-val">Ok</span>(())
+    <span class="prelude-val">Ok</span>((<span class="ident">aes_ctr_format</span>.<span class="ident">clone</span>(), <span class="ident">hmac_key_format</span>.<span class="ident">clone</span>()))
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../";window.currentCrate = "tink_aead";</script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>

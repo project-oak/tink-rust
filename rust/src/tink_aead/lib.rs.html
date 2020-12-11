@@ -87,6 +87,12 @@
 <span id="84">84</span>
 <span id="85">85</span>
 <span id="86">86</span>
+<span id="87">87</span>
+<span id="88">88</span>
+<span id="89">89</span>
+<span id="90">90</span>
+<span id="91">91</span>
+<span id="92">92</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2020 The Tink-Rust Authors</span>
 <span class="comment">//</span>
@@ -122,6 +128,8 @@
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">aes_ctr_hmac_aead_key_manager</span>::<span class="kw-2">*</span>;
 <span class="kw">mod</span> <span class="ident">aes_gcm_key_manager</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">aes_gcm_key_manager</span>::<span class="kw-2">*</span>;
+<span class="kw">mod</span> <span class="ident">aes_gcm_siv_key_manager</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">aes_gcm_siv_key_manager</span>::<span class="kw-2">*</span>;
 <span class="kw">mod</span> <span class="ident">chacha20poly1305_key_manager</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">chacha20poly1305_key_manager</span>::<span class="kw-2">*</span>;
 <span class="kw">mod</span> <span class="ident">kms_envelope_aead</span>;
@@ -144,18 +152,22 @@
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>() {
     <span class="ident">INIT</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> {
         <span class="ident">register_key_manager</span>(<span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">AesCtrHmacAeadKeyManager</span>::<span class="ident">default</span>()))
-            .<span class="ident">expect</span>(<span class="string">&quot;tink_aead::init() failed&quot;</span>);
+            .<span class="ident">expect</span>(<span class="string">&quot;tink_aead::init() failed&quot;</span>); <span class="comment">// safe: init</span>
         <span class="ident">register_key_manager</span>(<span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">AesGcmKeyManager</span>::<span class="ident">default</span>()))
-            .<span class="ident">expect</span>(<span class="string">&quot;tink_aead::init() failed&quot;</span>);
+            .<span class="ident">expect</span>(<span class="string">&quot;tink_aead::init() failed&quot;</span>); <span class="comment">// safe: init</span>
+        <span class="ident">register_key_manager</span>(<span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">AesGcmSivKeyManager</span>::<span class="ident">default</span>()))
+            .<span class="ident">expect</span>(<span class="string">&quot;tink_aead::init() failed&quot;</span>); <span class="comment">// safe: init</span>
         <span class="ident">register_key_manager</span>(<span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">ChaCha20Poly1305KeyManager</span>::<span class="ident">default</span>()))
-            .<span class="ident">expect</span>(<span class="string">&quot;tink_aead::init() failed&quot;</span>);
+            .<span class="ident">expect</span>(<span class="string">&quot;tink_aead::init() failed&quot;</span>); <span class="comment">// safe: init</span>
         <span class="ident">register_key_manager</span>(<span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">XChaCha20Poly1305KeyManager</span>::<span class="ident">default</span>()))
-            .<span class="ident">expect</span>(<span class="string">&quot;tink_aead::init() failed&quot;</span>);
+            .<span class="ident">expect</span>(<span class="string">&quot;tink_aead::init() failed&quot;</span>); <span class="comment">// safe: init</span>
         <span class="ident">register_key_manager</span>(<span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">KmsEnvelopeAeadKeyManager</span>::<span class="ident">default</span>()))
-            .<span class="ident">expect</span>(<span class="string">&quot;tink_aead::init() failed&quot;</span>);
+            .<span class="ident">expect</span>(<span class="string">&quot;tink_aead::init() failed&quot;</span>); <span class="comment">// safe:init</span>
 
         <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(<span class="string">&quot;AES128_GCM&quot;</span>, <span class="ident">aes128_gcm_key_template</span>);
         <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(<span class="string">&quot;AES256_GCM&quot;</span>, <span class="ident">aes256_gcm_key_template</span>);
+        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(<span class="string">&quot;AES128_GCM_SIV&quot;</span>, <span class="ident">aes128_gcm_siv_key_template</span>);
+        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(<span class="string">&quot;AES256_GCM_SIV&quot;</span>, <span class="ident">aes256_gcm_siv_key_template</span>);
         <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
             <span class="string">&quot;AES128_CTR_HMAC_SHA256&quot;</span>,
             <span class="ident">aes128_ctr_hmac_sha256_key_template</span>,

@@ -144,6 +144,45 @@
 <span id="141">141</span>
 <span id="142">142</span>
 <span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
+<span id="165">165</span>
+<span id="166">166</span>
+<span id="167">167</span>
+<span id="168">168</span>
+<span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
+<span id="176">176</span>
+<span id="177">177</span>
+<span id="178">178</span>
+<span id="179">179</span>
+<span id="180">180</span>
+<span id="181">181</span>
+<span id="182">182</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2020 The Tink-Rust Authors</span>
 <span class="comment">//</span>
@@ -186,6 +225,27 @@
 <span class="doccomment">///   - Output prefix type: RAW</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">aes256_gcm_no_prefix_key_template</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
     <span class="ident">create_aes_gcm_key_template</span>(<span class="number">32</span>, <span class="ident">OutputPrefixType</span>::<span class="ident">Raw</span>)
+}
+
+<span class="doccomment">/// Return a [`KeyTemplate`] that generates an AES-GCM-SIV key with the following parameters:</span>
+<span class="doccomment">///   - Key size: 16 bytes</span>
+<span class="doccomment">///   - Output prefix type: TINK</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">aes128_gcm_siv_key_template</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
+    <span class="ident">create_aes_gcm_siv_key_template</span>(<span class="number">16</span>, <span class="ident">OutputPrefixType</span>::<span class="ident">Tink</span>)
+}
+
+<span class="doccomment">/// Return a [`KeyTemplate`] that generates an AES-GCM-SIV key with the following parameters:</span>
+<span class="doccomment">///   - Key size: 32 bytes</span>
+<span class="doccomment">///   - Output prefix type: TINK</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">aes256_gcm_siv_key_template</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
+    <span class="ident">create_aes_gcm_siv_key_template</span>(<span class="number">32</span>, <span class="ident">OutputPrefixType</span>::<span class="ident">Tink</span>)
+}
+
+<span class="doccomment">/// Return a [`KeyTemplate`] that generates an AES-GCM-SIV key with the following parameters:</span>
+<span class="doccomment">///   - Key size: 32 bytes</span>
+<span class="doccomment">///   - Output prefix type: RAW</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">aes256_gcm_siv_no_prefix_key_template</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
+    <span class="ident">create_aes_gcm_siv_key_template</span>(<span class="number">32</span>, <span class="ident">OutputPrefixType</span>::<span class="ident">Raw</span>)
 }
 
 <span class="doccomment">/// Return a [`KeyTemplate`] that generates an AES-CTR-HMAC-AEAD key with the following parameters:</span>
@@ -235,7 +295,7 @@
         <span class="ident">dek_template</span>: <span class="prelude-val">Some</span>(<span class="ident">dek_t</span>),
     };
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">serialized_format</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
-    <span class="ident">f</span>.<span class="ident">encode</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized_format</span>).<span class="ident">unwrap</span>();
+    <span class="ident">f</span>.<span class="ident">encode</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized_format</span>).<span class="ident">unwrap</span>(); <span class="comment">// safe: proto-encode</span>
     <span class="ident">KeyTemplate</span> {
         <span class="ident">value</span>: <span class="ident">serialized_format</span>,
         <span class="ident">type_url</span>: <span class="kw">crate</span>::<span class="ident">KMS_ENVELOPE_AEAD_TYPE_URL</span>.<span class="ident">to_string</span>(),
@@ -250,9 +310,27 @@
         <span class="ident">key_size</span>,
     };
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">serialized_format</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
-    <span class="ident">format</span>.<span class="ident">encode</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized_format</span>).<span class="ident">unwrap</span>();
+    <span class="ident">format</span>.<span class="ident">encode</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized_format</span>).<span class="ident">unwrap</span>(); <span class="comment">// safe: proto-encode</span>
     <span class="ident">KeyTemplate</span> {
         <span class="ident">type_url</span>: <span class="kw">crate</span>::<span class="ident">AES_GCM_TYPE_URL</span>.<span class="ident">to_string</span>(),
+        <span class="ident">value</span>: <span class="ident">serialized_format</span>,
+        <span class="ident">output_prefix_type</span>: <span class="ident">output_prefix_type</span> <span class="kw">as</span> <span class="ident">i32</span>,
+    }
+}
+
+<span class="doccomment">/// Return an AES-GCM-SIV key template with the given key size in bytes.</span>
+<span class="kw">fn</span> <span class="ident">create_aes_gcm_siv_key_template</span>(
+    <span class="ident">key_size</span>: <span class="ident">u32</span>,
+    <span class="ident">output_prefix_type</span>: <span class="ident">OutputPrefixType</span>,
+) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
+    <span class="kw">let</span> <span class="ident">format</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesGcmSivKeyFormat</span> {
+        <span class="ident">version</span>: <span class="kw">crate</span>::<span class="ident">AES_GCM_SIV_KEY_VERSION</span>,
+        <span class="ident">key_size</span>,
+    };
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">serialized_format</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
+    <span class="ident">format</span>.<span class="ident">encode</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized_format</span>).<span class="ident">unwrap</span>(); <span class="comment">// safe: proto-encode</span>
+    <span class="ident">KeyTemplate</span> {
+        <span class="ident">type_url</span>: <span class="kw">crate</span>::<span class="ident">AES_GCM_SIV_TYPE_URL</span>.<span class="ident">to_string</span>(),
         <span class="ident">value</span>: <span class="ident">serialized_format</span>,
         <span class="ident">output_prefix_type</span>: <span class="ident">output_prefix_type</span> <span class="kw">as</span> <span class="ident">i32</span>,
     }
@@ -281,7 +359,7 @@
         }),
     };
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">serialized_format</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
-    <span class="ident">format</span>.<span class="ident">encode</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized_format</span>).<span class="ident">unwrap</span>();
+    <span class="ident">format</span>.<span class="ident">encode</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized_format</span>).<span class="ident">unwrap</span>(); <span class="comment">// safe: proto-encode</span>
     <span class="ident">KeyTemplate</span> {
         <span class="ident">value</span>: <span class="ident">serialized_format</span>,
         <span class="ident">type_url</span>: <span class="kw">crate</span>::<span class="ident">AES_CTR_HMAC_AEAD_TYPE_URL</span>.<span class="ident">to_string</span>(),

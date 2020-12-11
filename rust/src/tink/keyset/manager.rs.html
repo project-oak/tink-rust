@@ -224,12 +224,6 @@
 <span id="221">221</span>
 <span id="222">222</span>
 <span id="223">223</span>
-<span id="224">224</span>
-<span id="225">225</span>
-<span id="226">226</span>
-<span id="227">227</span>
-<span id="228">228</span>
-<span id="229">229</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2020 The Tink-Rust Authors</span>
 <span class="comment">//</span>
@@ -273,7 +267,9 @@
 
     <span class="doccomment">/// Create a new instance from the given [`Handle`](super::Handle).</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_from_handle</span>(<span class="ident">kh</span>: <span class="kw">super</span>::<span class="ident">Handle</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="self">Self</span> { <span class="ident">ks</span>: <span class="ident">kh</span>.<span class="ident">ks</span> }
+        <span class="self">Self</span> {
+            <span class="ident">ks</span>: <span class="ident">kh</span>.<span class="ident">into_inner</span>(),
+        }
     }
 
     <span class="doccomment">/// Generate a fresh key using the given key template and set the new key as the primary key.</span>
@@ -313,9 +309,7 @@
 
     <span class="doccomment">/// Create a new [`Handle`](super::Handle) for the managed keyset.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">handle</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw">super</span>::<span class="ident">Handle</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
-        <span class="prelude-val">Ok</span>(<span class="kw">super</span>::<span class="ident">Handle</span> {
-            <span class="ident">ks</span>: <span class="self">self</span>.<span class="ident">ks</span>.<span class="ident">clone</span>(),
-        })
+        <span class="kw">super</span>::<span class="ident">Handle</span>::<span class="ident">from_keyset</span>(<span class="self">self</span>.<span class="ident">ks</span>.<span class="ident">clone</span>())
     }
 
     <span class="doccomment">/// Sets the status of the specified key to [`KeyStatusType::Enabled`].  Succeeds only if before</span>
@@ -447,16 +441,10 @@
 
         <span class="kw">loop</span> {
             <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="ident">rng</span>.<span class="ident">gen</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>();
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ok</span> <span class="op">=</span> <span class="bool-val">true</span>;
-            <span class="kw">for</span> <span class="ident">key</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">ks</span>.<span class="ident">key</span> {
-                <span class="kw">if</span> <span class="ident">key</span>.<span class="ident">key_id</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ret</span> {
-                    <span class="ident">ok</span> <span class="op">=</span> <span class="bool-val">false</span>;
-                    <span class="kw">break</span>;
-                }
+            <span class="kw">if</span> <span class="self">self</span>.<span class="ident">ks</span>.<span class="ident">key</span>.<span class="ident">iter</span>().<span class="ident">any</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">key_id</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ret</span>) {
+                <span class="kw">continue</span>;
             }
-            <span class="kw">if</span> <span class="ident">ok</span> {
-                <span class="kw">return</span> <span class="ident">ret</span>;
-            }
+            <span class="kw">return</span> <span class="ident">ret</span>;
         }
     }
 }

@@ -54,6 +54,15 @@
 <span id="51">51</span>
 <span id="52">52</span>
 <span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2020 The Tink-Rust Authors</span>
 <span class="comment">//</span>
@@ -76,6 +85,14 @@
     <span class="ident">TinkError</span>,
 };
 
+<span class="doccomment">/// Supported signature encodings.  This is a precise subset of the protobuf enum,</span>
+<span class="doccomment">/// allowing exact `match`es.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">SignatureEncoding</span> {
+    <span class="ident">Der</span>,
+    <span class="ident">IeeeP1363</span>,
+}
+
 <span class="doccomment">/// Validate ECDSA parameters.</span>
 <span class="doccomment">/// The hash&#39;s strength must not be weaker than the curve&#39;s strength.</span>
 <span class="doccomment">/// Only DER encoding is supported now.</span>
@@ -83,11 +100,12 @@
     <span class="ident">hash_alg</span>: <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HashType</span>,
     <span class="ident">curve</span>: <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EllipticCurveType</span>,
     <span class="ident">encoding</span>: <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EcdsaSignatureEncoding</span>,
-) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TinkError</span><span class="op">&gt;</span> {
-    <span class="kw">match</span> <span class="ident">encoding</span> {
-        <span class="ident">EcdsaSignatureEncoding</span>::<span class="ident">IeeeP1363</span> <span class="op">|</span> <span class="ident">EcdsaSignatureEncoding</span>::<span class="ident">Der</span> <span class="op">=</span><span class="op">&gt;</span> {}
+) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">SignatureEncoding</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="ident">encoding</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">encoding</span> {
+        <span class="ident">EcdsaSignatureEncoding</span>::<span class="ident">IeeeP1363</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">SignatureEncoding</span>::<span class="ident">IeeeP1363</span>,
+        <span class="ident">EcdsaSignatureEncoding</span>::<span class="ident">Der</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">SignatureEncoding</span>::<span class="ident">Der</span>,
         <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="string">&quot;ecdsa: unsupported encoding&quot;</span>.<span class="ident">into</span>()),
-    }
+    };
     <span class="kw">match</span> <span class="ident">curve</span> {
         <span class="ident">EllipticCurveType</span>::<span class="ident">NistP256</span> <span class="op">=</span><span class="op">&gt;</span> {
             <span class="kw">if</span> <span class="ident">hash_alg</span> <span class="op">!</span><span class="op">=</span> <span class="ident">HashType</span>::<span class="ident">Sha256</span> {
@@ -106,7 +124,7 @@
         }
         <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;unsupported curve: {:?}&quot;</span>, <span class="ident">curve</span>).<span class="ident">into</span>()),
     }
-    <span class="prelude-val">Ok</span>(())
+    <span class="prelude-val">Ok</span>(<span class="ident">encoding</span>)
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../../";window.currentCrate = "tink_signature";</script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>

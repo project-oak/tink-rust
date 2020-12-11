@@ -56,6 +56,8 @@
 <span id="53">53</span>
 <span id="54">54</span>
 <span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2020 The Tink-Rust Authors</span>
 <span class="comment">//</span>
@@ -85,7 +87,9 @@
 <span class="kw">impl</span> <span class="ident">Ed25519Verifier</span> {
     <span class="doccomment">/// Create a new instance of `Ed25519Verifier` from a compressed point on the curve.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">pub_key</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
-        <span class="comment">// TODO: check pub_key is a compressed point on the curve?</span>
+        <span class="comment">// The docs for [`ed25519_dalek::PublicKey`] state that the caller is responsible</span>
+        <span class="comment">// for ensuring that `pub_key` is a compressed point on the curve; however, the</span>
+        <span class="comment">// implementation does appear to check this.</span>
         <span class="kw">let</span> <span class="ident">public_key</span> <span class="op">=</span> <span class="ident">ed25519_dalek</span>::<span class="ident">PublicKey</span>::<span class="ident">from_bytes</span>(<span class="ident">pub_key</span>)
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;Ed25519Verifier: invalid key&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
         <span class="self">Self</span>::<span class="ident">new_from_public_key</span>(<span class="ident">public_key</span>)

@@ -91,6 +91,9 @@
 <span id="88">88</span>
 <span id="89">89</span>
 <span id="90">90</span>
+<span id="91">91</span>
+<span id="92">92</span>
+<span id="93">93</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2020 The Tink-Rust Authors</span>
 <span class="comment">//</span>
@@ -117,7 +120,10 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">primitiveset</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">proto</span> {
     <span class="doccomment">//! Auto-generated code from protocol buffer message definitions.</span>
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;json&quot;</span>))]</span>
     <span class="macro">include</span><span class="macro">!</span>(<span class="string">&quot;codegen/google.crypto.tink.rs&quot;</span>);
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;json&quot;</span>)]</span>
+    <span class="macro">include</span><span class="macro">!</span>(<span class="string">&quot;codegen/serde/google.crypto.tink.rs&quot;</span>);
 }
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">registry</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">subtle</span>;
