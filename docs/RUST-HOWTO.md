@@ -3,6 +3,17 @@
 This document contains instructions and Rust code snippets for common tasks in
 [Tink](https://github.com/project-oak/tink-rust).
 
+- [Setup Instructions](#setup-instructions)
+- [Rustdoc](#rustdoc)
+- [Obtaining and Using Primitives](#obtaining-and-using-primitives)
+    - [AEAD](#aead)
+    - [MAC](#mac)
+    - [Deterministic AEAD](#deterministic-aead)
+    - [Signature](#signature)
+- [Key Management](#key-management)
+    - [Generating New Keys and Keysets](#generating-new-keys-and-keysets)
+    - [Storing and Loading Existing Keysets](#storing-and-loading-existing-keysets)
+
 ## Setup Instructions
 
 To install the Tink-Rust repository locally run:
@@ -136,9 +147,9 @@ fn main() {
 ```
 <!-- prettier-ignore-end -->
 
-## Key management
+## Key Management
 
-### Generating new keys and keysets
+### Generating New Keys and Keysets
 
 To take advantage of key rotation and other key management features, you usually
 do not work with single keys, but with keysets. Keysets are just sets of keys
@@ -187,7 +198,7 @@ support the separation of these activities Tink-Rust provides a command-line too
 upstream [tinkey]( https://github.com/google/tink/blob/v1.5.0/docs/TINKEY.md) tool,which can be used for common key
 management tasks.
 
-### Storing and loading existing keysets
+### Storing and Loading Existing Keysets
 
 After generating key material, you might want to persist it to a storage system.
 Tink supports persisting the keys after encryption to any `std::io::Write` and
