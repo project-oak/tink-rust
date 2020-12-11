@@ -8,8 +8,8 @@ This repository holds a Rust port of Google's [Tink cryptography library](https:
 
 The following warnings apply to use of this repo:
 
- - This is not an official port of Tink, and is **not supported** by Google's cryptography teams.
- - **The repo is under construction** and so details of the API and the code may change without warning.
+- This is not an official port of Tink, and is **not supported** by Google's cryptography teams.
+- **The repo is under construction** and so details of the API and the code may change without warning.
 
 Also, this repository does not implement cryptographic functionality itself; the underlying cryptographic operations are
 currently provided by the [RustCrypto](https://github.com/RustCrypto) crates &ndash; this repo focuses on making
@@ -34,7 +34,7 @@ very little cryptographic functionality.
 Individual cryptographic primitives are implemented in `tink-<primitive>` crates, which depend on:
 
 - the `tink` crate for common types and helpers
- - the RustCrypto crates to provide underlying cryptographic implementations.
+- the RustCrypto crates to provide underlying cryptographic implementations.
 
 For example, the `tink-aead` crate provides code that performs authenticated encryption with additional data (AEAD),
 implementing the `tink::Aead` trait.
@@ -47,10 +47,10 @@ of `tink` itself.)
 
 The Rust port of Tink has the following meta-goals:
 
- - **Diverge as little as possible from the upstream Tink code**: The Rust port is primarily based on the Go language
-   version of upstream Tink, and aims to stay as close to it as possible so that future changes to Tink can be
-   merged more easily. However, this does mean that some aspects of the port are not quite idiomatic Rust.
- - **Don't write any crypto code**: The Rust port aims to defer all cryptographic implementations to external crates
+- **Diverge as little as possible from the upstream Tink code**: The Rust port is primarily based on the Go language
+  version of upstream Tink, and aims to stay as close to it as possible so that future changes to Tink can be
+  merged more easily. However, this does mean that some aspects of the port are not quite idiomatic Rust.
+- **Don't write any crypto code**: The Rust port aims to defer all cryptographic implementations to external crates
   (currently the [RustCrypto](https://github.com/RustCrypto) crates).
 
 The remainder of this section describes design decisions involved in the conversion from Go to Rust.
@@ -81,21 +81,22 @@ A `KeyManager` is an object that handles the translation from a `Key` instance t
 that identifies the kind of keys it supports.
 
 This registry allows an arbitrary `Key` to be converted to a `Primitive` of the relevant type:
- - In Go, primitives are of type `interface {}`, and the user of the registry uses [type
-   assertions](https://tour.golang.org/methods/15) to convert a general primitive to a more specific object that
-   implements the `interface` of a particular primitive.
-     - The global registry is automatically populated at start-of-day, by the use of
-       [`init()`](https://golang.org/doc/effective_go.html#init) methods for each particular `KeyManager`
-       implementation.
- - In C++, the `KeyManager<P>` type is a template that is parameterized by the particular primitive
-   type that it handles, so it returns primitives that are automatically type safe.  Internally, the global registry of
-   key manager instances maps type URL strings to a combination of (roughly) `void *` and
-   [`type_info`](https://en.cppreference.com/w/cpp/types/type_info); the particular `KeyManager<P>` is then
-   recovered via `static_cast` (modulo a check that the `type_info` is sensible).
-     - The global registry has to be manually populated by calling `<Primitive>Config::Register()` methods before use.
- - In Rust, the `Primitive` type is an enum that encompasses all primitive types, and the user of the registry
-   checks that the relevant enum variant is returned.
-     - The global registry has to be manually populated by calling `tink_<primitive>::init()` methods before use.
+
+- In Go, primitives are of type `interface {}`, and the user of the registry uses [type
+  assertions](https://tour.golang.org/methods/15) to convert a general primitive to a more specific object that
+  implements the `interface` of a particular primitive.
+    - The global registry is automatically populated at start-of-day, by the use of
+      [`init()`](https://golang.org/doc/effective_go.html#init) methods for each particular `KeyManager`
+      implementation.
+- In C++, the `KeyManager<P>` type is a template that is parameterized by the particular primitive
+  type that it handles, so it returns primitives that are automatically type safe.  Internally, the global registry of
+  key manager instances maps type URL strings to a combination of (roughly) `void *` and
+  [`type_info`](https://en.cppreference.com/w/cpp/types/type_info); the particular `KeyManager<P>` is then
+  recovered via `static_cast` (modulo a check that the `type_info` is sensible).
+    - The global registry has to be manually populated by calling `<Primitive>Config::Register()` methods before use.
+- In Rust, the `Primitive` type is an enum that encompasses all primitive types, and the user of the registry
+  checks that the relevant enum variant is returned.
+    - The global registry has to be manually populated by calling `tink_<primitive>::init()` methods before use.
 
 ### Error Handling
 
@@ -165,19 +166,19 @@ buffer support. If Prost gets [`no_std` support](https://github.com/danburkert/p
 The obvious changes needed to make Tink `no_std` compatible would include the following, but there are bound to be
 others:
 
- - Depend on `core` + `alloc` instead of `std`, and have a `std` feature for those things that definitely need `std`:
-     - keyset I/O (both binary and JSON-based)
-     - streaming AEAD
- - Changes to use `core` / `alloc` types:
-     - `Box` => `alloc::boxed::Box`
-     - `String` => `alloc::string::String`
-     - `Vec` => `alloc::vec::Vec`
-     - `std::sync::Arc` => `alloc::sync::Arc`
-     - `std::fmt::*` => `core::fmt::*`
-     - `std::collections::HashMap` => `alloc::collections::BTreeMap`
-     - `std::sync::RwLock` => `spin::RwLock`
-     - `std::convert::From` => `core::convert::From`
-     - Move `TinkError` to wrap something that just implements `core::fmt::Debug` rather than `std::error::Error`.
+- Depend on `core` + `alloc` instead of `std`, and have a `std` feature for those things that definitely need `std`:
+    - keyset I/O (both binary and JSON-based)
+    - streaming AEAD
+- Changes to use `core` / `alloc` types:
+    - `Box` => `alloc::boxed::Box`
+    - `String` => `alloc::string::String`
+    - `Vec` => `alloc::vec::Vec`
+    - `std::sync::Arc` => `alloc::sync::Arc`
+    - `std::fmt::*` => `core::fmt::*`
+    - `std::collections::HashMap` => `alloc::collections::BTreeMap`
+    - `std::sync::RwLock` => `spin::RwLock`
+    - `std::convert::From` => `core::convert::From`
+    - Move `TinkError` to wrap something that just implements `core::fmt::Debug` rather than `std::error::Error`.
 
 ### Stringly-Typed Parameters
 
@@ -196,14 +197,14 @@ places (e.g. hash function names, curve names).  Wherever possible, the Rust por
 ### JSON Output
 
 Tink supports the encoding of `Keyset` and `EncryptedKeyset` types as JSON, with the following conventions:
- - Values of type `bytes` are serialized to base64-encoded strings (standard encoding).
- - Enum values are serialized as capitalized strings (e.g. `"ASYMMETRIC_PRIVATE"`).
+
+- Values of type `bytes` are serialized to base64-encoded strings (standard encoding).
+- Enum values are serialized as capitalized strings (e.g. `"ASYMMETRIC_PRIVATE"`).
 
 The `tink::keyset::json_io` module includes `serde` serialization code which matches these conventions, and
 the [prost-build](https://crates.io/crates/prost-build) invocation that creates the Rust protobuf message
 definitions includes a collection of extra options to force the generation of the appropriate `serde`
 attributes.
-
 
 ### Code Structure
 
