@@ -78,6 +78,8 @@ for f in "${MD_FILES[@]}"; do
   errcount=$((errcount + $?))
   check_todo "$f"
   errcount=$((errcount + $?))
+  mdl "$f"
+  errcount=$((errcount + $?))
 done
 
 if [ $errcount -gt 0 ]; then
