@@ -189,14 +189,12 @@ useful e.g. for key wrapping or for some schemes for searching on encrypted data
 for more info).  However, because of deterministic property, implementations of
 this primitive are **not semantically secure**.
 
-
 As for (regular) [AEAD](#authenticated-encryption-with-associated-data), when
 using Deterministic AEAD to encrypt a plaintext one can optionally provide
 _associated data_ that should be authenticated but not encrypted.  That is, the
 encryption with associated data ensures authenticity (ie. who the sender is) and
 integrity (ie. data has not been tampered with) of that data, but not its
 secrecy (see [RFC 5116](https://tools.ietf.org/html/rfc5116)).
-
 
 Minimal properties:
 
@@ -220,7 +218,6 @@ MAC primitive are secure against existential forgery under chosen plaintext
 attack, and can be deterministic or randomized. This interface should be used
 for authentication only, and not for other purposes like generation of
 pseudorandom bytes.
-
 
 Minimal properties:
 
@@ -249,12 +246,12 @@ carefully.
 
 Minimal properties:
 
--   without knowledge of the key the PRF is indistinguishable from a random
-    function
--   at least 128-bit security, also in multi-user scenarios (when an attacker is
-    not targeting a specific key, but any key from a set of up to 2<sup>32</sup>
-    keys)
--   at least 16 byte of output available
+- without knowledge of the key the PRF is indistinguishable from a random
+  function
+- at least 128-bit security, also in multi-user scenarios (when an attacker is
+  not targeting a specific key, but any key from a set of up to 2<sup>32</sup>
+  keys)
+- at least 16 byte of output available
 
 WARNING: While HMAC-SHA-2 and HKDF-SHA-2 behave like a cryptographically secure
 hash function if the key is revealed, and still provide some protection against
