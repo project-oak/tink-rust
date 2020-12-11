@@ -152,12 +152,12 @@ fn main() {
 ### Generating New Keys and Keysets
 
 To take advantage of key rotation and other key management features, you usually
-do not work with single keys, but with keysets. Keysets are just sets of keys
+do not work with single keys, but with keysets. `Keyset`s are just sets of keys
 with some additional parameters and metadata.
 
 Internally Tink stores keysets as Protocol Buffers, but you can work with
 keysets via a wrapper called keyset handle. You can generate a new keyset and
-obtain its handle using a KeyTemplate. KeysetHandle objects enforce certain
+obtain its handle using a `KeyTemplate`. Keyset `Handle` objects enforce certain
 restrictions that prevent accidental leakage of the sensitive key material.
 
 <!-- prettier-ignore-start -->
@@ -175,14 +175,16 @@ fn main() {
 ```
 <!-- prettier-ignore-end -->
 
-Key templates are available for MAC and DAEAD encryption.
+Key templates are available for different primitives as follows.
 
 Key Template Type  | Key Template
 ------------------ | ------------
 AEAD               | `tink_aead::aes128_ctr_hmac_sha256_key_template()`
 AEAD               | `tink_aead::aes128_gcm_key_template()`
+AEAD               | `tink_aead::aes128_gcm_siv_key_template()`
 AEAD               | `tink_aead::aes256_ctr_hmac_sha256_key_template()`
 AEAD               | `tink_aead::aes256_gcm_key_template()`
+AEAD               | `tink_aead::aes256_gcm_siv_key_template()`
 AEAD               | `tink_aead::cha_cha20_poly1305_key_template()`
 AEAD               | `tink_aead::x_cha_cha20_poly1305_key_template()`
 DAEAD              | `tink_daead::aes_siv_key_template()`
@@ -195,7 +197,7 @@ Signature          | `tink_signature::ed25519_key_template()`
 
 To avoid accidental leakage of sensitive key material, one should avoid mixing keyset generation and usage in code. To
 support the separation of these activities Tink-Rust provides a command-line tool, `rinkey` that is equivalent to the
-upstream [tinkey]( https://github.com/google/tink/blob/v1.5.0/docs/TINKEY.md) tool,which can be used for common key
+upstream [tinkey]( https://github.com/google/tink/blob/v1.5.0/docs/TINKEY.md) tool, which can be used for common key
 management tasks.
 
 ### Storing and Loading Existing Keysets
