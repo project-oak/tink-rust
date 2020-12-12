@@ -646,6 +646,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "example-streaming"
+version = "0.1.0"
+dependencies = [
+ "tempfile",
+ "tink",
+ "tink-streaming-aead",
+]
+
+[[package]]
 name = "ff"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

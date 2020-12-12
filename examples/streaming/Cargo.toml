@@ -1,0 +1,11 @@
+[package]
+name = "example-streaming"
+version = "0.1.0"
+authors = ["David Drysdale <drysdale@google.com>"]
+edition = "2018"
+license = "Apache-2.0"
+
+[dependencies]
+tempfile = "^3.1"
+tink = "^0.1"
+tink-streaming-aead = "^0.1"

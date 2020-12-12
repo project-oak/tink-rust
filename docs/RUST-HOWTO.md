@@ -10,6 +10,7 @@ This document contains instructions and Rust code snippets for common tasks in
     - [MAC](#mac)
     - [Deterministic AEAD](#deterministic-aead)
     - [Signature](#signature)
+    - [Symmetric Key Encryption of Streaming Data](#symmetric-key-encryption-of-streaming-data)
 - [Key Management](#key-management)
     - [Generating New Keys and Keysets](#generating-new-keys-and-keysets)
     - [Storing and Loading Existing Keysets](#storing-and-loading-existing-keysets)
@@ -143,6 +144,69 @@ fn main() {
     let v = tink_signature::new_verifier(&pubkh).unwrap();
     assert!(v.verify(&a, b"this data needs to be signed").is_ok());
     println!("Signature verified.");
+}
+```
+<!-- prettier-ignore-end -->
+
+### Symmetric Key Encryption of Streaming Data
+
+You can obtain and use a
+[Streaming AEAD](PRIMITIVES.md#streaming-authenticated-encryption-with-associated-data)
+(Streaming Authenticated Encryption with Associated Data) primitive to encrypt
+or decrypt data streams:
+
+<!-- prettier-ignore-start -->
+[embedmd]:# (../examples/streaming/src/main.rs Rust /.*streaming_aead::init/ /^}/)
+```Rust
+    tink_streaming_aead::init();
+
+    // Generate fresh key material.
+    let kh = tink::keyset::Handle::new(&tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template())
+        .unwrap();
+
+    // Get the primitive that uses the key material.
+    let a = tink_streaming_aead::new(&kh).unwrap();
+
+    // Use the primitive to create a [`std::io::Write`] object that writes ciphertext
+    // to a file.
+    let aad = b"this data needs to be authenticated, but not encrypted";
+    let ct_file = std::fs::File::create(ct_filename.clone()).unwrap();
+    let mut w = a
+        .new_encrypting_writer(Box::new(ct_file), &aad[..])
+        .unwrap();
+
+    // Write data to the encrypting-writer, in chunks to simulate streaming.
+    let mut offset = 0;
+    while offset < PT.len() {
+        let end = std::cmp::min(PT.len(), offset + CHUNK_SIZE);
+        let written = w.write(&PT[offset..end]).unwrap();
+        offset += written;
+        // Can flush but it does nothing.
+        w.flush().unwrap();
+    }
+    // Complete the encryption (process any remaining buffered plaintext).
+    w.close().unwrap();
+
+    // For the other direction, given a [`std::io::Read`] object that reads ciphertext,
+    // use the primitive to create a [`std::io::Read`] object that emits the corresponding
+    // plaintext.
+    let ct_file = std::fs::File::open(ct_filename).unwrap();
+    let mut r = a
+        .new_decrypting_reader(Box::new(ct_file), &aad[..])
+        .unwrap();
+
+    // Read data from the decrypting-reader, in chunks to simulate streaming.
+    let mut recovered = vec![];
+    loop {
+        let mut chunk = vec![0; CHUNK_SIZE];
+        let len = r.read(&mut chunk).unwrap();
+        if len == 0 {
+            break;
+        }
+        recovered.extend_from_slice(&chunk[..len]);
+    }
+
+    assert_eq!(recovered, PT);
 }
 ```
 <!-- prettier-ignore-end -->

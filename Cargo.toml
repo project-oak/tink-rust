@@ -8,6 +8,7 @@ members = [
   "examples/kms",
   "examples/mac",
   "examples/signature",
+  "examples/streaming",
   "integration/awskms",
   "mac",
   "prf",
