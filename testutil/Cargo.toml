@@ -12,7 +12,7 @@ hex = "^0.4.2"
 p256 = { version = "^0.6", features = ["ecdsa"] }
 prost = "^0.6.1"
 rand = "^0.7"
-serde = { version = "^1.0.116", features = ["derive"] }
+serde = { version = "^1.0.118", features = ["derive"] }
 # Depending on tink-testutil will turn on the `insecure` feature of `tink`.
 tink = { version = "^0.1", features = ["insecure"] }
 tink-daead = "^0.1"
