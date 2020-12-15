@@ -19,7 +19,7 @@
 use crate::proto;
 
 #[derive(Debug, Default)]
-pub struct SignatureServerImpl {}
+pub struct SignatureServerImpl;
 
 #[tonic::async_trait]
 impl proto::signature_server::Signature for SignatureServerImpl {

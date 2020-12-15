@@ -19,7 +19,7 @@
 use crate::proto;
 
 #[derive(Debug, Default)]
-pub struct DaeadServerImpl {}
+pub struct DaeadServerImpl;
 
 #[tonic::async_trait]
 impl proto::deterministic_aead_server::DeterministicAead for DaeadServerImpl {
