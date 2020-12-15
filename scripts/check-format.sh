@@ -40,6 +40,7 @@ check_todo() {
   local result
   result=$(grep --with-filename --line-number TODO "$path" | grep --invert-match --regexp='TODO(#[0-9][0-9]*)')
   if [[ -n $result ]]; then
+    echo "TODO marker without issue number:"
     echo "$result"
     return 1
   fi
@@ -52,10 +53,11 @@ check_panic() {
   if [[ $path =~ "test" || $path =~ "examples/" || $path =~ "rinkey/" || $path =~ "benches/" ]]; then
     return 0
   fi
-  for needle in "panic!(" "unwrap(" "expect(" "unwrap_err(" "expect_err(" "unwrap_none(" "expect_none("; do
+  for needle in "panic!(" "unwrap(" "expect(" "unwrap_err(" "expect_err(" "unwrap_none(" "expect_none(" "unreachable!"; do
     local result
     result=$(grep --with-filename --line-number "$needle" "$path" | grep --invert-match --regexp='safe:')
     if [[ -n $result ]]; then
+      echo "Un-annotated panic code:"
       echo "$result"
       return 1
     fi
