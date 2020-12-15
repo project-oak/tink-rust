@@ -21,7 +21,7 @@ use tink::{utils::wrap_err, TinkError};
 use tink_testutil::SharedBuf;
 
 #[derive(Debug, Default)]
-pub struct StreamingAeadServerImpl {}
+pub struct StreamingAeadServerImpl;
 
 #[tonic::async_trait]
 impl proto::streaming_aead_server::StreamingAead for StreamingAeadServerImpl {

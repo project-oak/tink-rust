@@ -19,7 +19,7 @@
 use crate::proto;
 
 #[derive(Debug, Default)]
-pub struct PrfSetServerImpl {}
+pub struct PrfSetServerImpl;
 
 #[tonic::async_trait]
 impl proto::prf_set_server::PrfSet for PrfSetServerImpl {

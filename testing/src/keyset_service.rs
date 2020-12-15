@@ -21,7 +21,7 @@ use prost::Message;
 use tink::{utils::wrap_err, TinkError};
 
 #[derive(Debug, Default)]
-pub struct KeysetServerImpl {}
+pub struct KeysetServerImpl;
 
 #[tonic::async_trait]
 impl proto::keyset_server::Keyset for KeysetServerImpl {

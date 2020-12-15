@@ -17,7 +17,7 @@
 //! Testing server for metadata.
 
 #[derive(Debug, Default)]
-pub struct MetadataServerImpl {}
+pub struct MetadataServerImpl;
 
 #[tonic::async_trait]
 impl crate::proto::metadata_server::Metadata for MetadataServerImpl {

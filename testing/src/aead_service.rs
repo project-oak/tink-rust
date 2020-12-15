@@ -19,7 +19,7 @@
 use crate::proto;
 
 #[derive(Debug, Default)]
-pub struct AeadServerImpl {}
+pub struct AeadServerImpl;
 
 #[tonic::async_trait]
 impl proto::aead_server::Aead for AeadServerImpl {

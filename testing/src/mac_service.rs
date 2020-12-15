@@ -19,7 +19,7 @@
 use crate::proto;
 
 #[derive(Debug, Default)]
-pub struct MacServerImpl {}
+pub struct MacServerImpl;
 
 #[tonic::async_trait]
 impl proto::mac_server::Mac for MacServerImpl {
