@@ -207,6 +207,10 @@ fn test_aes_gcm_hkdf_type_url() {
         tink_testutil::AES_GCM_HKDF_TYPE_URL,
         "incorrect key type"
     );
+    assert_eq!(
+        key_manager.key_material_type(),
+        tink::proto::key_data::KeyMaterialType::Symmetric
+    );
 }
 
 fn gen_invalid_aes_gcm_hkdf_keys() -> Vec<Vec<u8>> {
@@ -246,6 +250,22 @@ fn gen_invalid_aes_gcm_hkdf_keys() -> Vec<Vec<u8>> {
             16,
             16,
             HashType::Sha256,
+            4096,
+        )),
+        // ciphertext segment size too short
+        proto_encode(&tink_testutil::new_aes_gcm_hkdf_key(
+            tink_testutil::AES_GCM_KEY_VERSION,
+            16,
+            16,
+            HashType::Sha256,
+            4,
+        )),
+        // invalid hash
+        proto_encode(&tink_testutil::new_aes_gcm_hkdf_key(
+            tink_testutil::AES_GCM_KEY_VERSION,
+            16,
+            16,
+            HashType::UnknownHash,
             4096,
         )),
     ]
