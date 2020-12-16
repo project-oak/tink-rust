@@ -993,12 +993,30 @@ where
 }
 
 /// Check for an expected error.
-pub fn expect_err<T>(result: Result<T, TinkError>, err_msg: &str) {
-    assert!(result.is_err());
+pub fn expect_err<T, E: std::fmt::Debug>(result: Result<T, E>, err_msg: &str) {
+    assert!(result.is_err(), "expected error containing '{}'", err_msg);
     let err = result.err();
     assert!(
         format!("{:?}", err).contains(err_msg),
         "unexpected error {:?}, doesn't contain '{}'",
+        err,
+        err_msg
+    );
+}
+
+/// Check for an expected error in a particular test case.
+pub fn expect_err_for_case<T, E: std::fmt::Debug>(result: Result<T, E>, err_msg: &str, name: &str) {
+    assert!(
+        result.is_err(),
+        "{}: expected error containing '{}'",
+        name,
+        err_msg
+    );
+    let err = result.err();
+    assert!(
+        format!("{:?}", err).contains(err_msg),
+        "{}: unexpected error {:?}, doesn't contain '{}'",
+        name,
         err,
         err_msg
     );
