@@ -58,7 +58,7 @@ impl io::Read for DecryptReader {
             State::Failed => {
                 return Err(io::Error::new(
                     io::ErrorKind::InvalidInput,
-                    "no matching key found for the ciphertext in the stream",
+                    "read previously failed",
                 ))
             }
             State::Pending(_) => {}

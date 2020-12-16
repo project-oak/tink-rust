@@ -169,20 +169,7 @@ fn test_nonce_based_invalid_parameters() {
             first_ciphertext_segment_offset: tc.first_ciphertext_segment_offset,
         };
         let result = test_encrypt(tc.plaintext_size, tc.nonce_prefix_size, &test_params);
-        assert!(
-            result.is_err(),
-            "{}: did not produce expected error: got: {:?}, want: Err({})\n",
-            tc.name,
-            result,
-            tc.expected_error
-        );
-        assert!(
-            format!("{:?}", result).contains(tc.expected_error),
-            "{}: did not produce expected error: got: {:?}, want: Err({})\n",
-            tc.name,
-            result,
-            tc.expected_error
-        );
+        tink_testutil::expect_err_for_case(result, tc.expected_error, tc.name);
 
         // Prepare empty input for test_decrypt().
         let ciphertext_segment_size = tc.plaintext_segment_size + tc.nonce_size;
@@ -203,20 +190,7 @@ fn test_nonce_based_invalid_parameters() {
             &test_params,
             &nonce_prefix,
         );
-        assert!(
-            result.is_err(),
-            "{}: did not produce expected error: got: {:?}, want: Err({})\n",
-            tc.name,
-            result,
-            tc.expected_error
-        );
-        assert!(
-            format!("{:?}", result).contains(tc.expected_error),
-            "{}: did not produce expected error: got: {:?}, want: Err({})\n",
-            tc.name,
-            result,
-            tc.expected_error
-        );
+        tink_testutil::expect_err_for_case(result, tc.expected_error, tc.name);
     }
 }
 
