@@ -46,11 +46,7 @@ fn test_factory_multiple_keys() {
     let keyset_handle2 = tink::keyset::insecure::new_handle(keyset2).unwrap();
     let a2 = tink_streaming_aead::new(&keyset_handle2).expect("tink_streaming_aead::new failed");
     let result = validate_factory_cipher(a2.box_clone(), a.box_clone());
-    assert!(result.is_err());
-    assert!(
-        format!("{:?}", result.unwrap_err()).contains("decryption failed"),
-        "expect decryption to fail with random key"
-    );
+    tink_testutil::expect_err(result, "no matching key");
 }
 
 fn validate_factory_cipher(

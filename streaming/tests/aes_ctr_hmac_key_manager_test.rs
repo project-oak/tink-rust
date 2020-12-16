@@ -481,6 +481,22 @@ fn test_new_key_with_invalid_format() {
             },
         ),
         (
+            "tag size too big",
+            AesCtrHmacStreamingKeyFormat {
+                version: tink_streaming_aead::AES_CTR_HMAC_KEY_VERSION,
+                params: Some(AesCtrHmacStreamingParams {
+                    ciphertext_segment_size: 4096,
+                    derived_key_size: 16,
+                    hkdf_hash_type: HashType::Sha256 as i32,
+                    hmac_params: Some(tink::proto::HmacParams {
+                        hash: HashType::Sha256 as i32,
+                        tag_size: 99999,
+                    }),
+                }),
+                key_size: 16,
+            },
+        ),
+        (
             "invalid AES key size",
             AesCtrHmacStreamingKeyFormat {
                 version: tink_streaming_aead::AES_CTR_HMAC_KEY_VERSION,
@@ -638,6 +654,22 @@ fn test_primitive_with_invalid_key() {
                     hmac_params: Some(tink::proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 3,
+                    }),
+                }),
+                key_value: vec![0; 16],
+            },
+        ),
+        (
+            "tag size too big",
+            AesCtrHmacStreamingKey {
+                version: tink_streaming_aead::AES_CTR_HMAC_KEY_VERSION,
+                params: Some(AesCtrHmacStreamingParams {
+                    ciphertext_segment_size: 4096,
+                    derived_key_size: 16,
+                    hkdf_hash_type: HashType::Sha256 as i32,
+                    hmac_params: Some(tink::proto::HmacParams {
+                        hash: HashType::Sha256 as i32,
+                        tag_size: 99999,
                     }),
                 }),
                 key_value: vec![0; 16],

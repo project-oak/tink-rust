@@ -56,7 +56,7 @@ fn example() {
 }
 
 #[test]
-fn streaming_roundtrip_chunks() {
+fn test_streaming_roundtrip_chunks() {
     tink_streaming_aead::init();
     let pt = get_random_bytes(20_000);
     let aad = get_random_bytes(100);
@@ -75,7 +75,7 @@ fn streaming_roundtrip_chunks() {
 
             // Write data to an encrypting-writer, in chunks to simulate streaming.
             let mut w = a
-                .new_encrypting_writer(Box::new(buf.clone()), &aad[..])
+                .new_encrypting_writer(Box::new(buf.clone()), &aad)
                 .unwrap();
             let mut offset = 0;
             while offset < pt.len() {
@@ -87,7 +87,7 @@ fn streaming_roundtrip_chunks() {
             w.close().unwrap();
 
             // Read data from a decrypting-reader, in chunks to simulate streaming.
-            let mut r = a.new_decrypting_reader(Box::new(buf), &aad[..]).unwrap();
+            let mut r = a.new_decrypting_reader(Box::new(buf), &aad).unwrap();
             let mut recovered = vec![];
             loop {
                 let mut chunk = vec![0; *pt_chunk_size];
@@ -101,4 +101,54 @@ fn streaming_roundtrip_chunks() {
             assert_eq!(recovered, pt);
         }
     }
+}
+
+#[test]
+fn test_closed_write() {
+    tink_streaming_aead::init();
+    let pt = get_random_bytes(2000);
+    let aad = get_random_bytes(100);
+
+    let kh = tink::keyset::Handle::new(&tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template())
+        .unwrap();
+    let a = tink_streaming_aead::new(&kh).unwrap();
+    let buf = vec![];
+
+    let mut w = a.new_encrypting_writer(Box::new(buf), &aad).unwrap();
+    w.write_all(&pt).unwrap();
+    w.close().unwrap();
+
+    let result = w.write_all(&pt);
+    tink_testutil::expect_err(result, "write on closed writer");
+}
+
+#[test]
+fn test_multiple_failed_read() {
+    tink_streaming_aead::init();
+    let pt = get_random_bytes(2000);
+    let aad = get_random_bytes(100);
+
+    let kh = tink::keyset::Handle::new(&tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template())
+        .unwrap();
+    let a = tink_streaming_aead::new(&kh).unwrap();
+    let buf = SharedBuf::new();
+
+    {
+        let mut w = a
+            .new_encrypting_writer(Box::new(buf.clone()), &aad)
+            .unwrap();
+        w.write_all(&pt).unwrap();
+        w.close().unwrap();
+    }
+
+    // Fail to decrypt-read with a different key.
+    let kh = tink::keyset::Handle::new(&tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template())
+        .unwrap();
+    let a = tink_streaming_aead::new(&kh).unwrap();
+    let mut r = a.new_decrypting_reader(Box::new(buf), &aad).unwrap();
+    let mut recovered = vec![];
+    let result = r.read_to_end(&mut recovered);
+    tink_testutil::expect_err(result, "no matching key found");
+    let result = r.read_to_end(&mut recovered);
+    tink_testutil::expect_err(result, "read previously failed");
 }
