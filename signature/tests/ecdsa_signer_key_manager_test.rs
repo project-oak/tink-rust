@@ -434,6 +434,26 @@ fn test_new_key_with_invalid_format() {
             },
         ),
         (
+            "invalid hash type",
+            EcdsaKeyFormat {
+                params: Some(EcdsaParams {
+                    hash_type: HashType::Sha256 as i32,
+                    curve: EllipticCurveType::NistP521 as i32,
+                    encoding: EcdsaSignatureEncoding::Der as i32,
+                }),
+            },
+        ),
+        (
+            "unsupported curve",
+            EcdsaKeyFormat {
+                params: Some(EcdsaParams {
+                    hash_type: HashType::Sha512 as i32,
+                    curve: EllipticCurveType::NistP521 as i32,
+                    encoding: EcdsaSignatureEncoding::Der as i32,
+                }),
+            },
+        ),
+        (
             "unsupported encoding",
             EcdsaKeyFormat {
                 params: Some(EcdsaParams {
