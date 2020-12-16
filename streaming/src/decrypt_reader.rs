@@ -122,18 +122,6 @@ struct CopyReader {
     copied_data: Vec<u8>,
 }
 
-impl std::fmt::Debug for CopyReader {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "CopyReader {{copying={}, read_pos={}, copied_data.len()={}}}",
-            self.copying,
-            self.read_pos,
-            self.copied_data.len(),
-        )
-    }
-}
-
 impl CopyReader {
     fn new(reader: Box<dyn io::Read>) -> Self {
         Self {
@@ -176,7 +164,7 @@ impl io::Read for CopyReader {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 struct SharedCopyReader(Rc<RefCell<CopyReader>>);
 
 impl SharedCopyReader {
