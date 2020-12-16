@@ -30,11 +30,11 @@ pub struct HkdfPrf {
     prk: HkdfPrfVariant,
 }
 
+#[allow(clippy::large_enum_variant)]
 #[derive(Clone)]
 enum HkdfPrfVariant {
     Sha1(hkdf::Hkdf<sha1::Sha1>),
     Sha256(hkdf::Hkdf<sha2::Sha256>),
-    Sha384(hkdf::Hkdf<sha2::Sha384>),
     Sha512(hkdf::Hkdf<sha2::Sha512>),
 }
 
@@ -45,9 +45,6 @@ impl HkdfPrf {
             HashType::Sha1 => HkdfPrfVariant::Sha1(hkdf::Hkdf::<sha1::Sha1>::new(Some(salt), key)),
             HashType::Sha256 => {
                 HkdfPrfVariant::Sha256(hkdf::Hkdf::<sha2::Sha256>::new(Some(salt), key))
-            }
-            HashType::Sha384 => {
-                HkdfPrfVariant::Sha384(hkdf::Hkdf::<sha2::Sha384>::new(Some(salt), key))
             }
             HashType::Sha512 => {
                 HkdfPrfVariant::Sha512(hkdf::Hkdf::<sha2::Sha512>::new(Some(salt), key))
@@ -81,7 +78,6 @@ impl tink::Prf for HkdfPrf {
         match &self.prk {
             HkdfPrfVariant::Sha1(prk) => compute_hkdf_with::<sha1::Sha1>(prk, data, out_len),
             HkdfPrfVariant::Sha256(prk) => compute_hkdf_with::<sha2::Sha256>(prk, data, out_len),
-            HkdfPrfVariant::Sha384(prk) => compute_hkdf_with::<sha2::Sha384>(prk, data, out_len),
             HkdfPrfVariant::Sha512(prk) => compute_hkdf_with::<sha2::Sha512>(prk, data, out_len),
         }
     }
