@@ -37,13 +37,8 @@ impl tink::registry::KeyManager for AesGcmHkdfKeyManager {
         }
         let key = tink::proto::AesGcmHkdfStreamingKey::decode(serialized_key)
             .map_err(|e| wrap_err("AesGcmHkdfKeyManager: invalid key", e))?;
-        validate_key(&key)?;
-
-        let key_params = key
-            .params
-            .ok_or_else(|| TinkError::new("AesGcmHkdfKeyManager: no params"))?;
-        let hkdf_hash = HashType::from_i32(key_params.hkdf_hash_type)
-            .ok_or_else(|| TinkError::new("AesGcmHkdfKeyManager: unknown hash"))?;
+        let (key_params, hkdf_hash) =
+            validate_key(&key).map_err(|e| wrap_err("AesGcmHkdfKeyManager", e))?;
         match subtle::AesGcmHkdf::new(
             &key.key_value,
             hkdf_hash,
@@ -68,11 +63,8 @@ impl tink::registry::KeyManager for AesGcmHkdfKeyManager {
         }
         let key_format = tink::proto::AesGcmHkdfStreamingKeyFormat::decode(serialized_key_format)
             .map_err(|e| wrap_err("AesGcmHkdfKeyManager: invalid key format", e))?;
-        validate_key_format(&key_format)
-            .map_err(|e| wrap_err("AesGcmHkdfKeyManager: invalid key format", e))?;
-        let key_params = key_format
-            .params
-            .ok_or_else(|| TinkError::new("AesGcmHkdfKeyManager: no params"))?;
+        let key_params =
+            validate_key_format(&key_format).map_err(|e| wrap_err("AesGcmHkdfKeyManager", e))?;
         let key = tink::proto::AesGcmHkdfStreamingKey {
             version: AES_GCM_HKDF_KEY_VERSION,
             key_value: get_random_bytes(key_format.key_size as usize),
@@ -93,39 +85,40 @@ impl tink::registry::KeyManager for AesGcmHkdfKeyManager {
 }
 
 /// Validate the given [`tink::proto::AesGcmHkdfStreamingKey`].
-fn validate_key(key: &tink::proto::AesGcmHkdfStreamingKey) -> Result<(), TinkError> {
-    tink::keyset::validate_key_version(key.version, AES_GCM_HKDF_KEY_VERSION)
-        .map_err(|e| wrap_err("AesGcmHkdfKeyManager", e))?;
-    let key_size = key.key_value.len();
-    crate::subtle::validate_aes_key_size(key_size)
-        .map_err(|e| wrap_err("AesGcmHkdfKeyManager", e))?;
+fn validate_key(
+    key: &tink::proto::AesGcmHkdfStreamingKey,
+) -> Result<(tink::proto::AesGcmHkdfStreamingParams, HashType), TinkError> {
+    tink::keyset::validate_key_version(key.version, AES_GCM_HKDF_KEY_VERSION)?;
+    crate::subtle::validate_aes_key_size(key.key_value.len())?;
     let key_params = key
         .params
         .as_ref()
-        .ok_or_else(|| TinkError::new("AesGcmHkdfKeyManager: no key params"))?;
-    validate_params(&key_params).map_err(|e| wrap_err("AesGcmHkdfKeyManager", e))
+        .ok_or_else(|| TinkError::new("no key params"))?;
+    let hkdf_hash = validate_params(key_params)?;
+    Ok((key_params.clone(), hkdf_hash))
 }
 
 /// Validate the given [`tink::proto::AesGcmHkdfStreamingKeyFormat`].
 fn validate_key_format(
     format: &tink::proto::AesGcmHkdfStreamingKeyFormat,
-) -> Result<(), TinkError> {
-    crate::subtle::validate_aes_key_size(format.key_size as usize)
-        .map_err(|e| wrap_err("AesGcmHkdfKeyManager", e))?;
+) -> Result<tink::proto::AesGcmHkdfStreamingParams, TinkError> {
+    crate::subtle::validate_aes_key_size(format.key_size as usize)?;
     let format_params = format
         .params
         .as_ref()
-        .ok_or_else(|| TinkError::new("AesGcmHkdfKeyManager: no format params"))?;
-    validate_params(&format_params).map_err(|e| wrap_err("AesGcmHkdfKeyManager", e))
+        .ok_or_else(|| TinkError::new("no format params"))?;
+    validate_params(&format_params).map_err(|e| wrap_err("AesGcmHkdfKeyManager", e))?;
+    Ok(format_params.clone())
 }
 
 /// Validate the given [`tink::proto::AesGcmHkdfStreamingParams`].
-fn validate_params(params: &tink::proto::AesGcmHkdfStreamingParams) -> Result<(), TinkError> {
+fn validate_params(params: &tink::proto::AesGcmHkdfStreamingParams) -> Result<HashType, TinkError> {
     crate::subtle::validate_aes_key_size(params.derived_key_size as usize)?;
-    let hkdf_hash = HashType::from_i32(params.hkdf_hash_type);
-    if hkdf_hash.is_none() || hkdf_hash == Some(HashType::UnknownHash) {
-        return Err("unknown HKDF hash type".into());
-    }
+    let hkdf_hash = match HashType::from_i32(params.hkdf_hash_type) {
+        Some(HashType::UnknownHash) => return Err("unknown HKDF hash type".into()),
+        Some(h) => h,
+        None => return Err("unknown HKDF hash type".into()),
+    };
     let min_segment_size = (params.derived_key_size as usize)
         + subtle::AES_GCM_HKDF_NONCE_PREFIX_SIZE_IN_BYTES
         + subtle::AES_GCM_HKDF_TAG_SIZE_IN_BYTES
@@ -133,5 +126,5 @@ fn validate_params(params: &tink::proto::AesGcmHkdfStreamingParams) -> Result<()
     if (params.ciphertext_segment_size as usize) < min_segment_size {
         return Err("ciphertext segment_size must be at least (derivedKeySize + noncePrefixInBytes + tagSizeInBytes + 2)".into());
     }
-    Ok(())
+    Ok(hkdf_hash)
 }

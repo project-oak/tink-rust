@@ -37,19 +37,9 @@ impl tink::registry::KeyManager for AesCtrHmacKeyManager {
         }
         let key = tink::proto::AesCtrHmacStreamingKey::decode(serialized_key)
             .map_err(|e| wrap_err("AesCtrHmacKeyManager: invalid key", e))?;
-        validate_key(&key)?;
 
-        let key_params = key
-            .params
-            .ok_or_else(|| TinkError::new("AesCtrHmacKeyManager: no params"))?;
-        let hkdf_hash = HashType::from_i32(key_params.hkdf_hash_type)
-            .ok_or_else(|| TinkError::new("AesCtrHmacKeyManager: unknown hash"))?;
-        let hmac_params = key_params
-            .hmac_params
-            .ok_or_else(|| TinkError::new("AesCtrHmacKeyManager: no params"))?;
-        let hmac_hash = HashType::from_i32(hmac_params.hash)
-            .ok_or_else(|| TinkError::new("AesCtrHmacKeyManager: unknown hash"))?;
-
+        let key_params = validate_key(&key)?;
+        let (hmac_params, hkdf_hash, hmac_hash) = validate_params(&key_params)?;
         match crate::subtle::AesCtrHmac::new(
             &key.key_value,
             hkdf_hash,
@@ -76,11 +66,7 @@ impl tink::registry::KeyManager for AesCtrHmacKeyManager {
         }
         let key_format = tink::proto::AesCtrHmacStreamingKeyFormat::decode(serialized_key_format)
             .map_err(|e| wrap_err("AesCtrHmacKeyManager: invalid key format", e))?;
-        validate_key_format(&key_format)
-            .map_err(|e| wrap_err("AesCtrHmacKeyManager: invalid key format", e))?;
-        let key_params = key_format
-            .params
-            .ok_or_else(|| TinkError::new("AesCtrHmacKeyManager: no params"))?;
+        let key_params = validate_key_format(&key_format)?;
         let key = tink::proto::AesCtrHmacStreamingKey {
             version: AES_CTR_HMAC_KEY_VERSION,
             key_value: get_random_bytes(key_format.key_size as usize),
@@ -102,56 +88,65 @@ impl tink::registry::KeyManager for AesCtrHmacKeyManager {
 }
 
 /// Validate the given [`tink::proto::AesCtrHmacStreamingKey`].
-fn validate_key(key: &tink::proto::AesCtrHmacStreamingKey) -> Result<(), TinkError> {
+fn validate_key(
+    key: &tink::proto::AesCtrHmacStreamingKey,
+) -> Result<tink::proto::AesCtrHmacStreamingParams, TinkError> {
     tink::keyset::validate_key_version(key.version, AES_CTR_HMAC_KEY_VERSION)?;
-    let key_size = key.key_value.len();
-    crate::subtle::validate_aes_key_size(key_size)?;
+    crate::subtle::validate_aes_key_size(key.key_value.len())?;
     let key_params = key
         .params
         .as_ref()
-        .ok_or_else(|| TinkError::new("no params"))?;
-    validate_params(&key_params)
+        .ok_or_else(|| TinkError::new("AesCtrHmacKeyManager: no params"))?;
+    Ok(key_params.clone())
 }
 
 /// Validate the given [`tink::proto::AesCtrHmacStreamingKeyFormat`].
 fn validate_key_format(
     format: &tink::proto::AesCtrHmacStreamingKeyFormat,
-) -> Result<(), TinkError> {
+) -> Result<tink::proto::AesCtrHmacStreamingParams, TinkError> {
+    tink::keyset::validate_key_version(format.version, AES_CTR_HMAC_KEY_VERSION)?;
     crate::subtle::validate_aes_key_size(format.key_size as usize)?;
     let key_params = format
         .params
         .as_ref()
-        .ok_or_else(|| TinkError::new("no params"))?;
-    validate_params(&key_params)
+        .ok_or_else(|| TinkError::new("AesCtrHmacKeyManager: no params"))?;
+    validate_params(&key_params)?;
+    Ok(key_params.clone())
 }
 
 /// Validate the given [`tink::proto::AesCtrHmacStreamingParams`].
-fn validate_params(params: &tink::proto::AesCtrHmacStreamingParams) -> Result<(), TinkError> {
+fn validate_params(
+    params: &tink::proto::AesCtrHmacStreamingParams,
+) -> Result<(tink::proto::HmacParams, HashType, HashType), TinkError> {
     crate::subtle::validate_aes_key_size(params.derived_key_size as usize)?;
-    let hkdf_hash = HashType::from_i32(params.hkdf_hash_type);
-    if hkdf_hash.is_none() || hkdf_hash == Some(HashType::UnknownHash) {
-        return Err("unknown HKDF hash type".into());
-    }
+    let hkdf_hash = match HashType::from_i32(params.hkdf_hash_type) {
+        Some(HashType::UnknownHash) => return Err("AesCtrHmacKeyManager: unknown HKDF hash".into()),
+        Some(h) => h,
+        None => return Err("AesCtrHmacKeyManager: unknown HKDF hash".into()),
+    };
     let hmac_params = params
         .hmac_params
         .as_ref()
-        .ok_or_else(|| TinkError::new("AesCtrHmacKeyManager: no_params"))?;
+        .ok_or_else(|| TinkError::new("AesCtrHmacKeyManager: no HMAC params"))?;
     let hmac_hash = match HashType::from_i32(hmac_params.hash) {
-        Some(HashType::UnknownHash) => return Err("unknown tag algorithm".into()),
+        Some(HashType::UnknownHash) => {
+            return Err("AesCtrHmacKeyManager: unknown tag algorithm".into())
+        }
         Some(h) => h,
-        None => return Err("unknown tag algorithm".into()),
+        None => return Err("AesCtrHmacKeyManager: unknown tag algorithm".into()),
     };
     tink_mac::subtle::validate_hmac_params(
         hmac_hash,
         crate::subtle::AES_CTR_HMAC_KEY_SIZE_IN_BYTES,
         hmac_params.tag_size as usize,
-    )?;
+    )
+    .map_err(|e| wrap_err("AesCtrHmacKeyManager", e))?;
     let min_segment_size = (params.derived_key_size as usize)
         + crate::subtle::AES_CTR_HMAC_NONCE_PREFIX_SIZE_IN_BYTES
         + (hmac_params.tag_size as usize)
         + 2;
     if (params.ciphertext_segment_size as usize) < min_segment_size {
-        return Err("ciphertext segment size must be at least (derived_key_size + nonce_prefix_in_bytes + tag_size_in_bytes + 2)".into());
+        return Err("AesCtrHmacKeyManager: ciphertext segment size must be at least (derived_key_size + nonce_prefix_in_bytes + tag_size_in_bytes + 2)".into());
     }
-    Ok(())
+    Ok((hmac_params.clone(), hkdf_hash, hmac_hash))
 }
