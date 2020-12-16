@@ -280,5 +280,9 @@ fn validate_cmac_primitive(
         hex::encode(res2),
         "prf computation did not produce the same output for the same key and input"
     );
+    tink_testutil::expect_err(
+        prf_primitive.compute_prf(&data, 17),
+        "output_length must be between 0 and 16",
+    );
     Ok(())
 }

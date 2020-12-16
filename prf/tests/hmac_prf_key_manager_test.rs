@@ -236,6 +236,7 @@ fn gen_valid_hmac_prf_key_formats() -> Vec<tink::proto::HmacPrfKeyFormat> {
     vec![
         tink_testutil::new_hmac_prf_key_format(tink::proto::HashType::Sha1),
         tink_testutil::new_hmac_prf_key_format(tink::proto::HashType::Sha256),
+        tink_testutil::new_hmac_prf_key_format(tink::proto::HashType::Sha384),
         tink_testutil::new_hmac_prf_key_format(tink::proto::HashType::Sha512),
     ]
 }
@@ -244,6 +245,7 @@ fn gen_valid_hmac_prf_keys() -> Vec<tink::proto::HmacPrfKey> {
     vec![
         tink_testutil::new_hmac_prf_key(tink::proto::HashType::Sha1),
         tink_testutil::new_hmac_prf_key(tink::proto::HashType::Sha256),
+        tink_testutil::new_hmac_prf_key(tink::proto::HashType::Sha384),
         tink_testutil::new_hmac_prf_key(tink::proto::HashType::Sha512),
     ]
 }
@@ -304,5 +306,10 @@ fn validate_hmac_prf_primitive(
         hex::encode(res2),
         "prf computation did not produce the same output for the same key and input"
     );
+    tink_testutil::expect_err(
+        prf_primitive.compute_prf(&data, 999999),
+        "output_length must be between 0 and",
+    );
+
     Ok(())
 }
