@@ -37,11 +37,7 @@ impl tink::registry::KeyManager for HkdfPrfKeyManager {
         }
         let key = tink::proto::HkdfPrfKey::decode(serialized_key)
             .map_err(|_| TinkError::new("HkdfPrfKeyManager: invalid key"))?;
-        validate_key(&key)?;
-        let params = key
-            .params
-            .ok_or_else(|| TinkError::new("HkdfPrfKeyManager: no key parameters"))?;
-        let hash = HashType::from_i32(params.hash).unwrap_or(HashType::UnknownHash);
+        let (params, hash) = validate_key(&key).map_err(|e| wrap_err("HkdfPrfKeyManager", e))?;
 
         match subtle::HkdfPrf::new(hash, &key.key_value, &params.salt) {
             Ok(p) => Ok(tink::Primitive::Prf(Box::new(p))),
@@ -85,7 +81,9 @@ impl tink::registry::KeyManager for HkdfPrfKeyManager {
 
 /// Validate the given [`HkdfPrfKey`](tink::proto::HkdfPrfKey). It only validates the version of the
 /// key because other parameters will be validated in primitive construction.
-fn validate_key(key: &tink::proto::HkdfPrfKey) -> Result<(), TinkError> {
+fn validate_key(
+    key: &tink::proto::HkdfPrfKey,
+) -> Result<(tink::proto::HkdfPrfParams, HashType), TinkError> {
     tink::keyset::validate_key_version(key.version, HKDF_PRF_KEY_VERSION)
         .map_err(|e| wrap_err("HkdfPrfKeyManager: invalid version", e))?;
     let key_size = key.key_value.len();
@@ -94,7 +92,8 @@ fn validate_key(key: &tink::proto::HkdfPrfKey) -> Result<(), TinkError> {
         Some(p) => p,
     };
     let hash = HashType::from_i32(params.hash).unwrap_or(HashType::UnknownHash);
-    subtle::validate_hkdf_prf_params(hash, key_size, &params.salt)
+    subtle::validate_hkdf_prf_params(hash, key_size, &params.salt)?;
+    Ok((params.clone(), hash))
 }
 
 /// Validate the given [`HkdfPrfKeyFormat`](tink::proto::HkdfPrfKeyFormat).
@@ -102,7 +101,7 @@ fn validate_key_format(format: &tink::proto::HkdfPrfKeyFormat) -> Result<(), Tin
     let params = format
         .params
         .as_ref()
-        .ok_or_else(|| TinkError::new("no params"))?;
+        .ok_or_else(|| TinkError::new("no key params"))?;
     let hash = HashType::from_i32(params.hash).unwrap_or(HashType::UnknownHash);
     subtle::validate_hkdf_prf_params(hash, format.key_size as usize, &params.salt)
 }
