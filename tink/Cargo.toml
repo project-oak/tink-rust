@@ -23,7 +23,7 @@ serde = { version = "^1.0.118", features = ["derive"], optional = true }
 serde_json = { version = "^1.0.60", optional = true }
 sha-1 = "=0.9.1"
 sha2 = "=0.9.1"
-subtle = "^2.3"
+subtle = "^2.4"
 
 [build-dependencies]
 prost-build = "^0.6.1"
