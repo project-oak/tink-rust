@@ -9,7 +9,7 @@ license = "Apache-2.0"
 ed25519-dalek = "^1.0.1"
 generic-array = "^0.14.4"
 hex = "^0.4.2"
-p256 = { version = "^0.6", features = ["ecdsa"] }
+p256 = { version = "^0.7", features = ["ecdsa"] }
 prost = "^0.6.1"
 rand = "^0.7"
 serde = { version = "^1.0.118", features = ["derive"] }
