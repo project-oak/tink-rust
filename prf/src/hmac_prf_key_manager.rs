@@ -37,11 +37,7 @@ impl tink::registry::KeyManager for HmacPrfKeyManager {
         }
         let key = tink::proto::HmacPrfKey::decode(serialized_key)
             .map_err(|_| TinkError::new("HmacPrfKeyManager: invalid key"))?;
-        validate_key(&key)?;
-        let params = key
-            .params
-            .ok_or_else(|| TinkError::new("HmacPrfKeyManager: no key parameters"))?;
-        let hash = HashType::from_i32(params.hash).unwrap_or(HashType::UnknownHash);
+        let (_params, hash) = validate_key(&key).map_err(|e| wrap_err("HmacPrfKeyManager", e))?;
 
         match subtle::HmacPrf::new(hash, &key.key_value) {
             Ok(p) => Ok(tink::Primitive::Prf(Box::new(p))),
@@ -83,16 +79,19 @@ impl tink::registry::KeyManager for HmacPrfKeyManager {
 
 /// Validate the given [`HmacPrfKey`](tink::proto::HmacPrfKey). It only validates the version of the
 /// key because other parameters will be validated in primitive construction.
-fn validate_key(key: &tink::proto::HmacPrfKey) -> Result<(), TinkError> {
+fn validate_key(
+    key: &tink::proto::HmacPrfKey,
+) -> Result<(tink::proto::HmacPrfParams, HashType), TinkError> {
     tink::keyset::validate_key_version(key.version, HMAC_PRF_KEY_VERSION)
-        .map_err(|e| wrap_err("HmacPrfKeyManager: invalid version", e))?;
+        .map_err(|e| wrap_err("invalid version", e))?;
     let key_size = key.key_value.len();
-    let hash_val = match key.params.as_ref() {
-        None => return Err("HmacPrfKeyManager: no key params".into()),
-        Some(params) => params.hash,
+    let params = match key.params.as_ref() {
+        None => return Err("no key params".into()),
+        Some(p) => p,
     };
-    let hash = HashType::from_i32(hash_val).unwrap_or(HashType::UnknownHash);
-    subtle::validate_hmac_prf_params(hash, key_size)
+    let hash = HashType::from_i32(params.hash).unwrap_or(HashType::UnknownHash);
+    subtle::validate_hmac_prf_params(hash, key_size)?;
+    Ok((params.clone(), hash))
 }
 
 /// Validates the given [`HmacPrfKeyFormat`](tink::proto::HmacPrfKeyFormat).
