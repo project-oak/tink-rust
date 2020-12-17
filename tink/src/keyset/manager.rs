@@ -62,15 +62,15 @@ impl Manager {
         let key_data = crate::registry::new_key_data(kt)
             .map_err(|e| wrap_err("keyset::Manager: cannot create KeyData", e))?;
         let key_id = self.new_key_id();
-        let mut output_prefix_type = kt.output_prefix_type;
-        if OutputPrefixType::from_i32(output_prefix_type) == Some(OutputPrefixType::UnknownPrefix) {
-            output_prefix_type = OutputPrefixType::Tink as i32;
-        }
+        let output_prefix_type = match OutputPrefixType::from_i32(kt.output_prefix_type) {
+            None | Some(OutputPrefixType::UnknownPrefix) => OutputPrefixType::Tink,
+            Some(p) => p,
+        };
         let key = crate::proto::keyset::Key {
             key_data: Some(key_data),
             status: crate::proto::KeyStatusType::Enabled as i32,
             key_id,
-            output_prefix_type,
+            output_prefix_type: output_prefix_type as i32,
         };
         self.ks.key.push(key);
         if as_primary {

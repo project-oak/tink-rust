@@ -155,8 +155,7 @@ fn test_keyset_manager_operations() {
     );
 
     let result = keyset_manager.set_primary(key_id_2);
-    assert!(result.is_err());
-    assert!(format!("{:?}", result).contains("must be Enabled"));
+    tink_testutil::expect_err(result, "must be Enabled");
     let keyset = insecure::keyset_material(&keyset_manager.handle().unwrap());
     assert_eq!(key_id_1, keyset.primary_key_id);
 
@@ -202,11 +201,9 @@ fn test_keyset_manager_operations() {
     assert!(keyset.key[2].key_data.is_none());
 
     let result = keyset_manager.enable(key_id_2);
-    assert!(result.is_err());
-    assert!(format!("{:?}", result).contains("Cannot enable"));
+    tink_testutil::expect_err(result, "Cannot enable key");
     let result = keyset_manager.disable(key_id_2);
-    assert!(result.is_err());
-    assert!(format!("{:?}", result).contains("Cannot disable"));
+    tink_testutil::expect_err(result, "Cannot disable key");
     let keyset = insecure::keyset_material(&keyset_manager.handle().unwrap());
     assert_eq!(
         keyset.key[2].status,
@@ -221,28 +218,23 @@ fn test_keyset_manager_operations() {
     assert_eq!(2, keyset.key.len());
 
     let result = keyset_manager.destroy(key_id_2);
-    assert!(result.is_err());
-    assert!(format!("{:?}", result).contains("not found"));
+    tink_testutil::expect_err(result, "not found");
 
     let result = keyset_manager.delete(key_id_2);
-    assert!(result.is_err());
-    assert!(format!("{:?}", result).contains("not found"));
+    tink_testutil::expect_err(result, "not found");
 
     // Try disabling/destroying/deleting the primary key.
     let keyset = insecure::keyset_material(&keyset_manager.handle().unwrap());
     assert_eq!(key_id_1, keyset.primary_key_id);
 
     let result = keyset_manager.disable(key_id_1);
-    assert!(result.is_err());
-    assert!(format!("{:?}", result).contains("Cannot disable primary"));
+    tink_testutil::expect_err(result, "Cannot disable primary");
 
     let result = keyset_manager.destroy(key_id_1);
-    assert!(result.is_err());
-    assert!(format!("{:?}", result).contains("Cannot destroy primary"));
+    tink_testutil::expect_err(result, "Cannot destroy primary");
 
     let result = keyset_manager.delete(key_id_1);
-    assert!(result.is_err());
-    assert!(format!("{:?}", result).contains("Cannot delete primary"));
+    tink_testutil::expect_err(result, "Cannot delete primary");
 
     let keyset = insecure::keyset_material(&keyset_manager.handle().unwrap());
     assert_eq!(key_id_1, keyset.primary_key_id);
@@ -254,8 +246,7 @@ fn test_keyset_manager_operations() {
     assert_eq!(key_id_1, keyset.key[0].key_id);
 
     let result = keyset_manager.set_primary(key_id_0);
-    assert!(result.is_err());
-    assert!(format!("{:?}", result).contains("not found"));
+    tink_testutil::expect_err(result, "not found");
     assert_eq!(1, keyset_manager.key_count());
 
     // Operations with invalid key ID fail
@@ -265,6 +256,98 @@ fn test_keyset_manager_operations() {
     assert!(keyset_manager.disable(invalid_key_id).is_err());
     assert!(keyset_manager.destroy(invalid_key_id).is_err());
     assert!(keyset_manager.delete(invalid_key_id).is_err());
+}
+
+#[test]
+fn test_keyset_manager_corrupt_primary_key() {
+    tink_aead::init();
+    let key_template = tink_aead::aes128_gcm_key_template();
+
+    // Create a keyset that contains a single key which has an invalid status value.
+    let mut km = tink::keyset::Manager::new();
+    km.rotate(&key_template).unwrap();
+    let mut keyset = insecure::keyset_material(&km.handle().unwrap());
+    keyset.key[0].status = 999;
+    let key_id = keyset.key[0].key_id;
+
+    let kh = insecure::new_handle(keyset).unwrap();
+    let mut km = tink::keyset::Manager::new_from_handle(kh);
+
+    // All operations shoud fail.
+    let result = km.enable(key_id);
+    tink_testutil::expect_err(result, "Cannot enable");
+    let result = km.disable(key_id);
+    tink_testutil::expect_err(result, "Cannot disable");
+    let result = km.destroy(key_id);
+    tink_testutil::expect_err(result, "Cannot destroy");
+    let result = km.set_primary(key_id);
+    tink_testutil::expect_err(result, "must be Enabled");
+}
+
+#[test]
+fn test_keyset_manager_corrupt_secondary_key() {
+    tink_aead::init();
+    let key_template = tink_aead::aes128_gcm_key_template();
+
+    // Create a keyset that contains a valid primary key and a second key with an invalid status
+    // value.
+    let mut km = tink::keyset::Manager::new();
+    let _primary_key_id = km.rotate(&key_template).unwrap();
+    let secondary_key_id = km.add(&key_template, false).unwrap();
+    let mut keyset = insecure::keyset_material(&km.handle().unwrap());
+    keyset.key[1].status = 999;
+
+    let kh = insecure::new_handle(keyset).unwrap();
+    let mut km = tink::keyset::Manager::new_from_handle(kh);
+
+    // All operations shoud fail.
+    let result = km.enable(secondary_key_id);
+    tink_testutil::expect_err(result, "Cannot enable");
+    let result = km.disable(secondary_key_id);
+    tink_testutil::expect_err(result, "Cannot disable");
+    let result = km.destroy(secondary_key_id);
+    tink_testutil::expect_err(result, "Cannot destroy");
+    let result = km.set_primary(secondary_key_id);
+    tink_testutil::expect_err(result, "must be Enabled");
+}
+
+#[test]
+fn test_keyset_manager_invalid_key_id() {
+    tink_aead::init();
+    let key_template = tink_aead::aes128_gcm_key_template();
+
+    // Create a keyset that contains a single key.
+    let mut km = tink::keyset::Manager::new();
+    km.rotate(&key_template).unwrap();
+
+    // All operations shoud fail with an invalid key_id.
+    let key_id = 9999;
+    let result = km.enable(key_id);
+    tink_testutil::expect_err(result, "not found");
+    let result = km.disable(key_id);
+    tink_testutil::expect_err(result, "not found");
+    let result = km.destroy(key_id);
+    tink_testutil::expect_err(result, "not found");
+    let result = km.set_primary(key_id);
+    tink_testutil::expect_err(result, "not found");
+}
+
+#[test]
+fn test_keyset_manager_unknown_prefix_type() {
+    tink_aead::init();
+    let mut key_template = tink_aead::aes128_gcm_key_template();
+    for prefix_type in &[9999, tink::proto::OutputPrefixType::UnknownPrefix as i32] {
+        key_template.output_prefix_type = *prefix_type;
+
+        let mut km = tink::keyset::Manager::new();
+        km.rotate(&key_template).unwrap();
+        let kh = km.handle().unwrap();
+        let ks = insecure::keyset_material(&kh);
+        assert_eq!(
+            ks.key[0].output_prefix_type,
+            tink::proto::OutputPrefixType::Tink as i32
+        );
+    }
 }
 
 #[test]
