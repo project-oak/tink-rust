@@ -353,9 +353,9 @@ dependencies = [
 
 [[package]]
 name = "const-oid"
-version = "0.3.4"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "81f31e8ecbfc556990ae313b64aedaa11d901616af2a886e8caf57883caa43f0"
+checksum = "069b46dab00267d018567b1154f38b706d6ed93c4915301a2fa73bc24a03a1e7"
 
 [[package]]
 name = "const_fn"
@@ -523,9 +523,9 @@ checksum = "212d0f5754cb6769937f4501cc0e67f4f4483c8d2c3e1e922ee9edbe4ab4c7c0"
 
 [[package]]
 name = "ecdsa"
-version = "0.9.0"
+version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f488ad19df443921d9fa5b9ce13a282b552709c511d2d90b1fd635e0204d74d5"
+checksum = "d39be153f0e278ffba17d1c05e8999641fcf3df7584a7251b5e660742fcab1ef"
 dependencies = [
  "elliptic-curve",
  "hmac 0.10.1",
@@ -563,9 +563,9 @@ checksum = "e78d4f1cc4ae33bbfc157ed5d5a5ef3bc29227303d595861deb238fcec4e9457"
 
 [[package]]
 name = "elliptic-curve"
-version = "0.7.1"
+version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2d02ac72d4e61713e291a2ae644c1bd82be82c21b9a0de2271e0aa6886b7e0b4"
+checksum = "02b76528f382c916bbb94470b4e7ad107a3d01619503f7ffba86c93aea04e215"
 dependencies = [
  "bitvec",
  "digest",
@@ -1263,9 +1263,9 @@ dependencies = [
 
 [[package]]
 name = "p256"
-version = "0.6.0"
+version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4cead7739968fb4c7622c6664a9a3de0c9d92cb9e75b3a5f2467aad99b3cd3f5"
+checksum = "39f37a291d378ba3291c1fa4e925edb6729c8593d4c6064be79e4a4c12fa2d97"
 dependencies = [
  "ecdsa",
  "elliptic-curve",
@@ -1342,9 +1342,9 @@ checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 
 [[package]]
 name = "pkcs8"
-version = "0.1.1"
+version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6529960a627342f19f68d43a07b268c98fd347e68668df3743a3cb9211c0975f"
+checksum = "9911ed9965aeee333588f226ad2baeabda478bf5ec151550735ed1760df759ba"
 dependencies = [
  "const-oid",
 ]
