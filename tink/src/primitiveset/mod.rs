@@ -126,3 +126,153 @@ impl PrimitiveSet {
         Ok(retval)
     }
 }
+
+/// `TypedEntry` represents a single entry in a keyset for primitives of a known type. In addition
+/// to the actual primitive, it holds the identifier and status of the primitive.
+pub struct TypedEntry<P: From<crate::Primitive>> {
+    pub key_id: crate::KeyId,
+    pub primitive: P,
+    pub prefix: Vec<u8>,
+    pub prefix_type: crate::proto::OutputPrefixType,
+    pub status: crate::proto::KeyStatusType,
+}
+
+impl<P: From<crate::Primitive>> From<Entry> for TypedEntry<P> {
+    fn from(entry: Entry) -> Self {
+        Self {
+            key_id: entry.key_id,
+            primitive: entry.primitive.into(),
+            prefix: entry.prefix,
+            prefix_type: entry.prefix_type,
+            status: entry.status,
+        }
+    }
+}
+
+/// `TypedPrimitiveSet` is equivalent to [`PrimitiveSet`] but holds primitives
+/// of a specific known type `P`.
+pub struct TypedPrimitiveSet<P: From<crate::Primitive>> {
+    // Copy of the primary entry in `entries`.
+    pub primary: Option<TypedEntry<P>>,
+
+    // The primitives are stored in a map of (ciphertext prefix, list of
+    // primitives sharing the prefix). This allows quickly retrieving the
+    // primitives sharing some particular prefix.
+    pub entries: HashMap<Vec<u8>, Vec<TypedEntry<P>>>,
+}
+
+impl<P: From<crate::Primitive>> TypedPrimitiveSet<P> {
+    /// Return all primitives in the set that have RAW prefix.
+    pub fn raw_entries(&self) -> Option<&Vec<TypedEntry<P>>> {
+        self.entries_for_prefix(&crate::cryptofmt::RAW_PREFIX)
+    }
+
+    /// Return all primitives in the set that have the given prefix.
+    pub fn entries_for_prefix(&self, prefix: &[u8]) -> Option<&Vec<TypedEntry<P>>> {
+        match self.entries.get(prefix) {
+            Some(v) => Some(&v),
+            None => None,
+        }
+    }
+}
+
+/// A `TypedPrimitiveSet` is [`Clone`]able if its constituent [`TypedEntry`] objects
+/// are [`Clone`]able.
+impl<T> Clone for TypedPrimitiveSet<T>
+where
+    TypedEntry<T>: Clone,
+    T: From<crate::Primitive>,
+{
+    fn clone(&self) -> Self {
+        Self {
+            primary: self.primary.as_ref().cloned(),
+            entries: self.entries.clone(),
+        }
+    }
+}
+
+/// Convert an untyped [`PrimitiveSet`] into a [`TypedPrimitiveSet`]. This will
+/// panic if any of the primitives are not of the correct type.
+impl<P: From<crate::Primitive>> From<PrimitiveSet> for TypedPrimitiveSet<P> {
+    fn from(ps: PrimitiveSet) -> Self {
+        Self {
+            primary: ps.primary.map(|e| e.into()),
+            entries: ps
+                .entries
+                .into_iter()
+                .map(|(k, v)| (k, v.into_iter().map(TypedEntry::<P>::from).collect()))
+                .collect(),
+        }
+    }
+}
+
+// When used for a primitive, instances of `TypedPrimitiveSet` need to support `Clone`.
+// This is possible for each primitive type individually using the `box_clone()` method,
+// but needs a specialized implementation of `Clone` for each primitive.
+
+impl Clone for TypedEntry<Box<dyn crate::Aead>> {
+    fn clone(&self) -> Self {
+        Self {
+            key_id: self.key_id,
+            primitive: self.primitive.box_clone(),
+            prefix: self.prefix.clone(),
+            prefix_type: self.prefix_type,
+            status: self.status,
+        }
+    }
+}
+impl Clone for TypedEntry<Box<dyn crate::DeterministicAead>> {
+    fn clone(&self) -> Self {
+        Self {
+            key_id: self.key_id,
+            primitive: self.primitive.box_clone(),
+            prefix: self.prefix.clone(),
+            prefix_type: self.prefix_type,
+            status: self.status,
+        }
+    }
+}
+impl Clone for TypedEntry<Box<dyn crate::Mac>> {
+    fn clone(&self) -> Self {
+        Self {
+            key_id: self.key_id,
+            primitive: self.primitive.box_clone(),
+            prefix: self.prefix.clone(),
+            prefix_type: self.prefix_type,
+            status: self.status,
+        }
+    }
+}
+impl Clone for TypedEntry<Box<dyn crate::Signer>> {
+    fn clone(&self) -> Self {
+        Self {
+            key_id: self.key_id,
+            primitive: self.primitive.box_clone(),
+            prefix: self.prefix.clone(),
+            prefix_type: self.prefix_type,
+            status: self.status,
+        }
+    }
+}
+impl Clone for TypedEntry<Box<dyn crate::StreamingAead>> {
+    fn clone(&self) -> Self {
+        Self {
+            key_id: self.key_id,
+            primitive: self.primitive.box_clone(),
+            prefix: self.prefix.clone(),
+            prefix_type: self.prefix_type,
+            status: self.status,
+        }
+    }
+}
+impl Clone for TypedEntry<Box<dyn crate::Verifier>> {
+    fn clone(&self) -> Self {
+        Self {
+            key_id: self.key_id,
+            primitive: self.primitive.box_clone(),
+            prefix: self.prefix.clone(),
+            prefix_type: self.prefix_type,
+            status: self.status,
+        }
+    }
+}
