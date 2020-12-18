@@ -44,7 +44,10 @@ fn test_factory_multiple_keys() {
         let keyset2 = tink_testutil::new_keyset(raw_key.key_id, vec![raw_key]);
         let keyset_handle2 = tink::keyset::insecure::new_handle(keyset2).unwrap();
         let d2 = tink_daead::new(&keyset_handle2).unwrap();
-        assert!(validate_daead_factory_cipher(&d2, &d, &tink::cryptofmt::RAW_PREFIX).is_ok());
+        assert!(
+            validate_daead_factory_cipher(&d2, &d.box_clone(), &tink::cryptofmt::RAW_PREFIX)
+                .is_ok()
+        );
     }
 
     // encrypt with a random key from a new keyset, decrypt with the original keyset should fail.
