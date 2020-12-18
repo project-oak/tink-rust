@@ -20,6 +20,7 @@ use tink::subtle::random::get_random_bytes;
 #[test]
 #[ignore]
 fn test_signer_verify_factory() {
+    tink_signature::init();
     let (tink_priv, tink_pub) = new_ecdsa_keyset_keypair(
         tink::proto::HashType::Sha512,
         tink::proto::EllipticCurveType::NistP521,
@@ -80,6 +81,86 @@ fn test_signer_verify_factory() {
     );
 }
 
+#[test]
+fn test_signer_verify_multiple_keys() {
+    tink_signature::init();
+    let (tink_priv, tink_pub) = new_ecdsa_keyset_keypair(
+        tink::proto::HashType::Sha256,
+        tink::proto::EllipticCurveType::NistP256,
+        tink::proto::OutputPrefixType::Tink,
+        1,
+    );
+    let (legacy_priv, legacy_pub) = new_ecdsa_keyset_keypair(
+        tink::proto::HashType::Sha256,
+        tink::proto::EllipticCurveType::NistP256,
+        tink::proto::OutputPrefixType::Legacy,
+        2,
+    );
+    let (raw_priv, raw_pub) = new_ecdsa_keyset_keypair(
+        tink::proto::HashType::Sha256,
+        tink::proto::EllipticCurveType::NistP256,
+        tink::proto::OutputPrefixType::Raw,
+        3,
+    );
+    let (crunchy_priv, crunchy_pub) = new_ecdsa_keyset_keypair(
+        tink::proto::HashType::Sha256,
+        tink::proto::EllipticCurveType::NistP256,
+        tink::proto::OutputPrefixType::Crunchy,
+        4,
+    );
+    let priv_keys = vec![tink_priv, legacy_priv, raw_priv, crunchy_priv];
+    let priv_keyset = tink_testutil::new_keyset(priv_keys[0].key_id, priv_keys);
+    let priv_keyset_handle = tink::keyset::insecure::new_handle(priv_keyset).unwrap();
+    let pub_keys = vec![tink_pub, legacy_pub, raw_pub, crunchy_pub];
+    let pub_keyset = tink_testutil::new_keyset(pub_keys[0].key_id, pub_keys);
+    let pub_keyset_handle = tink::keyset::insecure::new_handle(pub_keyset).unwrap();
+
+    let data = get_random_bytes(200);
+    let signer = tink_signature::new_signer(&priv_keyset_handle).unwrap();
+    let sig = signer.sign(&data).unwrap();
+    let verifier = tink_signature::new_verifier(&pub_keyset_handle).unwrap();
+    verifier.verify(&sig, &data).unwrap();
+
+    // Set the Raw key temporarily to primary and sign with it.
+    let mut km = tink::keyset::Manager::new_from_handle(priv_keyset_handle);
+    km.set_primary(3).unwrap();
+    let raw_kh = km.handle().unwrap();
+    let data = get_random_bytes(200);
+    let signer = tink_signature::new_signer(&raw_kh).unwrap();
+    let raw_sig = signer.sign(&data).unwrap();
+
+    // Revert the primary key, and check that can still verify.
+    km.set_primary(1).unwrap();
+    let kh = km.handle().unwrap();
+    let pub_kh = kh.public().unwrap();
+    let verifier = tink_signature::new_verifier(&pub_kh).unwrap();
+    verifier.verify(&raw_sig, &data).unwrap();
+
+    // Set the Legacy key temporarily to primary and sign with it.
+    km.set_primary(2).unwrap();
+    let legacy_kh = km.handle().unwrap();
+    let data = get_random_bytes(200);
+    let signer = tink_signature::new_signer(&legacy_kh).unwrap();
+    let legacy_sig = signer.sign(&data).unwrap();
+
+    // Revert the primary key, and check that can still verify.
+    km.set_primary(1).unwrap();
+    let kh = km.handle().unwrap();
+    let pub_kh = kh.public().unwrap();
+    let verifier = tink_signature::new_verifier(&pub_kh).unwrap();
+    verifier.verify(&legacy_sig, &data).unwrap();
+
+    // However, a truncated signature should fail.
+    tink_testutil::expect_err(
+        verifier.verify(&legacy_sig[..legacy_sig.len() - 1], &data),
+        "invalid signature",
+    );
+    tink_testutil::expect_err(
+        verifier.verify(&legacy_sig[..2], &data),
+        "invalid signature",
+    );
+}
+
 fn new_ecdsa_keyset_keypair(
     hash_type: tink::proto::HashType,
     curve: tink::proto::EllipticCurveType,
@@ -122,14 +203,29 @@ fn test_factory_with_invalid_primitive_set_type() {
     let wrong_kh = tink::keyset::Handle::new(&tink_mac::hmac_sha256_tag128_key_template())
         .expect("failed to build keyset::Handle");
 
-    assert!(
-        tink_signature::new_signer(&wrong_kh).is_err(),
-        "calling new_signer() with wrong keyset::Handle should fail"
+    tink_testutil::expect_err(
+        tink_signature::new_signer(&wrong_kh),
+        "not a Signer primitive",
+    );
+    tink_testutil::expect_err(
+        tink_signature::new_verifier(&wrong_kh),
+        "not a Verifier primitive",
     );
 
-    assert!(
-        tink_signature::new_verifier(&wrong_kh).is_err(),
-        "calling new_verifier() with wrong keyset::Handle should fail"
+    // Now build an invalid keyset with heterogenous primitives: primary
+    // is for signatures, secondary is not.
+    let mut km = tink::keyset::Manager::new_from_handle(wrong_kh);
+    km.rotate(&tink_signature::ecdsa_p256_key_template())
+        .unwrap();
+    let wronger_kh = km.handle().unwrap();
+
+    tink_testutil::expect_err(
+        tink_signature::new_signer(&wronger_kh),
+        "not a Signer primitive",
+    );
+    tink_testutil::expect_err(
+        tink_signature::new_verifier(&wronger_kh),
+        "not a Verifier primitive",
     );
 }
 

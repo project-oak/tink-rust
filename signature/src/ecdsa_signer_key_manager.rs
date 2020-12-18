@@ -57,47 +57,40 @@ impl tink::registry::KeyManager for EcdsaSignerKeyManager {
         }
         let key_format = tink::proto::EcdsaKeyFormat::decode(serialized_key_format)
             .map_err(|e| wrap_err("EcdsaSignerKeyManager: invalid key", e))?;
-        let params = validate_key_format(&key_format)?;
+        let (params, curve) = validate_key_format(&key_format)?;
 
         // generate key
         let mut csprng = rand::rngs::OsRng {};
 
-        let (secret_key_data, pub_x_data, pub_y_data) =
-            match EllipticCurveType::from_i32(params.curve) {
-                Some(EllipticCurveType::NistP256) => {
-                    // Generate a new keypair.
-                    let secret_key = p256::ecdsa::SigningKey::random(&mut csprng);
-                    let public_key = p256::ecdsa::VerifyingKey::from(&secret_key);
-                    let public_key_point = public_key.to_encoded_point(/* compress= */ false);
-                    let public_key_data = public_key_point.as_bytes();
+        let (secret_key_data, pub_x_data, pub_y_data) = match curve {
+            EllipticCurveType::NistP256 => {
+                // Generate a new keypair.
+                let secret_key = p256::ecdsa::SigningKey::random(&mut csprng);
+                let public_key = p256::ecdsa::VerifyingKey::from(&secret_key);
+                let public_key_point = public_key.to_encoded_point(/* compress= */ false);
+                let public_key_data = public_key_point.as_bytes();
 
-                    // Check that the public key data is in the expected uncompressed format:
-                    //  - 1 byte uncompressed prefix (0x04)
-                    //  - P bytes of X coordinate
-                    //  - P bytes of Y coordinate
-                    // where P is the field element size.
-                    let point_len =
-                        <p256::NistP256 as elliptic_curve::Curve>::FieldSize::to_usize();
-                    if public_key_data.len() != 2 * point_len + 1
-                        || public_key_data[0] != ECDSA_UNCOMPRESSED_POINT_PREFIX
-                    {
-                        return Err(
-                            "EcdsaSignerKeyManager: unexpected public key data format".into()
-                        );
-                    }
-                    (
-                        secret_key.to_bytes().to_vec(),
-                        public_key_data[1..point_len + 1].to_vec(),
-                        public_key_data[point_len + 1..].to_vec(),
-                    )
+                // Check that the public key data is in the expected uncompressed format:
+                //  - 1 byte uncompressed prefix (0x04)
+                //  - P bytes of X coordinate
+                //  - P bytes of Y coordinate
+                // where P is the field element size.
+                let point_len = <p256::NistP256 as elliptic_curve::Curve>::FieldSize::to_usize();
+                if public_key_data.len() != 2 * point_len + 1
+                    || public_key_data[0] != ECDSA_UNCOMPRESSED_POINT_PREFIX
+                {
+                    return Err("EcdsaSignerKeyManager: unexpected public key data format".into());
                 }
-                Some(curve) => {
-                    return Err(
-                        format!("EcdsaSignerKeyManager: unsupported curve {:?}", curve).into(),
-                    )
-                }
-                None => return Err("EcdsaSignerKeyManager: no curve specified".into()),
-            };
+                (
+                    secret_key.to_bytes().to_vec(),
+                    public_key_data[1..point_len + 1].to_vec(),
+                    public_key_data[point_len + 1..].to_vec(),
+                )
+            }
+            _ => {
+                return Err(format!("EcdsaSignerKeyManager: unsupported curve {:?}", curve).into())
+            }
+        };
         let pub_key = tink::proto::EcdsaPublicKey {
             version: ECDSA_SIGNER_KEY_VERSION,
             params: Some(params),
@@ -173,12 +166,12 @@ fn validate_key(key: &tink::proto::EcdsaPrivateKey) -> Result<tink::proto::Ecdsa
 /// the parameters.
 fn validate_key_format(
     key_format: &tink::proto::EcdsaKeyFormat,
-) -> Result<tink::proto::EcdsaParams, TinkError> {
+) -> Result<(tink::proto::EcdsaParams, tink::proto::EllipticCurveType), TinkError> {
     let params = key_format
         .params
         .as_ref()
         .ok_or_else(|| TinkError::new("no public key parameters"))?;
     let (hash, curve, encoding) = crate::get_ecdsa_param_ids(&params);
     crate::subtle::validate_ecdsa_params(hash, curve, encoding)?;
-    Ok(params.clone())
+    Ok((params.clone(), curve))
 }

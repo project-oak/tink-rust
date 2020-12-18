@@ -83,6 +83,15 @@ fn test_ecdsa_key_templates() {
             sig_encoding: tink::proto::EcdsaSignatureEncoding::Der,
             prefix_type: tink::proto::OutputPrefixType::Raw,
         },
+        FlagTest {
+            tc_name: "P-256 with SHA256, P1363 format and TINK output prefix",
+            type_url: tink_testutil::ECDSA_SIGNER_TYPE_URL,
+            sig_template: tink_signature::ecdsa_p256_key_p1363_template(),
+            curve_type: tink::proto::EllipticCurveType::NistP256,
+            hash_type: tink::proto::HashType::Sha256,
+            sig_encoding: tink::proto::EcdsaSignatureEncoding::IeeeP1363,
+            prefix_type: tink::proto::OutputPrefixType::Tink,
+        },
     ];
 
     for tt in flag_tests {

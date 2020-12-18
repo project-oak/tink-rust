@@ -109,13 +109,39 @@ fn test_ecdsa_sign_new_key_with_invalid_input() {
     let km = tink::registry::get_key_manager(tink_testutil::ECDSA_SIGNER_TYPE_URL)
         .expect("cannot obtain EcdsaSigner key manager");
     // invalid hash and curve type
-    let test_params = gen_invalid_ecdsa_params();
-    for (i, test_param) in test_params.iter().enumerate() {
-        let params = tink_testutil::new_ecdsa_params(
-            test_param.hash_type,
-            test_param.curve,
-            tink::proto::EcdsaSignatureEncoding::Der,
-        );
+    let test_params = vec![
+        EcdsaParams {
+            hash_type: HashType::UnknownHash as i32,
+            curve: EllipticCurveType::NistP256 as i32,
+            encoding: tink::proto::EcdsaSignatureEncoding::Der as i32,
+        },
+        EcdsaParams {
+            hash_type: HashType::Sha256 as i32,
+            curve: EllipticCurveType::UnknownCurve as i32,
+            encoding: tink::proto::EcdsaSignatureEncoding::Der as i32,
+        },
+        EcdsaParams {
+            hash_type: HashType::Sha256 as i32,
+            curve: EllipticCurveType::NistP256 as i32,
+            encoding: tink::proto::EcdsaSignatureEncoding::UnknownEncoding as i32,
+        },
+        EcdsaParams {
+            hash_type: 9999,
+            curve: EllipticCurveType::NistP256 as i32,
+            encoding: tink::proto::EcdsaSignatureEncoding::Der as i32,
+        },
+        EcdsaParams {
+            hash_type: HashType::Sha256 as i32,
+            curve: 9999,
+            encoding: tink::proto::EcdsaSignatureEncoding::Der as i32,
+        },
+        EcdsaParams {
+            hash_type: HashType::Sha256 as i32,
+            curve: EllipticCurveType::NistP256 as i32,
+            encoding: 999,
+        },
+    ];
+    for (i, params) in test_params.iter().enumerate() {
         let serialized_format =
             tink_testutil::proto_encode(&tink_testutil::new_ecdsa_key_format(&params));
         assert!(
@@ -124,6 +150,7 @@ fn test_ecdsa_sign_new_key_with_invalid_input() {
             i
         );
     }
+
     // invalid encoding
     let test_params = gen_valid_ecdsa_params();
     for (i, test_param) in test_params.iter().enumerate() {
