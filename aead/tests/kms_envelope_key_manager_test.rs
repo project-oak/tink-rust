@@ -51,7 +51,7 @@ fn test_kms_envelope_get_primitive_no_client() {
         version: tink_testutil::KMS_ENVELOPE_AEAD_KEY_VERSION,
         params: Some(tink::proto::KmsEnvelopeAeadKeyFormat {
             kek_uri: "some uri".to_string(),
-            dek_template: None,
+            dek_template: Some(tink_aead::aes128_ctr_hmac_sha256_key_template()),
         }),
     };
     let serialized_key = proto_encode(&key);
@@ -63,6 +63,12 @@ fn test_kms_envelope_get_primitive_no_client() {
 #[test]
 fn test_kms_envelope_get_primitive_invalid() {
     tink_aead::init();
+
+    let key_uri = "aws-kms://arn:aws:kms:us-east-2:1234:key/abcd-1234";
+    let ini_file = "../testdata/credentials_aws.ini";
+    let g = tink_awskms::AwsClient::new_with_credentials(key_uri, ini_file).unwrap();
+    tink::registry::register_kms_client(g);
+
     let km = tink::registry::get_key_manager(tink_testutil::KMS_ENVELOPE_AEAD_TYPE_URL)
         .expect("cannot obtain KMS envelope key manager");
 
@@ -85,13 +91,24 @@ fn test_kms_envelope_get_primitive_invalid() {
     let key_wrong_version = tink::proto::KmsEnvelopeAeadKey {
         version: 9999,
         params: Some(tink::proto::KmsEnvelopeAeadKeyFormat {
-            kek_uri: "some uri".to_string(),
-            dek_template: None,
+            kek_uri: key_uri.to_string(),
+            dek_template: Some(tink_aead::aes128_ctr_hmac_sha256_key_template()),
         }),
     };
     let serialized_key = proto_encode(&key_wrong_version);
     let result = km.primitive(&serialized_key);
     tink_testutil::expect_err(result, "version in range");
+
+    let key_no_dek_template = tink::proto::KmsEnvelopeAeadKey {
+        version: tink_testutil::KMS_ENVELOPE_AEAD_KEY_VERSION,
+        params: Some(tink::proto::KmsEnvelopeAeadKeyFormat {
+            kek_uri: key_uri.to_string(),
+            dek_template: None,
+        }),
+    };
+    let serialized_key = proto_encode(&key_no_dek_template);
+    let result = km.primitive(&serialized_key);
+    tink_testutil::expect_err(result, "missing DEK template");
 }
 
 #[test]
