@@ -103,7 +103,7 @@ fn test_multiple_encrypt() {
     let key = get_random_bytes(16);
 
     let stream = subtle::AesCtr::new(&key, subtle::AES_CTR_MIN_IV_SIZE)
-        .expect("failed to create AESCTR instance");
+        .expect("failed to create AesCtr instance");
 
     let plaintext = b"Some data to encrypt.";
     let ct1 = stream.encrypt(plaintext).expect("encryption failed");
@@ -142,6 +142,22 @@ fn test_encrypt_decrypt() {
         .expect("decryption failed, error");
 
     assert_eq!(message.to_vec(), plaintext, "decryption result mismatch");
+}
+
+#[test]
+fn test_decrypt_failure() {
+    let key = get_random_bytes(16);
+
+    let stream = subtle::AesCtr::new(&key, subtle::AES_CTR_MIN_IV_SIZE)
+        .expect("failed to create AesCtr instance");
+
+    let plaintext = b"Some data to encrypt.";
+    let ct = stream.encrypt(plaintext).expect("encryption failed");
+
+    let result = stream.decrypt(&ct[..2]);
+    tink_testutil::expect_err(result, "ciphertext too short");
+    let result = stream.decrypt(&[]);
+    tink_testutil::expect_err(result, "ciphertext too short");
 }
 
 #[test]

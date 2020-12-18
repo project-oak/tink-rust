@@ -40,7 +40,7 @@ impl tink::registry::KeyManager for AesCtrHmacAeadKeyManager {
     /// Create an AEAD for the given serialized [`tink::proto::AesCtrHmacAeadKey`].
     fn primitive(&self, serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
         if serialized_key.is_empty() {
-            return Err("AesCtrHmacAeadKeyManager: invalid key".into());
+            return Err("AesCtrHmacAeadKeyManager: empty key".into());
         }
         let key = tink::proto::AesCtrHmacAeadKey::decode(serialized_key)
             .map_err(|e| wrap_err("AesCtrHmacAeadKeyManager: invalid key", e))?;
@@ -68,7 +68,7 @@ impl tink::registry::KeyManager for AesCtrHmacAeadKeyManager {
     /// Create a new key according to the given serialized [`tink::proto::AesCtrHmacAeadKeyFormat`].
     fn new_key(&self, serialized_key_format: &[u8]) -> Result<Vec<u8>, TinkError> {
         if serialized_key_format.is_empty() {
-            return Err("AesCtrHmacAeadKeyManager: invalid key format".into());
+            return Err("AesCtrHmacAeadKeyManager: empty key format".into());
         }
         let key_format = tink::proto::AesCtrHmacAeadKeyFormat::decode(serialized_key_format)
             .map_err(|e| wrap_err("AesCtrHmacAeadKeyManager: invalid key format", e))?;

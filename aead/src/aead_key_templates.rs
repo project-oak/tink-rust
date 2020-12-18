@@ -82,6 +82,16 @@ pub fn aes256_ctr_hmac_sha256_key_template() -> KeyTemplate {
     create_aes_ctr_hmac_aead_key_template(32, 16, 32, 32, HashType::Sha256)
 }
 
+/// Return a [`KeyTemplate`] that generates an AES-CTR-HMAC-AEAD key with the following parameters:
+///  - AES key size: 32 bytes
+///  - AES CTR IV size: 16 bytes
+///  - HMAC key size: 32 bytes
+///  - HMAC tag size: 32 bytes
+///  - HMAC hash function: SHA512
+pub fn aes256_ctr_hmac_sha512_key_template() -> KeyTemplate {
+    create_aes_ctr_hmac_aead_key_template(32, 16, 32, 32, HashType::Sha512)
+}
+
 /// Return a [`KeyTemplate`] that generates a CHACHA20_POLY1305 key.
 pub fn cha_cha20_poly1305_key_template() -> KeyTemplate {
     KeyTemplate {
