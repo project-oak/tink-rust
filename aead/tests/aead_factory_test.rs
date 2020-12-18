@@ -153,3 +153,12 @@ fn test_factory_with_valid_primitive_set_type() {
 
     tink_aead::new(&good_kh).expect("calling new() with good keyset::Handle failed");
 }
+
+#[test]
+fn test_factory_with_aes256_ctr_hmac_sha512() {
+    tink_aead::init();
+    let good_kh = tink::keyset::Handle::new(&tink_aead::aes256_ctr_hmac_sha512_key_template())
+        .expect("failed to build keyset::Handle");
+
+    tink_aead::new(&good_kh).expect("calling new() with good keyset::Handle failed");
+}

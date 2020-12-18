@@ -274,6 +274,8 @@ fn test_new_key_with_invalid_format() {
         let result = key_manager.new_key(&serialized_format);
         tink_testutil::expect_err(result, err_msg);
     }
+    let result = key_manager.new_key(&[]);
+    tink_testutil::expect_err(result, "empty");
 }
 
 #[test]
@@ -483,4 +485,6 @@ fn test_primitive_with_invalid_key() {
         let result = key_manager.primitive(&serialized_key);
         tink_testutil::expect_err(result, err_msg);
     }
+    let result = key_manager.primitive(&[]);
+    tink_testutil::expect_err(result, "empty");
 }
