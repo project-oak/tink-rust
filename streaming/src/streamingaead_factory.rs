@@ -14,6 +14,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+//! Factory methods for [`tink::StreamingAead`] instances.
+
+use std::sync::Arc;
 use tink::{utils::wrap_err, TinkError};
 
 /// Return a [`tink::StreamingAead`] primitive from the given keyset handle.
@@ -24,7 +27,7 @@ pub fn new(h: &tink::keyset::Handle) -> Result<Box<dyn tink::StreamingAead>, Tin
 /// Return a [`tink::StreamingAead`] primitive from the given keyset handle and custom key manager.
 pub fn new_with_key_manager(
     h: &tink::keyset::Handle,
-    km: Option<std::sync::Arc<dyn tink::registry::KeyManager>>,
+    km: Option<Arc<dyn tink::registry::KeyManager>>,
 ) -> Result<Box<dyn tink::StreamingAead>, TinkError> {
     let ps = h
         .primitives_with_key_manager(km)
@@ -34,11 +37,11 @@ pub fn new_with_key_manager(
     Ok(Box::new(ret))
 }
 
-// `WrappedStreamingAead` is a  [`tink::StreamingAead`] implementation that uses the underlying
-// primitive set for deterministic encryption and decryption.
+/// `WrappedStreamingAead` is a  [`tink::StreamingAead`] implementation that uses the underlying
+/// primitive set for deterministic encryption and decryption.
 #[derive(Clone)]
 pub(crate) struct WrappedStreamingAead {
-    pub(crate) ps: tink::primitiveset::PrimitiveSet,
+    pub(crate) ps: tink::primitiveset::TypedPrimitiveSet<Box<dyn tink::StreamingAead>>,
 }
 
 impl WrappedStreamingAead {
@@ -59,7 +62,9 @@ impl WrappedStreamingAead {
                 };
             }
         }
-        Ok(WrappedStreamingAead { ps })
+        // The `.into()` call is only safe because we've just checked that all entries have
+        // the right type of primitive
+        Ok(WrappedStreamingAead { ps: ps.into() })
     }
 }
 
@@ -73,11 +78,7 @@ impl tink::StreamingAead for WrappedStreamingAead {
             None => return Err("streaming_aead::factory: no primary primitive".into()),
             Some(p) => p,
         };
-        let p = match &entry.primitive {
-            tink::Primitive::StreamingAead(p) => p,
-            _ => return Err("streaming_aead::factory: not a StreamingAead primitive".into()),
-        };
-        p.new_encrypting_writer(w, aad)
+        entry.primitive.new_encrypting_writer(w, aad)
     }
 
     /// Return a wrapper around an underlying `std::io::Read`, such that any read-operation
