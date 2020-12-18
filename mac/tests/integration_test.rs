@@ -41,3 +41,19 @@ fn example() {
     println!("Message: {}", std::str::from_utf8(msg).unwrap());
     println!("Authentication tag: {}", base64::encode(&tag));
 }
+
+#[test]
+fn test_legacy_prefix_type() {
+    tink_mac::init();
+    let mut template = tink_mac::hmac_sha256_tag256_key_template();
+    template.output_prefix_type = tink::proto::OutputPrefixType::Legacy as i32;
+    let kh = tink::keyset::Handle::new(&template).unwrap();
+    let m = tink_mac::new(&kh).unwrap();
+
+    let msg = b"this data needs to be authenticated";
+    let tag = m.compute_mac(msg).unwrap();
+
+    assert!(m.verify_mac(&tag, msg).is_ok());
+    println!("Message: {}", std::str::from_utf8(msg).unwrap());
+    println!("Authentication tag: {}", base64::encode(&tag));
+}
