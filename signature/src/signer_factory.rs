@@ -40,7 +40,7 @@ pub fn new_signer_with_key_manager(
 /// A [`tink::Signer`] implementation that uses the underlying primitive set for signing.
 #[derive(Clone)]
 struct WrappedSigner {
-    ps: tink::primitiveset::PrimitiveSet,
+    ps: tink::primitiveset::TypedPrimitiveSet<Box<dyn tink::Signer>>,
 }
 
 impl WrappedSigner {
@@ -61,7 +61,9 @@ impl WrappedSigner {
                 };
             }
         }
-        Ok(WrappedSigner { ps })
+        // The `.into()` call is only safe because we've just checked that all entries have
+        // the right type of primitive
+        Ok(WrappedSigner { ps: ps.into() })
     }
 }
 
@@ -73,18 +75,14 @@ impl tink::Signer for WrappedSigner {
             Some(p) => p,
             None => return Err("signer::factory: no primary primitive".into()),
         };
-        let primitive = match &primary.primitive {
-            tink::Primitive::Signer(p) => p,
-            _ => return Err("signer::factory: not a Mac primitive".into()),
-        };
 
         let signature = if primary.prefix_type == tink::proto::OutputPrefixType::Legacy {
             let mut signed_data_copy = Vec::with_capacity(data.len() + 1);
             signed_data_copy.extend_from_slice(data);
             signed_data_copy.push(tink::cryptofmt::LEGACY_START_BYTE);
-            primitive.sign(&signed_data_copy)?
+            primary.primitive.sign(&signed_data_copy)?
         } else {
-            primitive.sign(data)?
+            primary.primitive.sign(data)?
         };
 
         let mut ret = Vec::with_capacity(primary.prefix.len() + signature.len());

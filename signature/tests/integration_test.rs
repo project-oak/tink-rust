@@ -66,3 +66,20 @@ fn example_ed25519() {
     let v = tink_signature::new_verifier(&pubkh).unwrap();
     assert!(v.verify(&a, b"this data needs to be signed").is_ok());
 }
+
+#[test]
+fn test_box_clone() {
+    tink_signature::init();
+    let kh = tink::keyset::Handle::new(&tink_signature::ed25519_key_template()).unwrap();
+    let s = tink_signature::new_signer(&kh).unwrap();
+
+    let a = s.box_clone().sign(b"this data needs to be signed").unwrap();
+
+    let pubkh = kh.public().unwrap();
+
+    let v = tink_signature::new_verifier(&pubkh).unwrap();
+    assert!(v
+        .box_clone()
+        .verify(&a, b"this data needs to be signed")
+        .is_ok());
+}
