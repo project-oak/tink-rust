@@ -41,7 +41,7 @@ pub fn new_with_key_manager(
 /// and decryption.
 #[derive(Clone)]
 struct WrappedAead {
-    ps: tink::primitiveset::PrimitiveSet,
+    ps: tink::primitiveset::TypedPrimitiveSet<Box<dyn tink::Aead>>,
 }
 
 impl WrappedAead {
@@ -62,7 +62,9 @@ impl WrappedAead {
                 };
             }
         }
-        Ok(WrappedAead { ps })
+        // The `.into()` call is only safe because we've just checked that all entries have
+        // the right type of primitive
+        Ok(WrappedAead { ps: ps.into() })
     }
 }
 
@@ -74,17 +76,12 @@ impl tink::Aead for WrappedAead {
             .as_ref()
             .ok_or_else(|| TinkError::new("no primary"))?;
 
-        match &primary.primitive {
-            tink::Primitive::Aead(p) => {
-                let ct = p.encrypt(pt, aad)?;
+        let ct = primary.primitive.encrypt(pt, aad)?;
 
-                let mut ret = Vec::with_capacity(primary.prefix.len() + ct.len());
-                ret.extend_from_slice(&primary.prefix);
-                ret.extend_from_slice(&ct);
-                Ok(ret)
-            }
-            _ => Err("aead::encrypt: not an AEAD primitive".into()),
-        }
+        let mut ret = Vec::with_capacity(primary.prefix.len() + ct.len());
+        ret.extend_from_slice(&primary.prefix);
+        ret.extend_from_slice(&ct);
+        Ok(ret)
     }
 
     fn decrypt(&self, ct: &[u8], aad: &[u8]) -> Result<Vec<u8>, TinkError> {
@@ -93,27 +90,21 @@ impl tink::Aead for WrappedAead {
         if ct.len() > prefix_size {
             let prefix = &ct[..prefix_size];
             let ct_no_prefix = &ct[prefix_size..];
-            let entries = self.ps.entries_for_prefix(&prefix);
-            for entry in &entries {
-                if let tink::Primitive::Aead(p) = &entry.primitive {
-                    if let Ok(pt) = p.decrypt(ct_no_prefix, aad) {
+            if let Some(entries) = self.ps.entries_for_prefix(&prefix) {
+                for entry in entries {
+                    if let Ok(pt) = entry.primitive.decrypt(ct_no_prefix, aad) {
                         return Ok(pt);
                     }
-                } else {
-                    return Err("aead::decrypt: not an AEAD primitive".into());
                 }
             }
         }
 
         // try raw keys
-        let entries = self.ps.raw_entries();
-        for entry in &entries {
-            if let tink::Primitive::Aead(p) = &entry.primitive {
-                if let Ok(pt) = p.decrypt(ct, aad) {
+        if let Some(entries) = self.ps.raw_entries() {
+            for entry in entries {
+                if let Ok(pt) = entry.primitive.decrypt(ct, aad) {
                     return Ok(pt);
                 }
-            } else {
-                return Err("aead::decrypt: not an AEAD primitive".into());
             }
         }
 
