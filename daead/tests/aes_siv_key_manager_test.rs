@@ -58,7 +58,7 @@ fn test_aes_siv_primitive_with_wrong_later_key() {
     tink_daead::init();
     tink_signature::init();
 
-    // Build a keyset with a primary ECDSA key plus an AES-SIV key.
+    // Build a keyset with a primary AES-SIV key plus a later ECDSA key.
     let mut ksm = tink::keyset::Manager::new();
     ksm.rotate(&tink_daead::aes_siv_key_template()).unwrap();
     ksm.add(
