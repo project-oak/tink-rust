@@ -81,7 +81,8 @@ A `KeyManager` is an object that handles the translation from a `Key` instance t
 `Key` for its key material. Tink has a **global** registry of `KeyManager` instances, each indexed by a **type URL**
 that identifies the kind of keys it supports.
 
-This registry allows an arbitrary `Key` to be converted to a `Primitive` of the relevant type:
+This registry allows an arbitrary `Key` to be converted to a `Primitive` of the relevant type, and similarly allows
+a `Keyset` to be converted to a `PrimitiveSet`.
 
 - In Go, primitives are of type `interface {}`, and the user of the registry uses [type
   assertions](https://tour.golang.org/methods/15) to convert a general primitive to a more specific object that
@@ -96,7 +97,9 @@ This registry allows an arbitrary `Key` to be converted to a `Primitive` of the 
   recovered via `static_cast` (modulo a check that the `type_info` is sensible).
     - The global registry has to be manually populated by calling `<Primitive>Config::Register()` methods before use.
 - In Rust, the `Primitive` type is an enum that encompasses all primitive types, and the user of the registry
-  checks that the relevant enum variant is returned.
+  checks that the relevant enum variant is returned.  If all of the `Primitive`s in a `PrimitiveSet` are known to be
+  of a specific primitive type, the `PrimitiveSet` can be converted to a `TypedPrimitiveSet<T>` for the relevant
+  primitive type `T`.
     - The global registry has to be manually populated by calling `tink_<primitive>::init()` methods before use.
 
 ### Error Handling
