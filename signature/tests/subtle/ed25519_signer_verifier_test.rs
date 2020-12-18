@@ -141,6 +141,14 @@ fn test_ed25519_sign_verify() {
     }
 }
 
+#[test]
+fn test_ed25519_signer_invalid_seed() {
+    let result = tink_signature::subtle::Ed25519Signer::new(&[]);
+    tink_testutil::expect_err(result, "invalid key");
+    let result = tink_signature::subtle::Ed25519Signer::new(&[1, 2, 3]);
+    tink_testutil::expect_err(result, "invalid key");
+}
+
 #[derive(Debug, Deserialize)]
 struct TestDataEd25519 {
     #[serde(flatten)]
