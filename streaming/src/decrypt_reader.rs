@@ -72,39 +72,38 @@ impl io::Read for DecryptReader {
         let mut copy_reader = SharedCopyReader::new(raw_reader);
 
         // find proper key to decrypt ciphertext
-        let entries = self.wrapped.ps.raw_entries();
-        for e in &entries {
-            let sa = match &e.primitive {
-                tink::Primitive::StreamingAead(p) => p,
-                _ => continue,
-            };
+        if let Some(entries) = self.wrapped.ps.raw_entries() {
+            for e in entries {
+                // Attempt a decrypting-read from the ciphertext reader `cr`, but also keep a copy
+                // of the read data into a buffer so that it can be re-scanned with
+                // a different key if decryption fails.
+                let mut r = match e
+                    .primitive
+                    .new_decrypting_reader(Box::new(copy_reader.clone()), &self.aad)
+                {
+                    Ok(r) => r,
+                    Err(_) => {
+                        copy_reader.rewind();
+                        continue;
+                    }
+                };
+                let n = match r.read(p) {
+                    Ok(n) => n,
+                    Err(_) => {
+                        // The read attempt will have consumed some of the underlying reader, but
+                        // there is a copy of the data that has been read. Ensure that this
+                        // already-read data is re-used next time around.
+                        copy_reader.rewind();
+                        continue;
+                    }
+                };
 
-            // Attempt a decrypting-read from the ciphertext reader `cr`, but also keep a copy of
-            // the read data into a buffer so that it can be re-scanned with a different key if
-            // decryption fails.
-            let mut r = match sa.new_decrypting_reader(Box::new(copy_reader.clone()), &self.aad) {
-                Ok(r) => r,
-                Err(_) => {
-                    copy_reader.rewind();
-                    continue;
-                }
-            };
-            let n = match r.read(p) {
-                Ok(n) => n,
-                Err(_) => {
-                    // The read attempt will have consumed some of the underlying reader, but
-                    // there is a copy of the data that has been read. Ensure that this already-read
-                    // data is re-used next time around.
-                    copy_reader.rewind();
-                    continue;
-                }
-            };
-
-            // Reading has succeeded, so use this particular key from now on and no longer need
-            // to store copies of read data.
-            copy_reader.stop_copying();
-            self.state = State::Found(r);
-            return Ok(n);
+                // Reading has succeeded, so use this particular key from now on and no longer need
+                // to store copies of read data.
+                copy_reader.stop_copying();
+                self.state = State::Found(r);
+                return Ok(n);
+            }
         }
         Err(io::Error::new(
             io::ErrorKind::InvalidInput,
