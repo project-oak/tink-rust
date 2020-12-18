@@ -42,7 +42,7 @@ pub fn new_with_key_manager(
 /// for deterministic encryption and decryption.
 #[derive(Clone)]
 struct WrappedDeterministicAead {
-    ps: tink::primitiveset::PrimitiveSet,
+    ps: tink::primitiveset::TypedPrimitiveSet<Box<dyn tink::DeterministicAead>>,
 }
 
 impl WrappedDeterministicAead {
@@ -63,7 +63,9 @@ impl WrappedDeterministicAead {
                 };
             }
         }
-        Ok(WrappedDeterministicAead { ps })
+        // The `.into()` call is only safe because we've just checked that all entries have
+        // the right type of primitive
+        Ok(WrappedDeterministicAead { ps: ps.into() })
     }
 }
 
@@ -75,17 +77,12 @@ impl tink::DeterministicAead for WrappedDeterministicAead {
             .as_ref()
             .ok_or_else(|| TinkError::new("no primary"))?;
 
-        match &primary.primitive {
-            tink::Primitive::DeterministicAead(p) => {
-                let ct = p.encrypt_deterministically(pt, aad)?;
+        let ct = primary.primitive.encrypt_deterministically(pt, aad)?;
 
-                let mut ret = Vec::with_capacity(primary.prefix.len() + ct.len());
-                ret.extend_from_slice(&primary.prefix);
-                ret.extend_from_slice(&ct);
-                Ok(ret)
-            }
-            _ => Err("daead::factory: not a DeterministicAEAD primitive".into()),
-        }
+        let mut ret = Vec::with_capacity(primary.prefix.len() + ct.len());
+        ret.extend_from_slice(&primary.prefix);
+        ret.extend_from_slice(&ct);
+        Ok(ret)
     }
 
     fn decrypt_deterministically(&self, ct: &[u8], aad: &[u8]) -> Result<Vec<u8>, TinkError> {
@@ -94,27 +91,21 @@ impl tink::DeterministicAead for WrappedDeterministicAead {
         if ct.len() > prefix_size {
             let prefix = &ct[..prefix_size];
             let ct_no_prefix = &ct[prefix_size..];
-            let entries = self.ps.entries_for_prefix(&prefix);
-            for entry in &entries {
-                if let tink::Primitive::DeterministicAead(p) = &entry.primitive {
-                    if let Ok(pt) = p.decrypt_deterministically(ct_no_prefix, aad) {
+            if let Some(entries) = self.ps.entries_for_prefix(&prefix) {
+                for entry in entries {
+                    if let Ok(pt) = entry.primitive.decrypt_deterministically(ct_no_prefix, aad) {
                         return Ok(pt);
                     }
-                } else {
-                    return Err("daead::factory: not a DeterministicAEAD primitive".into());
                 }
             }
         }
 
         // try raw keys
-        let entries = self.ps.raw_entries();
-        for entry in &entries {
-            if let tink::Primitive::DeterministicAead(p) = &entry.primitive {
-                if let Ok(pt) = p.decrypt_deterministically(ct, aad) {
+        if let Some(entries) = self.ps.raw_entries() {
+            for entry in entries {
+                if let Ok(pt) = entry.primitive.decrypt_deterministically(ct, aad) {
                     return Ok(pt);
                 }
-            } else {
-                return Err("daead::factory: not a DeterministicAEAD primitive".into());
             }
         }
 
