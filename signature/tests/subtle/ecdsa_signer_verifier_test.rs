@@ -101,7 +101,7 @@ fn test_sign_verify() {
 }
 
 #[test]
-fn test_ecdsa_invalid_params() {
+fn test_ecdsa_invalid_signer_params() {
     let mut csprng = rand::thread_rng();
     let secret_key = p256::ecdsa::SigningKey::random(&mut csprng);
     let priv_key_bytes = secret_key.to_bytes().to_vec();
@@ -119,6 +119,38 @@ fn test_ecdsa_invalid_params() {
         EllipticCurveType::NistP256,
         EcdsaSignatureEncoding::UnknownEncoding,
         &priv_key_bytes,
+    );
+    tink_testutil::expect_err(result, "unsupported encoding");
+}
+
+#[test]
+fn test_ecdsa_invalid_verifier_params() {
+    let mut csprng = rand::thread_rng();
+    let secret_key = p256::ecdsa::SigningKey::random(&mut csprng);
+    let public_key = p256::ecdsa::VerifyingKey::from(&secret_key);
+    let point_len = <p256::NistP256 as p256::elliptic_curve::Curve>::FieldSize::to_usize();
+    let pub_key_point = public_key.to_encoded_point(/* compress= */ false);
+    let pub_key_data = pub_key_point.as_bytes();
+    let (x, y) = (
+        pub_key_data[1..point_len + 1].to_vec(),
+        pub_key_data[point_len + 1..].to_vec(),
+    );
+
+    let result = subtle::EcdsaVerifier::new(
+        HashType::Sha256,
+        EllipticCurveType::UnknownCurve,
+        EcdsaSignatureEncoding::Der,
+        &x,
+        &y,
+    );
+    tink_testutil::expect_err(result, "unsupported curve");
+
+    let result = subtle::EcdsaVerifier::new(
+        HashType::Sha256,
+        EllipticCurveType::NistP256,
+        EcdsaSignatureEncoding::UnknownEncoding,
+        &x,
+        &y,
     );
     tink_testutil::expect_err(result, "unsupported encoding");
 }
