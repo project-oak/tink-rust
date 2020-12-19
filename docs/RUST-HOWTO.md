@@ -22,6 +22,7 @@ To install the Tink-Rust repository locally run:
 ```sh
 git clone https://github.com/project-oak/tink-rust
 cd tink-rust
+git submodule update # get local copy of Wycheproof test vectors
 ```
 
 to run all the tests locally:
@@ -34,7 +35,7 @@ TODO(#32): replace with crates.io instructions
 
 ## Rustdoc
 
-Documentation for the Tink API can be found [here](https://project-oak.github.io/tink-rust/).
+Documentation for the Tink Rust API can be found [here](https://project-oak.github.io/tink-rust/).
 
 ## Obtaining and Using Primitives
 
@@ -219,10 +220,13 @@ To take advantage of key rotation and other key management features, you usually
 do not work with single keys, but with keysets. `Keyset`s are just sets of keys
 with some additional parameters and metadata.
 
-Internally Tink stores keysets as Protocol Buffers, but you can work with
-keysets via a wrapper called keyset handle. You can generate a new keyset and
-obtain its handle using a `KeyTemplate`. Keyset `Handle` objects enforce certain
-restrictions that prevent accidental leakage of the sensitive key material.
+Internally Tink stores keysets as Protocol Buffers, but user code should
+normally use a **keyset handle**. This is a wrapper that enforces restrictions
+on access to the underlying keyset, to prevent accidental leakage of the
+sensitive key material.
+
+Generating a new key for a keyset involves the use of a `KeyTemplate`, which
+describes the parameters of the key being generated.
 
 <!-- prettier-ignore-start -->
 [embedmd]:# (../examples/keygen/src/main.rs Rust /fn main/ /^}/)
@@ -238,6 +242,59 @@ fn main() {
 }
 ```
 <!-- prettier-ignore-end -->
+
+Tink provides a **keyset manager** object for operations on keysets that contain
+multiple keys, each identified by a key ID.  This manager allows keys to be:
+
+- generated (based on key templates)
+- set to primary (the primary key is the one used for encryption operations;
+  all of the available keys are tried out for decryption operations)
+- enabled/disabled
+- destroyed (where the key material is removed but the key ID remains)
+- deleted (where the key material is removed along with the key ID).
+
+<!-- prettier-ignore-start -->
+[embedmd]:# (../examples/keymgr/src/main.rs Rust /fn main/ /^}/)
+```Rust
+fn main() {
+    tink_aead::init();
+
+    // Create a keyset with a single key in it, and encrypt something.
+    let kh = tink::keyset::Handle::new(&tink_aead::aes128_gcm_key_template()).unwrap();
+    let cipher = tink_aead::new(&kh).unwrap();
+    let ct = cipher.encrypt(b"data", b"aad").unwrap();
+
+    // Move ownership of the `Handle` into a `keyset::Manager`.
+    let mut km = tink::keyset::Manager::new_from_handle(kh);
+
+    // Rotate in a new primary key, and add an additional secondary key.
+    let key_id_a = km.rotate(&tink_aead::aes256_gcm_key_template()).unwrap();
+    let key_id_b = km
+        .add(
+            &tink_aead::aes256_gcm_key_template(),
+            /* primary = */ false,
+        )
+        .unwrap();
+
+    // Create a new keyset handle for the current state of the managed keyset.
+    let kh2 = km.handle().unwrap();
+    println!("{:?}", kh2); // debug output does not include key material
+
+    // The original key is still in the keyset, and so can decrypt.
+    let cipher2 = tink_aead::new(&kh2).unwrap();
+    let pt = cipher2.decrypt(&ct, b"aad").unwrap();
+    assert_eq!(pt, b"data");
+
+    // Set the third key to primary and disable the previous primary key.
+    km.set_primary(key_id_b).unwrap();
+    km.disable(key_id_a).unwrap();
+    let kh3 = km.handle().unwrap();
+    println!("{:?}", kh3);
+}
+```
+<!-- prettier-ignore-end -->
+
+#### Key Templates
 
 Key templates are available for different primitives as follows.
 
@@ -267,10 +324,12 @@ Streaming AEAD     | `tink_streaming_aead::aes128_ctr_hmac_sha256_segment_1mb_ke
 Streaming AEAD     | `tink_streaming_aead::aes256_ctr_hmac_sha256_segment_4kb_key_template`
 Streaming AEAD     | `tink_streaming_aead::aes256_ctr_hmac_sha256_segment_1mb_key_template`
 
-To avoid accidental leakage of sensitive key material, one should avoid mixing keyset generation and usage in code. To
-support the separation of these activities Tink-Rust provides a command-line tool, `rinkey` that is equivalent to the
-upstream [tinkey]( https://github.com/google/tink/blob/v1.5.0/docs/TINKEY.md) tool, which can be used for common key
-management tasks.
+To avoid accidental leakage of sensitive key material, one should avoid mixing
+keyset generation and usage in code. To support the separation of these
+activities Tink-Rust provides a command-line tool, `rinkey` that is equivalent
+to the upstream [tinkey](
+https://github.com/google/tink/blob/v1.5.0/docs/TINKEY.md) tool, which can be
+used for common key management tasks.
 
 ### Storing and Loading Existing Keysets
 
