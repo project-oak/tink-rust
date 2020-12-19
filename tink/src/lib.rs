@@ -91,3 +91,87 @@ impl Clone for Primitive {
         }
     }
 }
+
+// Conversions from the [`Primitive`] `enum` wrapper to specific primitive types.  Will panic if the
+// wrong type is passed in.
+
+impl From<Primitive> for Box<dyn Aead> {
+    fn from(p: Primitive) -> Box<dyn Aead> {
+        match p {
+            Primitive::Aead(p) => p,
+            _ => panic!("attempt to convert wrong primitive type"), // safe: precondition
+        }
+    }
+}
+
+impl From<Primitive> for Box<dyn DeterministicAead> {
+    fn from(p: Primitive) -> Box<dyn DeterministicAead> {
+        match p {
+            Primitive::DeterministicAead(p) => p,
+            _ => panic!("attempt to convert wrong primitive type"), // safe: precondition
+        }
+    }
+}
+
+impl From<Primitive> for Box<dyn HybridDecrypt> {
+    fn from(p: Primitive) -> Box<dyn HybridDecrypt> {
+        match p {
+            Primitive::HybridDecrypt(p) => p,
+            _ => panic!("attempt to convert wrong primitive type"), // safe: precondition
+        }
+    }
+}
+
+impl From<Primitive> for Box<dyn HybridEncrypt> {
+    fn from(p: Primitive) -> Box<dyn HybridEncrypt> {
+        match p {
+            Primitive::HybridEncrypt(p) => p,
+            _ => panic!("attempt to convert wrong primitive type"), // safe: precondition
+        }
+    }
+}
+
+impl From<Primitive> for Box<dyn Mac> {
+    fn from(p: Primitive) -> Box<dyn Mac> {
+        match p {
+            Primitive::Mac(p) => p,
+            _ => panic!("attempt to convert wrong primitive type"), // safe: precondition
+        }
+    }
+}
+
+impl From<Primitive> for Box<dyn Prf> {
+    fn from(p: Primitive) -> Box<dyn Prf> {
+        match p {
+            Primitive::Prf(p) => p,
+            _ => panic!("attempt to convert wrong primitive type"), // safe: precondition
+        }
+    }
+}
+
+impl From<Primitive> for Box<dyn Signer> {
+    fn from(p: Primitive) -> Box<dyn Signer> {
+        match p {
+            Primitive::Signer(p) => p,
+            _ => panic!("attempt to convert wrong primitive type"), // safe: precondition
+        }
+    }
+}
+
+impl From<Primitive> for Box<dyn StreamingAead> {
+    fn from(p: Primitive) -> Box<dyn StreamingAead> {
+        match p {
+            Primitive::StreamingAead(p) => p,
+            _ => panic!("attempt to convert wrong primitive type"), // safe: precondition
+        }
+    }
+}
+
+impl From<Primitive> for Box<dyn Verifier> {
+    fn from(p: Primitive) -> Box<dyn Verifier> {
+        match p {
+            Primitive::Verifier(p) => p,
+            _ => panic!("attempt to convert wrong primitive type"), // safe: precondition
+        }
+    }
+}

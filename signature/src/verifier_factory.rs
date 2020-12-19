@@ -40,7 +40,7 @@ pub fn new_verifier_with_key_manager(
 /// A [`tink::Verifier`] implementation that uses the underlying primitive set for verifying.
 #[derive(Clone)]
 struct WrappedVerifier {
-    ps: tink::primitiveset::PrimitiveSet,
+    ps: tink::primitiveset::TypedPrimitiveSet<Box<dyn tink::Verifier>>,
 }
 
 impl WrappedVerifier {
@@ -61,7 +61,9 @@ impl WrappedVerifier {
                 };
             }
         }
-        Ok(WrappedVerifier { ps })
+        // The `.into()` call is only safe because we've just checked that all entries have
+        // the right type of primitive
+        Ok(WrappedVerifier { ps: ps.into() })
     }
 }
 
@@ -75,34 +77,30 @@ impl tink::Verifier for WrappedVerifier {
         // try non-raw keys
         let prefix = &signature[..prefix_size];
         let signature_no_prefix = &signature[prefix_size..];
-        let entries = self.ps.entries_for_prefix(&prefix);
-        for entry in &entries {
-            if let tink::Primitive::Verifier(p) = &entry.primitive {
+        if let Some(entries) = self.ps.entries_for_prefix(&prefix) {
+            for entry in entries {
                 let result = if entry.prefix_type == tink::proto::OutputPrefixType::Legacy {
                     let mut signed_data_copy = Vec::with_capacity(data.len() + 1);
                     signed_data_copy.extend_from_slice(data);
                     signed_data_copy.push(tink::cryptofmt::LEGACY_START_BYTE);
-                    p.verify(signature_no_prefix, &signed_data_copy)
+                    entry
+                        .primitive
+                        .verify(signature_no_prefix, &signed_data_copy)
                 } else {
-                    p.verify(signature_no_prefix, data)
+                    entry.primitive.verify(signature_no_prefix, data)
                 };
                 if result.is_ok() {
                     return Ok(());
                 }
-            } else {
-                return Err("verifier::factory: not a Verifier primitive".into());
             }
         }
 
         // try raw keys
-        let entries = self.ps.raw_entries();
-        for entry in &entries {
-            if let tink::Primitive::Verifier(p) = &entry.primitive {
-                if p.verify(signature, data).is_ok() {
+        if let Some(entries) = self.ps.raw_entries() {
+            for entry in entries {
+                if entry.primitive.verify(signature, data).is_ok() {
                     return Ok(());
                 }
-            } else {
-                return Err("verifier::factory: not a Verifier primitive".into());
             }
         }
 

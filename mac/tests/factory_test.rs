@@ -54,7 +54,7 @@ fn test_factory_multiple_keys() {
     let keyset_handle2 = tink::keyset::insecure::new_handle(keyset2).unwrap();
 
     let p2 = tink_mac::new(&keyset_handle2).unwrap();
-    let result = verify_mac_primitive(&p2, &p, &expected_prefix, tag_size as usize);
+    let result = verify_mac_primitive(&p2, &p.box_clone(), &expected_prefix, tag_size as usize);
     assert!(result.is_err(), "Invalid MAC, shouldn't return valid");
     let detail = format!("{:?}", result.unwrap_err());
     assert!(
