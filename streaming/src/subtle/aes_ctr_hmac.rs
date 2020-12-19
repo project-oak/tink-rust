@@ -16,7 +16,7 @@
 
 //! AES-CTR-HMAC based implementation of the [`tink::StreamingAead`] trait.
 
-use super::noncebased;
+use super::{noncebased, AesVariant};
 use aes_ctr::cipher::stream::{Key, NewStreamCipher, SyncStreamCipher};
 use std::convert::TryInto;
 use tink::{proto::HashType, subtle::random::get_random_bytes, utils::wrap_err, Mac, TinkError};
@@ -45,7 +45,7 @@ enum AesCtrKeyVariant {
 pub struct AesCtrHmac {
     pub main_key: Vec<u8>,
     hkdf_alg: HashType,
-    key_size_in_bytes: usize,
+    aes_variant: AesVariant,
     tag_alg: HashType,
     tag_size_in_bytes: usize,
     ciphertext_segment_size: usize,
@@ -85,7 +85,7 @@ impl AesCtrHmac {
         if main_key.len() < 16 || main_key.len() < key_size_in_bytes {
             return Err("main_key too short".into());
         }
-        super::validate_aes_key_size(key_size_in_bytes)?;
+        let aes_variant = super::validate_aes_key_size(key_size_in_bytes)?;
         if tag_size_in_bytes < 10 {
             return Err("tag size too small".into());
         }
@@ -101,7 +101,7 @@ impl AesCtrHmac {
         Ok(AesCtrHmac {
             main_key: main_key.to_vec(),
             hkdf_alg,
-            key_size_in_bytes,
+            aes_variant,
             tag_alg,
             tag_size_in_bytes,
             ciphertext_segment_size,
@@ -112,12 +112,12 @@ impl AesCtrHmac {
 
     /// Return the length of the encryption header.
     pub fn header_length(&self) -> usize {
-        header_length_for(self.key_size_in_bytes)
+        header_length_for(self.aes_variant.key_size())
     }
 
     /// Return a key derived from the main key using` salt` and `aad` as parameters.
     fn derive_key_material(&self, salt: &[u8], aad: &[u8]) -> Result<Vec<u8>, TinkError> {
-        let key_material_size = self.key_size_in_bytes + AES_CTR_HMAC_KEY_SIZE_IN_BYTES;
+        let key_material_size = self.aes_variant.key_size() + AES_CTR_HMAC_KEY_SIZE_IN_BYTES;
         tink::subtle::compute_hkdf(self.hkdf_alg, &self.main_key, salt, aad, key_material_size)
     }
 }
@@ -133,23 +133,21 @@ impl tink::StreamingAead for AesCtrHmac {
         mut w: Box<dyn std::io::Write>,
         aad: &[u8],
     ) -> Result<Box<dyn tink::EncryptingWrite>, TinkError> {
-        let salt = get_random_bytes(self.key_size_in_bytes);
+        let key_size = self.aes_variant.key_size();
+        let salt = get_random_bytes(key_size);
         let nonce_prefix = get_random_bytes(AES_CTR_HMAC_NONCE_PREFIX_SIZE_IN_BYTES);
 
         let km = self.derive_key_material(&salt, aad)?;
 
-        let aes_key = match self.key_size_in_bytes {
-            16 => AesCtrKeyVariant::Aes128(*Key::<aes_ctr::Aes128Ctr>::from_slice(
-                &km[..self.key_size_in_bytes],
-            )),
-            32 => AesCtrKeyVariant::Aes256(*Key::<aes_ctr::Aes256Ctr>::from_slice(
-                &km[..self.key_size_in_bytes],
-            )),
-            l => {
-                return Err(format!("AesCtrHmac: invalid AES key size {} (want 16, 32)", l).into())
+        let aes_key = match self.aes_variant {
+            AesVariant::Aes128 => {
+                AesCtrKeyVariant::Aes128(*Key::<aes_ctr::Aes128Ctr>::from_slice(&km[..key_size]))
+            }
+            AesVariant::Aes256 => {
+                AesCtrKeyVariant::Aes256(*Key::<aes_ctr::Aes256Ctr>::from_slice(&km[..key_size]))
             }
         };
-        let hmac_key = &km[self.key_size_in_bytes..];
+        let hmac_key = &km[key_size..];
         let hmac = tink_mac::subtle::Hmac::new(self.tag_alg, hmac_key, self.tag_size_in_bytes)?;
 
         let mut header = Vec::with_capacity(self.header_length());
@@ -192,7 +190,8 @@ impl tink::StreamingAead for AesCtrHmac {
             return Err("invalid header length".into());
         }
 
-        let mut salt = vec![0; self.key_size_in_bytes];
+        let key_size = self.aes_variant.key_size();
+        let mut salt = vec![0; key_size];
         r.read_exact(&mut salt)
             .map_err(|e| wrap_err("cannot read salt", e))?;
 
@@ -202,18 +201,15 @@ impl tink::StreamingAead for AesCtrHmac {
 
         let km = self.derive_key_material(&salt, aad)?;
 
-        let aes_key = match self.key_size_in_bytes {
-            16 => AesCtrKeyVariant::Aes128(*Key::<aes_ctr::Aes128Ctr>::from_slice(
-                &km[..self.key_size_in_bytes],
-            )),
-            32 => AesCtrKeyVariant::Aes256(*Key::<aes_ctr::Aes256Ctr>::from_slice(
-                &km[..self.key_size_in_bytes],
-            )),
-            l => {
-                return Err(format!("AesCtrHmac: invalid AES key size {} (want 16, 32)", l).into())
+        let aes_key = match self.aes_variant {
+            AesVariant::Aes128 => {
+                AesCtrKeyVariant::Aes128(*Key::<aes_ctr::Aes128Ctr>::from_slice(&km[..key_size]))
+            }
+            AesVariant::Aes256 => {
+                AesCtrKeyVariant::Aes256(*Key::<aes_ctr::Aes256Ctr>::from_slice(&km[..key_size]))
             }
         };
-        let hmac_key = &km[self.key_size_in_bytes..];
+        let hmac_key = &km[self.aes_variant.key_size()..];
         let hmac = tink_mac::subtle::Hmac::new(self.tag_alg, hmac_key, self.tag_size_in_bytes)?;
 
         let nr = noncebased::Reader::new(noncebased::ReaderParams {

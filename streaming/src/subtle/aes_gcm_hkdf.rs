@@ -16,7 +16,7 @@
 
 //! AES-GCM-HKDF based implementation of the [`tink::StreamingAead`] trait.
 
-use super::noncebased;
+use super::{noncebased, AesVariant};
 use aes_gcm::aead::{generic_array::GenericArray, Aead, NewAead};
 use std::convert::TryInto;
 use tink::{proto::HashType, subtle::random::get_random_bytes, utils::wrap_err, TinkError};
@@ -39,7 +39,7 @@ pub const AES_GCM_HKDF_TAG_SIZE_IN_BYTES: usize = 16;
 pub struct AesGcmHkdf {
     pub main_key: Vec<u8>,
     hkdf_alg: HashType,
-    key_size_in_bytes: usize,
+    aes_variant: AesVariant,
     ciphertext_segment_size: usize,
     first_ciphertext_segment_offset: usize,
     plaintext_segment_size: usize,
@@ -80,7 +80,7 @@ impl AesGcmHkdf {
         if main_key.len() < 16 || main_key.len() < key_size_in_bytes {
             return Err("main_key too short".into());
         }
-        super::validate_aes_key_size(key_size_in_bytes)?;
+        let aes_variant = super::validate_aes_key_size(key_size_in_bytes)?;
         let header_len = header_length_for(key_size_in_bytes);
         if ciphertext_segment_size
             <= first_segment_offset + header_len + AES_GCM_HKDF_TAG_SIZE_IN_BYTES
@@ -91,7 +91,7 @@ impl AesGcmHkdf {
         Ok(AesGcmHkdf {
             main_key: main_key.to_vec(),
             hkdf_alg,
-            key_size_in_bytes,
+            aes_variant,
             ciphertext_segment_size,
             first_ciphertext_segment_offset: first_segment_offset + header_len,
             plaintext_segment_size: ciphertext_segment_size - AES_GCM_HKDF_TAG_SIZE_IN_BYTES,
@@ -100,7 +100,7 @@ impl AesGcmHkdf {
 
     /// Return the length of the encryption header.
     pub fn header_length(&self) -> usize {
-        header_length_for(self.key_size_in_bytes)
+        header_length_for(self.aes_variant.key_size())
     }
 
     /// Return a key derived from the given main key using `salt` and `aad` parameters.
@@ -110,7 +110,7 @@ impl AesGcmHkdf {
             &self.main_key,
             salt,
             aad,
-            self.key_size_in_bytes,
+            self.aes_variant.key_size(),
         )
     }
 }
@@ -126,11 +126,11 @@ impl tink::StreamingAead for AesGcmHkdf {
         mut w: Box<dyn std::io::Write>,
         aad: &[u8],
     ) -> Result<Box<dyn tink::EncryptingWrite>, TinkError> {
-        let salt = get_random_bytes(self.key_size_in_bytes);
+        let salt = get_random_bytes(self.aes_variant.key_size());
         let nonce_prefix = get_random_bytes(AES_GCM_HKDF_NONCE_PREFIX_SIZE_IN_BYTES);
 
         let dkey = self.derive_key(&salt, aad)?;
-        let cipher_key = new_cipher_key(&dkey)?;
+        let cipher_key = new_cipher_key(self.aes_variant, &dkey)?;
 
         let mut header = Vec::with_capacity(self.header_length());
         header.push(
@@ -169,7 +169,7 @@ impl tink::StreamingAead for AesGcmHkdf {
             return Err("invalid header length".into());
         }
 
-        let mut salt = vec![0; self.key_size_in_bytes];
+        let mut salt = vec![0; self.aes_variant.key_size()];
         r.read_exact(&mut salt)
             .map_err(|e| wrap_err("cannot read salt", e))?;
 
@@ -178,7 +178,7 @@ impl tink::StreamingAead for AesGcmHkdf {
             .map_err(|e| wrap_err("cannot read nonce_prefix", e))?;
 
         let dkey = self.derive_key(&salt, aad)?;
-        let cipher_key = new_cipher_key(&dkey)?;
+        let cipher_key = new_cipher_key(self.aes_variant, &dkey)?;
 
         let nr = noncebased::Reader::new(noncebased::ReaderParams {
             r,
@@ -194,15 +194,14 @@ impl tink::StreamingAead for AesGcmHkdf {
 }
 
 /// Create a new AES-GCM cipher key using the given key and the crypto library.
-fn new_cipher_key(key: &[u8]) -> Result<AesGcmKeyVariant, TinkError> {
-    match key.len() {
-        16 => Ok(AesGcmKeyVariant::Aes128(Box::new(aes_gcm::Aes128Gcm::new(
+fn new_cipher_key(aes_variant: AesVariant, key: &[u8]) -> Result<AesGcmKeyVariant, TinkError> {
+    match aes_variant {
+        AesVariant::Aes128 => Ok(AesGcmKeyVariant::Aes128(Box::new(aes_gcm::Aes128Gcm::new(
             GenericArray::from_slice(key),
         )))),
-        32 => Ok(AesGcmKeyVariant::Aes256(Box::new(aes_gcm::Aes256Gcm::new(
+        AesVariant::Aes256 => Ok(AesGcmKeyVariant::Aes256(Box::new(aes_gcm::Aes256Gcm::new(
             GenericArray::from_slice(key),
         )))),
-        l => Err(format!("AesGcmHmac: invalid AES key size {} (want 16, 32)", l).into()),
     }
 }
 

@@ -35,7 +35,7 @@ fn test_aes_gcm_hkdf_get_primitive_basic() {
             tink_testutil::AES_GCM_HKDF_KEY_VERSION,
             *key_size,
             *key_size,
-            HashType::Sha256,
+            HashType::Sha256 as i32,
             4096,
         );
         let serialized_key = proto_encode(&key);
@@ -74,7 +74,7 @@ fn test_aes_gcm_hkdf_new_key_multiple_times() {
     tink_streaming_aead::init();
     let key_manager = tink::registry::get_key_manager(tink_testutil::AES_GCM_HKDF_TYPE_URL)
         .expect("cannot obtain AES-GCM-HKDF key manager");
-    let format = tink_testutil::new_aes_gcm_hkdf_key_format(32, 32, HashType::Sha256, 4096);
+    let format = tink_testutil::new_aes_gcm_hkdf_key_format(32, 32, HashType::Sha256 as i32, 4096);
     let serialized_format = proto_encode(&format);
     let mut keys = HashSet::new();
     let n = 26;
@@ -99,7 +99,7 @@ fn test_aes_gcm_hkdf_new_key_basic() {
         let format = tink_testutil::new_aes_gcm_hkdf_key_format(
             *key_size,
             *key_size,
-            HashType::Sha256,
+            HashType::Sha256 as i32,
             4096,
         );
         let serialized_format = proto_encode(&format);
@@ -139,7 +139,7 @@ fn test_aes_gcm_hkdf_new_key_data_basic() {
         let format = tink_testutil::new_aes_gcm_hkdf_key_format(
             *key_size,
             *key_size,
-            HashType::Sha256,
+            HashType::Sha256 as i32,
             4096,
         );
         let serialized_format = proto_encode(&format);
@@ -219,7 +219,7 @@ fn gen_invalid_aes_gcm_hkdf_keys() -> Vec<Vec<u8>> {
         proto_encode(&tink_testutil::new_aes_gcm_hkdf_key_format(
             32,
             32,
-            HashType::Sha256,
+            HashType::Sha256 as i32,
             4096,
         )),
         // bad key size
@@ -227,21 +227,21 @@ fn gen_invalid_aes_gcm_hkdf_keys() -> Vec<Vec<u8>> {
             tink_testutil::AES_GCM_KEY_VERSION,
             17,
             16,
-            HashType::Sha256,
+            HashType::Sha256 as i32,
             4096,
         )),
         proto_encode(&tink_testutil::new_aes_gcm_hkdf_key(
             tink_testutil::AES_GCM_KEY_VERSION,
             16,
             17,
-            HashType::Sha256,
+            HashType::Sha256 as i32,
             4096,
         )),
         proto_encode(&tink_testutil::new_aes_gcm_hkdf_key(
             tink_testutil::AES_GCM_KEY_VERSION,
             33,
             33,
-            HashType::Sha256,
+            HashType::Sha256 as i32,
             4096,
         )),
         // bad version
@@ -249,7 +249,7 @@ fn gen_invalid_aes_gcm_hkdf_keys() -> Vec<Vec<u8>> {
             tink_testutil::AES_GCM_KEY_VERSION + 1,
             16,
             16,
-            HashType::Sha256,
+            HashType::Sha256 as i32,
             4096,
         )),
         // ciphertext segment size too short
@@ -257,7 +257,7 @@ fn gen_invalid_aes_gcm_hkdf_keys() -> Vec<Vec<u8>> {
             tink_testutil::AES_GCM_KEY_VERSION,
             16,
             16,
-            HashType::Sha256,
+            HashType::Sha256 as i32,
             4,
         )),
         // invalid hash
@@ -265,7 +265,14 @@ fn gen_invalid_aes_gcm_hkdf_keys() -> Vec<Vec<u8>> {
             tink_testutil::AES_GCM_KEY_VERSION,
             16,
             16,
-            HashType::UnknownHash,
+            HashType::UnknownHash as i32,
+            4096,
+        )),
+        proto_encode(&tink_testutil::new_aes_gcm_hkdf_key(
+            tink_testutil::AES_GCM_KEY_VERSION,
+            16,
+            16,
+            9999,
             4096,
         )),
     ]
@@ -278,27 +285,44 @@ fn gen_invalid_aes_gcm_hkdf_key_formats() -> Vec<Vec<u8>> {
             tink_testutil::AES_GCM_KEY_VERSION,
             16,
             16,
-            HashType::Sha256,
+            HashType::Sha256 as i32,
             16,
         )),
         // invalid key size
         proto_encode(&tink_testutil::new_aes_gcm_hkdf_key_format(
             17,
             16,
-            HashType::Sha256,
+            HashType::Sha256 as i32,
             4096,
         )),
         proto_encode(&tink_testutil::new_aes_gcm_hkdf_key_format(
             16,
             17,
-            HashType::Sha256,
+            HashType::Sha256 as i32,
             4096,
         )),
         proto_encode(&tink_testutil::new_aes_gcm_hkdf_key_format(
             33,
             33,
-            HashType::Sha256,
+            HashType::Sha256 as i32,
             4096,
+        )),
+        // invalid hash type
+        proto_encode(&tink_testutil::new_aes_gcm_hkdf_key_format(
+            32,
+            32,
+            HashType::UnknownHash as i32,
+            4096,
+        )),
+        proto_encode(&tink_testutil::new_aes_gcm_hkdf_key_format(
+            32, 32, 9999, 4096,
+        )),
+        // segment size too short
+        proto_encode(&tink_testutil::new_aes_gcm_hkdf_key_format(
+            32,
+            32,
+            HashType::Sha256 as i32,
+            4,
         )),
     ]
 }

@@ -73,10 +73,19 @@ fn test_factory_with_invalid_primitive_set_type() {
     tink_streaming_aead::init();
     let wrong_kh = tink::keyset::Handle::new(&tink_mac::hmac_sha256_tag128_key_template())
         .expect("failed to build keyset.Handle");
+    tink_testutil::expect_err(
+        tink_streaming_aead::new(&wrong_kh),
+        "not a StreamingAead primitive",
+    );
 
-    assert!(
-        tink_streaming_aead::new(&wrong_kh).is_err(),
-        "new() should fail with wrong keyset.Handle"
+    // Now arrange a keyset where the primary key is correct but secondary key is not.
+    let mut km = tink::keyset::Manager::new_from_handle(wrong_kh);
+    km.rotate(&tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template())
+        .unwrap();
+    let wronger_kh = km.handle().unwrap();
+    tink_testutil::expect_err(
+        tink_streaming_aead::new(&wronger_kh),
+        "not a StreamingAead primitive",
     );
 }
 

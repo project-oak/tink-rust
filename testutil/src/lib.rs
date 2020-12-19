@@ -453,7 +453,7 @@ pub fn new_aes_gcm_hkdf_key(
     key_version: u32,
     key_size: u32,
     derived_key_size: u32,
-    hkdf_hash_type: HashType,
+    hkdf_hash_type: i32,
     ciphertext_segment_size: u32,
 ) -> tink::proto::AesGcmHkdfStreamingKey {
     let key_value = get_random_bytes(key_size.try_into().unwrap());
@@ -463,7 +463,7 @@ pub fn new_aes_gcm_hkdf_key(
         params: Some(tink::proto::AesGcmHkdfStreamingParams {
             ciphertext_segment_size,
             derived_key_size,
-            hkdf_hash_type: hkdf_hash_type as i32,
+            hkdf_hash_type,
         }),
     }
 }
@@ -480,7 +480,7 @@ pub fn new_aes_gcm_hkdf_key_data(
         AES_GCM_HKDF_KEY_VERSION,
         key_size,
         derived_key_size,
-        hkdf_hash_type,
+        hkdf_hash_type as i32,
         ciphertext_segment_size,
     );
     let serialized_key = proto_encode(&key);
@@ -495,7 +495,7 @@ pub fn new_aes_gcm_hkdf_key_data(
 pub fn new_aes_gcm_hkdf_key_format(
     key_size: u32,
     derived_key_size: u32,
-    hkdf_hash_type: HashType,
+    hkdf_hash_type: i32,
     ciphertext_segment_size: u32,
 ) -> tink::proto::AesGcmHkdfStreamingKeyFormat {
     tink::proto::AesGcmHkdfStreamingKeyFormat {
@@ -504,7 +504,7 @@ pub fn new_aes_gcm_hkdf_key_format(
         params: Some(tink::proto::AesGcmHkdfStreamingParams {
             ciphertext_segment_size,
             derived_key_size,
-            hkdf_hash_type: hkdf_hash_type as i32,
+            hkdf_hash_type,
         }),
     }
 }
