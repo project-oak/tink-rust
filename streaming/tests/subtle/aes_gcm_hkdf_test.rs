@@ -14,6 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+use tink::proto::HashType;
 use tink_streaming_aead::subtle;
 
 #[test]
@@ -201,6 +202,62 @@ fn test_aes_gcm_hkdf_encrypt_decrypt() {
         let (pt, ct) = super::encrypt(&cipher, super::AAD, tc.plaintext_size).unwrap();
 
         assert!(super::decrypt(&cipher, super::AAD, &pt, &ct, tc.chunk_size).is_ok());
+    }
+}
+
+#[test]
+fn test_aes_gcm_hkdf_invalid_params() {
+    struct TestCase {
+        err_msg: &'static str,
+        key: Vec<u8>,
+        hash: HashType,
+        key_size_in_bytes: usize,
+        segment_size: usize,
+        first_segment_offset: usize,
+    };
+    let test_cases = vec![
+        TestCase {
+            err_msg: "invalid AES key size",
+            hash: HashType::Sha256,
+            key: vec![0; 32],
+            key_size_in_bytes: 18,
+            segment_size: 256,
+            first_segment_offset: 0,
+        },
+        TestCase {
+            err_msg: "main_key too short",
+            hash: HashType::Sha256,
+            key: vec![0; 14],
+            key_size_in_bytes: 16,
+            segment_size: 256,
+            first_segment_offset: 0,
+        },
+        TestCase {
+            err_msg: "main_key too short",
+            hash: HashType::Sha256,
+            key: vec![0; 16],
+            key_size_in_bytes: 20,
+            segment_size: 256,
+            first_segment_offset: 0,
+        },
+        TestCase {
+            err_msg: "ciphertext_segment_size too small",
+            hash: HashType::Sha256,
+            key: vec![0; 32],
+            key_size_in_bytes: 16,
+            segment_size: 2,
+            first_segment_offset: 0,
+        },
+    ];
+    for tc in test_cases {
+        let result = subtle::AesGcmHkdf::new(
+            &tc.key,
+            tc.hash,
+            tc.key_size_in_bytes,
+            tc.segment_size,
+            tc.first_segment_offset,
+        );
+        tink_testutil::expect_err(result, tc.err_msg);
     }
 }
 

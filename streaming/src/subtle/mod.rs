@@ -23,11 +23,28 @@ pub use aes_gcm_hkdf::*;
 
 pub mod noncebased;
 
+/// Supported AES variants.
+#[derive(Clone, Copy)]
+pub enum AesVariant {
+    Aes128,
+    Aes256,
+}
+
 /// Check if the given key size is a valid AES key size.
-/// (This is a copy of the function in tink_aead::subtle, to reduce inter-crate deps.)
-pub fn validate_aes_key_size(size_in_bytes: usize) -> Result<(), tink::TinkError> {
+pub fn validate_aes_key_size(size_in_bytes: usize) -> Result<AesVariant, tink::TinkError> {
     match size_in_bytes {
-        16 | 32 => Ok(()),
+        16 => Ok(AesVariant::Aes128),
+        32 => Ok(AesVariant::Aes256),
         _ => Err(format!("invalid AES key size; want 16 or 32, got {}", size_in_bytes).into()),
+    }
+}
+
+impl AesVariant {
+    /// Return the key size in bytes for the specified AES variant.
+    pub fn key_size(&self) -> usize {
+        match self {
+            AesVariant::Aes128 => 16,
+            AesVariant::Aes256 => 32,
+        }
     }
 }
