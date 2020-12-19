@@ -649,6 +649,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "example-keymgr"
+version = "0.1.0"
+dependencies = [
+ "tink",
+ "tink-aead",
+]
+
+[[package]]
 name = "example-kms"
 version = "0.1.0"
 dependencies = [
