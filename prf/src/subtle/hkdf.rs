@@ -16,7 +16,8 @@
 
 //! Provides an implementation of PRF using HKDF.
 
-use tink::{proto::HashType, TinkError};
+use tink::TinkError;
+use tink_proto::HashType;
 
 // We use a somewhat larger minimum key size than usual, because PRFs might be
 // used by many users, in which case the security can degrade by a factor

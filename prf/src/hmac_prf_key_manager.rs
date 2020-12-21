@@ -18,7 +18,8 @@
 
 use crate::subtle;
 use prost::Message;
-use tink::{proto::HashType, utils::wrap_err, TinkError};
+use tink::{utils::wrap_err, TinkError};
+use tink_proto::HashType;
 
 /// Maximal version of HMAC PRF keys.
 pub const HMAC_PRF_KEY_VERSION: u32 = 0;
@@ -30,12 +31,12 @@ pub const HMAC_PRF_TYPE_URL: &str = "type.googleapis.com/google.crypto.tink.Hmac
 pub(crate) struct HmacPrfKeyManager;
 
 impl tink::registry::KeyManager for HmacPrfKeyManager {
-    /// Construct an HMAC instance for the given serialized [`HmacPrfKey`](tink::proto::HmacPrfKey).
+    /// Construct an HMAC instance for the given serialized [`HmacPrfKey`](tink_proto::HmacPrfKey).
     fn primitive(&self, serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
         if serialized_key.is_empty() {
             return Err("HmacPrfKeyManager: invalid key".into());
         }
-        let key = tink::proto::HmacPrfKey::decode(serialized_key)
+        let key = tink_proto::HmacPrfKey::decode(serialized_key)
             .map_err(|_| TinkError::new("HmacPrfKeyManager: invalid key"))?;
         let (_params, hash) = validate_key(&key).map_err(|e| wrap_err("HmacPrfKeyManager", e))?;
 
@@ -45,20 +46,20 @@ impl tink::registry::KeyManager for HmacPrfKeyManager {
         }
     }
 
-    /// Generates a new [`HmacPrfKey`](tink::proto::HmacPrfKey) according to specification in the
-    /// given [`HmacPrfKeyFormat`](tink::proto::HmacPrfKeyFormat).
+    /// Generates a new [`HmacPrfKey`](tink_proto::HmacPrfKey) according to specification in the
+    /// given [`HmacPrfKeyFormat`](tink_proto::HmacPrfKeyFormat).
     fn new_key(&self, serialized_key_format: &[u8]) -> Result<Vec<u8>, TinkError> {
         if serialized_key_format.is_empty() {
             return Err("HmacPrfKeyManager: invalid key format".into());
         }
-        let key_format = tink::proto::HmacPrfKeyFormat::decode(serialized_key_format)
+        let key_format = tink_proto::HmacPrfKeyFormat::decode(serialized_key_format)
             .map_err(|_| TinkError::new("HmacPrfKeyManager: invalid key format"))?;
         validate_key_format(&key_format)
             .map_err(|e| wrap_err("HmacPrfKeyManager: invalid key format", e))?;
 
         let key_value = tink::subtle::random::get_random_bytes(key_format.key_size as usize);
         let mut sk = Vec::new();
-        tink::proto::HmacPrfKey {
+        tink_proto::HmacPrfKey {
             version: HMAC_PRF_KEY_VERSION,
             params: key_format.params,
             key_value,
@@ -72,16 +73,16 @@ impl tink::registry::KeyManager for HmacPrfKeyManager {
         HMAC_PRF_TYPE_URL
     }
 
-    fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {
-        tink::proto::key_data::KeyMaterialType::Symmetric
+    fn key_material_type(&self) -> tink_proto::key_data::KeyMaterialType {
+        tink_proto::key_data::KeyMaterialType::Symmetric
     }
 }
 
-/// Validate the given [`HmacPrfKey`](tink::proto::HmacPrfKey). It only validates the version of the
+/// Validate the given [`HmacPrfKey`](tink_proto::HmacPrfKey). It only validates the version of the
 /// key because other parameters will be validated in primitive construction.
 fn validate_key(
-    key: &tink::proto::HmacPrfKey,
-) -> Result<(tink::proto::HmacPrfParams, HashType), TinkError> {
+    key: &tink_proto::HmacPrfKey,
+) -> Result<(tink_proto::HmacPrfParams, HashType), TinkError> {
     tink::keyset::validate_key_version(key.version, HMAC_PRF_KEY_VERSION)
         .map_err(|e| wrap_err("invalid version", e))?;
     let key_size = key.key_value.len();
@@ -94,8 +95,8 @@ fn validate_key(
     Ok((params.clone(), hash))
 }
 
-/// Validates the given [`HmacPrfKeyFormat`](tink::proto::HmacPrfKeyFormat).
-fn validate_key_format(format: &tink::proto::HmacPrfKeyFormat) -> Result<(), TinkError> {
+/// Validates the given [`HmacPrfKeyFormat`](tink_proto::HmacPrfKeyFormat).
+fn validate_key_format(format: &tink_proto::HmacPrfKeyFormat) -> Result<(), TinkError> {
     let params = format
         .params
         .as_ref()

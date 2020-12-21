@@ -14,8 +14,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::{proto::HashType, subtle::random::get_random_bytes, TinkError};
+use tink::{subtle::random::get_random_bytes, TinkError};
 use tink_aead::subtle;
+use tink_proto::HashType;
 
 fn create_aead_with_keys(
     encryption_key: &[u8],

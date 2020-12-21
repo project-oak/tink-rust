@@ -16,7 +16,8 @@
 
 use prost::Message;
 use std::collections::HashSet;
-use tink::{proto::HashType, utils::wrap_err, Prf, TinkError};
+use tink::{utils::wrap_err, Prf, TinkError};
+use tink_proto::HashType;
 use tink_testutil::proto_encode;
 
 #[test]
@@ -59,7 +60,7 @@ fn test_new_key_hmac_multiple_times() {
     let km = tink::registry::get_key_manager(tink_testutil::HMAC_PRF_TYPE_URL)
         .expect("HMAC PRF key manager not found");
     let serialized_format = proto_encode(&tink_testutil::new_hmac_prf_key_format(
-        tink::proto::HashType::Sha256,
+        tink_proto::HashType::Sha256,
     ));
     let mut keys = HashSet::new();
     let n_test = 26;
@@ -84,7 +85,7 @@ fn test_new_key_hmac_basic() {
         let serialized_key = km
             .new_key(&serialized_format)
             .unwrap_or_else(|e| panic!("unexpected error in test case {}: {:?}", i, e));
-        let key = tink::proto::HmacPrfKey::decode(serialized_key.as_ref()).unwrap();
+        let key = tink_proto::HmacPrfKey::decode(serialized_key.as_ref()).unwrap();
         assert!(validate_hmac_prf_key(test_format, &key).is_ok());
     }
 }
@@ -130,12 +131,12 @@ fn test_new_key_data_hmac_basic() {
         );
         assert_eq!(
             key_data.key_material_type,
-            tink::proto::key_data::KeyMaterialType::Symmetric as i32,
+            tink_proto::key_data::KeyMaterialType::Symmetric as i32,
             "incorrect key material type in test case {}",
             i
         );
         let key =
-            tink::proto::HmacPrfKey::decode(key_data.value.as_ref()).expect("invalid key value");
+            tink_proto::HmacPrfKey::decode(key_data.value.as_ref()).expect("invalid key value");
         validate_hmac_prf_key(test_format, &key).expect("invalid key");
     }
 }
@@ -191,18 +192,18 @@ fn test_hmac_type_url() {
     );
     assert_eq!(
         km.key_material_type(),
-        tink::proto::key_data::KeyMaterialType::Symmetric
+        tink_proto::key_data::KeyMaterialType::Symmetric
     );
     assert!(!km.supports_private_keys());
 }
 
 fn gen_invalid_hmac_prf_keys() -> Vec<Vec<u8>> {
-    let mut bad_version_key = tink_testutil::new_hmac_prf_key(tink::proto::HashType::Sha256);
+    let mut bad_version_key = tink_testutil::new_hmac_prf_key(tink_proto::HashType::Sha256);
     bad_version_key.version = 1;
-    let mut short_key = tink_testutil::new_hmac_prf_key(tink::proto::HashType::Sha256);
+    let mut short_key = tink_testutil::new_hmac_prf_key(tink_proto::HashType::Sha256);
     short_key.key_value = vec![1, 1];
-    let non_key = tink_testutil::new_hmac_params(tink::proto::HashType::Sha256, 32);
-    let unknown_hash_key = tink_testutil::new_hmac_prf_key(tink::proto::HashType::UnknownHash);
+    let non_key = tink_testutil::new_hmac_params(tink_proto::HashType::Sha256, 32);
+    let unknown_hash_key = tink_testutil::new_hmac_prf_key(tink_proto::HashType::UnknownHash);
 
     vec![
         proto_encode(&non_key),
@@ -213,47 +214,46 @@ fn gen_invalid_hmac_prf_keys() -> Vec<Vec<u8>> {
 }
 
 fn gen_invalid_hmac_prf_key_formats() -> Vec<Vec<u8>> {
-    let mut short_key_format =
-        tink_testutil::new_hmac_prf_key_format(tink::proto::HashType::Sha256);
+    let mut short_key_format = tink_testutil::new_hmac_prf_key_format(tink_proto::HashType::Sha256);
     short_key_format.key_size = 1;
 
     vec![
         // not a `HmacPrfKeyFormat`
         proto_encode(&tink_testutil::new_hmac_params(
-            tink::proto::HashType::Sha256,
+            tink_proto::HashType::Sha256,
             32,
         )),
         // key too short
         proto_encode(&short_key_format),
         // unknown hash type
         proto_encode(&tink_testutil::new_hmac_prf_key_format(
-            tink::proto::HashType::UnknownHash,
+            tink_proto::HashType::UnknownHash,
         )),
     ]
 }
 
-fn gen_valid_hmac_prf_key_formats() -> Vec<tink::proto::HmacPrfKeyFormat> {
+fn gen_valid_hmac_prf_key_formats() -> Vec<tink_proto::HmacPrfKeyFormat> {
     vec![
-        tink_testutil::new_hmac_prf_key_format(tink::proto::HashType::Sha1),
-        tink_testutil::new_hmac_prf_key_format(tink::proto::HashType::Sha256),
-        tink_testutil::new_hmac_prf_key_format(tink::proto::HashType::Sha384),
-        tink_testutil::new_hmac_prf_key_format(tink::proto::HashType::Sha512),
+        tink_testutil::new_hmac_prf_key_format(tink_proto::HashType::Sha1),
+        tink_testutil::new_hmac_prf_key_format(tink_proto::HashType::Sha256),
+        tink_testutil::new_hmac_prf_key_format(tink_proto::HashType::Sha384),
+        tink_testutil::new_hmac_prf_key_format(tink_proto::HashType::Sha512),
     ]
 }
 
-fn gen_valid_hmac_prf_keys() -> Vec<tink::proto::HmacPrfKey> {
+fn gen_valid_hmac_prf_keys() -> Vec<tink_proto::HmacPrfKey> {
     vec![
-        tink_testutil::new_hmac_prf_key(tink::proto::HashType::Sha1),
-        tink_testutil::new_hmac_prf_key(tink::proto::HashType::Sha256),
-        tink_testutil::new_hmac_prf_key(tink::proto::HashType::Sha384),
-        tink_testutil::new_hmac_prf_key(tink::proto::HashType::Sha512),
+        tink_testutil::new_hmac_prf_key(tink_proto::HashType::Sha1),
+        tink_testutil::new_hmac_prf_key(tink_proto::HashType::Sha256),
+        tink_testutil::new_hmac_prf_key(tink_proto::HashType::Sha384),
+        tink_testutil::new_hmac_prf_key(tink_proto::HashType::Sha512),
     ]
 }
 
 /// Check whether the given `HmacPrfKey` matches the given key `HmacPrfKeyFormat`
 fn validate_hmac_prf_key(
-    format: &tink::proto::HmacPrfKeyFormat,
-    key: &tink::proto::HmacPrfKey,
+    format: &tink_proto::HmacPrfKeyFormat,
+    key: &tink_proto::HmacPrfKey,
 ) -> Result<(), TinkError> {
     if format.key_size as usize != key.key_value.len()
         || key.params.as_ref().unwrap().hash != format.params.as_ref().unwrap().hash
@@ -271,7 +271,7 @@ fn validate_hmac_prf_key(
 /// Check whether the given primitive can compute a PRF of length 16
 fn validate_hmac_prf_primitive(
     p: tink::Primitive,
-    key: &tink::proto::HmacPrfKey,
+    key: &tink_proto::HmacPrfKey,
 ) -> Result<(), TinkError> {
     let hmac_primitive = match p {
         tink::Primitive::Prf(prf) => prf,

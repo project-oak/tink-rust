@@ -15,13 +15,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use prost::Message;
-use tink::{proto::HashType, TinkError};
+use tink::TinkError;
+use tink_proto::HashType;
 
 #[test]
 fn test_aes_gcm_hkdf_key_templates() {
     struct TestCase {
         name: &'static str,
-        tmpl: tink::proto::KeyTemplate,
+        tmpl: tink_proto::KeyTemplate,
         key_size: usize,
         ciphertext_segment_size: usize,
     };
@@ -57,18 +58,18 @@ fn test_aes_gcm_hkdf_key_templates() {
             tc.key_size,
             HashType::Sha256,
             tc.ciphertext_segment_size,
-            tink::proto::OutputPrefixType::Raw,
+            tink_proto::OutputPrefixType::Raw,
         )
         .unwrap_or_else(|e| panic!("{}: failed with {:?}", tc.name, e));
     }
 }
 
 fn check_aes_gcm_hkdf_key_template(
-    template: &tink::proto::KeyTemplate,
+    template: &tink_proto::KeyTemplate,
     key_size: usize,
     hkdf_hash_type: HashType,
     ciphertext_segment_size: usize,
-    output_prefix_type: tink::proto::OutputPrefixType,
+    output_prefix_type: tink_proto::OutputPrefixType,
 ) -> Result<(), TinkError> {
     if template.type_url != tink_testutil::AES_GCM_HKDF_TYPE_URL {
         return Err("incorrect type url".into());
@@ -76,7 +77,7 @@ fn check_aes_gcm_hkdf_key_template(
     if template.output_prefix_type != output_prefix_type as i32 {
         return Err("incorrect output prefix type".into());
     }
-    let key_format = tink::proto::AesGcmHkdfStreamingKeyFormat::decode(template.value.as_ref())
+    let key_format = tink_proto::AesGcmHkdfStreamingKeyFormat::decode(template.value.as_ref())
         .expect("cannot deserialize key format");
     if key_format.key_size as usize != key_size {
         return Err(format!(
@@ -116,7 +117,7 @@ fn check_aes_gcm_hkdf_key_template(
 fn test_aes_ctr_hmac_key_templates() {
     struct TestCase {
         name: &'static str,
-        template: tink::proto::KeyTemplate,
+        template: tink_proto::KeyTemplate,
         key_size: usize,
         hkdf_hash_type: HashType,
         tag_alg: HashType,
@@ -169,20 +170,20 @@ fn test_aes_ctr_hmac_key_templates() {
             tc.tag_alg,
             tc.tag_size,
             tc.ciphertext_segment_size,
-            tink::proto::OutputPrefixType::Raw,
+            tink_proto::OutputPrefixType::Raw,
         )
         .unwrap_or_else(|e| panic!("{}: failed with {:?}", tc.name, e));
     }
 }
 
 fn check_aes_ctr_hmac_key_template(
-    template: &tink::proto::KeyTemplate,
+    template: &tink_proto::KeyTemplate,
     key_size: usize,
     hkdf_hash_type: HashType,
     tag_alg: HashType,
     tag_size: usize,
     ciphertext_segment_size: usize,
-    output_prefix_type: tink::proto::OutputPrefixType,
+    output_prefix_type: tink_proto::OutputPrefixType,
 ) -> Result<(), TinkError> {
     if template.type_url != tink_testutil::AES_CTR_HMAC_TYPE_URL {
         return Err("incorrect type url".into());
@@ -190,7 +191,7 @@ fn check_aes_ctr_hmac_key_template(
     if template.output_prefix_type != output_prefix_type as i32 {
         return Err("incorrect output prefix type".into());
     }
-    let key_format = tink::proto::AesCtrHmacStreamingKeyFormat::decode(template.value.as_ref())
+    let key_format = tink_proto::AesCtrHmacStreamingKeyFormat::decode(template.value.as_ref())
         .expect("cannot deserialize key format");
     if key_format.key_size as usize != key_size {
         return Err(format!(

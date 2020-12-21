@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::proto::HashType;
+use tink_proto::HashType;
 use tink_streaming_aead::subtle;
 
 #[test]
@@ -192,7 +192,7 @@ fn test_aes_gcm_hkdf_encrypt_decrypt() {
     for tc in test_cases {
         let cipher = subtle::AesGcmHkdf::new(
             super::IKM,
-            tink::proto::HashType::Sha256,
+            tink_proto::HashType::Sha256,
             tc.key_size_in_bytes,
             tc.segment_size,
             tc.first_segment_offset,
@@ -275,7 +275,7 @@ fn test_aes_gcm_hkdf_modified_ciphertext() {
 
     let cipher = subtle::AesGcmHkdf::new(
         &ikm,
-        tink::proto::HashType::Sha256,
+        tink_proto::HashType::Sha256,
         key_size_in_bytes,
         segment_size,
         first_segment_offset,

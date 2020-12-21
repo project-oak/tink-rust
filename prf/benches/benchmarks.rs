@@ -19,7 +19,7 @@ use test::Bencher;
 
 const MSG: &[u8] = b"this is an ID that needs to be redacted";
 
-fn setup(kt: tink::proto::KeyTemplate) -> tink_prf::Set {
+fn setup(kt: tink_proto::KeyTemplate) -> tink_prf::Set {
     tink_prf::init();
     let kh = tink::keyset::Handle::new(&kt).unwrap();
     tink_prf::Set::new(&kh).unwrap()

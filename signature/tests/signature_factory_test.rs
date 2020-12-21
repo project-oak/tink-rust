@@ -22,27 +22,27 @@ use tink::subtle::random::get_random_bytes;
 fn test_signer_verify_factory() {
     tink_signature::init();
     let (tink_priv, tink_pub) = new_ecdsa_keyset_keypair(
-        tink::proto::HashType::Sha512,
-        tink::proto::EllipticCurveType::NistP521,
-        tink::proto::OutputPrefixType::Tink,
+        tink_proto::HashType::Sha512,
+        tink_proto::EllipticCurveType::NistP521,
+        tink_proto::OutputPrefixType::Tink,
         1,
     );
     let (legacy_priv, legacy_pub) = new_ecdsa_keyset_keypair(
-        tink::proto::HashType::Sha256,
-        tink::proto::EllipticCurveType::NistP256,
-        tink::proto::OutputPrefixType::Legacy,
+        tink_proto::HashType::Sha256,
+        tink_proto::EllipticCurveType::NistP256,
+        tink_proto::OutputPrefixType::Legacy,
         2,
     );
     let (raw_priv, raw_pub) = new_ecdsa_keyset_keypair(
-        tink::proto::HashType::Sha512,
-        tink::proto::EllipticCurveType::NistP384,
-        tink::proto::OutputPrefixType::Raw,
+        tink_proto::HashType::Sha512,
+        tink_proto::EllipticCurveType::NistP384,
+        tink_proto::OutputPrefixType::Raw,
         3,
     );
     let (crunchy_priv, crunchy_pub) = new_ecdsa_keyset_keypair(
-        tink::proto::HashType::Sha512,
-        tink::proto::EllipticCurveType::NistP384,
-        tink::proto::OutputPrefixType::Crunchy,
+        tink_proto::HashType::Sha512,
+        tink_proto::EllipticCurveType::NistP384,
+        tink_proto::OutputPrefixType::Crunchy,
         4,
     );
     let priv_keys = vec![tink_priv, legacy_priv, raw_priv, crunchy_priv];
@@ -65,9 +65,9 @@ fn test_signer_verify_factory() {
 
     // verify with random key should fail
     let (_, random_pub) = new_ecdsa_keyset_keypair(
-        tink::proto::HashType::Sha512,
-        tink::proto::EllipticCurveType::NistP521,
-        tink::proto::OutputPrefixType::Tink,
+        tink_proto::HashType::Sha512,
+        tink_proto::EllipticCurveType::NistP521,
+        tink_proto::OutputPrefixType::Tink,
         1,
     );
     let pub_keys = vec![random_pub];
@@ -85,27 +85,27 @@ fn test_signer_verify_factory() {
 fn test_signer_verify_multiple_keys() {
     tink_signature::init();
     let (tink_priv, tink_pub) = new_ecdsa_keyset_keypair(
-        tink::proto::HashType::Sha256,
-        tink::proto::EllipticCurveType::NistP256,
-        tink::proto::OutputPrefixType::Tink,
+        tink_proto::HashType::Sha256,
+        tink_proto::EllipticCurveType::NistP256,
+        tink_proto::OutputPrefixType::Tink,
         1,
     );
     let (legacy_priv, legacy_pub) = new_ecdsa_keyset_keypair(
-        tink::proto::HashType::Sha256,
-        tink::proto::EllipticCurveType::NistP256,
-        tink::proto::OutputPrefixType::Legacy,
+        tink_proto::HashType::Sha256,
+        tink_proto::EllipticCurveType::NistP256,
+        tink_proto::OutputPrefixType::Legacy,
         2,
     );
     let (raw_priv, raw_pub) = new_ecdsa_keyset_keypair(
-        tink::proto::HashType::Sha256,
-        tink::proto::EllipticCurveType::NistP256,
-        tink::proto::OutputPrefixType::Raw,
+        tink_proto::HashType::Sha256,
+        tink_proto::EllipticCurveType::NistP256,
+        tink_proto::OutputPrefixType::Raw,
         3,
     );
     let (crunchy_priv, crunchy_pub) = new_ecdsa_keyset_keypair(
-        tink::proto::HashType::Sha256,
-        tink::proto::EllipticCurveType::NistP256,
-        tink::proto::OutputPrefixType::Crunchy,
+        tink_proto::HashType::Sha256,
+        tink_proto::EllipticCurveType::NistP256,
+        tink_proto::OutputPrefixType::Crunchy,
         4,
     );
     let priv_keys = vec![tink_priv, legacy_priv, raw_priv, crunchy_priv];
@@ -162,21 +162,21 @@ fn test_signer_verify_multiple_keys() {
 }
 
 fn new_ecdsa_keyset_keypair(
-    hash_type: tink::proto::HashType,
-    curve: tink::proto::EllipticCurveType,
-    output_prefix_type: tink::proto::OutputPrefixType,
+    hash_type: tink_proto::HashType,
+    curve: tink_proto::EllipticCurveType,
+    output_prefix_type: tink_proto::OutputPrefixType,
     key_id: tink::KeyId,
-) -> (tink::proto::keyset::Key, tink::proto::keyset::Key) {
+) -> (tink_proto::keyset::Key, tink_proto::keyset::Key) {
     let key = tink_testutil::new_random_ecdsa_private_key(hash_type, curve);
     let serialized_key = tink_testutil::proto_encode(&key);
     let key_data = tink_testutil::new_key_data(
         tink_testutil::ECDSA_SIGNER_TYPE_URL,
         &serialized_key,
-        tink::proto::key_data::KeyMaterialType::AsymmetricPrivate,
+        tink_proto::key_data::KeyMaterialType::AsymmetricPrivate,
     );
     let priv_key = tink_testutil::new_key(
         &key_data,
-        tink::proto::KeyStatusType::Enabled,
+        tink_proto::KeyStatusType::Enabled,
         key_id,
         output_prefix_type,
     );
@@ -185,11 +185,11 @@ fn new_ecdsa_keyset_keypair(
     let key_data = tink_testutil::new_key_data(
         tink_testutil::ECDSA_VERIFIER_TYPE_URL,
         &serialized_key,
-        tink::proto::key_data::KeyMaterialType::AsymmetricPublic,
+        tink_proto::key_data::KeyMaterialType::AsymmetricPublic,
     );
     let pub_key = tink_testutil::new_key(
         &key_data,
-        tink::proto::KeyStatusType::Enabled,
+        tink_proto::KeyStatusType::Enabled,
         key_id,
         output_prefix_type,
     );

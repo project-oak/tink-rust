@@ -13,6 +13,7 @@ members = [
   "integration/gcpkms",
   "mac",
   "prf",
+  "proto",
   "rinkey",
   "signature",
   "streaming",
@@ -31,6 +32,7 @@ tink-daead = { path = "daead" }
 tink-gcpkms = { path = "integration/gcpkms" }
 tink-mac = { path = "mac" }
 tink-prf = { path = "prf" }
+tink-proto = { path = "proto" }
 tink-signature = { path = "signature" }
 tink-streaming-aead = { path = "streaming" }
 tink-testing-server = { path = "testing" }

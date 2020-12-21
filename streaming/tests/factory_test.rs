@@ -33,7 +33,7 @@ fn test_factory_multiple_keys() {
     // Encrypt with a non-primary RAW key and decrypt with the keyset
     assert_eq!(
         raw_key.output_prefix_type,
-        tink::proto::OutputPrefixType::Raw as i32,
+        tink_proto::OutputPrefixType::Raw as i32,
         "expect a raw key"
     );
     let keyset2 = tink_testutil::new_keyset(raw_key.key_id, vec![raw_key]);

@@ -18,7 +18,8 @@
 
 use crate::subtle;
 use prost::Message;
-use tink::{proto::HashType, utils::wrap_err, TinkError};
+use tink::{utils::wrap_err, TinkError};
+use tink_proto::HashType;
 
 /// Maximal version of HKDF PRF keys.
 pub const HKDF_PRF_KEY_VERSION: u32 = 0;
@@ -30,12 +31,12 @@ pub const HKDF_PRF_TYPE_URL: &str = "type.googleapis.com/google.crypto.tink.Hkdf
 pub(crate) struct HkdfPrfKeyManager;
 
 impl tink::registry::KeyManager for HkdfPrfKeyManager {
-    /// Construct an HKDF instance for the given serialized [`HkdfPrfKey`](tink::proto::HkdfPrfKey).
+    /// Construct an HKDF instance for the given serialized [`HkdfPrfKey`](tink_proto::HkdfPrfKey).
     fn primitive(&self, serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
         if serialized_key.is_empty() {
             return Err("HkdfPrfKeyManager: invalid key".into());
         }
-        let key = tink::proto::HkdfPrfKey::decode(serialized_key)
+        let key = tink_proto::HkdfPrfKey::decode(serialized_key)
             .map_err(|_| TinkError::new("HkdfPrfKeyManager: invalid key"))?;
         let (params, hash) = validate_key(&key).map_err(|e| wrap_err("HkdfPrfKeyManager", e))?;
 
@@ -45,14 +46,14 @@ impl tink::registry::KeyManager for HkdfPrfKeyManager {
         }
     }
 
-    /// Generate a new [`HkdfPrfKey`](tink::proto::HkdfPrfKey) according to specification in the
-    /// given [`HkdfPrfKeyFormat`](tink::proto::HkdfPrfKeyFormat).
+    /// Generate a new [`HkdfPrfKey`](tink_proto::HkdfPrfKey) according to specification in the
+    /// given [`HkdfPrfKeyFormat`](tink_proto::HkdfPrfKeyFormat).
     fn new_key(&self, serialized_key_format: &[u8]) -> Result<Vec<u8>, TinkError> {
         if serialized_key_format.is_empty() {
             return Err("HkdfPrfKeyManager: invalid key format".into());
         }
 
-        let key_format = tink::proto::HkdfPrfKeyFormat::decode(serialized_key_format)
+        let key_format = tink_proto::HkdfPrfKeyFormat::decode(serialized_key_format)
             .map_err(|_| TinkError::new("HkdfPrfKeyManager: invalid key format"))?;
         validate_key_format(&key_format)
             .map_err(|e| wrap_err("HkdfPrfKeyManager: invalid key format", e))?;
@@ -60,7 +61,7 @@ impl tink::registry::KeyManager for HkdfPrfKeyManager {
         let key_value = tink::subtle::random::get_random_bytes(key_format.key_size as usize);
         let mut sk = Vec::new();
 
-        tink::proto::HkdfPrfKey {
+        tink_proto::HkdfPrfKey {
             version: HKDF_PRF_KEY_VERSION,
             params: key_format.params,
             key_value,
@@ -74,16 +75,16 @@ impl tink::registry::KeyManager for HkdfPrfKeyManager {
         HKDF_PRF_TYPE_URL
     }
 
-    fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {
-        tink::proto::key_data::KeyMaterialType::Symmetric
+    fn key_material_type(&self) -> tink_proto::key_data::KeyMaterialType {
+        tink_proto::key_data::KeyMaterialType::Symmetric
     }
 }
 
-/// Validate the given [`HkdfPrfKey`](tink::proto::HkdfPrfKey). It only validates the version of the
+/// Validate the given [`HkdfPrfKey`](tink_proto::HkdfPrfKey). It only validates the version of the
 /// key because other parameters will be validated in primitive construction.
 fn validate_key(
-    key: &tink::proto::HkdfPrfKey,
-) -> Result<(tink::proto::HkdfPrfParams, HashType), TinkError> {
+    key: &tink_proto::HkdfPrfKey,
+) -> Result<(tink_proto::HkdfPrfParams, HashType), TinkError> {
     tink::keyset::validate_key_version(key.version, HKDF_PRF_KEY_VERSION)
         .map_err(|e| wrap_err("HkdfPrfKeyManager: invalid version", e))?;
     let key_size = key.key_value.len();
@@ -96,8 +97,8 @@ fn validate_key(
     Ok((params.clone(), hash))
 }
 
-/// Validate the given [`HkdfPrfKeyFormat`](tink::proto::HkdfPrfKeyFormat).
-fn validate_key_format(format: &tink::proto::HkdfPrfKeyFormat) -> Result<(), TinkError> {
+/// Validate the given [`HkdfPrfKeyFormat`](tink_proto::HkdfPrfKeyFormat).
+fn validate_key_format(format: &tink_proto::HkdfPrfKeyFormat) -> Result<(), TinkError> {
     let params = format
         .params
         .as_ref()

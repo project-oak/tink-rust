@@ -16,7 +16,8 @@
 
 use prost::Message;
 use std::collections::HashSet;
-use tink::{proto::HashType, utils::wrap_err, Mac, TinkError};
+use tink::{utils::wrap_err, Mac, TinkError};
+use tink_proto::HashType;
 use tink_testutil::proto_encode;
 
 #[test]
@@ -58,10 +59,7 @@ fn test_new_key_multiple_times() {
     tink_mac::init();
     let km = tink::registry::get_key_manager(tink_testutil::HMAC_TYPE_URL)
         .expect("HMAC key manager not found");
-    let serialized_format = proto_encode(&tink_testutil::new_hmac_key_format(
-        tink::proto::HashType::Sha256,
-        32,
-    ));
+    let serialized_format = proto_encode(&tink_testutil::new_hmac_key_format(HashType::Sha256, 32));
     let mut keys = HashSet::new();
     let n_test = 26;
     for _i in 0..n_test {
@@ -85,7 +83,7 @@ fn test_new_key_basic() {
         let serialized_key = km
             .new_key(&serialized_format)
             .unwrap_or_else(|e| panic!("unexpected error in test case {}: {:?}", i, e));
-        let key = tink::proto::HmacKey::decode(serialized_key.as_ref()).unwrap();
+        let key = tink_proto::HmacKey::decode(serialized_key.as_ref()).unwrap();
         assert!(validate_hmac_key(test_format, &key).is_ok());
     }
 }
@@ -131,11 +129,11 @@ fn test_new_key_data_basic() {
         );
         assert_eq!(
             key_data.key_material_type,
-            tink::proto::key_data::KeyMaterialType::Symmetric as i32,
+            tink_proto::key_data::KeyMaterialType::Symmetric as i32,
             "incorrect key material type in test case {}",
             i
         );
-        let key = tink::proto::HmacKey::decode(key_data.value.as_ref()).expect("invalid key value");
+        let key = tink_proto::HmacKey::decode(key_data.value.as_ref()).expect("invalid key value");
         validate_hmac_key(test_format, &key).expect("invalid key");
     }
 }
@@ -191,111 +189,77 @@ fn test_type_url() {
     );
     assert_eq!(
         km.key_material_type(),
-        tink::proto::key_data::KeyMaterialType::Symmetric
+        tink_proto::key_data::KeyMaterialType::Symmetric
     );
     assert!(!km.supports_private_keys());
 }
 
 fn gen_invalid_hmac_keys() -> Vec<Vec<u8>> {
-    let mut bad_version_key = tink_testutil::new_hmac_key(tink::proto::HashType::Sha256, 32);
+    let mut bad_version_key = tink_testutil::new_hmac_key(HashType::Sha256, 32);
     bad_version_key.version = 1;
-    let mut short_key = tink_testutil::new_hmac_key(tink::proto::HashType::Sha256, 32);
+    let mut short_key = tink_testutil::new_hmac_key(HashType::Sha256, 32);
     short_key.key_value = vec![1, 1];
 
     vec![
         // not a HMAC key
-        proto_encode(&tink_testutil::new_hmac_params(
-            tink::proto::HashType::Sha256,
-            32,
-        )),
+        proto_encode(&tink_testutil::new_hmac_params(HashType::Sha256, 32)),
         proto_encode(&bad_version_key),
         // tag size too big
-        proto_encode(&tink_testutil::new_hmac_key(
-            tink::proto::HashType::Sha1,
-            21,
-        )),
-        proto_encode(&tink_testutil::new_hmac_key(
-            tink::proto::HashType::Sha256,
-            33,
-        )),
-        proto_encode(&tink_testutil::new_hmac_key(
-            tink::proto::HashType::Sha512,
-            65,
-        )),
+        proto_encode(&tink_testutil::new_hmac_key(HashType::Sha1, 21)),
+        proto_encode(&tink_testutil::new_hmac_key(HashType::Sha256, 33)),
+        proto_encode(&tink_testutil::new_hmac_key(HashType::Sha512, 65)),
         // tag size too small
-        proto_encode(&tink_testutil::new_hmac_key(
-            tink::proto::HashType::Sha256,
-            1,
-        )),
+        proto_encode(&tink_testutil::new_hmac_key(HashType::Sha256, 1)),
         // key too short
         proto_encode(&short_key),
         // unknown hash type
-        proto_encode(&tink_testutil::new_hmac_key(
-            tink::proto::HashType::UnknownHash,
-            32,
-        )),
+        proto_encode(&tink_testutil::new_hmac_key(HashType::UnknownHash, 32)),
     ]
 }
 
 fn gen_invalid_hmac_key_formats() -> Vec<Vec<u8>> {
-    let mut short_key_format =
-        tink_testutil::new_hmac_key_format(tink::proto::HashType::Sha256, 32);
+    let mut short_key_format = tink_testutil::new_hmac_key_format(HashType::Sha256, 32);
     short_key_format.key_size = 1;
 
     vec![
         // not a `HmacKeyFormat`
-        proto_encode(&tink_testutil::new_hmac_params(
-            tink::proto::HashType::Sha256,
-            32,
-        )),
+        proto_encode(&tink_testutil::new_hmac_params(HashType::Sha256, 32)),
         // tag size too big
-        proto_encode(&tink_testutil::new_hmac_key_format(
-            tink::proto::HashType::Sha1,
-            21,
-        )),
-        proto_encode(&tink_testutil::new_hmac_key_format(
-            tink::proto::HashType::Sha256,
-            33,
-        )),
-        proto_encode(&tink_testutil::new_hmac_key_format(
-            tink::proto::HashType::Sha512,
-            65,
-        )),
+        proto_encode(&tink_testutil::new_hmac_key_format(HashType::Sha1, 21)),
+        proto_encode(&tink_testutil::new_hmac_key_format(HashType::Sha256, 33)),
+        proto_encode(&tink_testutil::new_hmac_key_format(HashType::Sha512, 65)),
         // tag size too small
-        proto_encode(&tink_testutil::new_hmac_key_format(
-            tink::proto::HashType::Sha256,
-            1,
-        )),
+        proto_encode(&tink_testutil::new_hmac_key_format(HashType::Sha256, 1)),
         // key too short
         proto_encode(&short_key_format),
         // unknown hash type
         proto_encode(&tink_testutil::new_hmac_key_format(
-            tink::proto::HashType::UnknownHash,
+            HashType::UnknownHash,
             32,
         )),
     ]
 }
 
-fn gen_valid_hmac_key_formats() -> Vec<tink::proto::HmacKeyFormat> {
+fn gen_valid_hmac_key_formats() -> Vec<tink_proto::HmacKeyFormat> {
     vec![
-        tink_testutil::new_hmac_key_format(tink::proto::HashType::Sha1, 20),
-        tink_testutil::new_hmac_key_format(tink::proto::HashType::Sha256, 32),
-        tink_testutil::new_hmac_key_format(tink::proto::HashType::Sha512, 64),
+        tink_testutil::new_hmac_key_format(HashType::Sha1, 20),
+        tink_testutil::new_hmac_key_format(HashType::Sha256, 32),
+        tink_testutil::new_hmac_key_format(HashType::Sha512, 64),
     ]
 }
 
-fn gen_valid_hmac_keys() -> Vec<tink::proto::HmacKey> {
+fn gen_valid_hmac_keys() -> Vec<tink_proto::HmacKey> {
     vec![
-        tink_testutil::new_hmac_key(tink::proto::HashType::Sha1, 20),
-        tink_testutil::new_hmac_key(tink::proto::HashType::Sha256, 32),
-        tink_testutil::new_hmac_key(tink::proto::HashType::Sha512, 64),
+        tink_testutil::new_hmac_key(HashType::Sha1, 20),
+        tink_testutil::new_hmac_key(HashType::Sha256, 32),
+        tink_testutil::new_hmac_key(HashType::Sha512, 64),
     ]
 }
 
 /// Check whether the given `HmacKey` matches the given key `HmacKeyFormat`
 fn validate_hmac_key(
-    format: &tink::proto::HmacKeyFormat,
-    key: &tink::proto::HmacKey,
+    format: &tink_proto::HmacKeyFormat,
+    key: &tink_proto::HmacKey,
 ) -> Result<(), TinkError> {
     if format.key_size as usize != key.key_value.len()
         || key.params.as_ref().unwrap().tag_size != format.params.as_ref().unwrap().tag_size
@@ -313,10 +277,7 @@ fn validate_hmac_key(
 }
 
 /// Check whether the given primitive matches the given `HmacKey`
-fn validate_hmac_primitive(
-    p: tink::Primitive,
-    key: &tink::proto::HmacKey,
-) -> Result<(), TinkError> {
+fn validate_hmac_primitive(p: tink::Primitive, key: &tink_proto::HmacKey) -> Result<(), TinkError> {
     let hmac_primitive = match p {
         tink::Primitive::Mac(mac) => mac,
         _ => return Err("not a Mac primitive".into()),

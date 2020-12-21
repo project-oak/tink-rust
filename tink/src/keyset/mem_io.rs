@@ -22,13 +22,13 @@ use crate::TinkError;
 /// [`keyset.Writer`](super::Writer) with in-memory storage.
 #[derive(Default)]
 pub struct MemReaderWriter {
-    pub keyset: Option<crate::proto::Keyset>,
-    pub encrypted_keyset: Option<crate::proto::EncryptedKeyset>,
+    pub keyset: Option<tink_proto::Keyset>,
+    pub encrypted_keyset: Option<tink_proto::EncryptedKeyset>,
 }
 
 impl super::Reader for MemReaderWriter {
     /// Return `Keyset` from memory.
-    fn read(&mut self) -> Result<crate::proto::Keyset, TinkError> {
+    fn read(&mut self) -> Result<tink_proto::Keyset, TinkError> {
         match &self.keyset {
             Some(keyset) => Ok(keyset.clone()),
             None => Err("no keyset available".into()),
@@ -36,7 +36,7 @@ impl super::Reader for MemReaderWriter {
     }
 
     /// Return `EncryptedKeyset` from memory.
-    fn read_encrypted(&mut self) -> Result<crate::proto::EncryptedKeyset, TinkError> {
+    fn read_encrypted(&mut self) -> Result<tink_proto::EncryptedKeyset, TinkError> {
         match &self.encrypted_keyset {
             Some(keyset) => Ok(keyset.clone()),
             None => Err("no keyset available".into()),
@@ -46,13 +46,13 @@ impl super::Reader for MemReaderWriter {
 
 impl super::Writer for MemReaderWriter {
     /// Write keyset to memory.
-    fn write(&mut self, keyset: &crate::proto::Keyset) -> Result<(), TinkError> {
+    fn write(&mut self, keyset: &tink_proto::Keyset) -> Result<(), TinkError> {
         self.keyset = Some(keyset.clone());
         Ok(())
     }
 
     /// Write encrypted keyset to memory.
-    fn write_encrypted(&mut self, keyset: &crate::proto::EncryptedKeyset) -> Result<(), TinkError> {
+    fn write_encrypted(&mut self, keyset: &tink_proto::EncryptedKeyset) -> Result<(), TinkError> {
         self.encrypted_keyset = Some(keyset.clone());
         Ok(())
     }

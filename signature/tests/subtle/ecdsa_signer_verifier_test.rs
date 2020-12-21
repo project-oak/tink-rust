@@ -17,11 +17,8 @@
 use generic_array::typenum::Unsigned;
 use serde::Deserialize;
 use std::collections::HashSet;
-use tink::{
-    proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType},
-    subtle::random::get_random_bytes,
-    Signer, Verifier,
-};
+use tink::{subtle::random::get_random_bytes, Signer, Verifier};
+use tink_proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType};
 use tink_signature::{
     subtle,
     subtle::{EcdsaPrivateKey, EcdsaPublicKey},

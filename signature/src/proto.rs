@@ -16,10 +16,10 @@
 
 //! Utilities for dealing with protobuf types for signing.
 
-use tink::proto::{EcdsaParams, EcdsaSignatureEncoding, EllipticCurveType, HashType};
+use tink_proto::{EcdsaParams, EcdsaSignatureEncoding, EllipticCurveType, HashType};
 
 /// Return the enum values of each parameter in
-/// the given [`EcdsaParams`](tink::proto::EcdsaParams).
+/// the given [`EcdsaParams`](tink_proto::EcdsaParams).
 pub(crate) fn get_ecdsa_param_ids(
     params: &EcdsaParams,
 ) -> (HashType, EllipticCurveType, EcdsaSignatureEncoding) {

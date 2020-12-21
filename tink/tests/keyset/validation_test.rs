@@ -34,8 +34,8 @@ fn test_validate() {
     // no primary key
     let keys = vec![tink_testutil::new_dummy_key(
         1,
-        tink::proto::KeyStatusType::Enabled,
-        tink::proto::OutputPrefixType::Tink,
+        tink_proto::KeyStatusType::Enabled,
+        tink_proto::OutputPrefixType::Tink,
     )];
     assert!(
         keyset::validate(&tink_testutil::new_keyset(2, keys)).is_err(),
@@ -45,13 +45,13 @@ fn test_validate() {
     let keys = vec![
         tink_testutil::new_dummy_key(
             1,
-            tink::proto::KeyStatusType::Enabled,
-            tink::proto::OutputPrefixType::Tink,
+            tink_proto::KeyStatusType::Enabled,
+            tink_proto::OutputPrefixType::Tink,
         ),
         tink_testutil::new_dummy_key(
             2,
-            tink::proto::KeyStatusType::Disabled,
-            tink::proto::OutputPrefixType::Legacy,
+            tink_proto::KeyStatusType::Disabled,
+            tink_proto::OutputPrefixType::Legacy,
         ),
     ];
     assert!(
@@ -62,13 +62,13 @@ fn test_validate() {
     let keys = vec![
         tink_testutil::new_dummy_key(
             1,
-            tink::proto::KeyStatusType::Enabled,
-            tink::proto::OutputPrefixType::Tink,
+            tink_proto::KeyStatusType::Enabled,
+            tink_proto::OutputPrefixType::Tink,
         ),
         tink_testutil::new_dummy_key(
             1,
-            tink::proto::KeyStatusType::Enabled,
-            tink::proto::OutputPrefixType::Legacy,
+            tink_proto::KeyStatusType::Enabled,
+            tink_proto::OutputPrefixType::Legacy,
         ),
     ];
     assert!(
@@ -88,13 +88,13 @@ fn test_validate() {
     let keys = vec![
         tink_testutil::new_dummy_key(
             1,
-            tink::proto::KeyStatusType::Disabled,
-            tink::proto::OutputPrefixType::Tink,
+            tink_proto::KeyStatusType::Disabled,
+            tink_proto::OutputPrefixType::Tink,
         ),
         tink_testutil::new_dummy_key(
             1,
-            tink::proto::KeyStatusType::Disabled,
-            tink::proto::OutputPrefixType::Legacy,
+            tink_proto::KeyStatusType::Disabled,
+            tink_proto::OutputPrefixType::Legacy,
         ),
     ];
     assert!(
@@ -106,11 +106,11 @@ fn test_validate() {
         &tink_testutil::new_key_data(
             tink_testutil::ECIES_AEAD_HKDF_PUBLIC_KEY_TYPE_URL,
             &get_random_bytes(10),
-            tink::proto::key_data::KeyMaterialType::AsymmetricPublic,
+            tink_proto::key_data::KeyMaterialType::AsymmetricPublic,
         ),
-        tink::proto::KeyStatusType::Enabled,
+        tink_proto::KeyStatusType::Enabled,
         1,
-        tink::proto::OutputPrefixType::Tink,
+        tink_proto::OutputPrefixType::Tink,
     )];
     assert!(
         keyset::validate(&tink_testutil::new_keyset(1, keys)).is_ok(),
@@ -122,21 +122,21 @@ fn test_validate() {
             &tink_testutil::new_key_data(
                 tink_testutil::ECIES_AEAD_HKDF_PUBLIC_KEY_TYPE_URL,
                 &get_random_bytes(10),
-                tink::proto::key_data::KeyMaterialType::AsymmetricPublic,
+                tink_proto::key_data::KeyMaterialType::AsymmetricPublic,
             ),
-            tink::proto::KeyStatusType::Enabled,
+            tink_proto::KeyStatusType::Enabled,
             1,
-            tink::proto::OutputPrefixType::Tink,
+            tink_proto::OutputPrefixType::Tink,
         ),
         tink_testutil::new_key(
             &tink_testutil::new_key_data(
                 tink_testutil::ECIES_AEAD_HKDF_PRIVATE_KEY_TYPE_URL,
                 &get_random_bytes(10),
-                tink::proto::key_data::KeyMaterialType::AsymmetricPrivate,
+                tink_proto::key_data::KeyMaterialType::AsymmetricPrivate,
             ),
-            tink::proto::KeyStatusType::Enabled,
+            tink_proto::KeyStatusType::Enabled,
             1,
-            tink::proto::OutputPrefixType::Tink,
+            tink_proto::OutputPrefixType::Tink,
         ),
     ];
     assert!(
@@ -145,35 +145,35 @@ fn test_validate() {
     );
 }
 
-fn generate_invalid_keys() -> Vec<tink::proto::keyset::Key> {
+fn generate_invalid_keys() -> Vec<tink_proto::keyset::Key> {
     vec![
         // unknown status
         tink_testutil::new_key(
-            &tink::proto::KeyData::default(),
-            tink::proto::KeyStatusType::UnknownStatus,
+            &tink_proto::KeyData::default(),
+            tink_proto::KeyStatusType::UnknownStatus,
             1,
-            tink::proto::OutputPrefixType::Tink,
+            tink_proto::OutputPrefixType::Tink,
         ),
         // unknown prefix
         tink_testutil::new_key(
-            &tink::proto::KeyData::default(),
-            tink::proto::KeyStatusType::Enabled,
+            &tink_proto::KeyData::default(),
+            tink_proto::KeyStatusType::Enabled,
             1,
-            tink::proto::OutputPrefixType::UnknownPrefix,
+            tink_proto::OutputPrefixType::UnknownPrefix,
         ),
         // zero key id
         tink_testutil::new_key(
-            &tink::proto::KeyData::default(),
-            tink::proto::KeyStatusType::Enabled,
+            &tink_proto::KeyData::default(),
+            tink_proto::KeyStatusType::Enabled,
             0,
-            tink::proto::OutputPrefixType::Tink,
+            tink_proto::OutputPrefixType::Tink,
         ),
         // no key_data
-        tink::proto::keyset::Key {
+        tink_proto::keyset::Key {
             key_data: None,
-            status: tink::proto::KeyStatusType::Enabled as i32,
+            status: tink_proto::KeyStatusType::Enabled as i32,
             key_id: 1,
-            output_prefix_type: tink::proto::OutputPrefixType::Tink as i32,
+            output_prefix_type: tink_proto::OutputPrefixType::Tink as i32,
         },
     ]
 }

@@ -19,7 +19,7 @@ use test::Bencher;
 
 const MSG: &[u8] = b"this data needs to be authenticated";
 
-fn setup(kt: tink::proto::KeyTemplate) -> (Box<dyn tink::Mac>, Vec<u8>) {
+fn setup(kt: tink_proto::KeyTemplate) -> (Box<dyn tink::Mac>, Vec<u8>) {
     tink_mac::init();
     let kh = tink::keyset::Handle::new(&kt).unwrap();
     let m = tink_mac::new(&kh).unwrap();

@@ -16,15 +16,15 @@
 
 //! Trait definition for writing keysets.
 
-/// `Writer` knows how to write a [`Keyset`](crate::proto::Keyset) or an
-/// [`EncryptedKeyset`](crate::proto::EncryptedKeyset) to some source.
+/// `Writer` knows how to write a [`Keyset`](tink_proto::Keyset) or an
+/// [`EncryptedKeyset`](tink_proto::EncryptedKeyset) to some source.
 pub trait Writer {
     // Write keyset to some storage system.
-    fn write(&mut self, keyset: &crate::proto::Keyset) -> Result<(), crate::TinkError>;
+    fn write(&mut self, keyset: &tink_proto::Keyset) -> Result<(), crate::TinkError>;
 
     // Write `EncryptedKeyset` to some storage system.
     fn write_encrypted(
         &mut self,
-        keyset: &crate::proto::EncryptedKeyset,
+        keyset: &tink_proto::EncryptedKeyset,
     ) -> Result<(), crate::TinkError>;
 }

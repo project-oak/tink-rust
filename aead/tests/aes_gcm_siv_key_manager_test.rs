@@ -29,7 +29,7 @@ fn test_aes_gcm_siv_get_primitive_basic() {
     assert_eq!(key_manager.type_url(), tink_testutil::AES_GCM_SIV_TYPE_URL);
     assert_eq!(
         key_manager.key_material_type(),
-        tink::proto::key_data::KeyMaterialType::Symmetric
+        tink_proto::key_data::KeyMaterialType::Symmetric
     );
     for key_size in KEY_SIZES {
         let key =
@@ -91,7 +91,7 @@ fn test_aes_gcm_siv_new_key_basic() {
         let format = tink_testutil::new_aes_gcm_siv_key_format(*key_size);
         let serialized_format = proto_encode(&format);
         let m = key_manager.new_key(&serialized_format).unwrap();
-        let key = tink::proto::AesGcmSivKey::decode(m.as_ref()).unwrap();
+        let key = tink_proto::AesGcmSivKey::decode(m.as_ref()).unwrap();
         validate_aes_gcm_siv_key(&key, &format).unwrap();
     }
 }
@@ -130,10 +130,10 @@ fn test_aes_gcm_siv_new_key_data_basic() {
         );
         assert_eq!(
             key_data.key_material_type,
-            tink::proto::key_data::KeyMaterialType::Symmetric as i32,
+            tink_proto::key_data::KeyMaterialType::Symmetric as i32,
             "incorrect key material type"
         );
-        let _key = tink::proto::AesGcmSivKey::decode(key_data.value.as_ref()).unwrap();
+        let _key = tink_proto::AesGcmSivKey::decode(key_data.value.as_ref()).unwrap();
     }
 }
 
@@ -183,7 +183,7 @@ fn test_aes_gcm_siv_type_url() {
     );
     assert_eq!(
         key_manager.key_material_type(),
-        tink::proto::key_data::KeyMaterialType::Symmetric
+        tink_proto::key_data::KeyMaterialType::Symmetric
     );
     assert!(!key_manager.supports_private_keys());
 }
@@ -228,8 +228,8 @@ fn gen_invalid_aes_gcm_siv_key_formats() -> Vec<Vec<u8>> {
 }
 
 fn validate_aes_gcm_siv_key(
-    key: &tink::proto::AesGcmSivKey,
-    format: &tink::proto::AesGcmSivKeyFormat,
+    key: &tink_proto::AesGcmSivKey,
+    format: &tink_proto::AesGcmSivKeyFormat,
 ) -> Result<(), TinkError> {
     if key.key_value.len() != format.key_size as usize {
         return Err("incorrect key size".into());
@@ -244,7 +244,7 @@ fn validate_aes_gcm_siv_key(
 
 fn validate_aes_gcm_siv_primitive(
     p: tink::Primitive,
-    _key: &tink::proto::AesGcmSivKey,
+    _key: &tink_proto::AesGcmSivKey,
 ) -> Result<(), TinkError> {
     let cipher = match p {
         tink::Primitive::Aead(p) => p,

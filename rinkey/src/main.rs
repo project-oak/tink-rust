@@ -24,10 +24,8 @@ use std::{
     str::FromStr,
 };
 use structopt::StructOpt;
-use tink::{
-    proto::{KeyStatusType, OutputPrefixType},
-    TinkError,
-};
+use tink::TinkError;
+use tink_proto::{KeyStatusType, OutputPrefixType};
 
 /// File format for a keyset.
 #[derive(Clone, StructOpt)]
@@ -97,9 +95,9 @@ impl FromStr for KeysetWriter {
     }
 }
 
-/// Wrapper for [`tink::proto::KeyTemplate`] to allow the [`FromStr`] trait to be implemented.
+/// Wrapper for [`tink_proto::KeyTemplate`] to allow the [`FromStr`] trait to be implemented.
 #[derive(Clone)]
-struct KeyTemplate(tink::proto::KeyTemplate);
+struct KeyTemplate(tink_proto::KeyTemplate);
 
 impl FromStr for KeyTemplate {
     type Err = String;

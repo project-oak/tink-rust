@@ -16,13 +16,10 @@
 
 //! Handle wrapper for keysets.
 
-use crate::{
-    proto::{key_data::KeyMaterialType, Keyset, KeysetInfo},
-    utils::wrap_err,
-    TinkError,
-};
+use crate::{utils::wrap_err, TinkError};
 use prost::Message;
 use std::sync::Arc;
+use tink_proto::{key_data::KeyMaterialType, Keyset, KeysetInfo};
 
 /// `Handle` provides access to a [`Keyset`] protobuf, to limit the exposure
 /// of actual protocol buffers that hold sensitive key material.
@@ -32,8 +29,8 @@ pub struct Handle {
 
 impl Handle {
     /// Create a keyset handle that contains a single fresh key generated according
-    /// to the given [`KeyTemplate`](crate::proto::KeyTemplate).
-    pub fn new(kt: &crate::proto::KeyTemplate) -> Result<Self, TinkError> {
+    /// to the given [`KeyTemplate`](tink_proto::KeyTemplate).
+    pub fn new(kt: &tink_proto::KeyTemplate) -> Result<Self, TinkError> {
         let mut ksm = super::Manager::new();
         ksm.rotate(kt)
             .map_err(|e| wrap_err("keyset::Handle: cannot generate new keyset", e))?;
@@ -88,7 +85,7 @@ impl Handle {
                 .ok_or_else(|| TinkError::new("keyset::Handle: invalid keyset"))?;
             let pub_key_data =
                 public_key_data(priv_key_data).map_err(|e| wrap_err("keyset::Handle", e))?;
-            pub_keys.push(crate::proto::keyset::Key {
+            pub_keys.push(tink_proto::keyset::Key {
                 key_data: Some(pub_key_data),
                 status: priv_key.status,
                 key_id: priv_key.key_id,
@@ -158,7 +155,7 @@ impl Handle {
             .map_err(|e| wrap_err("primitives_with_key_manager: invalid keyset", e))?;
         let mut primitive_set = crate::primitiveset::PrimitiveSet::new();
         for key in &self.ks.key {
-            if key.status != crate::proto::KeyStatusType::Enabled as i32 {
+            if key.status != tink_proto::KeyStatusType::Enabled as i32 {
                 continue;
             }
             let key_data = key
@@ -238,7 +235,7 @@ impl Handle {
 fn validate_keyset(ks: Keyset) -> Result<Keyset, TinkError> {
     for k in &ks.key {
         match &k.key_data {
-            None if k.status == crate::proto::KeyStatusType::Destroyed as i32 => {}
+            None if k.status == tink_proto::KeyStatusType::Destroyed as i32 => {}
             None => return Err("invalid keyset".into()),
             Some(kd) => match KeyMaterialType::from_i32(kd.key_material_type) {
                 Some(_) => {}
@@ -250,11 +247,9 @@ fn validate_keyset(ks: Keyset) -> Result<Keyset, TinkError> {
 }
 
 /// Extract the public key data corresponding to private key data.
-fn public_key_data(
-    priv_key_data: &crate::proto::KeyData,
-) -> Result<crate::proto::KeyData, TinkError> {
+fn public_key_data(priv_key_data: &tink_proto::KeyData) -> Result<tink_proto::KeyData, TinkError> {
     if priv_key_data.key_material_type
-        != crate::proto::key_data::KeyMaterialType::AsymmetricPrivate as i32
+        != tink_proto::key_data::KeyMaterialType::AsymmetricPrivate as i32
     {
         return Err("keyset::Handle: keyset contains a non-private key".into());
     }
@@ -272,7 +267,7 @@ fn public_key_data(
 
 /// Decrypt a keyset with a master key.
 fn decrypt(
-    encrypted_keyset: &crate::proto::EncryptedKeyset,
+    encrypted_keyset: &tink_proto::EncryptedKeyset,
     master_key: Box<dyn crate::Aead>,
 ) -> Result<Keyset, TinkError> {
     let decrypted = master_key
@@ -285,7 +280,7 @@ fn decrypt(
 fn encrypt(
     keyset: &Keyset,
     master_key: Box<dyn crate::Aead>,
-) -> Result<crate::proto::EncryptedKeyset, TinkError> {
+) -> Result<tink_proto::EncryptedKeyset, TinkError> {
     let mut serialized_keyset = vec![];
     keyset
         .encode(&mut serialized_keyset)
@@ -293,7 +288,7 @@ fn encrypt(
     let encrypted = master_key
         .encrypt(&serialized_keyset, &[])
         .map_err(|e| wrap_err("keyset::Handle: encrypted failed", e))?;
-    Ok(crate::proto::EncryptedKeyset {
+    Ok(tink_proto::EncryptedKeyset {
         encrypted_keyset: encrypted,
         keyset_info: Some(get_keyset_info(keyset)),
     })
@@ -312,10 +307,10 @@ fn get_keyset_info(keyset: &Keyset) -> KeysetInfo {
     }
 }
 
-/// Return a [`KeyInfo`](crate::proto::keyset_info::KeyInfo) from a
-/// [`Key`](crate::proto::keyset::Key) protobuf.
-fn get_key_info(key: &crate::proto::keyset::Key) -> crate::proto::keyset_info::KeyInfo {
-    crate::proto::keyset_info::KeyInfo {
+/// Return a [`KeyInfo`](tink_proto::keyset_info::KeyInfo) from a
+/// [`Key`](tink_proto::keyset::Key) protobuf.
+fn get_key_info(key: &tink_proto::keyset::Key) -> tink_proto::keyset_info::KeyInfo {
+    tink_proto::keyset_info::KeyInfo {
         type_url: match &key.key_data {
             Some(kd) => kd.type_url.clone(),
             None => "".to_string(),

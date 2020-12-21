@@ -20,11 +20,11 @@ use tink::{utils::wrap_err, TinkError};
 fn test_factory_multiple_keys() {
     tink_mac::init();
     let tag_size = 16;
-    let keyset = tink_testutil::new_test_hmac_keyset(tag_size, tink::proto::OutputPrefixType::Tink);
+    let keyset = tink_testutil::new_test_hmac_keyset(tag_size, tink_proto::OutputPrefixType::Tink);
     let primary_key = keyset.key[0].clone();
     assert_eq!(
         primary_key.output_prefix_type,
-        tink::proto::OutputPrefixType::Tink as i32
+        tink_proto::OutputPrefixType::Tink as i32
     );
     let raw_key = keyset.key[1].clone();
     let keyset_handle = tink::keyset::insecure::new_handle(keyset).unwrap();
@@ -37,7 +37,7 @@ fn test_factory_multiple_keys() {
     // mac with a primary RAW key, verify with the keyset
     assert_eq!(
         raw_key.output_prefix_type,
-        tink::proto::OutputPrefixType::Raw as i32
+        tink_proto::OutputPrefixType::Raw as i32
     );
     let keyset2 = tink_testutil::new_keyset(raw_key.key_id, vec![raw_key]);
     let keyset_handle2 = tink::keyset::insecure::new_handle(keyset2).unwrap();
@@ -47,8 +47,7 @@ fn test_factory_multiple_keys() {
         .expect("invalid primitive");
 
     // mac with a random key not in the keyset, verify with the keyset should fail
-    let keyset2 =
-        tink_testutil::new_test_hmac_keyset(tag_size, tink::proto::OutputPrefixType::Tink);
+    let keyset2 = tink_testutil::new_test_hmac_keyset(tag_size, tink_proto::OutputPrefixType::Tink);
     let primary_key = keyset2.key[0].clone();
     let expected_prefix = tink::cryptofmt::output_prefix(&primary_key).unwrap();
     let keyset_handle2 = tink::keyset::insecure::new_handle(keyset2).unwrap();
@@ -67,11 +66,11 @@ fn test_factory_multiple_keys() {
 fn test_factory_raw_key() {
     tink_mac::init();
     let tag_size = 16;
-    let keyset = tink_testutil::new_test_hmac_keyset(tag_size, tink::proto::OutputPrefixType::Raw);
+    let keyset = tink_testutil::new_test_hmac_keyset(tag_size, tink_proto::OutputPrefixType::Raw);
     let primary_key = keyset.key[0].clone();
     assert_eq!(
         primary_key.output_prefix_type,
-        tink::proto::OutputPrefixType::Raw as i32
+        tink_proto::OutputPrefixType::Raw as i32
     );
     let keyset_handle = tink::keyset::insecure::new_handle(keyset).unwrap();
     let p = tink_mac::new(&keyset_handle).unwrap();

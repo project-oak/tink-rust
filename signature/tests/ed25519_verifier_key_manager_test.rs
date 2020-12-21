@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::proto::Ed25519PublicKey;
+use tink_proto::Ed25519PublicKey;
 
 #[test]
 fn test_ed25519_verify_get_primitive_basic() {
@@ -66,7 +66,7 @@ fn test_key_manager_params() {
     assert_eq!(km.type_url(), tink_testutil::ED25519_VERIFIER_TYPE_URL);
     assert_eq!(
         km.key_material_type(),
-        tink::proto::key_data::KeyMaterialType::AsymmetricPublic
+        tink_proto::key_data::KeyMaterialType::AsymmetricPublic
     );
     assert!(!km.supports_private_keys());
 }

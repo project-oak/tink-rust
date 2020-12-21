@@ -14,10 +14,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use crate::{
-    proto::HashType,
-    subtle::{hkdf::compute_hkdf, random::get_random_bytes},
-};
+use crate::subtle::{hkdf::compute_hkdf, random::get_random_bytes};
+use tink_proto::HashType;
 
 // Tests sourced from
 // java/src/test/java/com/google/crypto/tink/subtle/HkdfTest.java

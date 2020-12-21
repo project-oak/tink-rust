@@ -79,7 +79,7 @@ impl tink::Verifier for WrappedVerifier {
         let signature_no_prefix = &signature[prefix_size..];
         if let Some(entries) = self.ps.entries_for_prefix(&prefix) {
             for entry in entries {
-                let result = if entry.prefix_type == tink::proto::OutputPrefixType::Legacy {
+                let result = if entry.prefix_type == tink_proto::OutputPrefixType::Legacy {
                     let mut signed_data_copy = Vec::with_capacity(data.len() + 1);
                     signed_data_copy.extend_from_slice(data);
                     signed_data_copy.push(tink::cryptofmt::LEGACY_START_BYTE);

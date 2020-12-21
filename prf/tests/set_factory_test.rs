@@ -20,7 +20,7 @@ const MAX_AUTOCORRELATION: usize = 100;
 
 fn add_key_and_return_id(
     m: &mut tink::keyset::Manager,
-    template: &tink::proto::KeyTemplate,
+    template: &tink_proto::KeyTemplate,
 ) -> Result<u32, TinkError> {
     m.rotate(template)
         .map_err(|e| wrap_err("Could not add template", e))?;
@@ -128,7 +128,7 @@ fn test_factory_basic() {
 fn test_non_raw_keys() {
     tink_prf::init();
     let mut template = tink_prf::aes_cmac_prf_key_template();
-    template.output_prefix_type = tink::proto::OutputPrefixType::Tink as i32;
+    template.output_prefix_type = tink_proto::OutputPrefixType::Tink as i32;
     let h = tink::keyset::Handle::new(&template).expect("Couldn't create keyset");
     assert!(
         tink_prf::Set::new(&h).is_err(),
@@ -153,7 +153,7 @@ fn test_non_prf_primitives() {
     tink_mac::init();
     tink_prf::init();
     let mut template = tink_mac::aes_cmac_tag128_key_template();
-    template.output_prefix_type = tink::proto::OutputPrefixType::Raw as i32;
+    template.output_prefix_type = tink_proto::OutputPrefixType::Raw as i32;
     let h = tink::keyset::Handle::new(&template).expect("Couldn't create keyset");
     assert!(
         tink_prf::Set::new(&h).is_err(),

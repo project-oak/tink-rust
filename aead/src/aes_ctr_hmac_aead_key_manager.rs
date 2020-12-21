@@ -18,7 +18,8 @@
 
 use crate::subtle;
 use prost::Message;
-use tink::{proto::HashType, utils::wrap_err, TinkError};
+use tink::{utils::wrap_err, TinkError};
+use tink_proto::HashType;
 
 /// Maximal version of AES-CTR-HMAC keys.
 pub const AES_CTR_HMAC_AEAD_KEY_VERSION: u32 = 0;
@@ -31,18 +32,18 @@ const MIN_HMAC_KEY_SIZE_IN_BYTES: usize = 16;
 const MIN_TAG_SIZE_IN_BYTES: usize = 10;
 
 /// `AesCtrHmacAeadKeyManager` is an implementation of the [`tink::registry::KeyManager`] trait.
-/// It generates new [`AesCtrHmacAeadKey`](tink::proto::AesCtrHmacAeadKey) keys and produces new
+/// It generates new [`AesCtrHmacAeadKey`](tink_proto::AesCtrHmacAeadKey) keys and produces new
 /// instances of [`subtle::EncryptThenAuthenticate`] that use [`subtle::AesCtr`].
 #[derive(Default)]
 pub(crate) struct AesCtrHmacAeadKeyManager {}
 
 impl tink::registry::KeyManager for AesCtrHmacAeadKeyManager {
-    /// Create an AEAD for the given serialized [`tink::proto::AesCtrHmacAeadKey`].
+    /// Create an AEAD for the given serialized [`tink_proto::AesCtrHmacAeadKey`].
     fn primitive(&self, serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
         if serialized_key.is_empty() {
             return Err("AesCtrHmacAeadKeyManager: empty key".into());
         }
-        let key = tink::proto::AesCtrHmacAeadKey::decode(serialized_key)
+        let key = tink_proto::AesCtrHmacAeadKey::decode(serialized_key)
             .map_err(|e| wrap_err("AesCtrHmacAeadKeyManager: invalid key", e))?;
 
         let (aes_ctr_key, aes_params) = validate_aes_key(&key)?;
@@ -65,25 +66,25 @@ impl tink::registry::KeyManager for AesCtrHmacAeadKeyManager {
         }
     }
 
-    /// Create a new key according to the given serialized [`tink::proto::AesCtrHmacAeadKeyFormat`].
+    /// Create a new key according to the given serialized [`tink_proto::AesCtrHmacAeadKeyFormat`].
     fn new_key(&self, serialized_key_format: &[u8]) -> Result<Vec<u8>, TinkError> {
         if serialized_key_format.is_empty() {
             return Err("AesCtrHmacAeadKeyManager: empty key format".into());
         }
-        let key_format = tink::proto::AesCtrHmacAeadKeyFormat::decode(serialized_key_format)
+        let key_format = tink_proto::AesCtrHmacAeadKeyFormat::decode(serialized_key_format)
             .map_err(|e| wrap_err("AesCtrHmacAeadKeyManager: invalid key format", e))?;
 
         let (aes_ctr_key_format, hmac_key_format) = validate_key_format(&key_format)?;
-        let key = tink::proto::AesCtrHmacAeadKey {
+        let key = tink_proto::AesCtrHmacAeadKey {
             version: AES_CTR_HMAC_AEAD_KEY_VERSION,
-            aes_ctr_key: Some(tink::proto::AesCtrKey {
+            aes_ctr_key: Some(tink_proto::AesCtrKey {
                 version: AES_CTR_HMAC_AEAD_KEY_VERSION,
                 key_value: tink::subtle::random::get_random_bytes(
                     aes_ctr_key_format.key_size as usize,
                 ),
                 params: aes_ctr_key_format.params,
             }),
-            hmac_key: Some(tink::proto::HmacKey {
+            hmac_key: Some(tink_proto::HmacKey {
                 version: AES_CTR_HMAC_AEAD_KEY_VERSION,
                 key_value: tink::subtle::random::get_random_bytes(
                     hmac_key_format.key_size as usize,
@@ -101,15 +102,15 @@ impl tink::registry::KeyManager for AesCtrHmacAeadKeyManager {
         AES_CTR_HMAC_AEAD_TYPE_URL
     }
 
-    fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {
-        tink::proto::key_data::KeyMaterialType::Symmetric
+    fn key_material_type(&self) -> tink_proto::key_data::KeyMaterialType {
+        tink_proto::key_data::KeyMaterialType::Symmetric
     }
 }
 
-/// Validate and extract the AES parts of the given [`tink::proto::AesCtrHmacAeadKey`].
+/// Validate and extract the AES parts of the given [`tink_proto::AesCtrHmacAeadKey`].
 fn validate_aes_key(
-    key: &tink::proto::AesCtrHmacAeadKey,
-) -> Result<(&tink::proto::AesCtrKey, &tink::proto::AesCtrParams), TinkError> {
+    key: &tink_proto::AesCtrHmacAeadKey,
+) -> Result<(&tink_proto::AesCtrKey, &tink_proto::AesCtrParams), TinkError> {
     tink::keyset::validate_key_version(key.version, AES_CTR_HMAC_AEAD_KEY_VERSION)
         .map_err(|e| wrap_err("AesCtrHmacAeadKeyManager", e))?;
     let aes_ctr_key = key
@@ -134,14 +135,14 @@ fn validate_aes_key(
     Ok((aes_ctr_key, params))
 }
 
-/// Validate and extract the HMAC parts of the given [`tink::proto::AesCtrHmacAeadKey`].
+/// Validate and extract the HMAC parts of the given [`tink_proto::AesCtrHmacAeadKey`].
 fn validate_hmac_key(
-    key: &tink::proto::AesCtrHmacAeadKey,
+    key: &tink_proto::AesCtrHmacAeadKey,
 ) -> Result<
     (
-        &tink::proto::HmacKey,
-        &tink::proto::HmacParams,
-        tink::proto::HashType,
+        &tink_proto::HmacKey,
+        &tink_proto::HmacParams,
+        tink_proto::HashType,
     ),
     TinkError,
 > {
@@ -161,10 +162,10 @@ fn validate_hmac_key(
     Ok((hmac_key, hmac_params, hash))
 }
 
-/// Validate the given [`tink::proto::AesCtrHmacAeadKeyFormat`].
+/// Validate the given [`tink_proto::AesCtrHmacAeadKeyFormat`].
 fn validate_key_format(
-    format: &tink::proto::AesCtrHmacAeadKeyFormat,
-) -> Result<(tink::proto::AesCtrKeyFormat, tink::proto::HmacKeyFormat), TinkError> {
+    format: &tink_proto::AesCtrHmacAeadKeyFormat,
+) -> Result<(tink_proto::AesCtrKeyFormat, tink_proto::HmacKeyFormat), TinkError> {
     // Validate AesCtrKeyFormat.
     let aes_ctr_format = format
         .aes_ctr_key_format

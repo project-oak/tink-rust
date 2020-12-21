@@ -31,7 +31,7 @@ impl proto::keyset_server::Keyset for KeysetServerImpl {
     ) -> Result<tonic::Response<proto::KeysetGenerateResponse>, tonic::Status> {
         let req = request.into_inner(); // discard metadata
         let closure = move || -> Result<_, TinkError> {
-            let template = tink::proto::KeyTemplate::decode(req.template.as_ref())
+            let template = tink_proto::KeyTemplate::decode(req.template.as_ref())
                 .map_err(|e| wrap_err("decode failed", e))?;
             let handle = tink::keyset::Handle::new(&template)?;
             let mut buf = Vec::new();

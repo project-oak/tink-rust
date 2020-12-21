@@ -37,7 +37,7 @@ impl tink::registry::KeyManager for AesCmacPrfKeyManager {
             return Err("AesCmacPrfKeyManager: invalid key".into());
         }
 
-        let key = tink::proto::AesCmacPrfKey::decode(serialized_key)
+        let key = tink_proto::AesCmacPrfKey::decode(serialized_key)
             .map_err(|_| TinkError::new("AesCmacPrfKeyManager: invalid key"))?;
         validate_key(&key)?;
         match subtle::AesCmacPrf::new(&key.key_value) {
@@ -49,20 +49,20 @@ impl tink::registry::KeyManager for AesCmacPrfKeyManager {
         }
     }
 
-    /// Generate a new serialized [`AesCmacPrfKey`](tink::proto::AesCmacPrfKey) according to
-    /// specification in the given [`AesCmacPrfKeyFormat`](tink::proto::AesCmacPrfKeyFormat).
+    /// Generate a new serialized [`AesCmacPrfKey`](tink_proto::AesCmacPrfKey) according to
+    /// specification in the given [`AesCmacPrfKeyFormat`](tink_proto::AesCmacPrfKeyFormat).
     fn new_key(&self, serialized_key_format: &[u8]) -> Result<Vec<u8>, TinkError> {
         if serialized_key_format.is_empty() {
             return Err("AesCmacPrfKeyManager: invalid key format".into());
         }
-        let key_format = tink::proto::AesCmacPrfKeyFormat::decode(serialized_key_format)
+        let key_format = tink_proto::AesCmacPrfKeyFormat::decode(serialized_key_format)
             .map_err(|_| TinkError::new("AesCmacPrfKeyManager: invalid key format"))?;
         validate_key_format(&key_format)
             .map_err(|e| wrap_err("AesCmacPrfKeyManager: invalid key format", e))?;
         let key_value = tink::subtle::random::get_random_bytes(key_format.key_size as usize);
 
         let mut sk = Vec::new();
-        tink::proto::AesCmacPrfKey {
+        tink_proto::AesCmacPrfKey {
             version: AES_CMAC_PRF_KEY_VERSION,
             key_value,
         }
@@ -75,21 +75,21 @@ impl tink::registry::KeyManager for AesCmacPrfKeyManager {
         AES_CMAC_PRF_TYPE_URL
     }
 
-    fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {
-        tink::proto::key_data::KeyMaterialType::Symmetric
+    fn key_material_type(&self) -> tink_proto::key_data::KeyMaterialType {
+        tink_proto::key_data::KeyMaterialType::Symmetric
     }
 }
 
-/// Validate the given [`AesCmacPrfKey`](tink::proto::AesCmacPrfKey). It only validates the version
+/// Validate the given [`AesCmacPrfKey`](tink_proto::AesCmacPrfKey). It only validates the version
 /// of the key because other parameters will be validated in primitive construction.
-fn validate_key(key: &tink::proto::AesCmacPrfKey) -> Result<(), TinkError> {
+fn validate_key(key: &tink_proto::AesCmacPrfKey) -> Result<(), TinkError> {
     tink::keyset::validate_key_version(key.version, AES_CMAC_PRF_KEY_VERSION)
         .map_err(|e| wrap_err("AesCmacPrfKeyManager: invalid version", e))?;
     let key_size = key.key_value.len();
     subtle::validate_aes_cmac_prf_params(key_size)
 }
 
-/// Validate the given [`AesCmacPrfKeyFormat`](tink::proto::AesCmacPrfKeyFormat).
-fn validate_key_format(format: &tink::proto::AesCmacPrfKeyFormat) -> Result<(), TinkError> {
+/// Validate the given [`AesCmacPrfKeyFormat`](tink_proto::AesCmacPrfKeyFormat).
+fn validate_key_format(format: &tink_proto::AesCmacPrfKeyFormat) -> Result<(), TinkError> {
     subtle::validate_aes_cmac_prf_params(format.key_size as usize)
 }

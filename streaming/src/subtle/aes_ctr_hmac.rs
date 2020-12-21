@@ -19,7 +19,8 @@
 use super::{noncebased, AesVariant};
 use aes_ctr::cipher::stream::{Key, NewStreamCipher, SyncStreamCipher};
 use std::convert::TryInto;
-use tink::{proto::HashType, subtle::random::get_random_bytes, utils::wrap_err, Mac, TinkError};
+use tink::{subtle::random::get_random_bytes, utils::wrap_err, Mac, TinkError};
+use tink_proto::HashType;
 
 /// The size of the nonces used as IVs for CTR.
 pub const AES_CTR_HMAC_NONCE_SIZE_IN_BYTES: usize = 16;

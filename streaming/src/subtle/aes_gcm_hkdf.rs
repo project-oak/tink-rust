@@ -19,7 +19,8 @@
 use super::{noncebased, AesVariant};
 use aes_gcm::aead::{generic_array::GenericArray, Aead, NewAead};
 use std::convert::TryInto;
-use tink::{proto::HashType, subtle::random::get_random_bytes, utils::wrap_err, TinkError};
+use tink::{subtle::random::get_random_bytes, utils::wrap_err, TinkError};
+use tink_proto::HashType;
 
 /// The size of the nonces used for GCM.
 pub const AES_GCM_HKDF_NONCE_SIZE_IN_BYTES: usize = 12;

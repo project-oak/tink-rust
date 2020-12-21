@@ -41,7 +41,7 @@ fn test_binary_io_unencrypted() {
 
 #[test]
 fn test_binary_io_encrypted() {
-    let kse1 = tink::proto::EncryptedKeyset {
+    let kse1 = tink_proto::EncryptedKeyset {
         encrypted_keyset: vec![b'A'; 32],
         keyset_info: None,
     };
