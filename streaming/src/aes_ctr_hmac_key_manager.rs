@@ -17,25 +17,26 @@
 //! Key manager for streaming AES-CTR-HMAC keys.
 
 use prost::Message;
-use tink::{proto::HashType, subtle::random::get_random_bytes, utils::wrap_err, TinkError};
+use tink::{subtle::random::get_random_bytes, utils::wrap_err, TinkError};
+use tink_proto::HashType;
 
 pub const AES_CTR_HMAC_KEY_VERSION: u32 = 0;
 pub const AES_CTR_HMAC_TYPE_URL: &str =
     "type.googleapis.com/google.crypto.tink.AesCtrHmacStreamingKey";
 
 /// `AesCtrHmacKeyManager` is an implementation of the [`tink::registry::KeyManager`] trait.
-/// It generates new [`AesCtrHmacStreamingKey`](tink::proto::AesCtrHmacStreamingKey) keys and
+/// It generates new [`AesCtrHmacStreamingKey`](tink_proto::AesCtrHmacStreamingKey) keys and
 /// produces new instances of  [`subtle::AesCtrHmac`](crate::subtle::AesCtrHmac).
 #[derive(Default)]
 pub(crate) struct AesCtrHmacKeyManager {}
 
 impl tink::registry::KeyManager for AesCtrHmacKeyManager {
-    /// Create an AEAD for the given serialized [`tink::proto::AesCtrHmacStreamingKey`].
+    /// Create an AEAD for the given serialized [`tink_proto::AesCtrHmacStreamingKey`].
     fn primitive(&self, serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
         if serialized_key.is_empty() {
             return Err("AesCtrHmacKeyManager: invalid key".into());
         }
-        let key = tink::proto::AesCtrHmacStreamingKey::decode(serialized_key)
+        let key = tink_proto::AesCtrHmacStreamingKey::decode(serialized_key)
             .map_err(|e| wrap_err("AesCtrHmacKeyManager: invalid key", e))?;
 
         let key_params = validate_key(&key)?;
@@ -59,15 +60,15 @@ impl tink::registry::KeyManager for AesCtrHmacKeyManager {
     }
 
     /// Create a new key according to the given serialized
-    /// [`tink::proto::AesCtrHmacStreamingKeyFormat`].
+    /// [`tink_proto::AesCtrHmacStreamingKeyFormat`].
     fn new_key(&self, serialized_key_format: &[u8]) -> Result<Vec<u8>, TinkError> {
         if serialized_key_format.is_empty() {
             return Err("AesCtrHmacKeyManager: invalid key format".into());
         }
-        let key_format = tink::proto::AesCtrHmacStreamingKeyFormat::decode(serialized_key_format)
+        let key_format = tink_proto::AesCtrHmacStreamingKeyFormat::decode(serialized_key_format)
             .map_err(|e| wrap_err("AesCtrHmacKeyManager: invalid key format", e))?;
         let key_params = validate_key_format(&key_format)?;
-        let key = tink::proto::AesCtrHmacStreamingKey {
+        let key = tink_proto::AesCtrHmacStreamingKey {
             version: AES_CTR_HMAC_KEY_VERSION,
             key_value: get_random_bytes(key_format.key_size as usize),
             params: Some(key_params),
@@ -82,15 +83,15 @@ impl tink::registry::KeyManager for AesCtrHmacKeyManager {
         AES_CTR_HMAC_TYPE_URL
     }
 
-    fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {
-        tink::proto::key_data::KeyMaterialType::Symmetric
+    fn key_material_type(&self) -> tink_proto::key_data::KeyMaterialType {
+        tink_proto::key_data::KeyMaterialType::Symmetric
     }
 }
 
-/// Validate the given [`tink::proto::AesCtrHmacStreamingKey`].
+/// Validate the given [`tink_proto::AesCtrHmacStreamingKey`].
 fn validate_key(
-    key: &tink::proto::AesCtrHmacStreamingKey,
-) -> Result<tink::proto::AesCtrHmacStreamingParams, TinkError> {
+    key: &tink_proto::AesCtrHmacStreamingKey,
+) -> Result<tink_proto::AesCtrHmacStreamingParams, TinkError> {
     tink::keyset::validate_key_version(key.version, AES_CTR_HMAC_KEY_VERSION)?;
     crate::subtle::validate_aes_key_size(key.key_value.len())?;
     let key_params = key
@@ -100,10 +101,10 @@ fn validate_key(
     Ok(key_params.clone())
 }
 
-/// Validate the given [`tink::proto::AesCtrHmacStreamingKeyFormat`].
+/// Validate the given [`tink_proto::AesCtrHmacStreamingKeyFormat`].
 fn validate_key_format(
-    format: &tink::proto::AesCtrHmacStreamingKeyFormat,
-) -> Result<tink::proto::AesCtrHmacStreamingParams, TinkError> {
+    format: &tink_proto::AesCtrHmacStreamingKeyFormat,
+) -> Result<tink_proto::AesCtrHmacStreamingParams, TinkError> {
     tink::keyset::validate_key_version(format.version, AES_CTR_HMAC_KEY_VERSION)?;
     crate::subtle::validate_aes_key_size(format.key_size as usize)?;
     let key_params = format
@@ -114,10 +115,10 @@ fn validate_key_format(
     Ok(key_params.clone())
 }
 
-/// Validate the given [`tink::proto::AesCtrHmacStreamingParams`].
+/// Validate the given [`tink_proto::AesCtrHmacStreamingParams`].
 fn validate_params(
-    params: &tink::proto::AesCtrHmacStreamingParams,
-) -> Result<(tink::proto::HmacParams, HashType, HashType), TinkError> {
+    params: &tink_proto::AesCtrHmacStreamingParams,
+) -> Result<(tink_proto::HmacParams, HashType, HashType), TinkError> {
     crate::subtle::validate_aes_key_size(params.derived_key_size as usize)?;
     let hkdf_hash = match HashType::from_i32(params.hkdf_hash_type) {
         Some(HashType::UnknownHash) => return Err("AesCtrHmacKeyManager: unknown HKDF hash".into()),

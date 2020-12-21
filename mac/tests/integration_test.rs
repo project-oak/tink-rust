@@ -46,7 +46,7 @@ fn example() {
 fn test_legacy_prefix_type() {
     tink_mac::init();
     let mut template = tink_mac::hmac_sha256_tag256_key_template();
-    template.output_prefix_type = tink::proto::OutputPrefixType::Legacy as i32;
+    template.output_prefix_type = tink_proto::OutputPrefixType::Legacy as i32;
     let kh = tink::keyset::Handle::new(&template).unwrap();
     let m = tink_mac::new(&kh).unwrap();
 

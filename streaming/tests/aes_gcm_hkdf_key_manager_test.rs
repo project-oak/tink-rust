@@ -16,7 +16,8 @@
 
 use prost::Message;
 use std::collections::HashSet;
-use tink::{proto::HashType, TinkError};
+use tink::TinkError;
+use tink_proto::HashType;
 use tink_streaming_aead::subtle;
 use tink_testutil::proto_encode;
 
@@ -104,7 +105,7 @@ fn test_aes_gcm_hkdf_new_key_basic() {
         );
         let serialized_format = proto_encode(&format);
         let m = key_manager.new_key(&serialized_format).unwrap();
-        let key = tink::proto::AesGcmHkdfStreamingKey::decode(m.as_ref()).unwrap();
+        let key = tink_proto::AesGcmHkdfStreamingKey::decode(m.as_ref()).unwrap();
         validate_aes_gcm_hkdf_key(&key, &format).unwrap();
     }
 }
@@ -151,10 +152,10 @@ fn test_aes_gcm_hkdf_new_key_data_basic() {
         );
         assert_eq!(
             key_data.key_material_type,
-            tink::proto::key_data::KeyMaterialType::Symmetric as i32,
+            tink_proto::key_data::KeyMaterialType::Symmetric as i32,
             "incorrect key material type"
         );
-        let key = tink::proto::AesGcmHkdfStreamingKey::decode(key_data.value.as_ref())
+        let key = tink_proto::AesGcmHkdfStreamingKey::decode(key_data.value.as_ref())
             .expect("incorrect key value");
         validate_aes_gcm_hkdf_key(&key, &format).unwrap();
     }
@@ -209,7 +210,7 @@ fn test_aes_gcm_hkdf_type_url() {
     );
     assert_eq!(
         key_manager.key_material_type(),
-        tink::proto::key_data::KeyMaterialType::Symmetric
+        tink_proto::key_data::KeyMaterialType::Symmetric
     );
 }
 
@@ -328,8 +329,8 @@ fn gen_invalid_aes_gcm_hkdf_key_formats() -> Vec<Vec<u8>> {
 }
 
 fn validate_aes_gcm_hkdf_key(
-    key: &tink::proto::AesGcmHkdfStreamingKey,
-    format: &tink::proto::AesGcmHkdfStreamingKeyFormat,
+    key: &tink_proto::AesGcmHkdfStreamingKey,
+    format: &tink_proto::AesGcmHkdfStreamingKeyFormat,
 ) -> Result<(), TinkError> {
     if key.key_value.len() != format.key_size as usize {
         return Err("incorrect key size".into());
@@ -370,7 +371,7 @@ fn validate_aes_gcm_hkdf_key(
 
 fn validate_primitive(
     cipher: subtle::AesGcmHkdf,
-    key: &tink::proto::AesGcmHkdfStreamingKey,
+    key: &tink_proto::AesGcmHkdfStreamingKey,
 ) -> Result<(), TinkError> {
     if cipher.main_key != key.key_value {
         return Err("main key and primitive don't match".into());

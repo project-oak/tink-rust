@@ -35,7 +35,7 @@ impl tink::registry::KeyManager for Ed25519VerifierKeyManager {
         if serialized_key.is_empty() {
             return Err("Ed25519VerifierKeyManager: invalid key".into());
         }
-        let key = tink::proto::Ed25519PublicKey::decode(serialized_key)
+        let key = tink_proto::Ed25519PublicKey::decode(serialized_key)
             .map_err(|e| wrap_err("Ed25519VerifierKeyManager: invalid key", e))?;
         validate_ed25519_public_key(&key).map_err(|e| wrap_err("Ed25519VerifierKeyManager", e))?;
 
@@ -53,14 +53,14 @@ impl tink::registry::KeyManager for Ed25519VerifierKeyManager {
         ED25519_VERIFIER_TYPE_URL
     }
 
-    fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {
-        tink::proto::key_data::KeyMaterialType::AsymmetricPublic
+    fn key_material_type(&self) -> tink_proto::key_data::KeyMaterialType {
+        tink_proto::key_data::KeyMaterialType::AsymmetricPublic
     }
 }
 
-/// Validate the given [`Ed25519PublicKey`](tink::proto::Ed25519PublicKey).
+/// Validate the given [`Ed25519PublicKey`](tink_proto::Ed25519PublicKey).
 pub(crate) fn validate_ed25519_public_key(
-    key: &tink::proto::Ed25519PublicKey,
+    key: &tink_proto::Ed25519PublicKey,
 ) -> Result<(), TinkError> {
     tink::keyset::validate_key_version(key.version, ED25519_VERIFIER_KEY_VERSION)?;
 

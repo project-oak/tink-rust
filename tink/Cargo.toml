@@ -10,10 +10,9 @@ default = []
 # The `insecure` feature enables methods that expose unencrypted key material
 insecure = []
 # The `json` feature enables methods for serializing keysets to/from JSON.
-json = ["base64", "serde", "serde_json"]
+json = ["tink-proto/json", "serde", "serde_json"]
 
 [dependencies]
-base64 = { version = "^0.12", optional = true }
 digest = "^0.9"
 hkdf = "^0.10"
 lazy_static = "^1.4"
@@ -24,6 +23,7 @@ serde_json = { version = "^1.0.60", optional = true }
 sha-1 = "^0.9.1"
 sha2 = "^0.9.1"
 subtle = "^2.4"
+tink-proto = "^0.1"
 
 [build-dependencies]
 prost-build = "^0.6.1"

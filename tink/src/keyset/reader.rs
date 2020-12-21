@@ -16,15 +16,15 @@
 
 //! Trait definition for reading keysets.
 
-/// `Reader` knows how to read a [`Keyset`](crate::proto::Keyset) or an
-/// [`EncryptedKeyset`](crate::proto::EncryptedKeyset) from some source. In order to turn a `Reader`
+/// `Reader` knows how to read a [`Keyset`](tink_proto::Keyset) or an
+/// [`EncryptedKeyset`](tink_proto::EncryptedKeyset) from some source. In order to turn a `Reader`
 /// into a [`keyset::Handle`](crate::keyset::Handle) for use, callers must use
 /// [`insecure::new_handle`](super::insecure::new_handle) or
 /// [`Handle::read`](super::Handle::read) (with encryption).
 pub trait Reader {
     /// Return a (cleartext) `Keyset` object from the underlying source.
-    fn read(&mut self) -> Result<crate::proto::Keyset, crate::TinkError>;
+    fn read(&mut self) -> Result<tink_proto::Keyset, crate::TinkError>;
 
     /// Return an `EncryptedKeyset` object from the underlying source.
-    fn read_encrypted(&mut self) -> Result<crate::proto::EncryptedKeyset, crate::TinkError>;
+    fn read_encrypted(&mut self) -> Result<tink_proto::EncryptedKeyset, crate::TinkError>;
 }

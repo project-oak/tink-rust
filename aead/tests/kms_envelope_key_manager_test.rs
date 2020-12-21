@@ -45,11 +45,11 @@ fn test_kms_envelope_get_primitive_no_client() {
     );
     assert_eq!(
         key_manager.key_material_type(),
-        tink::proto::key_data::KeyMaterialType::Remote
+        tink_proto::key_data::KeyMaterialType::Remote
     );
-    let key = tink::proto::KmsEnvelopeAeadKey {
+    let key = tink_proto::KmsEnvelopeAeadKey {
         version: tink_testutil::KMS_ENVELOPE_AEAD_KEY_VERSION,
-        params: Some(tink::proto::KmsEnvelopeAeadKeyFormat {
+        params: Some(tink_proto::KmsEnvelopeAeadKeyFormat {
             kek_uri: "some uri".to_string(),
             dek_template: Some(tink_aead::aes128_ctr_hmac_sha256_key_template()),
         }),
@@ -78,7 +78,7 @@ fn test_kms_envelope_get_primitive_invalid() {
     let result = km.primitive(&[0; 5]);
     tink_testutil::expect_err(result, "invalid key");
 
-    let key_without_params = tink::proto::KmsEnvelopeAeadKey {
+    let key_without_params = tink_proto::KmsEnvelopeAeadKey {
         version: tink_testutil::KMS_ENVELOPE_AEAD_KEY_VERSION,
         params: None,
     };
@@ -88,9 +88,9 @@ fn test_kms_envelope_get_primitive_invalid() {
     let result = km.primitive(&serialized_key);
     assert!(result.is_err());
 
-    let key_wrong_version = tink::proto::KmsEnvelopeAeadKey {
+    let key_wrong_version = tink_proto::KmsEnvelopeAeadKey {
         version: 9999,
-        params: Some(tink::proto::KmsEnvelopeAeadKeyFormat {
+        params: Some(tink_proto::KmsEnvelopeAeadKeyFormat {
             kek_uri: key_uri.to_string(),
             dek_template: Some(tink_aead::aes128_ctr_hmac_sha256_key_template()),
         }),
@@ -99,9 +99,9 @@ fn test_kms_envelope_get_primitive_invalid() {
     let result = km.primitive(&serialized_key);
     tink_testutil::expect_err(result, "version in range");
 
-    let key_no_dek_template = tink::proto::KmsEnvelopeAeadKey {
+    let key_no_dek_template = tink_proto::KmsEnvelopeAeadKey {
         version: tink_testutil::KMS_ENVELOPE_AEAD_KEY_VERSION,
-        params: Some(tink::proto::KmsEnvelopeAeadKeyFormat {
+        params: Some(tink_proto::KmsEnvelopeAeadKeyFormat {
             kek_uri: key_uri.to_string(),
             dek_template: None,
         }),
@@ -116,13 +116,13 @@ fn test_kms_envelope_new_key_basic() {
     tink_aead::init();
     let key_manager = tink::registry::get_key_manager(tink_testutil::KMS_ENVELOPE_AEAD_TYPE_URL)
         .expect("cannot obtain KMS envelope key manager");
-    let format = tink::proto::KmsEnvelopeAeadKeyFormat {
+    let format = tink_proto::KmsEnvelopeAeadKeyFormat {
         kek_uri: "some uri".to_string(),
         dek_template: None,
     };
     let serialized_format = proto_encode(&format);
     let m = key_manager.new_key(&serialized_format).unwrap();
-    let key = tink::proto::KmsEnvelopeAeadKey::decode(m.as_ref()).unwrap();
+    let key = tink_proto::KmsEnvelopeAeadKey::decode(m.as_ref()).unwrap();
     assert_eq!(key.version, tink_testutil::KMS_ENVELOPE_AEAD_KEY_VERSION);
 }
 
@@ -142,7 +142,7 @@ fn test_kms_envelope_template() {
     let key_template = tink_aead::kms_envelope_aead_key_template("some-uri", dek_template);
     assert_eq!(key_template.type_url, tink_aead::KMS_ENVELOPE_AEAD_TYPE_URL);
     let key_format =
-        tink::proto::KmsEnvelopeAeadKeyFormat::decode(key_template.value.as_ref()).unwrap();
+        tink_proto::KmsEnvelopeAeadKeyFormat::decode(key_template.value.as_ref()).unwrap();
     assert_eq!(key_format.kek_uri, "some-uri");
 }
 
@@ -158,7 +158,7 @@ fn test_kms_envelope_key_manager_params() {
     );
     assert_eq!(
         key_manager.key_material_type(),
-        tink::proto::key_data::KeyMaterialType::Remote
+        tink_proto::key_data::KeyMaterialType::Remote
     );
     assert!(!key_manager.supports_private_keys());
 }

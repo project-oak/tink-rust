@@ -33,7 +33,7 @@ pub fn validate_key_version(version: u32, max_expected: u32) -> Result<(), TinkE
 }
 
 /// Validate the given key set.
-pub fn validate(keyset: &crate::proto::Keyset) -> Result<(), TinkError> {
+pub fn validate(keyset: &tink_proto::Keyset) -> Result<(), TinkError> {
     if keyset.key.is_empty() {
         return Err("empty keyset".into());
     }
@@ -43,7 +43,7 @@ pub fn validate(keyset: &crate::proto::Keyset) -> Result<(), TinkError> {
     let mut num_enabled_keys = 0;
     for key in &keyset.key {
         validate_key(&key)?;
-        if key.status != crate::proto::KeyStatusType::Enabled as i32 {
+        if key.status != tink_proto::KeyStatusType::Enabled as i32 {
             continue;
         }
         if key.key_id == primary_key_id {
@@ -54,7 +54,7 @@ pub fn validate(keyset: &crate::proto::Keyset) -> Result<(), TinkError> {
         }
         if let Some(key_data) = &key.key_data {
             if key_data.key_material_type
-                != crate::proto::key_data::KeyMaterialType::AsymmetricPublic as i32
+                != tink_proto::key_data::KeyMaterialType::AsymmetricPublic as i32
             {
                 contains_only_pub = false;
             }
@@ -71,20 +71,20 @@ pub fn validate(keyset: &crate::proto::Keyset) -> Result<(), TinkError> {
 }
 
 /// Validate the given key.
-pub fn validate_key(key: &crate::proto::keyset::Key) -> Result<(), TinkError> {
+pub fn validate_key(key: &tink_proto::keyset::Key) -> Result<(), TinkError> {
     if key.key_id == 0 {
         Err(format!("key has zero key id: {}", key.key_id).into())
     } else if key.key_data.is_none() {
         Err(format!("key {} has no key data", key.key_id).into())
-    } else if key.output_prefix_type != crate::proto::OutputPrefixType::Tink as i32
-        && key.output_prefix_type != crate::proto::OutputPrefixType::Legacy as i32
-        && key.output_prefix_type != crate::proto::OutputPrefixType::Raw as i32
-        && key.output_prefix_type != crate::proto::OutputPrefixType::Crunchy as i32
+    } else if key.output_prefix_type != tink_proto::OutputPrefixType::Tink as i32
+        && key.output_prefix_type != tink_proto::OutputPrefixType::Legacy as i32
+        && key.output_prefix_type != tink_proto::OutputPrefixType::Raw as i32
+        && key.output_prefix_type != tink_proto::OutputPrefixType::Crunchy as i32
     {
         Err(format!("key {} has unknown prefix", key.key_id).into())
-    } else if key.status != crate::proto::KeyStatusType::Enabled as i32
-        && key.status != crate::proto::KeyStatusType::Disabled as i32
-        && key.status != crate::proto::KeyStatusType::Destroyed as i32
+    } else if key.status != tink_proto::KeyStatusType::Enabled as i32
+        && key.status != tink_proto::KeyStatusType::Disabled as i32
+        && key.status != tink_proto::KeyStatusType::Destroyed as i32
     {
         Err(format!("key {} has unknown status", key.key_id).into())
     } else {

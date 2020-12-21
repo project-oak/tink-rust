@@ -17,9 +17,9 @@
 use std::sync::Arc;
 use tink::{
     keyset::{insecure, Handle},
-    proto::{key_data::KeyMaterialType, KeyData},
     TinkError,
 };
+use tink_proto::{key_data::KeyMaterialType, KeyData};
 
 #[test]
 fn test_new_handle() {
@@ -65,9 +65,9 @@ fn test_read() {
     );
     let key = tink_testutil::new_key(
         &key_data,
-        tink::proto::KeyStatusType::Enabled,
+        tink_proto::KeyStatusType::Enabled,
         1,
-        tink::proto::OutputPrefixType::Tink,
+        tink_proto::OutputPrefixType::Tink,
     );
     let ks = tink_testutil::new_keyset(1, vec![key]);
     let h = insecure::new_handle(ks).unwrap();
@@ -95,9 +95,9 @@ fn test_read_with_no_secrets() {
         tink_testutil::new_key_data("some type url", &[0], KeyMaterialType::AsymmetricPublic);
     let key = tink_testutil::new_key(
         &key_data,
-        tink::proto::KeyStatusType::Enabled,
+        tink_proto::KeyStatusType::Enabled,
         1,
-        tink::proto::OutputPrefixType::Tink,
+        tink_proto::OutputPrefixType::Tink,
     );
     let ks = tink_testutil::new_keyset(1, vec![key]);
     let h = insecure::new_handle(ks).unwrap();
@@ -121,9 +121,9 @@ fn test_with_no_secrets_functions_fail_when_handling_secret_key_material() {
     let key_data = tink_testutil::new_key_data("some type url", &[0], KeyMaterialType::Symmetric);
     let key = tink_testutil::new_key(
         &key_data,
-        tink::proto::KeyStatusType::Enabled,
+        tink_proto::KeyStatusType::Enabled,
         1,
-        tink::proto::OutputPrefixType::Tink,
+        tink_proto::OutputPrefixType::Tink,
     );
     let ks = tink_testutil::new_keyset(1, vec![key]);
     let h = insecure::new_handle(ks).unwrap();
@@ -151,9 +151,9 @@ fn test_with_no_secrets_functions_fail_when_unknown_key_material() {
         tink_testutil::new_key_data("some type url", &[0], KeyMaterialType::UnknownKeymaterial);
     let key = tink_testutil::new_key(
         &key_data,
-        tink::proto::KeyStatusType::Enabled,
+        tink_proto::KeyStatusType::Enabled,
         1,
-        tink::proto::OutputPrefixType::Tink,
+        tink_proto::OutputPrefixType::Tink,
     );
     let ks = tink_testutil::new_keyset(1, vec![key]);
     let h = insecure::new_handle(ks).unwrap();
@@ -181,9 +181,9 @@ fn test_with_no_secrets_functions_fail_with_asymmetric_private_key_material() {
         tink_testutil::new_key_data("some type url", &[0], KeyMaterialType::AsymmetricPrivate);
     let key = tink_testutil::new_key(
         &key_data,
-        tink::proto::KeyStatusType::Enabled,
+        tink_proto::KeyStatusType::Enabled,
         1,
-        tink::proto::OutputPrefixType::Tink,
+        tink_proto::OutputPrefixType::Tink,
     );
     let ks = tink_testutil::new_keyset(1, vec![key]);
     let h = insecure::new_handle(ks).unwrap();
@@ -259,8 +259,8 @@ fn test_invalid_keyset_from_manager() {
         }
     }
     tink::registry::register_key_manager(Arc::new(InvalidKeyManager {})).unwrap();
-    let kt = tink::proto::KeyTemplate {
-        output_prefix_type: tink::proto::OutputPrefixType::Tink as i32,
+    let kt = tink_proto::KeyTemplate {
+        output_prefix_type: tink_proto::OutputPrefixType::Tink as i32,
         type_url: "InvalidKeyGenerator".to_string(),
         value: vec![],
     };
@@ -276,7 +276,7 @@ fn test_destroyed_key_keyset() {
 
     let mut ks = insecure::keyset_material(&kh);
     ks.key[0].key_data = None;
-    ks.key[0].status = tink::proto::KeyStatusType::Destroyed as i32;
+    ks.key[0].status = tink_proto::KeyStatusType::Destroyed as i32;
     let kh = insecure::new_handle(ks).unwrap();
     let info = kh.keyset_info();
     assert_eq!(info.primary_key_id, info.key_info[0].key_id);
@@ -366,7 +366,7 @@ fn test_insecure_read_write() {
 #[test]
 fn test_insecure_read_empty() {
     let mut mem_keyset = tink::keyset::MemReaderWriter {
-        keyset: Some(tink::proto::Keyset {
+        keyset: Some(tink_proto::Keyset {
             key: vec![],
             primary_key_id: 1,
         }),

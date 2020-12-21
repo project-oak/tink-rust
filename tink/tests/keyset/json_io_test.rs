@@ -15,10 +15,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use std::io::Write;
-use tink::{
-    keyset::{Reader, Writer},
-    proto::{key_data::KeyMaterialType, KeyStatusType, OutputPrefixType},
-};
+use tink::keyset::{Reader, Writer};
+use tink_proto::{key_data::KeyMaterialType, KeyStatusType, OutputPrefixType};
 
 #[test]
 fn test_json_io_unencrypted() {
@@ -48,7 +46,7 @@ fn test_json_reader() {
     tink_mac::init();
     let gcm_key = tink_testutil::proto_encode(&tink_testutil::new_aes_gcm_key(0, 16));
     let eax_key = tink_testutil::proto_encode(&tink_testutil::new_hmac_key(
-        tink::proto::HashType::Sha512,
+        tink_proto::HashType::Sha512,
         32,
     ));
 
@@ -88,11 +86,11 @@ fn test_json_reader() {
 
     let got = r.read().expect("cannot read keyset");
 
-    let want = tink::proto::Keyset {
+    let want = tink_proto::Keyset {
         primary_key_id: 42,
         key: vec![
-            tink::proto::keyset::Key {
-                key_data: Some(tink::proto::KeyData {
+            tink_proto::keyset::Key {
+                key_data: Some(tink_proto::KeyData {
                     type_url: "type.googleapis.com/google.crypto.tink.AesGcmKey".to_string(),
                     key_material_type: KeyMaterialType::Symmetric as i32,
                     value: gcm_key,
@@ -101,8 +99,8 @@ fn test_json_reader() {
                 key_id: 42,
                 status: KeyStatusType::Enabled as i32,
             },
-            tink::proto::keyset::Key {
-                key_data: Some(tink::proto::KeyData {
+            tink_proto::keyset::Key {
+                key_data: Some(tink_proto::KeyData {
                     type_url: "type.googleapis.com/google.crypto.tink.AesEaxKey".to_string(),
                     key_material_type: KeyMaterialType::Symmetric as i32,
                     value: eax_key,
@@ -144,10 +142,10 @@ fn test_json_reader_large_ids() {
 
     let got = r.read().expect("cannot read keyset");
 
-    let want = tink::proto::Keyset {
+    let want = tink_proto::Keyset {
         primary_key_id: 4294967275,
-        key: vec![tink::proto::keyset::Key {
-            key_data: Some(tink::proto::KeyData {
+        key: vec![tink_proto::keyset::Key {
+            key_data: Some(tink_proto::KeyData {
                 type_url: "type.googleapis.com/google.crypto.tink.AesGcmKey".to_string(),
                 key_material_type: KeyMaterialType::Symmetric as i32,
                 value: gcm_key,
@@ -195,14 +193,14 @@ fn test_json_reader_negative_ids() {
 fn test_json_writer_large_id() {
     tink_mac::init();
     let eax_key = tink_testutil::proto_encode(&tink_testutil::new_hmac_key(
-        tink::proto::HashType::Sha512,
+        tink_proto::HashType::Sha512,
         32,
     ));
 
-    let ks = tink::proto::Keyset {
+    let ks = tink_proto::Keyset {
         primary_key_id: 4294967275,
-        key: vec![tink::proto::keyset::Key {
-            key_data: Some(tink::proto::KeyData {
+        key: vec![tink_proto::keyset::Key {
+            key_data: Some(tink_proto::KeyData {
                 type_url: "type.googleapis.com/google.crypto.tink.AesEaxKey".to_string(),
                 key_material_type: KeyMaterialType::Symmetric as i32,
                 value: eax_key,
@@ -235,7 +233,7 @@ fn test_json_io_encrypted() {
     tink_mac::init();
     let mut buf = Vec::new();
 
-    let kse1 = tink::proto::EncryptedKeyset {
+    let kse1 = tink_proto::EncryptedKeyset {
         encrypted_keyset: vec![b'A'; 32],
         keyset_info: None,
     };
@@ -269,13 +267,13 @@ fn test_json_io_read_fail_decode() {
 #[test]
 fn test_json_io_fail() {
     let eax_key = tink_testutil::proto_encode(&tink_testutil::new_hmac_key(
-        tink::proto::HashType::Sha512,
+        tink_proto::HashType::Sha512,
         32,
     ));
-    let ks = tink::proto::Keyset {
+    let ks = tink_proto::Keyset {
         primary_key_id: 4294967275,
-        key: vec![tink::proto::keyset::Key {
-            key_data: Some(tink::proto::KeyData {
+        key: vec![tink_proto::keyset::Key {
+            key_data: Some(tink_proto::KeyData {
                 type_url: "type.googleapis.com/google.crypto.tink.AesEaxKey".to_string(),
                 key_material_type: KeyMaterialType::Symmetric as i32,
                 value: eax_key,
@@ -285,7 +283,7 @@ fn test_json_io_fail() {
             status: KeyStatusType::Enabled as i32,
         }],
     };
-    let kse = tink::proto::EncryptedKeyset {
+    let kse = tink_proto::EncryptedKeyset {
         encrypted_keyset: vec![b'A'; 32],
         keyset_info: None,
     };
@@ -357,10 +355,10 @@ fn test_json_reader_all_enums() {
                     prefix_name,
                     status_name
                 );
-                let want = tink::proto::Keyset {
+                let want = tink_proto::Keyset {
                     primary_key_id: 42,
-                    key: vec![tink::proto::keyset::Key {
-                        key_data: Some(tink::proto::KeyData {
+                    key: vec![tink_proto::keyset::Key {
+                        key_data: Some(tink_proto::KeyData {
                             type_url: "type.googleapis.com/google.crypto.tink.AesGcmKey"
                                 .to_string(),
                             key_material_type: *material_type as i32,

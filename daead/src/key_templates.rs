@@ -16,14 +16,14 @@
 
 //! This module contains pre-generated [`KeyTemplate`] instances for deterministic AEAD.
 
-use tink::proto::KeyTemplate;
+use tink_proto::KeyTemplate;
 
-/// Return a [`KeyTemplate`](tink::proto::KeyTemplate) that generates a AES-SIV key.
+/// Return a [`KeyTemplate`](tink_proto::KeyTemplate) that generates a AES-SIV key.
 pub fn aes_siv_key_template() -> KeyTemplate {
     KeyTemplate {
         // Don't set value because KeyFormat is not required.
         value: Vec::new(),
         type_url: crate::AES_SIV_TYPE_URL.to_string(),
-        output_prefix_type: tink::proto::OutputPrefixType::Tink as i32,
+        output_prefix_type: tink_proto::OutputPrefixType::Tink as i32,
     }
 }

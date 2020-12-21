@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType};
+use tink_proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType};
 
 struct ParamsTest {
     hash: HashType,

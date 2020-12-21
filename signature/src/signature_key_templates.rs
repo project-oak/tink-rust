@@ -17,7 +17,7 @@
 //! This module contains pre-generated KeyTemplates for Signer and Verifier.
 /// One can use these templates to generate new Keysets.
 use prost::Message;
-use tink::proto::KeyTemplate;
+use tink_proto::KeyTemplate;
 
 /// Return a [`KeyTemplate`] that generates a new ECDSA private key with the following parameters:
 ///   - Hash function: SHA256
@@ -26,10 +26,10 @@ use tink::proto::KeyTemplate;
 ///   - Output prefix type: TINK
 pub fn ecdsa_p256_key_template() -> KeyTemplate {
     create_ecdsa_key_template(
-        tink::proto::HashType::Sha256,
-        tink::proto::EllipticCurveType::NistP256,
-        tink::proto::EcdsaSignatureEncoding::Der,
-        tink::proto::OutputPrefixType::Tink,
+        tink_proto::HashType::Sha256,
+        tink_proto::EllipticCurveType::NistP256,
+        tink_proto::EcdsaSignatureEncoding::Der,
+        tink_proto::OutputPrefixType::Tink,
     )
 }
 
@@ -40,10 +40,10 @@ pub fn ecdsa_p256_key_template() -> KeyTemplate {
 ///   - Output prefix type: TINK
 pub fn ecdsa_p256_key_p1363_template() -> KeyTemplate {
     create_ecdsa_key_template(
-        tink::proto::HashType::Sha256,
-        tink::proto::EllipticCurveType::NistP256,
-        tink::proto::EcdsaSignatureEncoding::IeeeP1363,
-        tink::proto::OutputPrefixType::Tink,
+        tink_proto::HashType::Sha256,
+        tink_proto::EllipticCurveType::NistP256,
+        tink_proto::EcdsaSignatureEncoding::IeeeP1363,
+        tink_proto::OutputPrefixType::Tink,
     )
 }
 
@@ -55,10 +55,10 @@ pub fn ecdsa_p256_key_p1363_template() -> KeyTemplate {
 ///   - Output prefix type: RAW
 pub fn ecdsa_p256_key_without_prefix_template() -> KeyTemplate {
     create_ecdsa_key_template(
-        tink::proto::HashType::Sha256,
-        tink::proto::EllipticCurveType::NistP256,
-        tink::proto::EcdsaSignatureEncoding::Der,
-        tink::proto::OutputPrefixType::Raw,
+        tink_proto::HashType::Sha256,
+        tink_proto::EllipticCurveType::NistP256,
+        tink_proto::EcdsaSignatureEncoding::Der,
+        tink_proto::OutputPrefixType::Raw,
     )
 }
 
@@ -69,10 +69,10 @@ pub fn ecdsa_p256_key_without_prefix_template() -> KeyTemplate {
 ///   - Output prefix type: TINK
 pub fn ecdsa_p384_key_template() -> KeyTemplate {
     create_ecdsa_key_template(
-        tink::proto::HashType::Sha512,
-        tink::proto::EllipticCurveType::NistP384,
-        tink::proto::EcdsaSignatureEncoding::Der,
-        tink::proto::OutputPrefixType::Tink,
+        tink_proto::HashType::Sha512,
+        tink_proto::EllipticCurveType::NistP384,
+        tink_proto::EcdsaSignatureEncoding::Der,
+        tink_proto::OutputPrefixType::Tink,
     )
 }
 
@@ -84,10 +84,10 @@ pub fn ecdsa_p384_key_template() -> KeyTemplate {
 ///   - Output prefix type: RAW
 pub fn ecdsa_p384_key_without_prefix_template() -> KeyTemplate {
     create_ecdsa_key_template(
-        tink::proto::HashType::Sha512,
-        tink::proto::EllipticCurveType::NistP384,
-        tink::proto::EcdsaSignatureEncoding::Der,
-        tink::proto::OutputPrefixType::Raw,
+        tink_proto::HashType::Sha512,
+        tink_proto::EllipticCurveType::NistP384,
+        tink_proto::EcdsaSignatureEncoding::Der,
+        tink_proto::OutputPrefixType::Raw,
     )
 }
 
@@ -98,10 +98,10 @@ pub fn ecdsa_p384_key_without_prefix_template() -> KeyTemplate {
 ///   - Output prefix type: TINK
 pub fn ecdsa_p521_key_template() -> KeyTemplate {
     create_ecdsa_key_template(
-        tink::proto::HashType::Sha512,
-        tink::proto::EllipticCurveType::NistP521,
-        tink::proto::EcdsaSignatureEncoding::Der,
-        tink::proto::OutputPrefixType::Tink,
+        tink_proto::HashType::Sha512,
+        tink_proto::EllipticCurveType::NistP521,
+        tink_proto::EcdsaSignatureEncoding::Der,
+        tink_proto::OutputPrefixType::Tink,
     )
 }
 
@@ -113,27 +113,27 @@ pub fn ecdsa_p521_key_template() -> KeyTemplate {
 ///   - Output prefix type: RAW
 pub fn ecdsa_p521_key_without_prefix_template() -> KeyTemplate {
     create_ecdsa_key_template(
-        tink::proto::HashType::Sha512,
-        tink::proto::EllipticCurveType::NistP521,
-        tink::proto::EcdsaSignatureEncoding::Der,
-        tink::proto::OutputPrefixType::Raw,
+        tink_proto::HashType::Sha512,
+        tink_proto::EllipticCurveType::NistP521,
+        tink_proto::EcdsaSignatureEncoding::Der,
+        tink_proto::OutputPrefixType::Raw,
     )
 }
 
 // createECDSAKeyTemplate creates a KeyTemplate containing a EcdasKeyFormat
 // with the given parameters.
 fn create_ecdsa_key_template(
-    hash_type: tink::proto::HashType,
-    curve: tink::proto::EllipticCurveType,
-    encoding: tink::proto::EcdsaSignatureEncoding,
-    prefix_type: tink::proto::OutputPrefixType,
+    hash_type: tink_proto::HashType,
+    curve: tink_proto::EllipticCurveType,
+    encoding: tink_proto::EcdsaSignatureEncoding,
+    prefix_type: tink_proto::OutputPrefixType,
 ) -> KeyTemplate {
-    let params = tink::proto::EcdsaParams {
+    let params = tink_proto::EcdsaParams {
         hash_type: hash_type as i32,
         curve: curve as i32,
         encoding: encoding as i32,
     };
-    let format = tink::proto::EcdsaKeyFormat {
+    let format = tink_proto::EcdsaKeyFormat {
         params: Some(params),
     };
     let mut serialized_format = Vec::new();
@@ -149,7 +149,7 @@ fn create_ecdsa_key_template(
 pub fn ed25519_key_template() -> KeyTemplate {
     KeyTemplate {
         type_url: crate::ED25519_SIGNER_TYPE_URL.to_string(),
-        output_prefix_type: tink::proto::OutputPrefixType::Tink as i32,
+        output_prefix_type: tink_proto::OutputPrefixType::Tink as i32,
         value: vec![],
     }
 }
@@ -158,7 +158,7 @@ pub fn ed25519_key_template() -> KeyTemplate {
 pub fn ed25519_key_without_prefix_template() -> KeyTemplate {
     KeyTemplate {
         type_url: crate::ED25519_SIGNER_TYPE_URL.to_string(),
-        output_prefix_type: tink::proto::OutputPrefixType::Raw as i32,
+        output_prefix_type: tink_proto::OutputPrefixType::Raw as i32,
         value: vec![],
     }
 }

@@ -20,7 +20,7 @@ use test::Bencher;
 const MSG: &[u8] = b"this data needs to be encrypted";
 const AAD: &[u8] = b"this data needs to be authenticated, but not encrypted";
 
-fn setup(kt: tink::proto::KeyTemplate) -> (Box<dyn tink::Aead>, Vec<u8>) {
+fn setup(kt: tink_proto::KeyTemplate) -> (Box<dyn tink::Aead>, Vec<u8>) {
     tink_aead::init();
     let kh = tink::keyset::Handle::new(&kt).unwrap();
     let a = tink_aead::new(&kh).unwrap();

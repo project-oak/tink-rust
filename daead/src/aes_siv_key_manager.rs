@@ -29,7 +29,7 @@ pub const AES_SIV_KEY_VERSION: u32 = 0;
 /// Type URL of AES-SIV keys that Tink supports.
 pub const AES_SIV_TYPE_URL: &str = "type.googleapis.com/google.crypto.tink.AesSivKey";
 
-/// `AesSivKeyManager` generates new [`AesSivKey`](tink::proto::AesSivKey) keys and produces new
+/// `AesSivKeyManager` generates new [`AesSivKey`](tink_proto::AesSivKey) keys and produces new
 /// instances of [`subtle::AesSiv`].
 #[derive(Default)]
 pub(crate) struct AesSivKeyManager;
@@ -41,7 +41,7 @@ impl KeyManager for AesSivKeyManager {
             return Err("AesSivKeyManager: invalid key".into());
         }
 
-        let key = tink::proto::AesSivKey::decode(serialized_key)
+        let key = tink_proto::AesSivKey::decode(serialized_key)
             .map_err(|e| wrap_err("AesSivKeyManager: decode failed", e))?;
         validate_key(&key)?;
         match subtle::AesSiv::new(&key.key_value) {
@@ -55,7 +55,7 @@ impl KeyManager for AesSivKeyManager {
     fn new_key(&self, serialized_key_format: &[u8]) -> Result<Vec<u8>, TinkError> {
         if !serialized_key_format.is_empty() {
             // If a key format was provided, check it is valid.
-            let key_format = tink::proto::AesSivKeyFormat::decode(serialized_key_format)
+            let key_format = tink_proto::AesSivKeyFormat::decode(serialized_key_format)
                 .map_err(|_| TinkError::new("AesSivKeyManager: invalid key format"))?;
             if key_format.key_size as usize != subtle::AES_SIV_KEY_SIZE {
                 return Err(format!(
@@ -65,7 +65,7 @@ impl KeyManager for AesSivKeyManager {
                 .into());
             }
         }
-        let key = tink::proto::AesSivKey {
+        let key = tink_proto::AesSivKey {
             version: AES_SIV_KEY_VERSION,
             key_value: get_random_bytes(subtle::AES_SIV_KEY_SIZE),
         };
@@ -79,13 +79,13 @@ impl KeyManager for AesSivKeyManager {
         AES_SIV_TYPE_URL
     }
 
-    fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {
-        tink::proto::key_data::KeyMaterialType::Symmetric
+    fn key_material_type(&self) -> tink_proto::key_data::KeyMaterialType {
+        tink_proto::key_data::KeyMaterialType::Symmetric
     }
 }
 
-/// Validate the given [`AesSivKey`](tink::proto::AesSivKey).
-fn validate_key(key: &tink::proto::AesSivKey) -> Result<(), TinkError> {
+/// Validate the given [`AesSivKey`](tink_proto::AesSivKey).
+fn validate_key(key: &tink_proto::AesSivKey) -> Result<(), TinkError> {
     tink::keyset::validate_key_version(key.version, AES_SIV_KEY_VERSION)
         .map_err(|e| wrap_err("AesSivKeyManager", e))?;
     let key_size = key.key_value.len();

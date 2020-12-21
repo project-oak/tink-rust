@@ -18,7 +18,8 @@
 
 use crate::subtle;
 use prost::Message;
-use tink::{proto::HashType, subtle::random::get_random_bytes, utils::wrap_err, TinkError};
+use tink::{subtle::random::get_random_bytes, utils::wrap_err, TinkError};
+use tink_proto::HashType;
 
 pub const AES_GCM_HKDF_KEY_VERSION: u32 = 0;
 pub const AES_GCM_HKDF_TYPE_URL: &str =
@@ -30,12 +31,12 @@ pub const AES_GCM_HKDF_TYPE_URL: &str =
 pub(crate) struct AesGcmHkdfKeyManager {}
 
 impl tink::registry::KeyManager for AesGcmHkdfKeyManager {
-    /// Create an AEAD for the given serialized [`tink::proto::AesGcmHkdfStreamingKey`].
+    /// Create an AEAD for the given serialized [`tink_proto::AesGcmHkdfStreamingKey`].
     fn primitive(&self, serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
         if serialized_key.is_empty() {
             return Err("AesGcmHkdfKeyManager: invalid key".into());
         }
-        let key = tink::proto::AesGcmHkdfStreamingKey::decode(serialized_key)
+        let key = tink_proto::AesGcmHkdfStreamingKey::decode(serialized_key)
             .map_err(|e| wrap_err("AesGcmHkdfKeyManager: invalid key", e))?;
         let (key_params, hkdf_hash) =
             validate_key(&key).map_err(|e| wrap_err("AesGcmHkdfKeyManager", e))?;
@@ -56,16 +57,16 @@ impl tink::registry::KeyManager for AesGcmHkdfKeyManager {
     }
 
     /// Create a new key according to specification in the given serialized
-    /// [`tink::proto::AesGcmHkdfStreamingKeyFormat`].
+    /// [`tink_proto::AesGcmHkdfStreamingKeyFormat`].
     fn new_key(&self, serialized_key_format: &[u8]) -> Result<Vec<u8>, TinkError> {
         if serialized_key_format.is_empty() {
             return Err("AesGcm_HkdfKeyManager: invalid key format".into());
         }
-        let key_format = tink::proto::AesGcmHkdfStreamingKeyFormat::decode(serialized_key_format)
+        let key_format = tink_proto::AesGcmHkdfStreamingKeyFormat::decode(serialized_key_format)
             .map_err(|e| wrap_err("AesGcmHkdfKeyManager: invalid key format", e))?;
         let key_params =
             validate_key_format(&key_format).map_err(|e| wrap_err("AesGcmHkdfKeyManager", e))?;
-        let key = tink::proto::AesGcmHkdfStreamingKey {
+        let key = tink_proto::AesGcmHkdfStreamingKey {
             version: AES_GCM_HKDF_KEY_VERSION,
             key_value: get_random_bytes(key_format.key_size as usize),
             params: Some(key_params),
@@ -79,15 +80,15 @@ impl tink::registry::KeyManager for AesGcmHkdfKeyManager {
         AES_GCM_HKDF_TYPE_URL
     }
 
-    fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {
-        tink::proto::key_data::KeyMaterialType::Symmetric
+    fn key_material_type(&self) -> tink_proto::key_data::KeyMaterialType {
+        tink_proto::key_data::KeyMaterialType::Symmetric
     }
 }
 
-/// Validate the given [`tink::proto::AesGcmHkdfStreamingKey`].
+/// Validate the given [`tink_proto::AesGcmHkdfStreamingKey`].
 fn validate_key(
-    key: &tink::proto::AesGcmHkdfStreamingKey,
-) -> Result<(tink::proto::AesGcmHkdfStreamingParams, HashType), TinkError> {
+    key: &tink_proto::AesGcmHkdfStreamingKey,
+) -> Result<(tink_proto::AesGcmHkdfStreamingParams, HashType), TinkError> {
     tink::keyset::validate_key_version(key.version, AES_GCM_HKDF_KEY_VERSION)?;
     crate::subtle::validate_aes_key_size(key.key_value.len())?;
     let key_params = key
@@ -98,10 +99,10 @@ fn validate_key(
     Ok((key_params.clone(), hkdf_hash))
 }
 
-/// Validate the given [`tink::proto::AesGcmHkdfStreamingKeyFormat`].
+/// Validate the given [`tink_proto::AesGcmHkdfStreamingKeyFormat`].
 fn validate_key_format(
-    format: &tink::proto::AesGcmHkdfStreamingKeyFormat,
-) -> Result<tink::proto::AesGcmHkdfStreamingParams, TinkError> {
+    format: &tink_proto::AesGcmHkdfStreamingKeyFormat,
+) -> Result<tink_proto::AesGcmHkdfStreamingParams, TinkError> {
     crate::subtle::validate_aes_key_size(format.key_size as usize)?;
     let format_params = format
         .params
@@ -111,8 +112,8 @@ fn validate_key_format(
     Ok(format_params.clone())
 }
 
-/// Validate the given [`tink::proto::AesGcmHkdfStreamingParams`].
-fn validate_params(params: &tink::proto::AesGcmHkdfStreamingParams) -> Result<HashType, TinkError> {
+/// Validate the given [`tink_proto::AesGcmHkdfStreamingParams`].
+fn validate_params(params: &tink_proto::AesGcmHkdfStreamingParams) -> Result<HashType, TinkError> {
     crate::subtle::validate_aes_key_size(params.derived_key_size as usize)?;
     let hkdf_hash = match HashType::from_i32(params.hkdf_hash_type) {
         Some(HashType::UnknownHash) => return Err("unknown HKDF hash type".into()),

@@ -26,19 +26,19 @@ pub const KMS_ENVELOPE_AEAD_TYPE_URL: &str =
     "type.googleapis.com/google.crypto.tink.KmsEnvelopeAeadKey";
 
 /// `KmsEnvelopeAeadKeyManager` is an implementation of the `tink::registry::KeyManager` trait.  It
-/// generates new [`KmsEnvelopeAeadKey`](tink::proto::KmsEnvelopeAeadKey) keys and produces new
+/// generates new [`KmsEnvelopeAeadKey`](tink_proto::KmsEnvelopeAeadKey) keys and produces new
 /// instances of [`KmsEnvelopeAead`](crate::KmsEnvelopeAead).
 #[derive(Default)]
 pub(crate) struct KmsEnvelopeAeadKeyManager {}
 
 impl tink::registry::KeyManager for KmsEnvelopeAeadKeyManager {
     /// Create a [`crate::KmsEnvelopeAead`] for the given serialized
-    /// [`tink::proto::KmsEnvelopeAeadKey`].
+    /// [`tink_proto::KmsEnvelopeAeadKey`].
     fn primitive(&self, serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
         if serialized_key.is_empty() {
             return Err("KmsEnvelopeAeadKeyManager: empty key".into());
         }
-        let key = tink::proto::KmsEnvelopeAeadKey::decode(serialized_key)
+        let key = tink_proto::KmsEnvelopeAeadKey::decode(serialized_key)
             .map_err(|e| wrap_err("KmsEnvelopeAeadKeyManager: invalid key", e))?;
         validate_key(&key)?;
         let key_params = key
@@ -61,14 +61,14 @@ impl tink::registry::KeyManager for KmsEnvelopeAeadKeyManager {
     }
 
     /// Create a new key according to specification the given serialized
-    /// [`tink::proto::KmsEnvelopeAeadKeyFormat`].
+    /// [`tink_proto::KmsEnvelopeAeadKeyFormat`].
     fn new_key(&self, serialized_key_format: &[u8]) -> Result<Vec<u8>, TinkError> {
         if serialized_key_format.is_empty() {
             return Err("KmsEnvelopeAeadKeyManager: invalid key format".into());
         }
-        let key_format = tink::proto::KmsEnvelopeAeadKeyFormat::decode(serialized_key_format)
+        let key_format = tink_proto::KmsEnvelopeAeadKeyFormat::decode(serialized_key_format)
             .map_err(|e| wrap_err("KmsEnvelopeAeadKeyManager: invalid key format", e))?;
-        let key = tink::proto::KmsEnvelopeAeadKey {
+        let key = tink_proto::KmsEnvelopeAeadKey {
             version: KMS_ENVELOPE_AEAD_KEY_VERSION,
             params: Some(key_format),
         };
@@ -82,13 +82,13 @@ impl tink::registry::KeyManager for KmsEnvelopeAeadKeyManager {
         KMS_ENVELOPE_AEAD_TYPE_URL
     }
 
-    fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {
-        tink::proto::key_data::KeyMaterialType::Remote
+    fn key_material_type(&self) -> tink_proto::key_data::KeyMaterialType {
+        tink_proto::key_data::KeyMaterialType::Remote
     }
 }
 
-/// Validate the given [`tink::proto::KmsEnvelopeAeadKey`].
-fn validate_key(key: &tink::proto::KmsEnvelopeAeadKey) -> Result<(), TinkError> {
+/// Validate the given [`tink_proto::KmsEnvelopeAeadKey`].
+fn validate_key(key: &tink_proto::KmsEnvelopeAeadKey) -> Result<(), TinkError> {
     tink::keyset::validate_key_version(key.version, KMS_ENVELOPE_AEAD_KEY_VERSION)
         .map_err(|e| wrap_err("KmsEnvelopeAeadKeyManager", e))
 }

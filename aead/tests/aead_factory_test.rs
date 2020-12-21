@@ -14,8 +14,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::{proto::OutputPrefixType, subtle::random::get_random_bytes, utils::wrap_err, TinkError};
+use tink::{subtle::random::get_random_bytes, utils::wrap_err, TinkError};
 use tink_aead::subtle;
+use tink_proto::OutputPrefixType;
 
 #[test]
 fn test_factory_multiple_keys() {

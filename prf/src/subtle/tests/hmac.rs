@@ -18,7 +18,8 @@ use super::aes_cmac::TestData;
 use crate::subtle::{validate_hmac_prf_params, HmacPrf};
 use maplit::hashmap;
 use std::collections::HashMap;
-use tink::{proto::HashType, Prf};
+use tink::Prf;
+use tink_proto::HashType;
 
 struct Rfc4868Test {
     key: &'static str,

@@ -1,0 +1,18 @@
+[package]
+name = "tink-proto"
+version = "0.1.0"
+authors = ["David Drysdale <drysdale@google.com>"]
+edition = "2018"
+license = "Apache-2.0"
+
+[features]
+default = []
+json = ["base64", "serde"]
+
+[dependencies]
+base64 = { version = "^0.12", optional = true }
+prost = "^0.6.1"
+serde = { version = "^1.0.118", features = ["derive"], optional = true }
+
+[build-dependencies]
+prost-build = "^0.6.1"

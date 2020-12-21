@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::proto::{
+use tink_proto::{
     EcdsaParams, EcdsaPublicKey, EcdsaSignatureEncoding, EllipticCurveType, HashType,
 };
 
@@ -57,8 +57,8 @@ fn test_ecdsa_verify_get_primitive_with_invalid_input() {
     }
     // invalid version
     let mut key = tink_testutil::new_random_ecdsa_public_key(
-        tink::proto::HashType::Sha256,
-        tink::proto::EllipticCurveType::NistP256,
+        tink_proto::HashType::Sha256,
+        tink_proto::EllipticCurveType::NistP256,
     );
     key.version = tink_testutil::ECDSA_VERIFIER_KEY_VERSION + 1;
     let serialized_key = tink_testutil::proto_encode(&key);
@@ -90,7 +90,7 @@ fn test_key_manager_params() {
     assert_eq!(km.type_url(), tink_testutil::ECDSA_VERIFIER_TYPE_URL);
     assert_eq!(
         km.key_material_type(),
-        tink::proto::key_data::KeyMaterialType::AsymmetricPublic
+        tink_proto::key_data::KeyMaterialType::AsymmetricPublic
     );
     assert!(!km.supports_private_keys());
 }

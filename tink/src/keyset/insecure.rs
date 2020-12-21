@@ -19,18 +19,18 @@
 use crate::TinkError;
 
 /// Create a [`Handle`](super::Handle) from cleartext key material.
-fn keyset_handle(ks: crate::proto::Keyset) -> Result<super::Handle, TinkError> {
+fn keyset_handle(ks: tink_proto::Keyset) -> Result<super::Handle, TinkError> {
     super::Handle::from_keyset(ks)
 }
 
 /// Return the key material contained in a [`Handle`](super::Handle).
-pub fn keyset_material(h: &super::Handle) -> crate::proto::Keyset {
+pub fn keyset_material(h: &super::Handle) -> tink_proto::Keyset {
     h.clone_keyset()
 }
 
 /// Create a new instance of [`Handle`](super::Handle) using the given
-/// [`Keyset`](crate::proto::Keyset).
-pub fn new_handle(ks: crate::proto::Keyset) -> Result<super::Handle, TinkError> {
+/// [`Keyset`](tink_proto::Keyset).
+pub fn new_handle(ks: tink_proto::Keyset) -> Result<super::Handle, TinkError> {
     if ks.key.is_empty() {
         Err("insecure: invalid keyset".into())
     } else {

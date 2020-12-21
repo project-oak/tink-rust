@@ -23,7 +23,7 @@ const LEN_DEK: usize = 4;
 
 /// `KmsEnvelopeAead` represents an instance of Envelope AEAD.
 pub struct KmsEnvelopeAead {
-    dek_template: tink::proto::KeyTemplate,
+    dek_template: tink_proto::KeyTemplate,
     remote: Box<dyn tink::Aead>,
 }
 
@@ -39,7 +39,7 @@ impl Clone for KmsEnvelopeAead {
 }
 
 impl KmsEnvelopeAead {
-    pub fn new(kt: tink::proto::KeyTemplate, remote: Box<dyn tink::Aead>) -> KmsEnvelopeAead {
+    pub fn new(kt: tink_proto::KeyTemplate, remote: Box<dyn tink::Aead>) -> KmsEnvelopeAead {
         KmsEnvelopeAead {
             dek_template: kt,
             remote,

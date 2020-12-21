@@ -71,13 +71,13 @@ fn test_new_key_data() {
         key_data.type_url,
         "invalid key data"
     );
-    let _key = tink::proto::HmacKey::decode(key_data.value.as_ref())
+    let _key = tink_proto::HmacKey::decode(key_data.value.as_ref())
         .expect("unexpected error when unmarshal HmacKey");
 
     // unregistered type url
-    let template = tink::proto::KeyTemplate {
+    let template = tink_proto::KeyTemplate {
         type_url: "some url".to_string(),
-        output_prefix_type: tink::proto::OutputPrefixType::Tink as i32,
+        output_prefix_type: tink_proto::OutputPrefixType::Tink as i32,
         value: vec![0],
     };
     assert!(
@@ -93,19 +93,19 @@ fn test_new_key() {
     let aes_gcm_template = tink_aead::aes128_gcm_key_template();
     let key = tink::registry::new_key(&aes_gcm_template).unwrap();
 
-    let aes_gcm_key = tink::proto::AesGcmKey::decode(key.as_ref()).unwrap();
+    let aes_gcm_key = tink_proto::AesGcmKey::decode(key.as_ref()).unwrap();
 
     let aes_gcm_format =
-        tink::proto::AesGcmKeyFormat::decode(aes_gcm_template.value.as_ref()).unwrap();
+        tink_proto::AesGcmKeyFormat::decode(aes_gcm_template.value.as_ref()).unwrap();
     assert_eq!(
         aes_gcm_key.key_value.len(),
         aes_gcm_format.key_size as usize
     );
 
     // unregistered type url
-    let template = tink::proto::KeyTemplate {
+    let template = tink_proto::KeyTemplate {
         type_url: "some url".to_string(),
-        output_prefix_type: tink::proto::OutputPrefixType::Tink as i32,
+        output_prefix_type: tink_proto::OutputPrefixType::Tink as i32,
         value: vec![0],
     };
     assert!(
@@ -118,7 +118,7 @@ fn test_new_key() {
 fn test_primitive_from_key_data() {
     tink_mac::init();
     // hmac keydata
-    let mut key_data = tink_testutil::new_hmac_key_data(tink::proto::HashType::Sha256, 16);
+    let mut key_data = tink_testutil::new_hmac_key_data(tink_proto::HashType::Sha256, 16);
     let p = tink::registry::primitive_from_key_data(&key_data).unwrap();
     if let tink::Primitive::Mac(_) = p {
     } else {
@@ -143,7 +143,7 @@ fn test_primitive_from_key_data() {
 fn test_primitive() {
     tink_mac::init();
     // hmac key
-    let key = tink_testutil::new_hmac_key(tink::proto::HashType::Sha256, 16);
+    let key = tink_testutil::new_hmac_key(tink_proto::HashType::Sha256, 16);
     let mut serialized_key = vec![];
     key.encode(&mut serialized_key).unwrap();
     let p = tink::registry::primitive(tink_testutil::HMAC_TYPE_URL, &serialized_key).unwrap();
@@ -181,8 +181,8 @@ fn test_register_kms_client() {
     tink::registry::get_kms_client("dummy").expect("error fetching dummy kms client");
 }
 
-fn dummy_key_generator() -> tink::proto::KeyTemplate {
-    tink::proto::KeyTemplate {
+fn dummy_key_generator() -> tink_proto::KeyTemplate {
+    tink_proto::KeyTemplate {
         type_url: "TEST".to_string(),
         value: vec![],
         output_prefix_type: 0,

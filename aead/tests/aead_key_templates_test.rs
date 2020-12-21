@@ -21,27 +21,27 @@ use tink::{utils::wrap_err, TinkError};
 fn test_aes_gcm_key_templates() {
     // AES-GCM 128 bit
     let template = tink_aead::aes128_gcm_key_template();
-    check_aes_gcm_key_template(&template, 16, tink::proto::OutputPrefixType::Tink)
+    check_aes_gcm_key_template(&template, 16, tink_proto::OutputPrefixType::Tink)
         .expect("invalid AES-128 GCM key template");
     test_encrypt_decrypt(&template, tink_testutil::AES_GCM_TYPE_URL).unwrap();
 
     // AES-GCM 256 bit
     let template = tink_aead::aes256_gcm_key_template();
-    check_aes_gcm_key_template(&template, 32, tink::proto::OutputPrefixType::Tink)
+    check_aes_gcm_key_template(&template, 32, tink_proto::OutputPrefixType::Tink)
         .expect("invalid AES-256 GCM key template");
     test_encrypt_decrypt(&template, tink_testutil::AES_GCM_TYPE_URL).unwrap();
 
     // AES-GCM 256 bit No Prefix
     let template = tink_aead::aes256_gcm_no_prefix_key_template();
-    check_aes_gcm_key_template(&template, 32, tink::proto::OutputPrefixType::Raw)
+    check_aes_gcm_key_template(&template, 32, tink_proto::OutputPrefixType::Raw)
         .expect("invalid AES-256 GCM No Prefix key template");
     test_encrypt_decrypt(&template, tink_testutil::AES_GCM_TYPE_URL).unwrap();
 }
 
 fn check_aes_gcm_key_template(
-    template: &tink::proto::KeyTemplate,
+    template: &tink_proto::KeyTemplate,
     key_size: u32,
-    output_prefix_type: tink::proto::OutputPrefixType,
+    output_prefix_type: tink_proto::OutputPrefixType,
 ) -> Result<(), TinkError> {
     if template.type_url != tink_testutil::AES_GCM_TYPE_URL {
         return Err("incorrect type url".into());
@@ -49,7 +49,7 @@ fn check_aes_gcm_key_template(
     if template.output_prefix_type != output_prefix_type as i32 {
         return Err("incorrect output prefix type".into());
     }
-    let key_format = tink::proto::AesGcmKeyFormat::decode(template.value.as_ref())
+    let key_format = tink_proto::AesGcmKeyFormat::decode(template.value.as_ref())
         .map_err(|e| wrap_err("cannot deserialize key format", e))?;
     if key_format.key_size != key_size {
         return Err(format!(
@@ -65,27 +65,27 @@ fn check_aes_gcm_key_template(
 fn test_aes_gcm_siv_key_templates() {
     // AES-GCM-SIV 128 bit
     let template = tink_aead::aes128_gcm_siv_key_template();
-    check_aes_gcm_siv_key_template(&template, 16, tink::proto::OutputPrefixType::Tink)
+    check_aes_gcm_siv_key_template(&template, 16, tink_proto::OutputPrefixType::Tink)
         .expect("invalid AES-128 GCM SIV key template");
     test_encrypt_decrypt(&template, tink_testutil::AES_GCM_SIV_TYPE_URL).unwrap();
 
     // AES-GCM-SIV 256 bit
     let template = tink_aead::aes256_gcm_siv_key_template();
-    check_aes_gcm_siv_key_template(&template, 32, tink::proto::OutputPrefixType::Tink)
+    check_aes_gcm_siv_key_template(&template, 32, tink_proto::OutputPrefixType::Tink)
         .expect("invalid AES-256 GCM SIV key template");
     test_encrypt_decrypt(&template, tink_testutil::AES_GCM_SIV_TYPE_URL).unwrap();
 
     // AES-GCM-SIV 256 bit No Prefix
     let template = tink_aead::aes256_gcm_siv_no_prefix_key_template();
-    check_aes_gcm_siv_key_template(&template, 32, tink::proto::OutputPrefixType::Raw)
+    check_aes_gcm_siv_key_template(&template, 32, tink_proto::OutputPrefixType::Raw)
         .expect("invalid AES-256 GCM No Prefix key template");
     test_encrypt_decrypt(&template, tink_testutil::AES_GCM_SIV_TYPE_URL).unwrap();
 }
 
 fn check_aes_gcm_siv_key_template(
-    template: &tink::proto::KeyTemplate,
+    template: &tink_proto::KeyTemplate,
     key_size: u32,
-    output_prefix_type: tink::proto::OutputPrefixType,
+    output_prefix_type: tink_proto::OutputPrefixType,
 ) -> Result<(), TinkError> {
     if template.type_url != tink_testutil::AES_GCM_SIV_TYPE_URL {
         return Err("incorrect type url".into());
@@ -93,7 +93,7 @@ fn check_aes_gcm_siv_key_template(
     if template.output_prefix_type != output_prefix_type as i32 {
         return Err("incorrect output prefix type".into());
     }
-    let key_format = tink::proto::AesGcmKeyFormat::decode(template.value.as_ref())
+    let key_format = tink_proto::AesGcmKeyFormat::decode(template.value.as_ref())
         .map_err(|e| wrap_err("cannot deserialize key format", e))?;
     if key_format.key_size != key_size {
         return Err(format!(
@@ -121,7 +121,7 @@ fn test_aes_ctr_hmac_aead_key_templates() {
 }
 
 fn check_aes_ctr_hmac_aead_key_template(
-    template: &tink::proto::KeyTemplate,
+    template: &tink_proto::KeyTemplate,
     key_size: u32,
     iv_size: u32,
     tag_size: u32,
@@ -129,7 +129,7 @@ fn check_aes_ctr_hmac_aead_key_template(
     if template.type_url != tink_testutil::AES_CTR_HMAC_AEAD_TYPE_URL {
         return Err("incorrect type url".into());
     }
-    let key_format = tink::proto::AesCtrHmacAeadKeyFormat::decode(template.value.as_ref())
+    let key_format = tink_proto::AesCtrHmacAeadKeyFormat::decode(template.value.as_ref())
         .map_err(|e| wrap_err("cannot deserialize key format", e))?;
     let aes_format = key_format
         .aes_ctr_key_format
@@ -172,10 +172,10 @@ fn check_aes_ctr_hmac_aead_key_template(
         )
         .into());
     }
-    if hmac_params.hash != tink::proto::HashType::Sha256 as i32 {
+    if hmac_params.hash != tink_proto::HashType::Sha256 as i32 {
         return Err(format!(
             "incorrect HMAC hash, expect {:?}, got {}",
-            tink::proto::HashType::Sha256,
+            tink_proto::HashType::Sha256,
             hmac_params.hash
         )
         .into());
@@ -206,7 +206,7 @@ fn test_x_cha_cha20_poly1305_key_template() {
 }
 
 fn test_encrypt_decrypt(
-    template: &tink::proto::KeyTemplate,
+    template: &tink_proto::KeyTemplate,
     type_url: &str,
 ) -> Result<(), TinkError> {
     tink_aead::init();

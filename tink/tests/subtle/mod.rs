@@ -14,7 +14,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::{proto::HashType, subtle};
+use tink::subtle;
+use tink_proto::HashType;
 
 mod random;
 
@@ -22,7 +23,7 @@ mod random;
 fn test_compute_hash() {
     let data = b"Hello";
     struct Case {
-        hf: tink::proto::HashType,
+        hf: tink_proto::HashType,
         want: &'static str,
     }
     let tests = vec![

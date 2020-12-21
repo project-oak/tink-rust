@@ -46,7 +46,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "tink.proto",
         "xchacha20_poly1305.proto",
     ];
-    let proto_path = Path::new("../proto").to_path_buf();
+    let proto_path = Path::new("proto").to_path_buf();
     let proto_files: Vec<PathBuf> = source_files.iter().map(|f| proto_path.join(f)).collect();
 
     // Tell cargo to rerun this build script if any proto file has changed.
@@ -58,7 +58,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     prost_build::Config::new()
         // Emit generated code into the source directory, so it can be checked in.
         .out_dir("src/codegen")
-        .compile_protos(&proto_files, &[PathBuf::from("..")])?;
+        .compile_protos(&proto_files, &[PathBuf::from(".")])?;
 
     // Separate variant with serde-related annotations
     prost_build::Config::new()
@@ -86,30 +86,30 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         // Set up serde-json options for fields that need special parsing
         .field_attribute(
             "Key.status",
-            "#[serde(with = \"crate::keyset::key_status_type\")]",
+            "#[serde(with = \"crate::json::key_status_type\")]",
         )
         .field_attribute(
             "KeyInfo.status",
-            "#[serde(with = \"crate::keyset::key_status_type\")]",
+            "#[serde(with = \"crate::json::key_status_type\")]",
         )
         .field_attribute(
             "Key.output_prefix_type",
-            "#[serde(with = \"crate::keyset::output_prefix_type\")]",
+            "#[serde(with = \"crate::json::output_prefix_type\")]",
         )
         .field_attribute(
             "KeyInfo.output_prefix_type",
-            "#[serde(with = \"crate::keyset::output_prefix_type\")]",
+            "#[serde(with = \"crate::json::output_prefix_type\")]",
         )
         .field_attribute(
             "KeyData.key_material_type",
-            "#[serde(with = \"crate::keyset::key_material_type\")]",
+            "#[serde(with = \"crate::json::key_material_type\")]",
         )
-        .field_attribute("KeyData.value", "#[serde(with = \"crate::keyset::b64\")]")
+        .field_attribute("KeyData.value", "#[serde(with = \"crate::json::b64\")]")
         .field_attribute(
             "EncryptedKeyset.encrypted_keyset",
-            "#[serde(with = \"crate::keyset::b64\")]",
+            "#[serde(with = \"crate::json::b64\")]",
         )
-        .compile_protos(&proto_files, &[PathBuf::from("..")])?;
+        .compile_protos(&proto_files, &[PathBuf::from(".")])?;
 
     Ok(())
 }

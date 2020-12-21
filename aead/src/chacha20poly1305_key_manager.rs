@@ -27,19 +27,19 @@ pub const CHA_CHA20_POLY1305_TYPE_URL: &str =
     "type.googleapis.com/google.crypto.tink.ChaCha20Poly1305Key";
 
 /// `ChaCha20Poly1305KeyManager` is an implementation of the [`tink::registry::KeyManager`] trait.
-/// It generates new [`ChaCha20Poly1305Key`](tink::proto::ChaCha20Poly1305Key) keys and produces new
+/// It generates new [`ChaCha20Poly1305Key`](tink_proto::ChaCha20Poly1305Key) keys and produces new
 /// instances of [`subtle::ChaCha20Poly1305`].
 #[derive(Default)]
 pub(crate) struct ChaCha20Poly1305KeyManager {}
 
 impl tink::registry::KeyManager for ChaCha20Poly1305KeyManager {
     /// Create a [`subtle::ChaCha20Poly1305`] for the given serialized
-    /// [`tink::proto::ChaCha20Poly1305Key`].
+    /// [`tink_proto::ChaCha20Poly1305Key`].
     fn primitive(&self, serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
         if serialized_key.is_empty() {
             return Err("ChaCha20Poly1305KeyManager: invalid key".into());
         }
-        let key = tink::proto::ChaCha20Poly1305Key::decode(serialized_key)
+        let key = tink_proto::ChaCha20Poly1305Key::decode(serialized_key)
             .map_err(|e| wrap_err("ChaCha20Poly1305KeyManager: invalid key", e))?;
         validate_key(&key)?;
         match subtle::ChaCha20Poly1305::new(&key.key_value) {
@@ -65,21 +65,21 @@ impl tink::registry::KeyManager for ChaCha20Poly1305KeyManager {
         CHA_CHA20_POLY1305_TYPE_URL
     }
 
-    fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {
-        tink::proto::key_data::KeyMaterialType::Symmetric
+    fn key_material_type(&self) -> tink_proto::key_data::KeyMaterialType {
+        tink_proto::key_data::KeyMaterialType::Symmetric
     }
 }
 
-fn new_cha_cha20_poly1305_key() -> tink::proto::ChaCha20Poly1305Key {
+fn new_cha_cha20_poly1305_key() -> tink_proto::ChaCha20Poly1305Key {
     let key_value = tink::subtle::random::get_random_bytes(subtle::CHA_CHA20_KEY_SIZE);
-    tink::proto::ChaCha20Poly1305Key {
+    tink_proto::ChaCha20Poly1305Key {
         version: CHA_CHA20_POLY1305_KEY_VERSION,
         key_value,
     }
 }
 
-/// Validate the given [`tink::proto::ChaCha20Poly1305Key`].
-fn validate_key(key: &tink::proto::ChaCha20Poly1305Key) -> Result<(), TinkError> {
+/// Validate the given [`tink_proto::ChaCha20Poly1305Key`].
+fn validate_key(key: &tink_proto::ChaCha20Poly1305Key) -> Result<(), TinkError> {
     tink::keyset::validate_key_version(key.version, CHA_CHA20_POLY1305_KEY_VERSION)
         .map_err(|e| wrap_err("ChaCha20Poly1305KeyManager", e))?;
     let key_size = key.key_value.len();

@@ -84,18 +84,18 @@ pub fn get_key_manager(type_url: &str) -> Result<Arc<dyn KeyManager>, TinkError>
     Ok(km.clone())
 }
 
-/// Generate a new [`KeyData`](crate::proto::KeyData) for the given key template.
-pub fn new_key_data(kt: &crate::proto::KeyTemplate) -> Result<crate::proto::KeyData, TinkError> {
+/// Generate a new [`KeyData`](tink_proto::KeyData) for the given key template.
+pub fn new_key_data(kt: &tink_proto::KeyTemplate) -> Result<tink_proto::KeyData, TinkError> {
     get_key_manager(&kt.type_url)?.new_key_data(&kt.value)
 }
 
 /// Generate a new key for the given key template as a serialized protobuf message.
-pub fn new_key(kt: &crate::proto::KeyTemplate) -> Result<Vec<u8>, TinkError> {
+pub fn new_key(kt: &tink_proto::KeyTemplate) -> Result<Vec<u8>, TinkError> {
     get_key_manager(&kt.type_url)?.new_key(&kt.value)
 }
 
-/// Create a new primitive for the key given in the given [`KeyData`](crate::proto::KeyData).
-pub fn primitive_from_key_data(kd: &crate::proto::KeyData) -> Result<crate::Primitive, TinkError> {
+/// Create a new primitive for the key given in the given [`KeyData`](tink_proto::KeyData).
+pub fn primitive_from_key_data(kd: &tink_proto::KeyData) -> Result<crate::Primitive, TinkError> {
     primitive(&kd.type_url, &kd.value)
 }
 

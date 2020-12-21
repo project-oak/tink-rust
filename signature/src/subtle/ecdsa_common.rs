@@ -14,10 +14,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::{
-    proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType},
-    TinkError,
-};
+use tink::TinkError;
+use tink_proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType};
 
 /// Supported signature encodings.  This is a precise subset of the protobuf enum,
 /// allowing exact `match`es.
@@ -31,9 +29,9 @@ pub enum SignatureEncoding {
 /// The hash's strength must not be weaker than the curve's strength.
 /// Only DER encoding is supported now.
 pub fn validate_ecdsa_params(
-    hash_alg: tink::proto::HashType,
-    curve: tink::proto::EllipticCurveType,
-    encoding: tink::proto::EcdsaSignatureEncoding,
+    hash_alg: tink_proto::HashType,
+    curve: tink_proto::EllipticCurveType,
+    encoding: tink_proto::EcdsaSignatureEncoding,
 ) -> Result<SignatureEncoding, TinkError> {
     let encoding = match encoding {
         EcdsaSignatureEncoding::IeeeP1363 => SignatureEncoding::IeeeP1363,

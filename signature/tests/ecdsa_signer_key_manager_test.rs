@@ -16,13 +16,10 @@
 
 use prost::Message;
 use std::collections::HashSet;
-use tink::{
-    proto::{
-        EcdsaKeyFormat, EcdsaParams, EcdsaPrivateKey, EcdsaPublicKey, EcdsaSignatureEncoding,
-        EllipticCurveType, HashType,
-    },
-    subtle::random::get_random_bytes,
-    Signer, TinkError, Verifier,
+use tink::{subtle::random::get_random_bytes, Signer, TinkError, Verifier};
+use tink_proto::{
+    EcdsaKeyFormat, EcdsaParams, EcdsaPrivateKey, EcdsaPublicKey, EcdsaSignatureEncoding,
+    EllipticCurveType, HashType,
 };
 
 mod common;
@@ -89,12 +86,12 @@ fn test_ecdsa_sign_new_key_basic() {
         let params = tink_testutil::new_ecdsa_params(
             test_param.hash_type,
             test_param.curve,
-            tink::proto::EcdsaSignatureEncoding::Der,
+            tink_proto::EcdsaSignatureEncoding::Der,
         );
         let serialized_format =
             tink_testutil::proto_encode(&tink_testutil::new_ecdsa_key_format(&params));
         let tmp = km.new_key(&serialized_format).unwrap();
-        let key = tink::proto::EcdsaPrivateKey::decode(tmp.as_ref()).unwrap();
+        let key = tink_proto::EcdsaPrivateKey::decode(tmp.as_ref()).unwrap();
         assert!(
             validate_ecdsa_private_key(&key, &params).is_ok(),
             "invalid private key in test case {}",
@@ -113,27 +110,27 @@ fn test_ecdsa_sign_new_key_with_invalid_input() {
         EcdsaParams {
             hash_type: HashType::UnknownHash as i32,
             curve: EllipticCurveType::NistP256 as i32,
-            encoding: tink::proto::EcdsaSignatureEncoding::Der as i32,
+            encoding: tink_proto::EcdsaSignatureEncoding::Der as i32,
         },
         EcdsaParams {
             hash_type: HashType::Sha256 as i32,
             curve: EllipticCurveType::UnknownCurve as i32,
-            encoding: tink::proto::EcdsaSignatureEncoding::Der as i32,
+            encoding: tink_proto::EcdsaSignatureEncoding::Der as i32,
         },
         EcdsaParams {
             hash_type: HashType::Sha256 as i32,
             curve: EllipticCurveType::NistP256 as i32,
-            encoding: tink::proto::EcdsaSignatureEncoding::UnknownEncoding as i32,
+            encoding: tink_proto::EcdsaSignatureEncoding::UnknownEncoding as i32,
         },
         EcdsaParams {
             hash_type: 9999,
             curve: EllipticCurveType::NistP256 as i32,
-            encoding: tink::proto::EcdsaSignatureEncoding::Der as i32,
+            encoding: tink_proto::EcdsaSignatureEncoding::Der as i32,
         },
         EcdsaParams {
             hash_type: HashType::Sha256 as i32,
             curve: 9999,
-            encoding: tink::proto::EcdsaSignatureEncoding::Der as i32,
+            encoding: tink_proto::EcdsaSignatureEncoding::Der as i32,
         },
         EcdsaParams {
             hash_type: HashType::Sha256 as i32,
@@ -157,7 +154,7 @@ fn test_ecdsa_sign_new_key_with_invalid_input() {
         let params = tink_testutil::new_ecdsa_params(
             test_param.hash_type,
             test_param.curve,
-            tink::proto::EcdsaSignatureEncoding::UnknownEncoding,
+            tink_proto::EcdsaSignatureEncoding::UnknownEncoding,
         );
         let serialized_format =
             tink_testutil::proto_encode(&tink_testutil::new_ecdsa_key_format(&params));
@@ -186,7 +183,7 @@ fn test_ecdsa_sign_new_key_multiple_times() {
         let params = tink_testutil::new_ecdsa_params(
             test_param.hash_type,
             test_param.curve,
-            tink::proto::EcdsaSignatureEncoding::Der,
+            tink_proto::EcdsaSignatureEncoding::Der,
         );
         let format = tink_testutil::new_ecdsa_key_format(&params);
         let serialized_format = tink_testutil::proto_encode(&format);
@@ -217,7 +214,7 @@ fn test_ecdsa_sign_new_key_data_basic() {
         let params = tink_testutil::new_ecdsa_params(
             test_param.hash_type,
             test_param.curve,
-            tink::proto::EcdsaSignatureEncoding::Der,
+            tink_proto::EcdsaSignatureEncoding::Der,
         );
         let serialized_format =
             tink_testutil::proto_encode(&tink_testutil::new_ecdsa_key_format(&params));
@@ -233,11 +230,11 @@ fn test_ecdsa_sign_new_key_data_basic() {
         );
         assert_eq!(
             key_data.key_material_type,
-            tink::proto::key_data::KeyMaterialType::AsymmetricPrivate as i32,
+            tink_proto::key_data::KeyMaterialType::AsymmetricPrivate as i32,
             "incorrect key material type in test case  {}",
             i
         );
-        let key = tink::proto::EcdsaPrivateKey::decode(key_data.value.as_ref())
+        let key = tink_proto::EcdsaPrivateKey::decode(key_data.value.as_ref())
             .unwrap_or_else(|e| panic!("unexpected error in test case {}: {:?}", i, e));
         assert!(
             validate_ecdsa_private_key(&key, &params).is_ok(),
@@ -257,7 +254,7 @@ fn test_ecdsa_sign_new_key_data_with_invalid_input() {
         let params = tink_testutil::new_ecdsa_params(
             test_param.hash_type,
             test_param.curve,
-            tink::proto::EcdsaSignatureEncoding::Der,
+            tink_proto::EcdsaSignatureEncoding::Der,
         );
         let format = tink_testutil::new_ecdsa_key_format(&params);
         let serialized_format = tink_testutil::proto_encode(&format);
@@ -300,10 +297,10 @@ fn test_public_key_data_basic() {
         );
         assert_eq!(
             pub_key_data.key_material_type,
-            tink::proto::key_data::KeyMaterialType::AsymmetricPublic as i32,
+            tink_proto::key_data::KeyMaterialType::AsymmetricPublic as i32,
             "incorrect key material type"
         );
-        let _pub_key = tink::proto::EcdsaPublicKey::decode(pub_key_data.value.as_ref())
+        let _pub_key = tink_proto::EcdsaPublicKey::decode(pub_key_data.value.as_ref())
             .expect("invalid public key");
     }
 }
@@ -334,8 +331,8 @@ fn test_public_key_data_with_invalid_input() {
 }
 
 fn validate_ecdsa_private_key(
-    key: &tink::proto::EcdsaPrivateKey,
-    params: &tink::proto::EcdsaParams,
+    key: &tink_proto::EcdsaPrivateKey,
+    params: &tink_proto::EcdsaParams,
 ) -> Result<(), TinkError> {
     if key.version != tink_testutil::ECDSA_SIGNER_KEY_VERSION {
         return Err(format!(
@@ -429,7 +426,7 @@ fn test_key_manager_params() {
     assert_eq!(km.type_url(), tink_testutil::ECDSA_SIGNER_TYPE_URL);
     assert_eq!(
         km.key_material_type(),
-        tink::proto::key_data::KeyMaterialType::AsymmetricPrivate
+        tink_proto::key_data::KeyMaterialType::AsymmetricPrivate
     );
     assert!(km.supports_private_keys());
 }

@@ -21,31 +21,31 @@ use tink::{utils::wrap_err, TinkError};
 fn test_templates() {
     tink_mac::init();
     let template = tink_mac::hmac_sha256_tag128_key_template();
-    check_hmac_template(template, 32, 16, tink::proto::HashType::Sha256)
+    check_hmac_template(template, 32, 16, tink_proto::HashType::Sha256)
         .expect("incorrect HMACSHA256Tag128KeyTemplate");
     let template = tink_mac::hmac_sha256_tag256_key_template();
-    check_hmac_template(template, 32, 32, tink::proto::HashType::Sha256)
+    check_hmac_template(template, 32, 32, tink_proto::HashType::Sha256)
         .expect("incorrect HMACSHA256Tag256KeyTemplate");
     let template = tink_mac::hmac_sha512_tag256_key_template();
-    check_hmac_template(template, 64, 32, tink::proto::HashType::Sha512)
+    check_hmac_template(template, 64, 32, tink_proto::HashType::Sha512)
         .expect("incorrect HMACSHA512Tag256KeyTemplate");
     let template = tink_mac::hmac_sha512_tag512_key_template();
-    check_hmac_template(template, 64, 64, tink::proto::HashType::Sha512)
+    check_hmac_template(template, 64, 64, tink_proto::HashType::Sha512)
         .expect("incorrect HMACSHA512Tag512KeyTemplate");
     let template = tink_mac::aes_cmac_tag128_key_template();
     check_cmac_template(template, 32, 16).expect("incorrect AESCMACTag128KeyTemplate");
 }
 
 fn check_hmac_template(
-    template: tink::proto::KeyTemplate,
+    template: tink_proto::KeyTemplate,
     key_size: usize,
     tag_size: usize,
-    hash_type: tink::proto::HashType,
+    hash_type: tink_proto::HashType,
 ) -> Result<(), TinkError> {
     if template.type_url != tink_testutil::HMAC_TYPE_URL {
         return Err("type_url is incorrect".into());
     }
-    let format = tink::proto::HmacKeyFormat::decode(template.value.as_ref())
+    let format = tink_proto::HmacKeyFormat::decode(template.value.as_ref())
         .map_err(|e| wrap_err("unable to unmarshal serialized key format", e))?;
     if format.key_size as usize != key_size
         || format.params.as_ref().unwrap().hash != hash_type as i32
@@ -62,14 +62,14 @@ fn check_hmac_template(
 }
 
 fn check_cmac_template(
-    template: tink::proto::KeyTemplate,
+    template: tink_proto::KeyTemplate,
     key_size: usize,
     tag_size: usize,
 ) -> Result<(), TinkError> {
     if template.type_url != tink_testutil::AES_CMAC_TYPE_URL {
         return Err("TypeUrl is incorrect".into());
     }
-    let format = tink::proto::AesCmacKeyFormat::decode(template.value.as_ref())
+    let format = tink_proto::AesCmacKeyFormat::decode(template.value.as_ref())
         .map_err(|e| wrap_err("unable to unmarshal serialized key format", e))?;
     if format.key_size as usize != key_size
         || format.params.as_ref().unwrap().tag_size as usize != tag_size

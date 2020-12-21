@@ -36,7 +36,7 @@ impl tink::registry::KeyManager for AesCmacKeyManager {
             return Err("AesCmacKeyManager: invalid key".into());
         }
 
-        let key = tink::proto::AesCmacKey::decode(serialized_key)
+        let key = tink_proto::AesCmacKey::decode(serialized_key)
             .map_err(|e| wrap_err("AesCmacKeyManager: decode failed", e))?;
         let tag_size = validate_key(&key)?;
         match crate::subtle::AesCmac::new(&key.key_value, tag_size) {
@@ -48,19 +48,19 @@ impl tink::registry::KeyManager for AesCmacKeyManager {
         }
     }
 
-    /// Generate a new serialized [`AesCmacKey`](tink::proto::AesCmacKey) according to
-    /// specification in the given [`AesCmacKeyFormat`](tink::proto::AesCmacKeyFormat).
+    /// Generate a new serialized [`AesCmacKey`](tink_proto::AesCmacKey) according to
+    /// specification in the given [`AesCmacKeyFormat`](tink_proto::AesCmacKeyFormat).
     fn new_key(&self, serialized_key_format: &[u8]) -> Result<Vec<u8>, TinkError> {
         if serialized_key_format.is_empty() {
             return Err("AesCmacKeyManager: invalid key format".into());
         }
-        let key_format = tink::proto::AesCmacKeyFormat::decode(serialized_key_format)
+        let key_format = tink_proto::AesCmacKeyFormat::decode(serialized_key_format)
             .map_err(|_| TinkError::new("AesCmacKeyManager: invalid key format"))?;
         validate_key_format(&key_format)
             .map_err(|e| wrap_err("AesCmacKeyManager: invalid key format", e))?;
         let key_value = tink::subtle::random::get_random_bytes(key_format.key_size as usize);
         let mut sk = Vec::new();
-        tink::proto::AesCmacKey {
+        tink_proto::AesCmacKey {
             version: CMAC_KEY_VERSION,
             params: key_format.params,
             key_value,
@@ -74,14 +74,14 @@ impl tink::registry::KeyManager for AesCmacKeyManager {
         CMAC_TYPE_URL
     }
 
-    fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {
-        tink::proto::key_data::KeyMaterialType::Symmetric
+    fn key_material_type(&self) -> tink_proto::key_data::KeyMaterialType {
+        tink_proto::key_data::KeyMaterialType::Symmetric
     }
 }
 
-/// Validate the given [`AesCmacKey`](tink::proto::AesCmacKey). It only validates the version of the
+/// Validate the given [`AesCmacKey`](tink_proto::AesCmacKey). It only validates the version of the
 /// key because other parameters will be validated in primitive construction.
-fn validate_key(key: &tink::proto::AesCmacKey) -> Result<usize, TinkError> {
+fn validate_key(key: &tink_proto::AesCmacKey) -> Result<usize, TinkError> {
     tink::keyset::validate_key_version(key.version, CMAC_KEY_VERSION)
         .map_err(|e| wrap_err("AesCmacKeyManager: invalid version", e))?;
     let key_size = key.key_value.len();
@@ -94,8 +94,8 @@ fn validate_key(key: &tink::proto::AesCmacKey) -> Result<usize, TinkError> {
     }
 }
 
-/// Validate the given [`AesCmacKeyFormat`](tink::proto::AesCmacKeyFormat).
-fn validate_key_format(format: &tink::proto::AesCmacKeyFormat) -> Result<(), TinkError> {
+/// Validate the given [`AesCmacKeyFormat`](tink_proto::AesCmacKeyFormat).
+fn validate_key_format(format: &tink_proto::AesCmacKeyFormat) -> Result<(), TinkError> {
     match &format.params {
         None => Err("missing AES-CMAC params".into()),
         Some(params) => {

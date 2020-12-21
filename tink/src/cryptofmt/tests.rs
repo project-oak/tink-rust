@@ -36,37 +36,37 @@ fn test_output_prefix() {
             result: vec![0, 0, 0, 0],
         },
     ];
-    let mut key = crate::proto::keyset::Key::default();
+    let mut key = tink_proto::keyset::Key::default();
     for test in tests {
         key.key_id = test.key_id;
         // legacy type
-        key.output_prefix_type = crate::proto::OutputPrefixType::Legacy as i32;
+        key.output_prefix_type = tink_proto::OutputPrefixType::Legacy as i32;
         let prefix = cryptofmt::output_prefix(&key).unwrap();
         assert!(
             validate_prefix(&prefix, cryptofmt::LEGACY_START_BYTE, &test.result),
             "incorrect legacy prefix",
         );
         // crunchy type
-        key.output_prefix_type = crate::proto::OutputPrefixType::Crunchy as i32;
+        key.output_prefix_type = tink_proto::OutputPrefixType::Crunchy as i32;
         let prefix = cryptofmt::output_prefix(&key).unwrap();
         assert!(
             validate_prefix(&prefix, cryptofmt::LEGACY_START_BYTE, &test.result),
             "incorrect crunchy prefix",
         );
         // tink type
-        key.output_prefix_type = crate::proto::OutputPrefixType::Tink as i32;
+        key.output_prefix_type = tink_proto::OutputPrefixType::Tink as i32;
         let prefix = cryptofmt::output_prefix(&key).unwrap();
         assert!(
             validate_prefix(&prefix, cryptofmt::TINK_START_BYTE, &test.result),
             "incorrect tink prefix",
         );
         // raw type
-        key.output_prefix_type = crate::proto::OutputPrefixType::Raw as i32;
+        key.output_prefix_type = tink_proto::OutputPrefixType::Raw as i32;
         let prefix = cryptofmt::output_prefix(&key).unwrap();
         assert_eq!(prefix, cryptofmt::RAW_PREFIX, "incorrect raw prefix",);
     }
     // unknown prefix type
-    key.output_prefix_type = crate::proto::OutputPrefixType::UnknownPrefix as i32;
+    key.output_prefix_type = tink_proto::OutputPrefixType::UnknownPrefix as i32;
     assert!(
         cryptofmt::output_prefix(&key).is_err(),
         "expect an error when prefix type is unknown"

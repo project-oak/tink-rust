@@ -213,9 +213,9 @@ fn test_aes_ctr_hmac_encrypt_decrypt() {
     for tc in test_cases {
         let cipher = subtle::AesCtrHmac::new(
             super::IKM,
-            tink::proto::HashType::Sha256,
+            tink_proto::HashType::Sha256,
             tc.key_size_in_bytes,
-            tink::proto::HashType::Sha256,
+            tink_proto::HashType::Sha256,
             tc.tag_size_in_bytes,
             tc.segment_size,
             tc.first_segment_offset,
@@ -246,9 +246,9 @@ fn test_aes_ctr_hmac_modified_ciphertext() {
 
     let cipher = subtle::AesCtrHmac::new(
         &ikm,
-        tink::proto::HashType::Sha256,
+        tink_proto::HashType::Sha256,
         key_size_in_bytes,
-        tink::proto::HashType::Sha256,
+        tink_proto::HashType::Sha256,
         tag_size_in_bytes,
         segment_size,
         first_segment_offset,
