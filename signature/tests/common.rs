@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::proto::{EllipticCurveType, HashType};
+use tink_proto::{EllipticCurveType, HashType};
 
 pub struct EcdsaParams {
     pub hash_type: HashType,

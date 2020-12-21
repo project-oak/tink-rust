@@ -19,11 +19,8 @@ use p256::{
     ecdsa::signature::{RandomizedSigner, Signature},
     elliptic_curve,
 };
-use tink::{
-    proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType},
-    utils::wrap_err,
-    TinkError,
-};
+use tink::{utils::wrap_err, TinkError};
+use tink_proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType};
 
 // An ECDSA private key.
 pub enum EcdsaPrivateKey {

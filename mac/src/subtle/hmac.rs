@@ -16,7 +16,8 @@
 
 //! Provides an implementation of MAC using HMAC.
 
-use tink::{proto::HashType, utils::wrap_err, Prf, TinkError};
+use tink::{utils::wrap_err, Prf, TinkError};
+use tink_proto::HashType;
 
 /// Minimum key size in bytes.
 const MIN_KEY_SIZE_IN_BYTES: usize = 16;

@@ -16,25 +16,22 @@
 
 //! Utilities for managing keys in a keyset.
 
-use crate::{
-    proto::{KeyStatusType, OutputPrefixType},
-    utils::wrap_err,
-    KeyId, TinkError,
-};
+use crate::{utils::wrap_err, KeyId, TinkError};
 use rand::Rng;
+use tink_proto::{KeyStatusType, OutputPrefixType};
 
-/// Manager manages a [`Keyset`](crate::proto::Keyset)-proto, with convenience methods that rotate,
+/// Manager manages a [`Keyset`](tink_proto::Keyset)-proto, with convenience methods that rotate,
 /// disable, enable or destroy keys. Note: It is not thread-safe.
 #[derive(Default)]
 pub struct Manager {
-    ks: crate::proto::Keyset,
+    ks: tink_proto::Keyset,
 }
 
 impl Manager {
-    /// Create a new instance with an empty [`Keyset`](crate::proto::Keyset).
+    /// Create a new instance with an empty [`Keyset`](tink_proto::Keyset).
     pub fn new() -> Self {
         Self {
-            ks: crate::proto::Keyset::default(),
+            ks: tink_proto::Keyset::default(),
         }
     }
 
@@ -48,7 +45,7 @@ impl Manager {
     /// Generate a fresh key using the given key template and set the new key as the primary key.
     /// The key that was primary prior to rotation remains `Enabled`. Returns the key ID of the
     /// new primary key.
-    pub fn rotate(&mut self, kt: &crate::proto::KeyTemplate) -> Result<KeyId, TinkError> {
+    pub fn rotate(&mut self, kt: &tink_proto::KeyTemplate) -> Result<KeyId, TinkError> {
         self.add(kt, true)
     }
 
@@ -56,7 +53,7 @@ impl Manager {
     /// primary key. Returns the key ID of the added key.
     pub fn add(
         &mut self,
-        kt: &crate::proto::KeyTemplate,
+        kt: &tink_proto::KeyTemplate,
         as_primary: bool,
     ) -> Result<KeyId, TinkError> {
         let key_data = crate::registry::new_key_data(kt)
@@ -66,9 +63,9 @@ impl Manager {
             None | Some(OutputPrefixType::UnknownPrefix) => OutputPrefixType::Tink,
             Some(p) => p,
         };
-        let key = crate::proto::keyset::Key {
+        let key = tink_proto::keyset::Key {
             key_data: Some(key_data),
-            status: crate::proto::KeyStatusType::Enabled as i32,
+            status: tink_proto::KeyStatusType::Enabled as i32,
             key_id,
             output_prefix_type: output_prefix_type as i32,
         };
@@ -208,7 +205,7 @@ impl Manager {
         self.ks.key.len()
     }
 
-    /// Generate a key id that has not been used by any key in the [`Keyset`](crate::proto::Keyset).
+    /// Generate a key id that has not been used by any key in the [`Keyset`](tink_proto::Keyset).
     fn new_key_id(&self) -> KeyId {
         let mut rng = rand::thread_rng();
 

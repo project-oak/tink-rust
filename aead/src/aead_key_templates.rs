@@ -18,7 +18,7 @@
 //! to generate new Keysets.
 
 use prost::Message;
-use tink::proto::{HashType, KeyTemplate, OutputPrefixType};
+use tink_proto::{HashType, KeyTemplate, OutputPrefixType};
 
 /// Return a [`KeyTemplate`] that generates an AES-GCM key with the following parameters:
 ///   - Key size: 16 bytes
@@ -114,7 +114,7 @@ pub fn x_cha_cha20_poly1305_key_template() -> KeyTemplate {
 
 /// Return a [`KeyTemplate`] that generates a KmsEnvelopeAead key for a given KEK in remote KMS
 pub fn kms_envelope_aead_key_template(uri: &str, dek_t: KeyTemplate) -> KeyTemplate {
-    let f = tink::proto::KmsEnvelopeAeadKeyFormat {
+    let f = tink_proto::KmsEnvelopeAeadKeyFormat {
         kek_uri: uri.to_string(),
         dek_template: Some(dek_t),
     };
@@ -129,7 +129,7 @@ pub fn kms_envelope_aead_key_template(uri: &str, dek_t: KeyTemplate) -> KeyTempl
 
 /// Return an AES-GCM key template with the given key size in bytes.
 fn create_aes_gcm_key_template(key_size: u32, output_prefix_type: OutputPrefixType) -> KeyTemplate {
-    let format = tink::proto::AesGcmKeyFormat {
+    let format = tink_proto::AesGcmKeyFormat {
         version: crate::AES_GCM_KEY_VERSION,
         key_size,
     };
@@ -147,7 +147,7 @@ fn create_aes_gcm_siv_key_template(
     key_size: u32,
     output_prefix_type: OutputPrefixType,
 ) -> KeyTemplate {
-    let format = tink::proto::AesGcmSivKeyFormat {
+    let format = tink_proto::AesGcmSivKeyFormat {
         version: crate::AES_GCM_SIV_KEY_VERSION,
         key_size,
     };
@@ -168,14 +168,14 @@ fn create_aes_ctr_hmac_aead_key_template(
     tag_size: u32,
     hash: HashType,
 ) -> KeyTemplate {
-    let format = tink::proto::AesCtrHmacAeadKeyFormat {
-        aes_ctr_key_format: Some(tink::proto::AesCtrKeyFormat {
-            params: Some(tink::proto::AesCtrParams { iv_size }),
+    let format = tink_proto::AesCtrHmacAeadKeyFormat {
+        aes_ctr_key_format: Some(tink_proto::AesCtrKeyFormat {
+            params: Some(tink_proto::AesCtrParams { iv_size }),
             key_size: aes_key_size,
         }),
-        hmac_key_format: Some(tink::proto::HmacKeyFormat {
+        hmac_key_format: Some(tink_proto::HmacKeyFormat {
             version: crate::AES_CTR_HMAC_AEAD_KEY_VERSION,
-            params: Some(tink::proto::HmacParams {
+            params: Some(tink_proto::HmacParams {
                 hash: hash as i32,
                 tag_size,
             }),

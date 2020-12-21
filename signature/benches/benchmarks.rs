@@ -19,9 +19,7 @@ use test::Bencher;
 
 const MSG: &[u8] = b"this data needs to be signed";
 
-fn setup(
-    kt: tink::proto::KeyTemplate,
-) -> (Box<dyn tink::Signer>, Box<dyn tink::Verifier>, Vec<u8>) {
+fn setup(kt: tink_proto::KeyTemplate) -> (Box<dyn tink::Signer>, Box<dyn tink::Verifier>, Vec<u8>) {
     tink_signature::init();
     let kh = tink::keyset::Handle::new(&kt).unwrap();
     let s = tink_signature::new_signer(&kh).unwrap();

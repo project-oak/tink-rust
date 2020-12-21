@@ -14,12 +14,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-//! Provides a registry of generator functions that return [`crate::proto::KeyTemplate`] objects.
+//! Provides a registry of generator functions that return [`tink_proto::KeyTemplate`] objects.
 
 use lazy_static::lazy_static;
 use std::{collections::HashMap, sync::RwLock};
 
-pub type KeyTemplateGenerator = fn() -> crate::proto::KeyTemplate;
+pub type KeyTemplateGenerator = fn() -> tink_proto::KeyTemplate;
 
 lazy_static! {
     /// Global registry of key template generator functions, indexed by template name.

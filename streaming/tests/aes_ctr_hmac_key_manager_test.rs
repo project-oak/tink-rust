@@ -16,11 +16,9 @@
 
 use prost::Message;
 use std::collections::HashSet;
-use tink::{
-    proto::{
-        AesCtrHmacStreamingKey, AesCtrHmacStreamingKeyFormat, AesCtrHmacStreamingParams, HashType,
-    },
-    TinkError,
+use tink::TinkError;
+use tink_proto::{
+    AesCtrHmacStreamingKey, AesCtrHmacStreamingKeyFormat, AesCtrHmacStreamingParams, HashType,
 };
 use tink_streaming_aead::subtle;
 use tink_testutil::proto_encode;
@@ -119,7 +117,7 @@ fn test_aes_ctr_hmac_new_key_basic() {
         );
         let serialized_format = proto_encode(&format);
         let serialized_key = key_manager.new_key(&serialized_format).unwrap();
-        let key = tink::proto::AesCtrHmacStreamingKey::decode(serialized_key.as_ref()).unwrap();
+        let key = tink_proto::AesCtrHmacStreamingKey::decode(serialized_key.as_ref()).unwrap();
         validate_aes_ctr_hmac_key(&key, &format).unwrap();
     }
 }
@@ -168,10 +166,10 @@ fn test_aes_ctr_hmac_new_key_data_basic() {
         );
         assert_eq!(
             key_data.key_material_type,
-            tink::proto::key_data::KeyMaterialType::Symmetric as i32,
+            tink_proto::key_data::KeyMaterialType::Symmetric as i32,
             "incorrect key material type"
         );
-        let key = tink::proto::AesCtrHmacStreamingKey::decode(key_data.value.as_ref())
+        let key = tink_proto::AesCtrHmacStreamingKey::decode(key_data.value.as_ref())
             .expect("incorrect key value");
         validate_aes_ctr_hmac_key(&key, &format).unwrap();
     }
@@ -319,8 +317,8 @@ fn gen_invalid_aes_ctr_hmac_key_formats() -> Vec<Vec<u8>> {
 }
 
 fn validate_aes_ctr_hmac_key(
-    key: &tink::proto::AesCtrHmacStreamingKey,
-    format: &tink::proto::AesCtrHmacStreamingKeyFormat,
+    key: &tink_proto::AesCtrHmacStreamingKey,
+    format: &tink_proto::AesCtrHmacStreamingKeyFormat,
 ) -> Result<(), TinkError> {
     if key.key_value.len() != (format.key_size as usize) {
         return Err("incorrect key size".into());
@@ -369,7 +367,7 @@ fn validate_aes_ctr_hmac_key(
 
 fn validate_aes_ctr_hmac_primitive(
     cipher: subtle::AesCtrHmac,
-    key: &tink::proto::AesCtrHmacStreamingKey,
+    key: &tink_proto::AesCtrHmacStreamingKey,
 ) -> Result<(), TinkError> {
     if cipher.main_key != key.key_value {
         return Err("main key and primitive don't match".into());
@@ -392,7 +390,7 @@ fn test_new_key_with_invalid_format() {
                     ciphertext_segment_size: 4096,
                     derived_key_size: 16,
                     hkdf_hash_type: HashType::Sha256 as i32,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 32,
                     }),
@@ -408,7 +406,7 @@ fn test_new_key_with_invalid_format() {
                     ciphertext_segment_size: 4,
                     derived_key_size: 16,
                     hkdf_hash_type: HashType::Sha256 as i32,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 32,
                     }),
@@ -424,7 +422,7 @@ fn test_new_key_with_invalid_format() {
                     ciphertext_segment_size: 4096,
                     derived_key_size: 1,
                     hkdf_hash_type: HashType::Sha256 as i32,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 32,
                     }),
@@ -440,7 +438,7 @@ fn test_new_key_with_invalid_format() {
                     ciphertext_segment_size: 4096,
                     derived_key_size: 16,
                     hkdf_hash_type: 999,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 32,
                     }),
@@ -456,7 +454,7 @@ fn test_new_key_with_invalid_format() {
                     ciphertext_segment_size: 4096,
                     derived_key_size: 16,
                     hkdf_hash_type: HashType::UnknownHash as i32,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 32,
                     }),
@@ -472,7 +470,7 @@ fn test_new_key_with_invalid_format() {
                     ciphertext_segment_size: 4096,
                     derived_key_size: 16,
                     hkdf_hash_type: HashType::Sha256 as i32,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: 999,
                         tag_size: 32,
                     }),
@@ -488,7 +486,7 @@ fn test_new_key_with_invalid_format() {
                     ciphertext_segment_size: 4096,
                     derived_key_size: 16,
                     hkdf_hash_type: HashType::Sha256 as i32,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: HashType::UnknownHash as i32,
                         tag_size: 32,
                     }),
@@ -504,7 +502,7 @@ fn test_new_key_with_invalid_format() {
                     ciphertext_segment_size: 4096,
                     derived_key_size: 16,
                     hkdf_hash_type: HashType::Sha256 as i32,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 1,
                     }),
@@ -520,7 +518,7 @@ fn test_new_key_with_invalid_format() {
                     ciphertext_segment_size: 4096,
                     derived_key_size: 16,
                     hkdf_hash_type: HashType::Sha256 as i32,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 99999,
                     }),
@@ -536,7 +534,7 @@ fn test_new_key_with_invalid_format() {
                     ciphertext_segment_size: 4096,
                     derived_key_size: 16,
                     hkdf_hash_type: HashType::Sha256 as i32,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 32,
                     }),
@@ -572,7 +570,7 @@ fn test_new_key_with_invalid_format() {
                 ciphertext_segment_size: 4096,
                 derived_key_size: 16,
                 hkdf_hash_type: HashType::Sha256 as i32,
-                hmac_params: Some(tink::proto::HmacParams {
+                hmac_params: Some(tink_proto::HmacParams {
                     hash: HashType::Sha256 as i32,
                     tag_size: 32,
                 }),
@@ -603,7 +601,7 @@ fn test_primitive_with_invalid_key() {
                     ciphertext_segment_size: 4096,
                     derived_key_size: 16,
                     hkdf_hash_type: HashType::Sha256 as i32,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 32,
                     }),
@@ -619,7 +617,7 @@ fn test_primitive_with_invalid_key() {
                     ciphertext_segment_size: 4,
                     derived_key_size: 16,
                     hkdf_hash_type: HashType::Sha256 as i32,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 32,
                     }),
@@ -635,7 +633,7 @@ fn test_primitive_with_invalid_key() {
                     ciphertext_segment_size: 4096,
                     derived_key_size: 1,
                     hkdf_hash_type: HashType::Sha256 as i32,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 32,
                     }),
@@ -651,7 +649,7 @@ fn test_primitive_with_invalid_key() {
                     ciphertext_segment_size: 4096,
                     derived_key_size: 16,
                     hkdf_hash_type: 9999,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 32,
                     }),
@@ -667,7 +665,7 @@ fn test_primitive_with_invalid_key() {
                     ciphertext_segment_size: 4096,
                     derived_key_size: 16,
                     hkdf_hash_type: HashType::UnknownHash as i32,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 32,
                     }),
@@ -683,7 +681,7 @@ fn test_primitive_with_invalid_key() {
                     ciphertext_segment_size: 4096,
                     derived_key_size: 16,
                     hkdf_hash_type: HashType::Sha256 as i32,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: 9999,
                         tag_size: 32,
                     }),
@@ -699,7 +697,7 @@ fn test_primitive_with_invalid_key() {
                     ciphertext_segment_size: 4096,
                     derived_key_size: 16,
                     hkdf_hash_type: HashType::Sha256 as i32,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: HashType::UnknownHash as i32,
                         tag_size: 32,
                     }),
@@ -715,7 +713,7 @@ fn test_primitive_with_invalid_key() {
                     ciphertext_segment_size: 4096,
                     derived_key_size: 16,
                     hkdf_hash_type: HashType::Sha256 as i32,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 3,
                     }),
@@ -731,7 +729,7 @@ fn test_primitive_with_invalid_key() {
                     ciphertext_segment_size: 4096,
                     derived_key_size: 16,
                     hkdf_hash_type: HashType::Sha256 as i32,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 99999,
                     }),
@@ -747,7 +745,7 @@ fn test_primitive_with_invalid_key() {
                     ciphertext_segment_size: 4096,
                     derived_key_size: 16,
                     hkdf_hash_type: HashType::Sha256 as i32,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 32,
                     }),
@@ -783,7 +781,7 @@ fn test_primitive_with_invalid_key() {
                 ciphertext_segment_size: 4096,
                 derived_key_size: 16,
                 hkdf_hash_type: HashType::Sha256 as i32,
-                hmac_params: Some(tink::proto::HmacParams {
+                hmac_params: Some(tink_proto::HmacParams {
                     hash: HashType::Sha256 as i32,
                     tag_size: 32,
                 }),
@@ -810,7 +808,7 @@ fn test_aes_ctr_hmac_new_with_invalid_params() {
                     ciphertext_segment_size: 4096,
                     derived_key_size: 16,
                     hkdf_hash_type: HashType::Sha256 as i32,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 32,
                     }),
@@ -826,7 +824,7 @@ fn test_aes_ctr_hmac_new_with_invalid_params() {
                     ciphertext_segment_size: 4096,
                     derived_key_size: 16,
                     hkdf_hash_type: HashType::Sha256 as i32,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 2,
                     }),
@@ -842,7 +840,7 @@ fn test_aes_ctr_hmac_new_with_invalid_params() {
                     ciphertext_segment_size: 4096,
                     derived_key_size: 16,
                     hkdf_hash_type: HashType::Sha256 as i32,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 9999,
                     }),
@@ -858,7 +856,7 @@ fn test_aes_ctr_hmac_new_with_invalid_params() {
                     ciphertext_segment_size: 4,
                     derived_key_size: 16,
                     hkdf_hash_type: HashType::Sha256 as i32,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 32,
                     }),
@@ -874,7 +872,7 @@ fn test_aes_ctr_hmac_new_with_invalid_params() {
                     ciphertext_segment_size: 4096,
                     derived_key_size: 19,
                     hkdf_hash_type: HashType::Sha256 as i32,
-                    hmac_params: Some(tink::proto::HmacParams {
+                    hmac_params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 32,
                     }),

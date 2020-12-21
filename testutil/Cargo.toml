@@ -17,6 +17,7 @@ serde = { version = "^1.0.118", features = ["derive"] }
 tink = { version = "^0.1", features = ["insecure"] }
 tink-daead = "^0.1"
 tink-mac = "^0.1"
+tink-proto = "^0.1"
 
 [dev-dependencies]
 serde_json = "^1.0.60"

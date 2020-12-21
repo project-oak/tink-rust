@@ -19,7 +19,8 @@
 use generic_array::typenum::Unsigned;
 use p256::elliptic_curve;
 use prost::Message;
-use tink::{proto::EllipticCurveType, utils::wrap_err, TinkError};
+use tink::{utils::wrap_err, TinkError};
+use tink_proto::EllipticCurveType;
 
 /// Maximal version of ECDSA keys.
 pub const ECDSA_SIGNER_KEY_VERSION: u32 = 0;
@@ -40,7 +41,7 @@ impl tink::registry::KeyManager for EcdsaSignerKeyManager {
         if serialized_key.is_empty() {
             return Err("EcdsaSignerKeyManager: invalid key".into());
         }
-        let key = tink::proto::EcdsaPrivateKey::decode(serialized_key)
+        let key = tink_proto::EcdsaPrivateKey::decode(serialized_key)
             .map_err(|e| wrap_err("EcdsaSignerKeyManager: invalid key", e))?;
         let params = validate_key(&key)?;
 
@@ -55,7 +56,7 @@ impl tink::registry::KeyManager for EcdsaSignerKeyManager {
         if serialized_key_format.is_empty() {
             return Err("EcdsaSignerKeyManager: invalid key format".into());
         }
-        let key_format = tink::proto::EcdsaKeyFormat::decode(serialized_key_format)
+        let key_format = tink_proto::EcdsaKeyFormat::decode(serialized_key_format)
             .map_err(|e| wrap_err("EcdsaSignerKeyManager: invalid key", e))?;
         let (params, curve) = validate_key_format(&key_format)?;
 
@@ -91,14 +92,14 @@ impl tink::registry::KeyManager for EcdsaSignerKeyManager {
                 return Err(format!("EcdsaSignerKeyManager: unsupported curve {:?}", curve).into())
             }
         };
-        let pub_key = tink::proto::EcdsaPublicKey {
+        let pub_key = tink_proto::EcdsaPublicKey {
             version: ECDSA_SIGNER_KEY_VERSION,
             params: Some(params),
             x: pub_x_data,
             y: pub_y_data,
         };
 
-        let priv_key = tink::proto::EcdsaPrivateKey {
+        let priv_key = tink_proto::EcdsaPrivateKey {
             version: ECDSA_SIGNER_KEY_VERSION,
             public_key: Some(pub_key),
             key_value: secret_key_data,
@@ -115,8 +116,8 @@ impl tink::registry::KeyManager for EcdsaSignerKeyManager {
         ECDSA_SIGNER_TYPE_URL
     }
 
-    fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {
-        tink::proto::key_data::KeyMaterialType::AsymmetricPrivate
+    fn key_material_type(&self) -> tink_proto::key_data::KeyMaterialType {
+        tink_proto::key_data::KeyMaterialType::AsymmetricPrivate
     }
 
     fn supports_private_keys(&self) -> bool {
@@ -126,8 +127,8 @@ impl tink::registry::KeyManager for EcdsaSignerKeyManager {
     fn public_key_data(
         &self,
         serialized_priv_key: &[u8],
-    ) -> Result<tink::proto::KeyData, TinkError> {
-        let priv_key = tink::proto::EcdsaPrivateKey::decode(serialized_priv_key)
+    ) -> Result<tink_proto::KeyData, TinkError> {
+        let priv_key = tink_proto::EcdsaPrivateKey::decode(serialized_priv_key)
             .map_err(|e| wrap_err("EcdsaSignerKeyManager: invalid private key", e))?;
         let mut serialized_pub_key = Vec::new();
         priv_key
@@ -135,17 +136,17 @@ impl tink::registry::KeyManager for EcdsaSignerKeyManager {
             .ok_or_else(|| TinkError::new("EcdsaSignerKeyManager: no public key"))?
             .encode(&mut serialized_pub_key)
             .map_err(|e| wrap_err("EcdsaSignerKeyManager: invalid public key", e))?;
-        Ok(tink::proto::KeyData {
+        Ok(tink_proto::KeyData {
             type_url: crate::ECDSA_VERIFIER_TYPE_URL.to_string(),
             value: serialized_pub_key,
-            key_material_type: tink::proto::key_data::KeyMaterialType::AsymmetricPublic as i32,
+            key_material_type: tink_proto::key_data::KeyMaterialType::AsymmetricPublic as i32,
         })
     }
 }
 
-/// Validate the given [`EcdsaPrivateKey`](tink::proto::EcdsaPrivateKey) and return
+/// Validate the given [`EcdsaPrivateKey`](tink_proto::EcdsaPrivateKey) and return
 /// the parameters.
-fn validate_key(key: &tink::proto::EcdsaPrivateKey) -> Result<tink::proto::EcdsaParams, TinkError> {
+fn validate_key(key: &tink_proto::EcdsaPrivateKey) -> Result<tink_proto::EcdsaParams, TinkError> {
     tink::keyset::validate_key_version(key.version, ECDSA_SIGNER_KEY_VERSION)
         .map_err(|e| wrap_err("EcdsaSignerKeyManager", e))?;
     let pub_key = key
@@ -162,11 +163,11 @@ fn validate_key(key: &tink::proto::EcdsaPrivateKey) -> Result<tink::proto::Ecdsa
     Ok(params)
 }
 
-/// Validate the given [`EcdsaKeyFormat`](tink::proto::EcdsaKeyFormat) and return
+/// Validate the given [`EcdsaKeyFormat`](tink_proto::EcdsaKeyFormat) and return
 /// the parameters.
 fn validate_key_format(
-    key_format: &tink::proto::EcdsaKeyFormat,
-) -> Result<(tink::proto::EcdsaParams, tink::proto::EllipticCurveType), TinkError> {
+    key_format: &tink_proto::EcdsaKeyFormat,
+) -> Result<(tink_proto::EcdsaParams, tink_proto::EllipticCurveType), TinkError> {
     let params = key_format
         .params
         .as_ref()

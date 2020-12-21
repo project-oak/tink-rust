@@ -35,6 +35,7 @@ very little cryptographic functionality.
 Individual cryptographic primitives are implemented in `tink-<primitive>` crates, which depend on:
 
 - the `tink` crate for common types and helpers
+- the `tink-proto` crate for protobuf-derived `struct`s
 - the RustCrypto crates to provide underlying cryptographic implementations.
 
 For example, the `tink-aead` crate provides code that performs authenticated encryption with additional data (AEAD),
@@ -223,7 +224,7 @@ This section describes the mapping between the upstream Go packages and the equi
 | `tink::primitiveset` | `core/primitiveset` |
 | `tink::registry`     | `core/registry` |
 | `tink`               | `tink` |
-| `tink::proto`        | `*_go_proto` |
+| `tink-proto`        | `*_go_proto` |
 
 #### Common Crypto
 

@@ -32,16 +32,16 @@ impl<T: Read> BinaryReader<T> {
 }
 
 impl<T: Read> super::Reader for BinaryReader<T> {
-    /// Return a (cleartext) [`Keyset`](crate::proto::Keyset) object from the underlying
+    /// Return a (cleartext) [`Keyset`](tink_proto::Keyset) object from the underlying
     /// [`std::io::Read`].
-    fn read(&mut self) -> Result<crate::proto::Keyset, TinkError> {
-        read::<crate::proto::Keyset>(&mut self.r)
+    fn read(&mut self) -> Result<tink_proto::Keyset, TinkError> {
+        read::<tink_proto::Keyset>(&mut self.r)
     }
 
-    /// Return an [`EncryptedKeyset`](crate::proto::EncryptedKeyset) object from the underlying
+    /// Return an [`EncryptedKeyset`](tink_proto::EncryptedKeyset) object from the underlying
     /// [`std::io::Read`].
-    fn read_encrypted(&mut self) -> Result<crate::proto::EncryptedKeyset, TinkError> {
-        read::<crate::proto::EncryptedKeyset>(&mut self.r)
+    fn read_encrypted(&mut self) -> Result<tink_proto::EncryptedKeyset, TinkError> {
+        read::<tink_proto::EncryptedKeyset>(&mut self.r)
     }
 }
 
@@ -72,12 +72,12 @@ impl<T: Write> BinaryWriter<T> {
 
 impl<T: Write> super::Writer for BinaryWriter<T> {
     /// Write the keyset to the underlying [`std::io::Write`].
-    fn write(&mut self, keyset: &crate::proto::Keyset) -> Result<(), TinkError> {
+    fn write(&mut self, keyset: &tink_proto::Keyset) -> Result<(), TinkError> {
         write(&mut self.w, keyset)
     }
 
     /// Write the encrypted keyset to the underlying [`std::io::Write`].
-    fn write_encrypted(&mut self, keyset: &crate::proto::EncryptedKeyset) -> Result<(), TinkError> {
+    fn write_encrypted(&mut self, keyset: &tink_proto::EncryptedKeyset) -> Result<(), TinkError> {
         write(&mut self.w, keyset)
     }
 }

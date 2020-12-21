@@ -16,7 +16,8 @@
 
 use prost::Message;
 use std::collections::HashSet;
-use tink::{proto::HashType, utils::wrap_err, Prf, TinkError};
+use tink::{utils::wrap_err, Prf, TinkError};
+use tink_proto::HashType;
 use tink_testutil::proto_encode;
 
 #[test]
@@ -60,7 +61,7 @@ fn test_new_key_hkdf_multiple_times() {
         .expect("HKDF PRF key manager not found");
 
     let serialized_format = proto_encode(&tink_testutil::new_hkdf_prf_key_format(
-        tink::proto::HashType::Sha256,
+        HashType::Sha256,
         &[],
     ));
     let mut keys = HashSet::new();
@@ -86,7 +87,7 @@ fn test_new_key_hkdf_basic() {
         let serialized_key = km
             .new_key(&serialized_format)
             .unwrap_or_else(|e| panic!("unexpected error in test case {}: {:?}", i, e));
-        let key = tink::proto::HkdfPrfKey::decode(serialized_key.as_ref()).unwrap();
+        let key = tink_proto::HkdfPrfKey::decode(serialized_key.as_ref()).unwrap();
         assert!(validate_hkdf_key(test_format, &key).is_ok());
     }
 }
@@ -133,12 +134,12 @@ fn test_new_key_data_hkdf_basic() {
         );
         assert_eq!(
             key_data.key_material_type,
-            tink::proto::key_data::KeyMaterialType::Symmetric as i32,
+            tink_proto::key_data::KeyMaterialType::Symmetric as i32,
             "incorrect key material type in test case {}",
             i
         );
         let key =
-            tink::proto::HkdfPrfKey::decode(key_data.value.as_ref()).expect("invalid key value");
+            tink_proto::HkdfPrfKey::decode(key_data.value.as_ref()).expect("invalid key value");
         validate_hkdf_key(test_format, &key).expect("invalid key");
     }
 }
@@ -196,19 +197,19 @@ fn test_hkdf_type_url() {
     );
     assert_eq!(
         km.key_material_type(),
-        tink::proto::key_data::KeyMaterialType::Symmetric
+        tink_proto::key_data::KeyMaterialType::Symmetric
     );
     assert!(!km.supports_private_keys());
 }
 
 fn gen_invalid_hkdf_keys() -> Vec<Vec<u8>> {
-    let mut bad_version_key = tink_testutil::new_hkdf_prf_key(tink::proto::HashType::Sha256, &[]);
+    let mut bad_version_key = tink_testutil::new_hkdf_prf_key(HashType::Sha256, &[]);
     bad_version_key.version += 1;
-    let mut short_key = tink_testutil::new_hkdf_prf_key(tink::proto::HashType::Sha256, &[]);
+    let mut short_key = tink_testutil::new_hkdf_prf_key(HashType::Sha256, &[]);
     short_key.key_value = vec![1, 1];
-    let sha1_key = tink_testutil::new_hkdf_prf_key(tink::proto::HashType::Sha1, &[]);
-    let unknown_hash_key = tink_testutil::new_hkdf_prf_key(tink::proto::HashType::UnknownHash, &[]);
-    let non_key = tink_testutil::new_hkdf_prf_params(tink::proto::HashType::Sha256, &[]);
+    let sha1_key = tink_testutil::new_hkdf_prf_key(HashType::Sha1, &[]);
+    let unknown_hash_key = tink_testutil::new_hkdf_prf_key(HashType::UnknownHash, &[]);
+    let non_key = tink_testutil::new_hkdf_prf_params(HashType::Sha256, &[]);
 
     vec![
         proto_encode(&non_key),
@@ -220,53 +221,46 @@ fn gen_invalid_hkdf_keys() -> Vec<Vec<u8>> {
 }
 
 fn gen_invalid_hkdf_key_formats() -> Vec<Vec<u8>> {
-    let mut short_key_format =
-        tink_testutil::new_hkdf_prf_key_format(tink::proto::HashType::Sha256, &[]);
+    let mut short_key_format = tink_testutil::new_hkdf_prf_key_format(HashType::Sha256, &[]);
     short_key_format.key_size = 1;
 
     vec![
         // not a `HkdfPrfKeyFormat`
-        proto_encode(&tink_testutil::new_hmac_params(
-            tink::proto::HashType::Sha256,
-            32,
-        )),
+        proto_encode(&tink_testutil::new_hmac_params(HashType::Sha256, 32)),
         // key too short
         proto_encode(&short_key_format),
         // SHA-1
-        proto_encode(&tink_testutil::new_hkdf_prf_key_format(
-            tink::proto::HashType::Sha1,
-            &[],
-        )),
+        proto_encode(&tink_testutil::new_hkdf_prf_key_format(HashType::Sha1, &[])),
         // unknown hash type
         proto_encode(&tink_testutil::new_hkdf_prf_key_format(
-            tink::proto::HashType::UnknownHash,
+            HashType::UnknownHash,
             &[],
         )),
     ]
 }
 
-fn gen_valid_hkdf_key_formats() -> Vec<tink::proto::HkdfPrfKeyFormat> {
+fn gen_valid_hkdf_key_formats() -> Vec<tink_proto::HkdfPrfKeyFormat> {
     vec![
-        tink_testutil::new_hkdf_prf_key_format(tink::proto::HashType::Sha256, &[]),
-        tink_testutil::new_hkdf_prf_key_format(tink::proto::HashType::Sha512, &[]),
-        tink_testutil::new_hkdf_prf_key_format(tink::proto::HashType::Sha256, &[0x01, 0x03, 0x42]),
-        tink_testutil::new_hkdf_prf_key_format(tink::proto::HashType::Sha512, &[0x01, 0x03, 0x42]),
+        tink_testutil::new_hkdf_prf_key_format(HashType::Sha256, &[]),
+        tink_testutil::new_hkdf_prf_key_format(HashType::Sha512, &[]),
+        tink_testutil::new_hkdf_prf_key_format(HashType::Sha256, &[0x01, 0x03, 0x42]),
+        tink_testutil::new_hkdf_prf_key_format(HashType::Sha512, &[0x01, 0x03, 0x42]),
     ]
 }
 
-fn gen_valid_hkdf_keys() -> Vec<tink::proto::HkdfPrfKey> {
+fn gen_valid_hkdf_keys() -> Vec<tink_proto::HkdfPrfKey> {
     vec![
-        tink_testutil::new_hkdf_prf_key(tink::proto::HashType::Sha256, &[]),
-        tink_testutil::new_hkdf_prf_key(tink::proto::HashType::Sha512, &[]),
-        tink_testutil::new_hkdf_prf_key(tink::proto::HashType::Sha256, &[0x01, 0x03, 0x42]),
-        tink_testutil::new_hkdf_prf_key(tink::proto::HashType::Sha512, &[0x01, 0x03, 0x42]),
+        tink_testutil::new_hkdf_prf_key(HashType::Sha256, &[]),
+        tink_testutil::new_hkdf_prf_key(HashType::Sha512, &[]),
+        tink_testutil::new_hkdf_prf_key(HashType::Sha256, &[0x01, 0x03, 0x42]),
+        tink_testutil::new_hkdf_prf_key(HashType::Sha512, &[0x01, 0x03, 0x42]),
     ]
 }
 
 // Checks whether the given HKDFPRFKey matches the given key HKDFPRFKeyFormat
 fn validate_hkdf_key(
-    format: &tink::proto::HkdfPrfKeyFormat,
-    key: &tink::proto::HkdfPrfKey,
+    format: &tink_proto::HkdfPrfKeyFormat,
+    key: &tink_proto::HkdfPrfKey,
 ) -> Result<(), TinkError> {
     if format.key_size as usize != key.key_value.len()
         || key.params.as_ref().unwrap().hash != format.params.as_ref().unwrap().hash
@@ -282,10 +276,10 @@ fn validate_hkdf_key(
     validate_hkdf_primitive(tink::Primitive::Prf(Box::new(p)), key)
 }
 
-/// Check whether the given primitive matches the given [`HkdfPrfKey`](tink::proto::HkdfPrfKey).
+/// Check whether the given primitive matches the given [`HkdfPrfKey`](tink_proto::HkdfPrfKey).
 fn validate_hkdf_primitive(
     p: tink::Primitive,
-    key: &tink::proto::HkdfPrfKey,
+    key: &tink_proto::HkdfPrfKey,
 ) -> Result<(), TinkError> {
     let hkdf_primitive = match p {
         tink::Primitive::Prf(prf) => prf,

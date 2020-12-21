@@ -21,7 +21,7 @@ use crate::TinkError;
 /// `KeyManager` "understands" keys of a specific key types: it can generate keys of a supported
 /// type and create primitives for supported keys.  A key type is identified by the global name of
 /// the protocol buffer that holds the corresponding key material, and is given by `type_url`-field
-/// of [`KeyData`](crate::proto::KeyData)-protocol buffer.
+/// of [`KeyData`](tink_proto::KeyData)-protocol buffer.
 pub trait KeyManager: Send + Sync {
     /// Construct a primitive instance for the key given in `serialized_key`, which must be a
     /// serialized key protocol buffer handled by this manager.
@@ -40,18 +40,15 @@ pub trait KeyManager: Send + Sync {
     fn type_url(&self) -> &'static str;
 
     /// Return the key material type handled by this key manager
-    fn key_material_type(&self) -> crate::proto::key_data::KeyMaterialType;
+    fn key_material_type(&self) -> tink_proto::key_data::KeyMaterialType;
 
     // APIs for Key Management
 
-    /// Generate a new [`KeyData`](crate::proto::KeyData) according to specification in
+    /// Generate a new [`KeyData`](tink_proto::KeyData) according to specification in
     /// `serialized_key_format`. This should be used solely by the key management API.
-    fn new_key_data(
-        &self,
-        serialized_key_format: &[u8],
-    ) -> Result<crate::proto::KeyData, TinkError> {
+    fn new_key_data(&self, serialized_key_format: &[u8]) -> Result<tink_proto::KeyData, TinkError> {
         let serialized_key = self.new_key(serialized_key_format)?;
-        Ok(crate::proto::KeyData {
+        Ok(tink_proto::KeyData {
             type_url: self.type_url().to_string(),
             value: serialized_key,
             key_material_type: self.key_material_type() as i32,
@@ -65,7 +62,7 @@ pub trait KeyManager: Send + Sync {
 
     /// Extract the public key data from the private key. If `supports_private_keys` returns
     /// false, this method will always return an error.
-    fn public_key_data(&self, _serialized_key: &[u8]) -> Result<crate::proto::KeyData, TinkError> {
+    fn public_key_data(&self, _serialized_key: &[u8]) -> Result<tink_proto::KeyData, TinkError> {
         Err("private keys not supported".into())
     }
 }

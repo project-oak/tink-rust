@@ -17,7 +17,8 @@
 //! Provides an implementation of MAC using a set of underlying implementations.
 
 use std::sync::Arc;
-use tink::{proto::OutputPrefixType, utils::wrap_err, TinkError};
+use tink::{utils::wrap_err, TinkError};
+use tink_proto::OutputPrefixType;
 
 /// Create a [`tink::Mac`] primitive from the given keyset handle.
 pub fn new(h: &tink::keyset::Handle) -> Result<Box<dyn tink::Mac>, TinkError> {

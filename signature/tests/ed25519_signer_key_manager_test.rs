@@ -15,12 +15,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use prost::Message;
-use tink::{
-    proto::{Ed25519PrivateKey, Ed25519PublicKey},
-    subtle::random::get_random_bytes,
-    utils::wrap_err,
-    Signer, TinkError, Verifier,
-};
+use tink::{subtle::random::get_random_bytes, utils::wrap_err, Signer, TinkError, Verifier};
+use tink_proto::{Ed25519PrivateKey, Ed25519PublicKey};
 
 #[test]
 fn test_ed25519_signer_get_primitive_basic() {
@@ -87,7 +83,7 @@ fn test_ed25519_sign_new_key_basic() {
         .expect("cannot obtain Ed25519Signer key manager");
     let serialized_format = tink_testutil::proto_encode(&tink_testutil::new_ed25519_private_key());
     let tmp = km.new_key(&serialized_format).unwrap();
-    let key = tink::proto::Ed25519PrivateKey::decode(tmp.as_ref()).unwrap();
+    let key = tink_proto::Ed25519PrivateKey::decode(tmp.as_ref()).unwrap();
     assert!(
         validate_ed25519_private_key(&key).is_ok(),
         "invalid private key in test case"
@@ -115,11 +111,11 @@ fn test_ed25519_public_key_data_basic() {
     );
     assert_eq!(
         pub_key_data.key_material_type,
-        tink::proto::key_data::KeyMaterialType::AsymmetricPublic as i32,
+        tink_proto::key_data::KeyMaterialType::AsymmetricPublic as i32,
         "incorrect key material type"
     );
     assert!(
-        tink::proto::Ed25519PublicKey::decode(pub_key_data.value.as_ref()).is_ok(),
+        tink_proto::Ed25519PublicKey::decode(pub_key_data.value.as_ref()).is_ok(),
         "invalid public key"
     );
 }
@@ -148,7 +144,7 @@ fn test_ed25519_public_key_data_with_invalid_input() {
     );
 }
 
-fn validate_ed25519_private_key(key: &tink::proto::Ed25519PrivateKey) -> Result<(), TinkError> {
+fn validate_ed25519_private_key(key: &tink_proto::Ed25519PrivateKey) -> Result<(), TinkError> {
     if key.version != tink_testutil::ED25519_SIGNER_KEY_VERSION {
         return Err(format!(
             "incorrect private key's version: expect {}, got {}",
@@ -192,7 +188,7 @@ fn test_key_manager_params() {
     assert_eq!(km.type_url(), tink_testutil::ED25519_SIGNER_TYPE_URL);
     assert_eq!(
         km.key_material_type(),
-        tink::proto::key_data::KeyMaterialType::AsymmetricPrivate
+        tink_proto::key_data::KeyMaterialType::AsymmetricPrivate
     );
     assert!(km.supports_private_keys());
 }

@@ -16,9 +16,10 @@
 
 //! Common methods needed in subtle implementations.
 
-use crate::{proto::HashType, TinkError};
+use crate::TinkError;
 use digest::Digest;
 use subtle::ConstantTimeEq;
+use tink_proto::HashType;
 
 mod hkdf;
 pub use self::hkdf::*;

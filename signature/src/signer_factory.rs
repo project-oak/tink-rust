@@ -76,7 +76,7 @@ impl tink::Signer for WrappedSigner {
             None => return Err("signer::factory: no primary primitive".into()),
         };
 
-        let signature = if primary.prefix_type == tink::proto::OutputPrefixType::Legacy {
+        let signature = if primary.prefix_type == tink_proto::OutputPrefixType::Legacy {
             let mut signed_data_copy = Vec::with_capacity(data.len() + 1);
             signed_data_copy.extend_from_slice(data);
             signed_data_copy.push(tink::cryptofmt::LEGACY_START_BYTE);

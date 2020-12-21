@@ -36,7 +36,7 @@ impl tink::registry::KeyManager for Ed25519SignerKeyManager {
         if serialized_key.is_empty() {
             return Err("Ed25519SignerKeyManager: invalid key".into());
         }
-        let key = tink::proto::Ed25519PrivateKey::decode(serialized_key)
+        let key = tink_proto::Ed25519PrivateKey::decode(serialized_key)
             .map_err(|e| wrap_err("Ed25519SignerKeyManager: invalid key", e))?;
         validate_key(&key)?;
 
@@ -50,11 +50,11 @@ impl tink::registry::KeyManager for Ed25519SignerKeyManager {
         let mut csprng = rand::rngs::OsRng {};
         let keypair = ed25519_dalek::Keypair::generate(&mut csprng);
 
-        let public_proto = tink::proto::Ed25519PublicKey {
+        let public_proto = tink_proto::Ed25519PublicKey {
             version: ED25519_SIGNER_KEY_VERSION,
             key_value: keypair.public.as_bytes().to_vec(),
         };
-        let key = tink::proto::Ed25519PrivateKey {
+        let key = tink_proto::Ed25519PrivateKey {
             version: ED25519_SIGNER_KEY_VERSION,
             public_key: Some(public_proto),
             key_value: keypair.secret.as_bytes().to_vec(),
@@ -69,8 +69,8 @@ impl tink::registry::KeyManager for Ed25519SignerKeyManager {
         ED25519_SIGNER_TYPE_URL
     }
 
-    fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {
-        tink::proto::key_data::KeyMaterialType::AsymmetricPrivate
+    fn key_material_type(&self) -> tink_proto::key_data::KeyMaterialType {
+        tink_proto::key_data::KeyMaterialType::AsymmetricPrivate
     }
 
     fn supports_private_keys(&self) -> bool {
@@ -80,24 +80,24 @@ impl tink::registry::KeyManager for Ed25519SignerKeyManager {
     fn public_key_data(
         &self,
         serialized_priv_key: &[u8],
-    ) -> Result<tink::proto::KeyData, TinkError> {
-        let key = tink::proto::Ed25519PrivateKey::decode(serialized_priv_key)
+    ) -> Result<tink_proto::KeyData, TinkError> {
+        let key = tink_proto::Ed25519PrivateKey::decode(serialized_priv_key)
             .map_err(|e| wrap_err("Ed25519SignerKeyManager: invalid key", e))?;
         let mut serialized_pub_key = Vec::new();
         key.public_key
             .ok_or_else(|| TinkError::new("Ed25519SignerKeyManager: invalid key"))?
             .encode(&mut serialized_pub_key)
             .map_err(|e| wrap_err("Ed25519SignerKeyManager: invalid key", e))?;
-        Ok(tink::proto::KeyData {
+        Ok(tink_proto::KeyData {
             type_url: crate::ED25519_VERIFIER_TYPE_URL.to_string(),
             value: serialized_pub_key,
-            key_material_type: tink::proto::key_data::KeyMaterialType::AsymmetricPublic as i32,
+            key_material_type: tink_proto::key_data::KeyMaterialType::AsymmetricPublic as i32,
         })
     }
 }
 
-/// Validate the given [`Ed25519PrivateKey`](tink::proto::Ed25519PrivateKey).
-fn validate_key(key: &tink::proto::Ed25519PrivateKey) -> Result<(), TinkError> {
+/// Validate the given [`Ed25519PrivateKey`](tink_proto::Ed25519PrivateKey).
+fn validate_key(key: &tink_proto::Ed25519PrivateKey) -> Result<(), TinkError> {
     tink::keyset::validate_key_version(key.version, ED25519_SIGNER_KEY_VERSION)
         .map_err(|e| wrap_err("Ed25519SignerKeyManager", e))?;
 

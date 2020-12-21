@@ -34,7 +34,7 @@ impl tink::registry::KeyManager for EcdsaVerifierKeyManager {
         if serialized_key.is_empty() {
             return Err("EcdsaVerifierKeyManager: invalid key".into());
         }
-        let key = tink::proto::EcdsaPublicKey::decode(serialized_key)
+        let key = tink_proto::EcdsaPublicKey::decode(serialized_key)
             .map_err(|e| wrap_err("EcdsaVerifierKeyManager: invalid key", e))?;
         let params =
             validate_ecdsa_public_key(&key).map_err(|e| wrap_err("EcdsaVerifierKeyManager", e))?;
@@ -54,16 +54,16 @@ impl tink::registry::KeyManager for EcdsaVerifierKeyManager {
         ECDSA_VERIFIER_TYPE_URL
     }
 
-    fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {
-        tink::proto::key_data::KeyMaterialType::AsymmetricPublic
+    fn key_material_type(&self) -> tink_proto::key_data::KeyMaterialType {
+        tink_proto::key_data::KeyMaterialType::AsymmetricPublic
     }
 }
 
-/// Validate the given [`EcdsaPublicKey`](tink::proto::EcdsaPublicKey) and return
+/// Validate the given [`EcdsaPublicKey`](tink_proto::EcdsaPublicKey) and return
 /// the parameters.
 pub(crate) fn validate_ecdsa_public_key(
-    key: &tink::proto::EcdsaPublicKey,
-) -> Result<tink::proto::EcdsaParams, TinkError> {
+    key: &tink_proto::EcdsaPublicKey,
+) -> Result<tink_proto::EcdsaParams, TinkError> {
     tink::keyset::validate_key_version(key.version, ECDSA_VERIFIER_KEY_VERSION)?;
     let params = key
         .params

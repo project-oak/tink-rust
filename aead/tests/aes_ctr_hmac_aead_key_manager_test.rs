@@ -16,15 +16,14 @@
 
 use prost::Message;
 use std::collections::HashSet;
-use tink::proto::{AesCtrHmacAeadKey, AesCtrHmacAeadKeyFormat, HashType};
+use tink_proto::{AesCtrHmacAeadKey, AesCtrHmacAeadKeyFormat, HashType};
 
 #[test]
 fn test_new_key_multiple_times() {
     tink_aead::init();
     let key_template = tink_aead::aes128_ctr_hmac_sha256_key_template();
-    let _aead_key_format =
-        tink::proto::AesCtrHmacAeadKeyFormat::decode(key_template.value.as_ref())
-            .expect("cannot unmarshal AES128_CTR_HMAC_SHA256 key template");
+    let _aead_key_format = tink_proto::AesCtrHmacAeadKeyFormat::decode(key_template.value.as_ref())
+        .expect("cannot unmarshal AES128_CTR_HMAC_SHA256 key template");
 
     let key_manager = tink::registry::get_key_manager(tink_testutil::AES_CTR_HMAC_AEAD_TYPE_URL)
         .expect("cannot obtain AES-CTR-HMAC-AEAD key manager");
@@ -33,7 +32,7 @@ fn test_new_key_multiple_times() {
     let num_tests = 24;
     for _ in 0..num_tests / 2 {
         let sk = key_manager.new_key(&key_template.value).unwrap();
-        let key = tink::proto::AesCtrHmacAeadKey::decode(sk.as_ref()).unwrap();
+        let key = tink_proto::AesCtrHmacAeadKey::decode(sk.as_ref()).unwrap();
 
         keys.insert(key.aes_ctr_key.as_ref().unwrap().key_value.clone());
         keys.insert(key.hmac_key.as_ref().unwrap().key_value.clone());
@@ -54,10 +53,10 @@ fn test_new_key_multiple_times() {
 #[test]
 fn test_new_key_with_corrupted_format() {
     tink_aead::init();
-    let key_template = tink::proto::KeyTemplate {
+    let key_template = tink_proto::KeyTemplate {
         type_url: tink_testutil::AES_CTR_HMAC_AEAD_TYPE_URL.to_string(),
         value: vec![0, 128],
-        output_prefix_type: tink::proto::OutputPrefixType::UnknownPrefix as i32,
+        output_prefix_type: tink_proto::OutputPrefixType::UnknownPrefix as i32,
     };
 
     let key_manager = tink::registry::get_key_manager(tink_testutil::AES_CTR_HMAC_AEAD_TYPE_URL)
@@ -83,7 +82,7 @@ fn test_key_manager_params() {
     );
     assert_eq!(
         key_manager.key_material_type(),
-        tink::proto::key_data::KeyMaterialType::Symmetric
+        tink_proto::key_data::KeyMaterialType::Symmetric
     );
     assert!(!key_manager.supports_private_keys());
 }
@@ -98,13 +97,13 @@ fn test_new_key_with_invalid_format() {
         (
             "IV size out of range",
             AesCtrHmacAeadKeyFormat {
-                aes_ctr_key_format: Some(tink::proto::AesCtrKeyFormat {
-                    params: Some(tink::proto::AesCtrParams { iv_size: 0 }), // invalid
+                aes_ctr_key_format: Some(tink_proto::AesCtrKeyFormat {
+                    params: Some(tink_proto::AesCtrParams { iv_size: 0 }), // invalid
                     key_size: 16,
                 }),
-                hmac_key_format: Some(tink::proto::HmacKeyFormat {
+                hmac_key_format: Some(tink_proto::HmacKeyFormat {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
-                    params: Some(tink::proto::HmacParams {
+                    params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 16,
                     }),
@@ -115,13 +114,13 @@ fn test_new_key_with_invalid_format() {
         (
             "invalid AES key size",
             AesCtrHmacAeadKeyFormat {
-                aes_ctr_key_format: Some(tink::proto::AesCtrKeyFormat {
-                    params: Some(tink::proto::AesCtrParams { iv_size: 16 }),
+                aes_ctr_key_format: Some(tink_proto::AesCtrKeyFormat {
+                    params: Some(tink_proto::AesCtrParams { iv_size: 16 }),
                     key_size: 0, // invalid
                 }),
-                hmac_key_format: Some(tink::proto::HmacKeyFormat {
+                hmac_key_format: Some(tink_proto::HmacKeyFormat {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
-                    params: Some(tink::proto::HmacParams {
+                    params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 16,
                     }),
@@ -132,13 +131,13 @@ fn test_new_key_with_invalid_format() {
         (
             "tag_size 0 is too small",
             AesCtrHmacAeadKeyFormat {
-                aes_ctr_key_format: Some(tink::proto::AesCtrKeyFormat {
-                    params: Some(tink::proto::AesCtrParams { iv_size: 16 }),
+                aes_ctr_key_format: Some(tink_proto::AesCtrKeyFormat {
+                    params: Some(tink_proto::AesCtrParams { iv_size: 16 }),
                     key_size: 16,
                 }),
-                hmac_key_format: Some(tink::proto::HmacKeyFormat {
+                hmac_key_format: Some(tink_proto::HmacKeyFormat {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
-                    params: Some(tink::proto::HmacParams {
+                    params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 0, // invalid
                     }),
@@ -149,13 +148,13 @@ fn test_new_key_with_invalid_format() {
         (
             "tag_size 999999 is too big",
             AesCtrHmacAeadKeyFormat {
-                aes_ctr_key_format: Some(tink::proto::AesCtrKeyFormat {
-                    params: Some(tink::proto::AesCtrParams { iv_size: 16 }),
+                aes_ctr_key_format: Some(tink_proto::AesCtrKeyFormat {
+                    params: Some(tink_proto::AesCtrParams { iv_size: 16 }),
                     key_size: 16,
                 }),
-                hmac_key_format: Some(tink::proto::HmacKeyFormat {
+                hmac_key_format: Some(tink_proto::HmacKeyFormat {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
-                    params: Some(tink::proto::HmacParams {
+                    params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 999999, // invalid
                     }),
@@ -166,13 +165,13 @@ fn test_new_key_with_invalid_format() {
         (
             "HMAC key_size is too small",
             AesCtrHmacAeadKeyFormat {
-                aes_ctr_key_format: Some(tink::proto::AesCtrKeyFormat {
-                    params: Some(tink::proto::AesCtrParams { iv_size: 16 }),
+                aes_ctr_key_format: Some(tink_proto::AesCtrKeyFormat {
+                    params: Some(tink_proto::AesCtrParams { iv_size: 16 }),
                     key_size: 16,
                 }),
-                hmac_key_format: Some(tink::proto::HmacKeyFormat {
+                hmac_key_format: Some(tink_proto::HmacKeyFormat {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
-                    params: Some(tink::proto::HmacParams {
+                    params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 16,
                     }),
@@ -183,13 +182,13 @@ fn test_new_key_with_invalid_format() {
         (
             "hash_type 999 not supported",
             AesCtrHmacAeadKeyFormat {
-                aes_ctr_key_format: Some(tink::proto::AesCtrKeyFormat {
-                    params: Some(tink::proto::AesCtrParams { iv_size: 16 }),
+                aes_ctr_key_format: Some(tink_proto::AesCtrKeyFormat {
+                    params: Some(tink_proto::AesCtrParams { iv_size: 16 }),
                     key_size: 16,
                 }),
-                hmac_key_format: Some(tink::proto::HmacKeyFormat {
+                hmac_key_format: Some(tink_proto::HmacKeyFormat {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
-                    params: Some(tink::proto::HmacParams {
+                    params: Some(tink_proto::HmacParams {
                         hash: 999, // invalid
                         tag_size: 16,
                     }),
@@ -200,13 +199,13 @@ fn test_new_key_with_invalid_format() {
         (
             "no AES key params",
             AesCtrHmacAeadKeyFormat {
-                aes_ctr_key_format: Some(tink::proto::AesCtrKeyFormat {
+                aes_ctr_key_format: Some(tink_proto::AesCtrKeyFormat {
                     params: None, // invalid
                     key_size: 16,
                 }),
-                hmac_key_format: Some(tink::proto::HmacKeyFormat {
+                hmac_key_format: Some(tink_proto::HmacKeyFormat {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
-                    params: Some(tink::proto::HmacParams {
+                    params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 16,
                     }),
@@ -217,11 +216,11 @@ fn test_new_key_with_invalid_format() {
         (
             "no HMAC key params",
             AesCtrHmacAeadKeyFormat {
-                aes_ctr_key_format: Some(tink::proto::AesCtrKeyFormat {
-                    params: Some(tink::proto::AesCtrParams { iv_size: 16 }),
+                aes_ctr_key_format: Some(tink_proto::AesCtrKeyFormat {
+                    params: Some(tink_proto::AesCtrParams { iv_size: 16 }),
                     key_size: 16,
                 }),
-                hmac_key_format: Some(tink::proto::HmacKeyFormat {
+                hmac_key_format: Some(tink_proto::HmacKeyFormat {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
                     params: None, // invalid
                     key_size: 32,
@@ -232,9 +231,9 @@ fn test_new_key_with_invalid_format() {
             "no AES key format",
             AesCtrHmacAeadKeyFormat {
                 aes_ctr_key_format: None, // invalid
-                hmac_key_format: Some(tink::proto::HmacKeyFormat {
+                hmac_key_format: Some(tink_proto::HmacKeyFormat {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
-                    params: Some(tink::proto::HmacParams {
+                    params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 16,
                     }),
@@ -245,8 +244,8 @@ fn test_new_key_with_invalid_format() {
         (
             "no HMAC key format",
             AesCtrHmacAeadKeyFormat {
-                aes_ctr_key_format: Some(tink::proto::AesCtrKeyFormat {
-                    params: Some(tink::proto::AesCtrParams { iv_size: 16 }),
+                aes_ctr_key_format: Some(tink_proto::AesCtrKeyFormat {
+                    params: Some(tink_proto::AesCtrParams { iv_size: 16 }),
                     key_size: 16,
                 }),
                 hmac_key_format: None, // invalid
@@ -254,13 +253,13 @@ fn test_new_key_with_invalid_format() {
         ),
         /* All based on this valid key format:
                 AesCtrHmacAeadKeyFormat {
-                    aes_ctr_key_format: Some(tink::proto::AesCtrKeyFormat {
-                        params: Some(tink::proto::AesCtrParams { iv_size: 16 }),
+                    aes_ctr_key_format: Some(tink_proto::AesCtrKeyFormat {
+                        params: Some(tink_proto::AesCtrParams { iv_size: 16 }),
                         key_size: 16,
                     }),
-                    hmac_key_format: Some(tink::proto::HmacKeyFormat {
+                    hmac_key_format: Some(tink_proto::HmacKeyFormat {
                         version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
-                        params: Some(tink::proto::HmacParams {
+                        params: Some(tink_proto::HmacParams {
                             hash: HashType::Sha256 as i32,
                             tag_size: 16,
                         }),
@@ -289,15 +288,15 @@ fn test_primitive_with_invalid_key() {
             "version in range",
             AesCtrHmacAeadKey {
                 version: 999, // invalid
-                aes_ctr_key: Some(tink::proto::AesCtrKey {
+                aes_ctr_key: Some(tink_proto::AesCtrKey {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
                     key_value: vec![0; 16],
-                    params: Some(tink::proto::AesCtrParams { iv_size: 16 }),
+                    params: Some(tink_proto::AesCtrParams { iv_size: 16 }),
                 }),
-                hmac_key: Some(tink::proto::HmacKey {
+                hmac_key: Some(tink_proto::HmacKey {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
                     key_value: vec![0; 32],
-                    params: Some(tink::proto::HmacParams {
+                    params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 16,
                     }),
@@ -308,15 +307,15 @@ fn test_primitive_with_invalid_key() {
             "invalid AES key size",
             AesCtrHmacAeadKey {
                 version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
-                aes_ctr_key: Some(tink::proto::AesCtrKey {
+                aes_ctr_key: Some(tink_proto::AesCtrKey {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
                     key_value: vec![0; 1], // invalid
-                    params: Some(tink::proto::AesCtrParams { iv_size: 16 }),
+                    params: Some(tink_proto::AesCtrParams { iv_size: 16 }),
                 }),
-                hmac_key: Some(tink::proto::HmacKey {
+                hmac_key: Some(tink_proto::HmacKey {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
                     key_value: vec![0; 32],
-                    params: Some(tink::proto::HmacParams {
+                    params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 16,
                     }),
@@ -327,15 +326,15 @@ fn test_primitive_with_invalid_key() {
             "IV size out of range",
             AesCtrHmacAeadKey {
                 version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
-                aes_ctr_key: Some(tink::proto::AesCtrKey {
+                aes_ctr_key: Some(tink_proto::AesCtrKey {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
                     key_value: vec![0; 16],
-                    params: Some(tink::proto::AesCtrParams { iv_size: 0 }), // invalid
+                    params: Some(tink_proto::AesCtrParams { iv_size: 0 }), // invalid
                 }),
-                hmac_key: Some(tink::proto::HmacKey {
+                hmac_key: Some(tink_proto::HmacKey {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
                     key_value: vec![0; 32],
-                    params: Some(tink::proto::HmacParams {
+                    params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 16,
                     }),
@@ -346,15 +345,15 @@ fn test_primitive_with_invalid_key() {
             "key too short",
             AesCtrHmacAeadKey {
                 version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
-                aes_ctr_key: Some(tink::proto::AesCtrKey {
+                aes_ctr_key: Some(tink_proto::AesCtrKey {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
                     key_value: vec![0; 16],
-                    params: Some(tink::proto::AesCtrParams { iv_size: 16 }),
+                    params: Some(tink_proto::AesCtrParams { iv_size: 16 }),
                 }),
-                hmac_key: Some(tink::proto::HmacKey {
+                hmac_key: Some(tink_proto::HmacKey {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
                     key_value: vec![0; 2], // invalid
-                    params: Some(tink::proto::HmacParams {
+                    params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 16,
                     }),
@@ -365,15 +364,15 @@ fn test_primitive_with_invalid_key() {
             "unknown hash",
             AesCtrHmacAeadKey {
                 version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
-                aes_ctr_key: Some(tink::proto::AesCtrKey {
+                aes_ctr_key: Some(tink_proto::AesCtrKey {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
                     key_value: vec![0; 16],
-                    params: Some(tink::proto::AesCtrParams { iv_size: 16 }),
+                    params: Some(tink_proto::AesCtrParams { iv_size: 16 }),
                 }),
-                hmac_key: Some(tink::proto::HmacKey {
+                hmac_key: Some(tink_proto::HmacKey {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
                     key_value: vec![0; 32],
-                    params: Some(tink::proto::HmacParams {
+                    params: Some(tink_proto::HmacParams {
                         hash: 9999, // invalid
                         tag_size: 16,
                     }),
@@ -384,15 +383,15 @@ fn test_primitive_with_invalid_key() {
             "tag size too small",
             AesCtrHmacAeadKey {
                 version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
-                aes_ctr_key: Some(tink::proto::AesCtrKey {
+                aes_ctr_key: Some(tink_proto::AesCtrKey {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
                     key_value: vec![0; 16],
-                    params: Some(tink::proto::AesCtrParams { iv_size: 16 }),
+                    params: Some(tink_proto::AesCtrParams { iv_size: 16 }),
                 }),
-                hmac_key: Some(tink::proto::HmacKey {
+                hmac_key: Some(tink_proto::HmacKey {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
                     key_value: vec![0; 32],
-                    params: Some(tink::proto::HmacParams {
+                    params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 1, // invalid
                     }),
@@ -403,15 +402,15 @@ fn test_primitive_with_invalid_key() {
             "no AES key params",
             AesCtrHmacAeadKey {
                 version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
-                aes_ctr_key: Some(tink::proto::AesCtrKey {
+                aes_ctr_key: Some(tink_proto::AesCtrKey {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
                     key_value: vec![0; 16],
                     params: None, // invalid
                 }),
-                hmac_key: Some(tink::proto::HmacKey {
+                hmac_key: Some(tink_proto::HmacKey {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
                     key_value: vec![0; 32],
-                    params: Some(tink::proto::HmacParams {
+                    params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 16,
                     }),
@@ -422,12 +421,12 @@ fn test_primitive_with_invalid_key() {
             "no HMAC params",
             AesCtrHmacAeadKey {
                 version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
-                aes_ctr_key: Some(tink::proto::AesCtrKey {
+                aes_ctr_key: Some(tink_proto::AesCtrKey {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
                     key_value: vec![0; 16],
-                    params: Some(tink::proto::AesCtrParams { iv_size: 16 }),
+                    params: Some(tink_proto::AesCtrParams { iv_size: 16 }),
                 }),
-                hmac_key: Some(tink::proto::HmacKey {
+                hmac_key: Some(tink_proto::HmacKey {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
                     key_value: vec![0; 32],
                     params: None, // invalid
@@ -439,10 +438,10 @@ fn test_primitive_with_invalid_key() {
             AesCtrHmacAeadKey {
                 version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
                 aes_ctr_key: None, // invalid
-                hmac_key: Some(tink::proto::HmacKey {
+                hmac_key: Some(tink_proto::HmacKey {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
                     key_value: vec![0; 32],
-                    params: Some(tink::proto::HmacParams {
+                    params: Some(tink_proto::HmacParams {
                         hash: HashType::Sha256 as i32,
                         tag_size: 16,
                     }),
@@ -453,10 +452,10 @@ fn test_primitive_with_invalid_key() {
             "no HMAC key",
             AesCtrHmacAeadKey {
                 version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
-                aes_ctr_key: Some(tink::proto::AesCtrKey {
+                aes_ctr_key: Some(tink_proto::AesCtrKey {
                     version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
                     key_value: vec![0; 16],
-                    params: Some(tink::proto::AesCtrParams { iv_size: 16 }),
+                    params: Some(tink_proto::AesCtrParams { iv_size: 16 }),
                 }),
                 hmac_key: None, // invalid
             },
@@ -464,15 +463,15 @@ fn test_primitive_with_invalid_key() {
         /* All based on this valid key:
         AesCtrHmacAeadKey {
             version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
-            aes_ctr_key: Some(tink::proto::AesCtrKey {
+            aes_ctr_key: Some(tink_proto::AesCtrKey {
                 version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
                 key_value: vec![0; 16],
-                params: Some(tink::proto::AesCtrParams { iv_size: 16 }),
+                params: Some(tink_proto::AesCtrParams { iv_size: 16 }),
             }),
-            hmac_key: Some(tink::proto::HmacKey {
+            hmac_key: Some(tink_proto::HmacKey {
                 version: tink_aead::AES_CTR_HMAC_AEAD_KEY_VERSION,
                 key_value: vec![0; 32],
-                params: Some(tink::proto::HmacParams {
+                params: Some(tink_proto::HmacParams {
                     hash: HashType::Sha256 as i32,
                     tag_size: 16,
                 }),

@@ -1616,6 +1616,7 @@ dependencies = [
  "tink-daead",
  "tink-mac",
  "tink-prf",
+ "tink-proto",
  "tink-signature",
  "tink-streaming-aead",
 ]
@@ -2115,6 +2116,7 @@ dependencies = [
  "subtle",
  "tink-aead",
  "tink-mac",
+ "tink-proto",
  "tink-signature",
  "tink-testutil",
 ]
@@ -2138,6 +2140,7 @@ dependencies = [
  "tink",
  "tink-awskms",
  "tink-mac",
+ "tink-proto",
  "tink-signature",
  "tink-testutil",
 ]
@@ -2170,6 +2173,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tink",
+ "tink-proto",
  "tink-signature",
  "tink-testutil",
 ]
@@ -2187,6 +2191,7 @@ dependencies = [
  "serde_json",
  "tink",
  "tink-prf",
+ "tink-proto",
  "tink-testutil",
 ]
 
@@ -2209,7 +2214,18 @@ dependencies = [
  "sha2",
  "tink",
  "tink-mac",
+ "tink-proto",
  "tink-testutil",
+]
+
+[[package]]
+name = "tink-proto"
+version = "0.1.0"
+dependencies = [
+ "base64",
+ "prost",
+ "prost-build",
+ "serde",
 ]
 
 [[package]]
@@ -2228,6 +2244,7 @@ dependencies = [
  "signature",
  "tink",
  "tink-mac",
+ "tink-proto",
  "tink-testutil",
 ]
 
@@ -2243,6 +2260,7 @@ dependencies = [
  "tempfile",
  "tink",
  "tink-mac",
+ "tink-proto",
  "tink-testutil",
 ]
 
@@ -2260,6 +2278,7 @@ dependencies = [
  "tink-daead",
  "tink-mac",
  "tink-prf",
+ "tink-proto",
  "tink-signature",
  "tink-streaming-aead",
  "tink-testutil",
@@ -2283,6 +2302,7 @@ dependencies = [
  "tink",
  "tink-daead",
  "tink-mac",
+ "tink-proto",
 ]
 
 [[package]]

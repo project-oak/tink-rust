@@ -17,14 +17,14 @@
 //! This module contains pre-generated [`KeyTemplate`] instances for MAC.
 
 use prost::Message;
-use tink::proto::KeyTemplate;
+use tink_proto::KeyTemplate;
 
 /// Return a [`KeyTemplate`] that generates a HMAC key with the following parameters:
 ///  - Key size: 32 bytes
 ///  - Tag size: 16 bytes
 ///  - Hash function: SHA256
 pub fn hmac_sha256_tag128_key_template() -> KeyTemplate {
-    create_hmac_key_template(32, 16, tink::proto::HashType::Sha256)
+    create_hmac_key_template(32, 16, tink_proto::HashType::Sha256)
 }
 
 /// Return a [`KeyTemplate`] that generates a HMAC key with the following parameters:
@@ -32,7 +32,7 @@ pub fn hmac_sha256_tag128_key_template() -> KeyTemplate {
 ///  - Tag size: 32 bytes
 ///  - Hash function: SHA256
 pub fn hmac_sha256_tag256_key_template() -> KeyTemplate {
-    create_hmac_key_template(32, 32, tink::proto::HashType::Sha256)
+    create_hmac_key_template(32, 32, tink_proto::HashType::Sha256)
 }
 
 /// Return a [`KeyTemplate`] that generates a HMAC key with the following parameters:
@@ -40,7 +40,7 @@ pub fn hmac_sha256_tag256_key_template() -> KeyTemplate {
 ///  - Tag size: 32 bytes
 ///  - Hash function: SHA512
 pub fn hmac_sha512_tag256_key_template() -> KeyTemplate {
-    create_hmac_key_template(64, 32, tink::proto::HashType::Sha512)
+    create_hmac_key_template(64, 32, tink_proto::HashType::Sha512)
 }
 
 /// Return a [`KeyTemplate`] that generates a HMAC key with the following parameters:
@@ -48,7 +48,7 @@ pub fn hmac_sha512_tag256_key_template() -> KeyTemplate {
 ///  - Tag size: 64 bytes
 ///  - Hash function: SHA512
 pub fn hmac_sha512_tag512_key_template() -> KeyTemplate {
-    create_hmac_key_template(64, 64, tink::proto::HashType::Sha512)
+    create_hmac_key_template(64, 64, tink_proto::HashType::Sha512)
 }
 
 /// Return a [`KeyTemplate`] that generates a AES-CMAC key with the following parameters:
@@ -62,13 +62,13 @@ pub fn aes_cmac_tag128_key_template() -> KeyTemplate {
 fn create_hmac_key_template(
     key_size: u32,
     tag_size: u32,
-    hash_type: tink::proto::HashType,
+    hash_type: tink_proto::HashType,
 ) -> KeyTemplate {
-    let params = tink::proto::HmacParams {
+    let params = tink_proto::HmacParams {
         hash: hash_type as i32,
         tag_size,
     };
-    let format = tink::proto::HmacKeyFormat {
+    let format = tink_proto::HmacKeyFormat {
         version: crate::HMAC_KEY_VERSION,
         params: Some(params),
         key_size,
@@ -78,14 +78,14 @@ fn create_hmac_key_template(
     KeyTemplate {
         type_url: crate::HMAC_TYPE_URL.to_string(),
         value: serialized_format,
-        output_prefix_type: tink::proto::OutputPrefixType::Tink as i32,
+        output_prefix_type: tink_proto::OutputPrefixType::Tink as i32,
     }
 }
 
 /// Create a new [`KeyTemplate`] for CMAC using the given parameters.
 fn create_cmac_key_template(key_size: u32, tag_size: u32) -> KeyTemplate {
-    let params = tink::proto::AesCmacParams { tag_size };
-    let format = tink::proto::AesCmacKeyFormat {
+    let params = tink_proto::AesCmacParams { tag_size };
+    let format = tink_proto::AesCmacKeyFormat {
         params: Some(params),
         key_size,
     };
@@ -94,6 +94,6 @@ fn create_cmac_key_template(key_size: u32, tag_size: u32) -> KeyTemplate {
     KeyTemplate {
         type_url: crate::CMAC_TYPE_URL.to_string(),
         value: serialized_format,
-        output_prefix_type: tink::proto::OutputPrefixType::Tink as i32,
+        output_prefix_type: tink_proto::OutputPrefixType::Tink as i32,
     }
 }

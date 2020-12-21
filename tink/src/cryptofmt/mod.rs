@@ -16,7 +16,8 @@
 
 //! Provides constants and convenience methods that define the format of ciphertexts and signatures.
 
-use crate::{proto::OutputPrefixType, TinkError};
+use crate::TinkError;
+use tink_proto::OutputPrefixType;
 
 #[cfg(test)]
 mod tests;
@@ -45,7 +46,7 @@ pub const RAW_PREFIX: Vec<u8> = Vec::new();
 /// Generate the prefix of ciphertexts produced by the crypto primitive obtained from key.  The
 /// prefix can be either empty (for RAW-type prefix), or consists of a 1-byte indicator of the type
 /// of the prefix, followed by 4 bytes of the key ID in big endian encoding.
-pub fn output_prefix(key: &crate::proto::keyset::Key) -> Result<Vec<u8>, TinkError> {
+pub fn output_prefix(key: &tink_proto::keyset::Key) -> Result<Vec<u8>, TinkError> {
     match OutputPrefixType::from_i32(key.output_prefix_type) {
         Some(OutputPrefixType::Legacy) | Some(OutputPrefixType::Crunchy) => Ok(
             create_output_prefix(LEGACY_PREFIX_SIZE, LEGACY_START_BYTE, key.key_id),

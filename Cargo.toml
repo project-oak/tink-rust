@@ -12,6 +12,7 @@ members = [
   "integration/awskms",
   "mac",
   "prf",
+  "proto",
   "rinkey",
   "signature",
   "streaming",
@@ -29,6 +30,7 @@ tink-awskms = { path = "integration/awskms" }
 tink-daead = { path = "daead" }
 tink-mac = { path = "mac" }
 tink-prf = { path = "prf" }
+tink-proto = { path = "proto" }
 tink-signature = { path = "signature" }
 tink-streaming-aead = { path = "streaming" }
 tink-testing-server = { path = "testing" }

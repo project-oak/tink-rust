@@ -17,7 +17,8 @@
 //! Key manager for AES-CMAC keys for HMAC.
 
 use prost::Message;
-use tink::{proto::HashType, utils::wrap_err, TinkError};
+use tink::{utils::wrap_err, TinkError};
+use tink_proto::HashType;
 
 /// Maximal version of HMAC keys.
 pub const HMAC_KEY_VERSION: u32 = 0;
@@ -29,13 +30,13 @@ pub const HMAC_TYPE_URL: &str = "type.googleapis.com/google.crypto.tink.HmacKey"
 pub(crate) struct HmacKeyManager;
 
 impl tink::registry::KeyManager for HmacKeyManager {
-    /// Create an HMAC instance for the given serialized [`HmacKey`](tink::proto::HmacKey) proto.
+    /// Create an HMAC instance for the given serialized [`HmacKey`](tink_proto::HmacKey) proto.
     fn primitive(&self, serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
         if serialized_key.is_empty() {
             return Err("HmacKeyManager: invalid key".into());
         }
 
-        let key = tink::proto::HmacKey::decode(serialized_key)
+        let key = tink_proto::HmacKey::decode(serialized_key)
             .map_err(|e| wrap_err("HmacKeyManager: decode failed", e))?;
         validate_key(&key)?;
 
@@ -50,19 +51,19 @@ impl tink::registry::KeyManager for HmacKeyManager {
         }
     }
 
-    /// Generate a new serialized [`HmacKey`](tink::proto::HmacKey) according to specification in
-    /// the given [`HmacKeyFormat`](tink::proto::HmacKeyFormat).
+    /// Generate a new serialized [`HmacKey`](tink_proto::HmacKey) according to specification in
+    /// the given [`HmacKeyFormat`](tink_proto::HmacKeyFormat).
     fn new_key(&self, serialized_key_format: &[u8]) -> Result<Vec<u8>, TinkError> {
         if serialized_key_format.is_empty() {
             return Err("HmacKeyManager: invalid key format".into());
         }
-        let key_format = tink::proto::HmacKeyFormat::decode(serialized_key_format)
+        let key_format = tink_proto::HmacKeyFormat::decode(serialized_key_format)
             .map_err(|_| TinkError::new("HmacKeyManager: invalid key format"))?;
         validate_key_format(&key_format)
             .map_err(|e| wrap_err("HmacKeyManager: invalid key format", e))?;
         let key_value = tink::subtle::random::get_random_bytes(key_format.key_size as usize);
         let mut sk = Vec::new();
-        tink::proto::HmacKey {
+        tink_proto::HmacKey {
             version: HMAC_KEY_VERSION,
             params: key_format.params,
             key_value,
@@ -76,14 +77,14 @@ impl tink::registry::KeyManager for HmacKeyManager {
         HMAC_TYPE_URL
     }
 
-    fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {
-        tink::proto::key_data::KeyMaterialType::Symmetric
+    fn key_material_type(&self) -> tink_proto::key_data::KeyMaterialType {
+        tink_proto::key_data::KeyMaterialType::Symmetric
     }
 }
 
-/// Validate the given [`HmacKey`](tink::proto::HmacKey). It only validates the version of the
+/// Validate the given [`HmacKey`](tink_proto::HmacKey). It only validates the version of the
 /// key because other parameters will be validated in primitive construction.
-fn validate_key(key: &tink::proto::HmacKey) -> Result<(), TinkError> {
+fn validate_key(key: &tink_proto::HmacKey) -> Result<(), TinkError> {
     tink::keyset::validate_key_version(key.version, HMAC_KEY_VERSION)
         .map_err(|e| wrap_err("HmacKeyManager: invalid version", e))?;
     let key_size = key.key_value.len();
@@ -96,8 +97,8 @@ fn validate_key(key: &tink::proto::HmacKey) -> Result<(), TinkError> {
     }
 }
 
-/// Validate the given [`HmacKeyFormat`](tink::proto::HmacKeyFormat).
-fn validate_key_format(format: &tink::proto::HmacKeyFormat) -> Result<(), TinkError> {
+/// Validate the given [`HmacKeyFormat`](tink_proto::HmacKeyFormat).
+fn validate_key_format(format: &tink_proto::HmacKeyFormat) -> Result<(), TinkError> {
     match &format.params {
         None => Err("missing HMAC params".into()),
         Some(params) => {

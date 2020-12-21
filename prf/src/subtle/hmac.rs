@@ -22,7 +22,8 @@ use std::{
     ops::DerefMut,
     sync::{Arc, Mutex},
 };
-use tink::{proto::HashType, TinkError};
+use tink::TinkError;
+use tink_proto::HashType;
 
 const MIN_HMAC_KEY_SIZE_IN_BYTES: usize = 16;
 

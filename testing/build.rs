@@ -17,7 +17,7 @@ use std::path::{Path, PathBuf};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let source_files = ["testing_api.proto"];
-    let proto_path = Path::new("../proto/testing").to_path_buf();
+    let proto_path = Path::new("proto").to_path_buf();
     let proto_files: Vec<PathBuf> = source_files.iter().map(|f| proto_path.join(f)).collect();
 
     // Tell cargo to rerun this build script if any proto file has changed.
@@ -29,7 +29,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Emit generated code into the source directory, so it can be checked in.
     tonic_build::configure()
         .out_dir("src/codegen")
-        .compile(&proto_files, &[PathBuf::from("..")])?;
+        .compile(&proto_files, &[PathBuf::from(".")])?;
 
     Ok(())
 }

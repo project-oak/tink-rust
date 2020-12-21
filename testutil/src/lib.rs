@@ -21,11 +21,8 @@
 use generic_array::typenum::Unsigned;
 use p256::elliptic_curve;
 use std::convert::TryInto;
-use tink::{
-    proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType, KeyData, Keyset},
-    subtle::random::get_random_bytes,
-    TinkError,
-};
+use tink::{subtle::random::get_random_bytes, TinkError};
+use tink_proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType, KeyData, Keyset};
 
 mod constant;
 pub use constant::*;
@@ -66,8 +63,8 @@ impl tink::registry::KeyManager for DummyAeadKeyManager {
         self.type_url
     }
 
-    fn key_material_type(&self) -> tink::proto::key_data::KeyMaterialType {
-        tink::proto::key_data::KeyMaterialType::Symmetric
+    fn key_material_type(&self) -> tink_proto::key_data::KeyMaterialType {
+        tink_proto::key_data::KeyMaterialType::Symmetric
     }
 
     fn new_key_data(&self, _serialized_key_format: &[u8]) -> Result<KeyData, TinkError> {
@@ -123,24 +120,20 @@ impl tink::registry::KmsClient for DummyKmsClient {
     }
 }
 
-/// Create a new [`Keyset`] containing an [`AesGcmKey`](tink::proto::AesGcmKey).
-pub fn new_test_aes_gcm_keyset(
-    primary_output_prefix_type: tink::proto::OutputPrefixType,
-) -> Keyset {
+/// Create a new [`Keyset`] containing an [`AesGcmKey`](tink_proto::AesGcmKey).
+pub fn new_test_aes_gcm_keyset(primary_output_prefix_type: tink_proto::OutputPrefixType) -> Keyset {
     new_test_keyset(|| new_aes_gcm_key_data(16), primary_output_prefix_type)
 }
 
-/// Create a new [`Keyset`] containing an [`AesSivKey`](tink::proto::AesSivKey).
-pub fn new_test_aes_siv_keyset(
-    primary_output_prefix_type: tink::proto::OutputPrefixType,
-) -> Keyset {
+/// Create a new [`Keyset`] containing an [`AesSivKey`](tink_proto::AesSivKey).
+pub fn new_test_aes_siv_keyset(primary_output_prefix_type: tink_proto::OutputPrefixType) -> Keyset {
     new_test_keyset(new_aes_siv_key_data, primary_output_prefix_type)
 }
 
-/// Create a new [`Keyset`] containing an [`HmacKey`](tink::proto::HmacKey).
+/// Create a new [`Keyset`] containing an [`HmacKey`](tink_proto::HmacKey).
 pub fn new_test_hmac_keyset(
     tag_size: u32,
-    primary_output_prefix_type: tink::proto::OutputPrefixType,
+    primary_output_prefix_type: tink_proto::OutputPrefixType,
 ) -> Keyset {
     new_test_keyset(
         || new_hmac_key_data(HashType::Sha256, tag_size),
@@ -148,7 +141,7 @@ pub fn new_test_hmac_keyset(
     )
 }
 
-/// Create a new [`Keyset`] containing an [`AesGcmHkdfKey`](tink::proto::AesGcmHkdfStreamingKey).
+/// Create a new [`Keyset`] containing an [`AesGcmHkdfKey`](tink_proto::AesGcmHkdfStreamingKey).
 pub fn new_test_aes_gcm_hkdf_keyset() -> Keyset {
     const KEY_SIZE: u32 = 16;
     const DERIVED_KEY_SIZE: u32 = 16;
@@ -162,7 +155,7 @@ pub fn new_test_aes_gcm_hkdf_keyset() -> Keyset {
                 CIPHERTEXT_SEGMENT_SIZE,
             )
         },
-        tink::proto::OutputPrefixType::Raw,
+        tink_proto::OutputPrefixType::Raw,
     )
 }
 
@@ -170,40 +163,40 @@ pub fn new_test_aes_gcm_hkdf_keyset() -> Keyset {
 /// `key_data_generator`.
 pub fn new_test_keyset<T>(
     key_data_generator: T,
-    primary_output_prefix_type: tink::proto::OutputPrefixType,
+    primary_output_prefix_type: tink_proto::OutputPrefixType,
 ) -> Keyset
 where
     T: Fn() -> KeyData,
 {
     let primary_key = new_key(
         &key_data_generator(),
-        tink::proto::KeyStatusType::Enabled,
+        tink_proto::KeyStatusType::Enabled,
         42,
         primary_output_prefix_type,
     );
     let raw_key = new_key(
         &key_data_generator(),
-        tink::proto::KeyStatusType::Enabled,
+        tink_proto::KeyStatusType::Enabled,
         43,
-        tink::proto::OutputPrefixType::Raw,
+        tink_proto::OutputPrefixType::Raw,
     );
     let legacy_key = new_key(
         &key_data_generator(),
-        tink::proto::KeyStatusType::Enabled,
+        tink_proto::KeyStatusType::Enabled,
         44,
-        tink::proto::OutputPrefixType::Legacy,
+        tink_proto::OutputPrefixType::Legacy,
     );
     let tink_key = new_key(
         &key_data_generator(),
-        tink::proto::KeyStatusType::Enabled,
+        tink_proto::KeyStatusType::Enabled,
         45,
-        tink::proto::OutputPrefixType::Tink,
+        tink_proto::OutputPrefixType::Tink,
     );
     let crunchy_key = new_key(
         &key_data_generator(),
-        tink::proto::KeyStatusType::Enabled,
+        tink_proto::KeyStatusType::Enabled,
         46,
-        tink::proto::OutputPrefixType::Crunchy,
+        tink_proto::OutputPrefixType::Crunchy,
     );
     let primary_key_id = primary_key.key_id;
     let keys = vec![primary_key, raw_key, legacy_key, tink_key, crunchy_key];
@@ -213,10 +206,10 @@ where
 /// Return a dummy key that doesn't contain actual key material.
 pub fn new_dummy_key(
     key_id: tink::KeyId,
-    status: tink::proto::KeyStatusType,
-    output_prefix_type: tink::proto::OutputPrefixType,
-) -> tink::proto::keyset::Key {
-    tink::proto::keyset::Key {
+    status: tink_proto::KeyStatusType,
+    output_prefix_type: tink_proto::OutputPrefixType,
+) -> tink_proto::keyset::Key {
+    tink_proto::keyset::Key {
         key_data: Some(KeyData::default()),
         status: status as i32,
         key_id,
@@ -224,32 +217,32 @@ pub fn new_dummy_key(
     }
 }
 
-/// Create an [`EcdsaParams`](tink::proto::EcdsaParams) with the specified parameters.
+/// Create an [`EcdsaParams`](tink_proto::EcdsaParams) with the specified parameters.
 pub fn new_ecdsa_params(
     hash_type: HashType,
     curve: EllipticCurveType,
     encoding: EcdsaSignatureEncoding,
-) -> tink::proto::EcdsaParams {
-    tink::proto::EcdsaParams {
+) -> tink_proto::EcdsaParams {
+    tink_proto::EcdsaParams {
         hash_type: hash_type as i32,
         curve: curve as i32,
         encoding: encoding as i32,
     }
 }
 
-/// Create an [`EcdsaKeyFormat`](tink::proto::EcdsaKeyFormat) with the specified parameters.
-pub fn new_ecdsa_key_format(params: &tink::proto::EcdsaParams) -> tink::proto::EcdsaKeyFormat {
-    tink::proto::EcdsaKeyFormat {
+/// Create an [`EcdsaKeyFormat`](tink_proto::EcdsaKeyFormat) with the specified parameters.
+pub fn new_ecdsa_key_format(params: &tink_proto::EcdsaParams) -> tink_proto::EcdsaKeyFormat {
+    tink_proto::EcdsaKeyFormat {
         params: Some(params.clone()),
     }
 }
 
-/// Create an [`EcdsaPrivateKey`](tink::proto::EcdsaPrivateKey) with randomly generated key
+/// Create an [`EcdsaPrivateKey`](tink_proto::EcdsaPrivateKey) with randomly generated key
 /// material.
 pub fn new_random_ecdsa_private_key(
     hash_type: HashType,
     curve: EllipticCurveType,
-) -> tink::proto::EcdsaPrivateKey {
+) -> tink_proto::EcdsaPrivateKey {
     let mut csprng = rand::thread_rng();
     let (secret_key_data, pub_x, pub_y) = match curve {
         EllipticCurveType::NistP256 => {
@@ -281,21 +274,21 @@ pub fn new_random_ecdsa_private_key(
         _ => panic!("unsupported curve {:?}", curve),
     };
     let params = new_ecdsa_params(hash_type, curve, EcdsaSignatureEncoding::Der);
-    let pub_key = tink::proto::EcdsaPublicKey {
+    let pub_key = tink_proto::EcdsaPublicKey {
         version: ECDSA_SIGNER_KEY_VERSION,
         params: Some(params),
         x: pub_x,
         y: pub_y,
     };
 
-    tink::proto::EcdsaPrivateKey {
+    tink_proto::EcdsaPrivateKey {
         version: ECDSA_SIGNER_KEY_VERSION,
         public_key: Some(pub_key),
         key_value: secret_key_data,
     }
 }
 
-/// Create a [`KeyData`] containing an [`EcdsaPrivateKey`](tink::proto::EcdsaPrivateKey) with
+/// Create a [`KeyData`] containing an [`EcdsaPrivateKey`](tink_proto::EcdsaPrivateKey) with
 /// randomly generated key material.
 pub fn new_random_ecdsa_private_key_data(hash_type: HashType, curve: EllipticCurveType) -> KeyData {
     let key = new_random_ecdsa_private_key(hash_type, curve);
@@ -303,24 +296,24 @@ pub fn new_random_ecdsa_private_key_data(hash_type: HashType, curve: EllipticCur
     KeyData {
         type_url: ECDSA_SIGNER_TYPE_URL.to_string(),
         value: serialized_key,
-        key_material_type: tink::proto::key_data::KeyMaterialType::AsymmetricPrivate as i32,
+        key_material_type: tink_proto::key_data::KeyMaterialType::AsymmetricPrivate as i32,
     }
 }
 
-/// Create an [`EcdsaPublicKey`](tink::proto::EcdsaPublicKey) with randomly generated key material.
+/// Create an [`EcdsaPublicKey`](tink_proto::EcdsaPublicKey) with randomly generated key material.
 pub fn new_random_ecdsa_public_key(
     hash_type: HashType,
     curve: EllipticCurveType,
-) -> tink::proto::EcdsaPublicKey {
+) -> tink_proto::EcdsaPublicKey {
     new_random_ecdsa_private_key(hash_type, curve)
         .public_key
         .unwrap()
 }
 
 /// Return the enum representations of each parameter in the given
-/// [`EcdsaParams`](tink::proto::EcdsaParams).
+/// [`EcdsaParams`](tink_proto::EcdsaParams).
 pub fn get_ecdsa_params(
-    params: &tink::proto::EcdsaParams,
+    params: &tink_proto::EcdsaParams,
 ) -> (HashType, EllipticCurveType, EcdsaSignatureEncoding) {
     (
         HashType::from_i32(params.hash_type).unwrap(),
@@ -329,24 +322,24 @@ pub fn get_ecdsa_params(
     )
 }
 
-/// Create an [`Ed25519PrivateKey`](tink::proto::Ed25519PrivateKey) with randomly generated key
+/// Create an [`Ed25519PrivateKey`](tink_proto::Ed25519PrivateKey) with randomly generated key
 /// material.
-pub fn new_ed25519_private_key() -> tink::proto::Ed25519PrivateKey {
+pub fn new_ed25519_private_key() -> tink_proto::Ed25519PrivateKey {
     let mut csprng = rand::thread_rng();
     let keypair = ed25519_dalek::Keypair::generate(&mut csprng);
 
-    let public_proto = tink::proto::Ed25519PublicKey {
+    let public_proto = tink_proto::Ed25519PublicKey {
         version: ED25519_SIGNER_KEY_VERSION,
         key_value: keypair.public.as_bytes().to_vec(),
     };
-    tink::proto::Ed25519PrivateKey {
+    tink_proto::Ed25519PrivateKey {
         version: ED25519_SIGNER_KEY_VERSION,
         public_key: Some(public_proto),
         key_value: keypair.secret.as_bytes().to_vec(),
     }
 }
 
-/// Create a [`KeyData`] containing an [`Ed25519PrivateKey`](tink::proto::Ed25519PrivateKey) with
+/// Create a [`KeyData`] containing an [`Ed25519PrivateKey`](tink_proto::Ed25519PrivateKey) with
 /// randomly generated key material.
 pub fn new_ed25519_private_key_data() -> KeyData {
     let key = new_ed25519_private_key();
@@ -354,20 +347,20 @@ pub fn new_ed25519_private_key_data() -> KeyData {
     KeyData {
         type_url: ED25519_SIGNER_TYPE_URL.to_string(),
         value: serialized_key,
-        key_material_type: tink::proto::key_data::KeyMaterialType::AsymmetricPrivate as i32,
+        key_material_type: tink_proto::key_data::KeyMaterialType::AsymmetricPrivate as i32,
     }
 }
 
-/// Create an [`Ed25519PublicKey`](tink::proto::Ed25519PublicKey) with randomly generated key
+/// Create an [`Ed25519PublicKey`](tink_proto::Ed25519PublicKey) with randomly generated key
 /// material.
-pub fn new_ed25519_public_key() -> tink::proto::Ed25519PublicKey {
+pub fn new_ed25519_public_key() -> tink_proto::Ed25519PublicKey {
     new_ed25519_private_key().public_key.unwrap()
 }
 
-/// Create a [`KeyData`] containing a randomly generated [`AesSivKey`](tink::proto::AesSivKey).
-fn new_aes_siv_key_data() -> tink::proto::KeyData {
+/// Create a [`KeyData`] containing a randomly generated [`AesSivKey`](tink_proto::AesSivKey).
+fn new_aes_siv_key_data() -> tink_proto::KeyData {
     let key_value = get_random_bytes(tink_daead::subtle::AES_SIV_KEY_SIZE);
-    let key = &tink::proto::AesSivKey {
+    let key = &tink_proto::AesSivKey {
         version: AES_SIV_KEY_VERSION,
         key_value,
     };
@@ -375,92 +368,92 @@ fn new_aes_siv_key_data() -> tink::proto::KeyData {
     new_key_data(
         AES_SIV_TYPE_URL,
         &serialized_key,
-        tink::proto::key_data::KeyMaterialType::Symmetric,
+        tink_proto::key_data::KeyMaterialType::Symmetric,
     )
 }
 
-/// Create a randomly generated [`AesGcmKey`](tink::proto::AesGcmKey).
-pub fn new_aes_gcm_key(key_version: u32, key_size: u32) -> tink::proto::AesGcmKey {
+/// Create a randomly generated [`AesGcmKey`](tink_proto::AesGcmKey).
+pub fn new_aes_gcm_key(key_version: u32, key_size: u32) -> tink_proto::AesGcmKey {
     let key_value = get_random_bytes(key_size.try_into().unwrap());
-    tink::proto::AesGcmKey {
+    tink_proto::AesGcmKey {
         version: key_version,
         key_value,
     }
 }
 
-/// Create a [`KeyData`] containing a randomly generated [`AesGcmKey`](tink::proto::AesGcmKey).
+/// Create a [`KeyData`] containing a randomly generated [`AesGcmKey`](tink_proto::AesGcmKey).
 pub fn new_aes_gcm_key_data(key_size: u32) -> KeyData {
     let key = new_aes_gcm_key(AES_GCM_KEY_VERSION, key_size);
     let serialized_key = proto_encode(&key);
     new_key_data(
         AES_GCM_TYPE_URL,
         &serialized_key,
-        tink::proto::key_data::KeyMaterialType::Symmetric,
+        tink_proto::key_data::KeyMaterialType::Symmetric,
     )
 }
 
-/// Create an [`AesGcmKey`](tink::proto::AesGcmKey) with randomly generated key material.
+/// Create an [`AesGcmKey`](tink_proto::AesGcmKey) with randomly generated key material.
 pub fn new_serialized_aes_gcm_key(key_size: u32) -> Vec<u8> {
     let key = new_aes_gcm_key(AES_GCM_KEY_VERSION, key_size);
     proto_encode(&key)
 }
 
-/// Return a new [`AesGcmKeyFormat`](tink::proto::AesGcmKeyFormat).
-pub fn new_aes_gcm_key_format(key_size: u32) -> tink::proto::AesGcmKeyFormat {
-    tink::proto::AesGcmKeyFormat {
+/// Return a new [`AesGcmKeyFormat`](tink_proto::AesGcmKeyFormat).
+pub fn new_aes_gcm_key_format(key_size: u32) -> tink_proto::AesGcmKeyFormat {
+    tink_proto::AesGcmKeyFormat {
         key_size,
         version: AES_GCM_KEY_VERSION,
     }
 }
 
-/// Create a randomly generated [`AesGcmSivKey`](tink::proto::AesGcmSivKey).
-pub fn new_aes_gcm_siv_key(key_version: u32, key_size: u32) -> tink::proto::AesGcmSivKey {
+/// Create a randomly generated [`AesGcmSivKey`](tink_proto::AesGcmSivKey).
+pub fn new_aes_gcm_siv_key(key_version: u32, key_size: u32) -> tink_proto::AesGcmSivKey {
     let key_value = get_random_bytes(key_size.try_into().unwrap());
-    tink::proto::AesGcmSivKey {
+    tink_proto::AesGcmSivKey {
         version: key_version,
         key_value,
     }
 }
 
 /// Create a [`KeyData`] containing a randomly generated
-/// [`AesGcmSivKey`](tink::proto::AesGcmSivKey).
+/// [`AesGcmSivKey`](tink_proto::AesGcmSivKey).
 pub fn new_aes_gcm_siv_key_data(key_size: u32) -> KeyData {
     let key = new_aes_gcm_siv_key(AES_GCM_SIV_KEY_VERSION, key_size);
     let serialized_key = proto_encode(&key);
     new_key_data(
         AES_GCM_SIV_TYPE_URL,
         &serialized_key,
-        tink::proto::key_data::KeyMaterialType::Symmetric,
+        tink_proto::key_data::KeyMaterialType::Symmetric,
     )
 }
 
-/// Create an [`AesGcmSivKey`](tink::proto::AesGcmSivKey) with randomly generated key material.
+/// Create an [`AesGcmSivKey`](tink_proto::AesGcmSivKey) with randomly generated key material.
 pub fn new_serialized_aes_gcm_siv_key(key_size: u32) -> Vec<u8> {
     let key = new_aes_gcm_siv_key(AES_GCM_SIV_KEY_VERSION, key_size);
     proto_encode(&key)
 }
 
-/// Return a new [`AesGcmSivKeyFormat`](tink::proto::AesGcmSivKeyFormat).
-pub fn new_aes_gcm_siv_key_format(key_size: u32) -> tink::proto::AesGcmSivKeyFormat {
-    tink::proto::AesGcmSivKeyFormat {
+/// Return a new [`AesGcmSivKeyFormat`](tink_proto::AesGcmSivKeyFormat).
+pub fn new_aes_gcm_siv_key_format(key_size: u32) -> tink_proto::AesGcmSivKeyFormat {
+    tink_proto::AesGcmSivKeyFormat {
         key_size,
         version: AES_GCM_SIV_KEY_VERSION,
     }
 }
 
-/// Create a randomly generated [`AesGcmHkdfStreamingKey`](tink::proto::AesGcmHkdfStreamingKey).
+/// Create a randomly generated [`AesGcmHkdfStreamingKey`](tink_proto::AesGcmHkdfStreamingKey).
 pub fn new_aes_gcm_hkdf_key(
     key_version: u32,
     key_size: u32,
     derived_key_size: u32,
     hkdf_hash_type: i32,
     ciphertext_segment_size: u32,
-) -> tink::proto::AesGcmHkdfStreamingKey {
+) -> tink_proto::AesGcmHkdfStreamingKey {
     let key_value = get_random_bytes(key_size.try_into().unwrap());
-    tink::proto::AesGcmHkdfStreamingKey {
+    tink_proto::AesGcmHkdfStreamingKey {
         version: key_version,
         key_value,
-        params: Some(tink::proto::AesGcmHkdfStreamingParams {
+        params: Some(tink_proto::AesGcmHkdfStreamingParams {
             ciphertext_segment_size,
             derived_key_size,
             hkdf_hash_type,
@@ -469,7 +462,7 @@ pub fn new_aes_gcm_hkdf_key(
 }
 
 /// Create a [`KeyData`] containing a randomly generated
-/// [`AesGcmHkdfStreamingKey`](tink::proto::AesGcmHkdfStreamingKey).
+/// [`AesGcmHkdfStreamingKey`](tink_proto::AesGcmHkdfStreamingKey).
 pub fn new_aes_gcm_hkdf_key_data(
     key_size: u32,
     derived_key_size: u32,
@@ -487,21 +480,21 @@ pub fn new_aes_gcm_hkdf_key_data(
     new_key_data(
         AES_GCM_HKDF_TYPE_URL,
         &serialized_key,
-        tink::proto::key_data::KeyMaterialType::Symmetric,
+        tink_proto::key_data::KeyMaterialType::Symmetric,
     )
 }
 
-/// Return a new [`AesGcmHkdfStreamingKeyFormat`](tink::proto::AesGcmHkdfStreamingKeyFormat).
+/// Return a new [`AesGcmHkdfStreamingKeyFormat`](tink_proto::AesGcmHkdfStreamingKeyFormat).
 pub fn new_aes_gcm_hkdf_key_format(
     key_size: u32,
     derived_key_size: u32,
     hkdf_hash_type: i32,
     ciphertext_segment_size: u32,
-) -> tink::proto::AesGcmHkdfStreamingKeyFormat {
-    tink::proto::AesGcmHkdfStreamingKeyFormat {
+) -> tink_proto::AesGcmHkdfStreamingKeyFormat {
+    tink_proto::AesGcmHkdfStreamingKeyFormat {
         version: AES_GCM_HKDF_KEY_VERSION,
         key_size,
-        params: Some(tink::proto::AesGcmHkdfStreamingParams {
+        params: Some(tink_proto::AesGcmHkdfStreamingParams {
             ciphertext_segment_size,
             derived_key_size,
             hkdf_hash_type,
@@ -509,7 +502,7 @@ pub fn new_aes_gcm_hkdf_key_format(
     }
 }
 
-/// Create a randomly generated [`AesCtrHmacStreamingKey`](tink::proto::AesCtrHmacStreamingKey).
+/// Create a randomly generated [`AesCtrHmacStreamingKey`](tink_proto::AesCtrHmacStreamingKey).
 pub fn new_aes_ctr_hmac_key(
     key_version: u32,
     key_size: u32,
@@ -518,16 +511,16 @@ pub fn new_aes_ctr_hmac_key(
     hash_type: HashType,
     tag_size: u32,
     ciphertext_segment_size: u32,
-) -> tink::proto::AesCtrHmacStreamingKey {
+) -> tink_proto::AesCtrHmacStreamingKey {
     let key_value = get_random_bytes(key_size.try_into().unwrap());
-    tink::proto::AesCtrHmacStreamingKey {
+    tink_proto::AesCtrHmacStreamingKey {
         version: key_version,
         key_value,
-        params: Some(tink::proto::AesCtrHmacStreamingParams {
+        params: Some(tink_proto::AesCtrHmacStreamingParams {
             ciphertext_segment_size,
             derived_key_size,
             hkdf_hash_type: hkdf_hash_type as i32,
-            hmac_params: Some(tink::proto::HmacParams {
+            hmac_params: Some(tink_proto::HmacParams {
                 hash: hash_type as i32,
                 tag_size,
             }),
@@ -536,7 +529,7 @@ pub fn new_aes_ctr_hmac_key(
 }
 
 /// Create a [`KeyData`] containing a randomly generated
-/// [`AesCtrHmacStreamingKey`](tink::proto::AesCtrHmacStreamingKey).
+/// [`AesCtrHmacStreamingKey`](tink_proto::AesCtrHmacStreamingKey).
 pub fn new_aes_ctr_hmac_key_data(
     key_size: u32,
     hkdf_hash_type: HashType,
@@ -558,11 +551,11 @@ pub fn new_aes_ctr_hmac_key_data(
     new_key_data(
         AES_CTR_HMAC_TYPE_URL,
         &serialized_key,
-        tink::proto::key_data::KeyMaterialType::Symmetric,
+        tink_proto::key_data::KeyMaterialType::Symmetric,
     )
 }
 
-/// Return a new [`AesCtrHmacStreamingKeyFormat`](tink::proto::AesCtrHmacStreamingKeyFormat).
+/// Return a new [`AesCtrHmacStreamingKeyFormat`](tink_proto::AesCtrHmacStreamingKeyFormat).
 pub fn new_aes_ctr_hmac_key_format(
     key_size: u32,
     hkdf_hash_type: HashType,
@@ -570,15 +563,15 @@ pub fn new_aes_ctr_hmac_key_format(
     hash_type: HashType,
     tag_size: u32,
     ciphertext_segment_size: u32,
-) -> tink::proto::AesCtrHmacStreamingKeyFormat {
-    tink::proto::AesCtrHmacStreamingKeyFormat {
+) -> tink_proto::AesCtrHmacStreamingKeyFormat {
+    tink_proto::AesCtrHmacStreamingKeyFormat {
         version: AES_CTR_HMAC_AEAD_KEY_VERSION,
         key_size,
-        params: Some(tink::proto::AesCtrHmacStreamingParams {
+        params: Some(tink_proto::AesCtrHmacStreamingParams {
             ciphertext_segment_size,
             derived_key_size,
             hkdf_hash_type: hkdf_hash_type as i32,
-            hmac_params: Some(tink::proto::HmacParams {
+            hmac_params: Some(tink_proto::HmacParams {
                 hash: hash_type as i32,
                 tag_size,
             }),
@@ -586,63 +579,63 @@ pub fn new_aes_ctr_hmac_key_format(
     }
 }
 
-/// Return a new [`HmacParams`](tink::proto::HmacParams).
-pub fn new_hmac_params(hash_type: HashType, tag_size: u32) -> tink::proto::HmacParams {
-    tink::proto::HmacParams {
+/// Return a new [`HmacParams`](tink_proto::HmacParams).
+pub fn new_hmac_params(hash_type: HashType, tag_size: u32) -> tink_proto::HmacParams {
+    tink_proto::HmacParams {
         hash: hash_type as i32,
         tag_size,
     }
 }
 
-/// Create a new [`HmacKey`](tink::proto::HmacKey) with the specified parameters.
-pub fn new_hmac_key(hash_type: HashType, tag_size: u32) -> tink::proto::HmacKey {
+/// Create a new [`HmacKey`](tink_proto::HmacKey) with the specified parameters.
+pub fn new_hmac_key(hash_type: HashType, tag_size: u32) -> tink_proto::HmacKey {
     let params = new_hmac_params(hash_type, tag_size);
     let key_value = get_random_bytes(20);
-    tink::proto::HmacKey {
+    tink_proto::HmacKey {
         version: HMAC_KEY_VERSION,
         params: Some(params),
         key_value,
     }
 }
 
-/// Create a new [`HmacKeyFormat`](tink::proto::HmacKeyFormat) with the specified parameters.
-pub fn new_hmac_key_format(hash_type: HashType, tag_size: u32) -> tink::proto::HmacKeyFormat {
+/// Create a new [`HmacKeyFormat`](tink_proto::HmacKeyFormat) with the specified parameters.
+pub fn new_hmac_key_format(hash_type: HashType, tag_size: u32) -> tink_proto::HmacKeyFormat {
     let params = new_hmac_params(hash_type, tag_size);
     let key_size = 20u32;
-    tink::proto::HmacKeyFormat {
+    tink_proto::HmacKeyFormat {
         params: Some(params),
         key_size,
         version: HMAC_KEY_VERSION,
     }
 }
 
-/// Return a new [`AesCmacParams`](tink::proto::AesCmacParams).
-pub fn new_aes_cmac_params(tag_size: u32) -> tink::proto::AesCmacParams {
-    tink::proto::AesCmacParams { tag_size }
+/// Return a new [`AesCmacParams`](tink_proto::AesCmacParams).
+pub fn new_aes_cmac_params(tag_size: u32) -> tink_proto::AesCmacParams {
+    tink_proto::AesCmacParams { tag_size }
 }
 
-/// Create a new [`AesCmacKey`](tink::proto::AesCmacKey) with the specified parameters.
-pub fn new_aes_cmac_key(tag_size: u32) -> tink::proto::AesCmacKey {
+/// Create a new [`AesCmacKey`](tink_proto::AesCmacKey) with the specified parameters.
+pub fn new_aes_cmac_key(tag_size: u32) -> tink_proto::AesCmacKey {
     let params = new_aes_cmac_params(tag_size);
     let key_value = get_random_bytes(32);
-    tink::proto::AesCmacKey {
+    tink_proto::AesCmacKey {
         version: AES_CMAC_KEY_VERSION,
         params: Some(params),
         key_value,
     }
 }
 
-/// Create a new [`AesCmacKeyFormat`](tink::proto::AesCmacKeyFormat) with the specified parameters.
-pub fn new_aes_cmac_key_format(tag_size: u32) -> tink::proto::AesCmacKeyFormat {
+/// Create a new [`AesCmacKeyFormat`](tink_proto::AesCmacKeyFormat) with the specified parameters.
+pub fn new_aes_cmac_key_format(tag_size: u32) -> tink_proto::AesCmacKeyFormat {
     let params = new_aes_cmac_params(tag_size);
     let key_size = 32u32;
-    tink::proto::AesCmacKeyFormat {
+    tink_proto::AesCmacKeyFormat {
         params: Some(params),
         key_size,
     }
 }
 
-/// Return a new [`tink::keyset::Manager`] that contains a [`HmacKey`](tink::proto::HmacKey).
+/// Return a new [`tink::keyset::Manager`] that contains a [`HmacKey`](tink_proto::HmacKey).
 pub fn new_hmac_keyset_manager() -> tink::keyset::Manager {
     let mut ksm = tink::keyset::Manager::new();
     let kt = tink_mac::hmac_sha256_tag128_key_template();
@@ -650,90 +643,90 @@ pub fn new_hmac_keyset_manager() -> tink::keyset::Manager {
     ksm
 }
 
-/// Return a new [`KeyData`] that contains a [`HmacKey`](tink::proto::HmacKey).
+/// Return a new [`KeyData`] that contains a [`HmacKey`](tink_proto::HmacKey).
 pub fn new_hmac_key_data(hash_type: HashType, tag_size: u32) -> KeyData {
     let key = new_hmac_key(hash_type, tag_size);
     let serialized_key = proto_encode(&key);
     KeyData {
         type_url: HMAC_TYPE_URL.to_string(),
         value: serialized_key,
-        key_material_type: tink::proto::key_data::KeyMaterialType::Symmetric as i32,
+        key_material_type: tink_proto::key_data::KeyMaterialType::Symmetric as i32,
     }
 }
 
-/// Return a new [`HmacPrfParams`](tink::proto::HmacPrfParams).
-pub fn new_hmac_prf_params(hash_type: HashType) -> tink::proto::HmacPrfParams {
-    tink::proto::HmacPrfParams {
+/// Return a new [`HmacPrfParams`](tink_proto::HmacPrfParams).
+pub fn new_hmac_prf_params(hash_type: HashType) -> tink_proto::HmacPrfParams {
+    tink_proto::HmacPrfParams {
         hash: hash_type as i32,
     }
 }
 
-/// Create a new [`HmacPrfKey`](tink::proto::HmacPrfKey) with the specified parameters.
-pub fn new_hmac_prf_key(hash_type: HashType) -> tink::proto::HmacPrfKey {
+/// Create a new [`HmacPrfKey`](tink_proto::HmacPrfKey) with the specified parameters.
+pub fn new_hmac_prf_key(hash_type: HashType) -> tink_proto::HmacPrfKey {
     let params = new_hmac_prf_params(hash_type);
     let key_value = get_random_bytes(32);
-    tink::proto::HmacPrfKey {
+    tink_proto::HmacPrfKey {
         version: HMAC_PRF_KEY_VERSION,
         params: Some(params),
         key_value,
     }
 }
 
-/// Create a new [`HmacPrfKeyFormat`](tink::proto::HmacPrfKeyFormat) with the specified parameters.
-pub fn new_hmac_prf_key_format(hash_type: HashType) -> tink::proto::HmacPrfKeyFormat {
+/// Create a new [`HmacPrfKeyFormat`](tink_proto::HmacPrfKeyFormat) with the specified parameters.
+pub fn new_hmac_prf_key_format(hash_type: HashType) -> tink_proto::HmacPrfKeyFormat {
     let params = new_hmac_prf_params(hash_type);
     let key_size = 32u32;
-    tink::proto::HmacPrfKeyFormat {
+    tink_proto::HmacPrfKeyFormat {
         params: Some(params),
         key_size,
         version: HMAC_PRF_KEY_VERSION,
     }
 }
 
-/// Return a new [`HkdfPrfParams`](tink::proto::HkdfPrfParams).
-pub fn new_hkdf_prf_params(hash_type: HashType, salt: &[u8]) -> tink::proto::HkdfPrfParams {
-    tink::proto::HkdfPrfParams {
+/// Return a new [`HkdfPrfParams`](tink_proto::HkdfPrfParams).
+pub fn new_hkdf_prf_params(hash_type: HashType, salt: &[u8]) -> tink_proto::HkdfPrfParams {
+    tink_proto::HkdfPrfParams {
         hash: hash_type as i32,
         salt: salt.to_vec(),
     }
 }
 
-/// Create a new [`HkdfPrfKey`](tink::proto::HkdfPrfKey) with the specified parameters.
-pub fn new_hkdf_prf_key(hash_type: HashType, salt: &[u8]) -> tink::proto::HkdfPrfKey {
+/// Create a new [`HkdfPrfKey`](tink_proto::HkdfPrfKey) with the specified parameters.
+pub fn new_hkdf_prf_key(hash_type: HashType, salt: &[u8]) -> tink_proto::HkdfPrfKey {
     let params = new_hkdf_prf_params(hash_type, salt);
     let key_value = get_random_bytes(32);
-    tink::proto::HkdfPrfKey {
+    tink_proto::HkdfPrfKey {
         version: HKDF_PRF_KEY_VERSION,
         params: Some(params),
         key_value,
     }
 }
 
-/// Create a new [`HkdfPrfKeyFormat`](tink::proto::HkdfPrfKeyFormat) with the specified parameters.
-pub fn new_hkdf_prf_key_format(hash_type: HashType, salt: &[u8]) -> tink::proto::HkdfPrfKeyFormat {
+/// Create a new [`HkdfPrfKeyFormat`](tink_proto::HkdfPrfKeyFormat) with the specified parameters.
+pub fn new_hkdf_prf_key_format(hash_type: HashType, salt: &[u8]) -> tink_proto::HkdfPrfKeyFormat {
     let params = new_hkdf_prf_params(hash_type, salt);
     let key_size = 32u32;
-    tink::proto::HkdfPrfKeyFormat {
+    tink_proto::HkdfPrfKeyFormat {
         params: Some(params),
         key_size,
         version: HKDF_PRF_KEY_VERSION,
     }
 }
 
-/// Create a new [`AesCmacPrfKey`](tink::proto::AesCmacPrfKey) with the specified parameters.
-pub fn new_aes_cmac_prf_key() -> tink::proto::AesCmacPrfKey {
+/// Create a new [`AesCmacPrfKey`](tink_proto::AesCmacPrfKey) with the specified parameters.
+pub fn new_aes_cmac_prf_key() -> tink_proto::AesCmacPrfKey {
     let key_value = get_random_bytes(32);
-    tink::proto::AesCmacPrfKey {
+    tink_proto::AesCmacPrfKey {
         version: AES_CMAC_PRF_KEY_VERSION,
         key_value,
     }
 }
 
-/// Create a new [`AesCmacPrfKeyFormat`](tink::proto::AesCmacPrfKeyFormat) with the specified
+/// Create a new [`AesCmacPrfKeyFormat`](tink_proto::AesCmacPrfKeyFormat) with the specified
 /// parameters.
-pub fn new_aes_cmac_prf_key_format() -> tink::proto::AesCmacPrfKeyFormat {
+pub fn new_aes_cmac_prf_key_format() -> tink_proto::AesCmacPrfKeyFormat {
     let key_size = 32u32;
-    tink::proto::AesCmacPrfKeyFormat {
+    tink_proto::AesCmacPrfKeyFormat {
         version: AES_CMAC_PRF_KEY_VERSION,
         key_size,
     }
@@ -743,7 +736,7 @@ pub fn new_aes_cmac_prf_key_format() -> tink::proto::AesCmacPrfKeyFormat {
 pub fn new_key_data(
     type_url: &str,
     value: &[u8],
-    material_type: tink::proto::key_data::KeyMaterialType,
+    material_type: tink_proto::key_data::KeyMaterialType,
 ) -> KeyData {
     KeyData {
         type_url: type_url.to_string(),
@@ -752,14 +745,14 @@ pub fn new_key_data(
     }
 }
 
-/// Create a new [`Key`](tink::proto::keyset::Key) with the specified parameters.
+/// Create a new [`Key`](tink_proto::keyset::Key) with the specified parameters.
 pub fn new_key(
     key_data: &KeyData,
-    status: tink::proto::KeyStatusType,
+    status: tink_proto::KeyStatusType,
     key_id: tink::KeyId,
-    prefix_type: tink::proto::OutputPrefixType,
-) -> tink::proto::keyset::Key {
-    tink::proto::keyset::Key {
+    prefix_type: tink_proto::OutputPrefixType,
+) -> tink_proto::keyset::Key {
+    tink_proto::keyset::Key {
         key_data: Some(key_data.clone()),
         status: status as i32,
         key_id,
@@ -768,19 +761,19 @@ pub fn new_key(
 }
 
 /// Create a new [`Keyset`] with the specified parameters.
-pub fn new_keyset(primary_key_id: tink::KeyId, keys: Vec<tink::proto::keyset::Key>) -> Keyset {
+pub fn new_keyset(primary_key_id: tink::KeyId, keys: Vec<tink_proto::keyset::Key>) -> Keyset {
     Keyset {
         primary_key_id,
         key: keys,
     }
 }
 
-/// Create a new [`EncryptedKeyset`](tink::proto::EncryptedKeyset) with a specified parameters.
+/// Create a new [`EncryptedKeyset`](tink_proto::EncryptedKeyset) with a specified parameters.
 pub fn new_encrypted_keyset(
     encrypted_keyset: &[u8],
-    info: tink::proto::KeysetInfo,
-) -> tink::proto::EncryptedKeyset {
-    tink::proto::EncryptedKeyset {
+    info: tink_proto::KeysetInfo,
+) -> tink_proto::EncryptedKeyset {
+    tink_proto::EncryptedKeyset {
         encrypted_keyset: encrypted_keyset.to_vec(),
         keyset_info: Some(info),
     }
@@ -909,26 +902,26 @@ pub fn z_test_autocorrelation_uniform_string(bytes: &[u8]) -> Result<(), TinkErr
     }
 }
 
-/// Return a [`EciesAeadHkdfPublicKey`](tink::proto::EciesAeadHkdfPublicKey) with specified
+/// Return a [`EciesAeadHkdfPublicKey`](tink_proto::EciesAeadHkdfPublicKey) with specified
 /// parameters.
 pub fn ecies_aead_hkdf_public_key(
     c: EllipticCurveType,
     ht: HashType,
-    ptfmt: tink::proto::EcPointFormat,
-    dek_t: tink::proto::KeyTemplate,
+    ptfmt: tink_proto::EcPointFormat,
+    dek_t: tink_proto::KeyTemplate,
     x: &[u8],
     y: &[u8],
     salt: &[u8],
-) -> tink::proto::EciesAeadHkdfPublicKey {
-    tink::proto::EciesAeadHkdfPublicKey {
+) -> tink_proto::EciesAeadHkdfPublicKey {
+    tink_proto::EciesAeadHkdfPublicKey {
         version: 0,
-        params: Some(tink::proto::EciesAeadHkdfParams {
-            kem_params: Some(tink::proto::EciesHkdfKemParams {
+        params: Some(tink_proto::EciesAeadHkdfParams {
+            kem_params: Some(tink_proto::EciesHkdfKemParams {
                 curve_type: c as i32,
                 hkdf_hash_type: ht as i32,
                 hkdf_salt: salt.to_vec(),
             }),
-            dem_params: Some(tink::proto::EciesAeadDemParams {
+            dem_params: Some(tink_proto::EciesAeadDemParams {
                 aead_dem: Some(dek_t),
             }),
             ec_point_format: ptfmt as i32,
@@ -938,13 +931,13 @@ pub fn ecies_aead_hkdf_public_key(
     }
 }
 
-/// Return an [`EciesAeadHkdfPrivateKey`](tink::proto::EciesAeadHkdfPrivateKey) with specified
+/// Return an [`EciesAeadHkdfPrivateKey`](tink_proto::EciesAeadHkdfPrivateKey) with specified
 /// parameters
 pub fn ecies_aead_hkdf_private_key(
-    p: tink::proto::EciesAeadHkdfPublicKey,
+    p: tink_proto::EciesAeadHkdfPublicKey,
     d: &[u8],
-) -> tink::proto::EciesAeadHkdfPrivateKey {
-    tink::proto::EciesAeadHkdfPrivateKey {
+) -> tink_proto::EciesAeadHkdfPrivateKey {
+    tink_proto::EciesAeadHkdfPrivateKey {
         version: 0,
         public_key: Some(p),
         key_value: d.to_vec(),
@@ -955,10 +948,10 @@ pub fn ecies_aead_hkdf_private_key(
 pub fn generate_ecies_aead_hkdf_private_key(
     c: EllipticCurveType,
     ht: HashType,
-    ptfmt: tink::proto::EcPointFormat,
-    dek_t: tink::proto::KeyTemplate,
+    ptfmt: tink_proto::EcPointFormat,
+    dek_t: tink_proto::KeyTemplate,
     salt: &[u8],
-) -> Result<tink::proto::EciesAeadHkdfPrivateKey, TinkError> {
+) -> Result<tink_proto::EciesAeadHkdfPrivateKey, TinkError> {
     // TODO(#17): implementation via ECC library
     /*
     let curve = subtlehybrid.get_curve(format!("{:?}", c))?;

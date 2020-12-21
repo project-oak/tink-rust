@@ -21,11 +21,8 @@ use p256::{
     elliptic_curve::sec1::EncodedPoint,
 };
 use signature::Signature as _;
-use tink::{
-    proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType},
-    utils::wrap_err,
-    TinkError,
-};
+use tink::{utils::wrap_err, TinkError};
+use tink_proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType};
 
 /// An ECDSA public key.
 #[derive(Clone)]

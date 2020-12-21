@@ -16,7 +16,8 @@
 
 //! HKDF functions.
 
-use crate::{proto::HashType, utils::wrap_err, TinkError};
+use crate::{utils::wrap_err, TinkError};
+use tink_proto::HashType;
 
 /// Minimum tag size in bytes. This provides minimum 80-bit security strength.
 const MIN_TAG_SIZE_IN_BYTES: usize = 10;

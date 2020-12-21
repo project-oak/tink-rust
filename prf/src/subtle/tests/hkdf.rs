@@ -17,7 +17,8 @@
 use crate::subtle::{validate_hkdf_prf_params, HkdfPrf};
 use maplit::hashmap;
 use serde::Deserialize;
-use tink::{proto::HashType, Prf};
+use tink::Prf;
+use tink_proto::HashType;
 
 struct Rfc5869Test {
     hash: HashType,

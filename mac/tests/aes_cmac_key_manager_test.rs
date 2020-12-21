@@ -82,7 +82,7 @@ fn test_new_key_cmac_basic() {
         let serialized_key = km
             .new_key(&serialized_format)
             .unwrap_or_else(|e| panic!("unexpected error in test case {}: {:?}", i, e));
-        let key = tink::proto::AesCmacKey::decode(serialized_key.as_ref()).unwrap();
+        let key = tink_proto::AesCmacKey::decode(serialized_key.as_ref()).unwrap();
         assert!(validate_cmac_key(test_format, &key).is_ok());
     }
 }
@@ -127,12 +127,12 @@ fn test_new_key_data_cmac_basic() {
         );
         assert_eq!(
             key_data.key_material_type,
-            tink::proto::key_data::KeyMaterialType::Symmetric as i32,
+            tink_proto::key_data::KeyMaterialType::Symmetric as i32,
             "incorrect key material type in test case {}",
             i
         );
         let key =
-            tink::proto::AesCmacKey::decode(key_data.value.as_ref()).expect("invalid key value");
+            tink_proto::AesCmacKey::decode(key_data.value.as_ref()).expect("invalid key value");
         validate_cmac_key(test_format, &key).expect("invalid key");
     }
 }
@@ -188,7 +188,7 @@ fn test_cmac_type_url() {
     );
     assert_eq!(
         km.key_material_type(),
-        tink::proto::key_data::KeyMaterialType::Symmetric
+        tink_proto::key_data::KeyMaterialType::Symmetric
     );
     assert!(!km.supports_private_keys());
 }
@@ -225,14 +225,14 @@ fn gen_invalid_cmac_key_formats() -> Vec<Vec<u8>> {
     ]
 }
 
-fn gen_valid_cmac_key_formats() -> Vec<tink::proto::AesCmacKeyFormat> {
+fn gen_valid_cmac_key_formats() -> Vec<tink_proto::AesCmacKeyFormat> {
     vec![
         tink_testutil::new_aes_cmac_key_format(10),
         tink_testutil::new_aes_cmac_key_format(16),
     ]
 }
 
-fn gen_valid_cmac_keys() -> Vec<tink::proto::AesCmacKey> {
+fn gen_valid_cmac_keys() -> Vec<tink_proto::AesCmacKey> {
     vec![
         tink_testutil::new_aes_cmac_key(10),
         tink_testutil::new_aes_cmac_key(16),
@@ -241,8 +241,8 @@ fn gen_valid_cmac_keys() -> Vec<tink::proto::AesCmacKey> {
 
 /// Check whether the given `AesCmacKey` matches the given key `AesCmacKeyFormat`
 fn validate_cmac_key(
-    format: &tink::proto::AesCmacKeyFormat,
-    key: &tink::proto::AesCmacKey,
+    format: &tink_proto::AesCmacKeyFormat,
+    key: &tink_proto::AesCmacKey,
 ) -> Result<(), TinkError> {
     if format.key_size as usize != key.key_value.len()
         || key.params.as_ref().unwrap().tag_size != format.params.as_ref().unwrap().tag_size
@@ -260,7 +260,7 @@ fn validate_cmac_key(
 /// Check whether the given primitive matches the given `AesCmacKey`.
 fn validate_cmac_primitive(
     p: tink::Primitive,
-    key: &tink::proto::AesCmacKey,
+    key: &tink_proto::AesCmacKey,
 ) -> Result<(), TinkError> {
     let cmac_primitive = match p {
         tink::Primitive::Mac(mac) => mac,

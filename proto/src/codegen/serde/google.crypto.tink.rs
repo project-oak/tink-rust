@@ -457,11 +457,11 @@ pub struct KeyData {
     ///
     /// contains specific serialized *Key proto
     #[prost(bytes, tag="2")]
-    #[serde(with = "crate::keyset::b64")]
+    #[serde(with = "crate::json::b64")]
     pub value: std::vec::Vec<u8>,
     /// Required.
     #[prost(enumeration="key_data::KeyMaterialType", tag="3")]
-    #[serde(with = "crate::keyset::key_material_type")]
+    #[serde(with = "crate::json::key_material_type")]
     pub key_material_type: i32,
 }
 pub mod key_data {
@@ -503,7 +503,7 @@ pub mod keyset {
         #[prost(message, optional, tag="1")]
         pub key_data: ::std::option::Option<super::KeyData>,
         #[prost(enumeration="super::KeyStatusType", tag="2")]
-        #[serde(with = "crate::keyset::key_status_type")]
+        #[serde(with = "crate::json::key_status_type")]
         pub status: i32,
         /// Identifies a key within a keyset, is a part of metadata
         /// of a ciphertext/signature.
@@ -512,7 +512,7 @@ pub mod keyset {
         /// Determines the prefix of the ciphertexts/signatures produced by this key.
         /// This value is copied verbatim from the key template.
         #[prost(enumeration="super::OutputPrefixType", tag="4")]
-        #[serde(with = "crate::keyset::output_prefix_type")]
+        #[serde(with = "crate::json::output_prefix_type")]
         pub output_prefix_type: i32,
     }
 }
@@ -542,14 +542,14 @@ pub mod keyset_info {
         pub type_url: std::string::String,
         /// See Keyset.Key.status.
         #[prost(enumeration="super::KeyStatusType", tag="2")]
-        #[serde(with = "crate::keyset::key_status_type")]
+        #[serde(with = "crate::json::key_status_type")]
         pub status: i32,
         /// See Keyset.Key.key_id.
         #[prost(uint32, tag="3")]
         pub key_id: u32,
         /// See Keyset.Key.output_prefix_type.
         #[prost(enumeration="super::OutputPrefixType", tag="4")]
-        #[serde(with = "crate::keyset::output_prefix_type")]
+        #[serde(with = "crate::json::output_prefix_type")]
         pub output_prefix_type: i32,
     }
 }
@@ -560,7 +560,7 @@ pub mod keyset_info {
 pub struct EncryptedKeyset {
     /// Required.
     #[prost(bytes, tag="2")]
-    #[serde(with = "crate::keyset::b64")]
+    #[serde(with = "crate::json::b64")]
     pub encrypted_keyset: std::vec::Vec<u8>,
     /// Optional.
     #[prost(message, optional, tag="3")]

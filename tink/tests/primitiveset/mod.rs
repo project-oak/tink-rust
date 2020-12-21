@@ -14,11 +14,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::{
-    primitiveset::Entry,
-    proto::{keyset::Key, KeyStatusType, OutputPrefixType},
-    Primitive,
-};
+use tink::{primitiveset::Entry, Primitive};
+use tink_proto::{keyset::Key, KeyStatusType, OutputPrefixType};
 use tink_testutil::{new_dummy_key, DummyMac};
 
 fn create_keyset() -> Vec<Key> {

@@ -30,8 +30,8 @@ pub struct Entry {
     pub key_id: crate::KeyId,
     pub primitive: crate::Primitive,
     pub prefix: Vec<u8>,
-    pub prefix_type: crate::proto::OutputPrefixType,
-    pub status: crate::proto::KeyStatusType,
+    pub prefix_type: tink_proto::OutputPrefixType,
+    pub status: tink_proto::KeyStatusType,
 }
 
 impl Entry {
@@ -39,8 +39,8 @@ impl Entry {
         key_id: crate::KeyId,
         p: crate::Primitive,
         prefix: &[u8],
-        prefix_type: crate::proto::OutputPrefixType,
-        status: crate::proto::KeyStatusType,
+        prefix_type: tink_proto::OutputPrefixType,
+        status: tink_proto::KeyStatusType,
     ) -> Self {
         Entry {
             key_id,
@@ -100,9 +100,9 @@ impl PrimitiveSet {
     pub fn add(
         &mut self,
         p: crate::Primitive,
-        key: &crate::proto::keyset::Key,
+        key: &tink_proto::keyset::Key,
     ) -> Result<Entry, TinkError> {
-        if key.status != crate::proto::KeyStatusType::Enabled as i32 {
+        if key.status != tink_proto::KeyStatusType::Enabled as i32 {
             return Err("The key must be ENABLED".into());
         }
         let prefix =
@@ -111,9 +111,9 @@ impl PrimitiveSet {
             key.key_id,
             p,
             &prefix,
-            crate::proto::OutputPrefixType::from_i32(key.output_prefix_type)
+            tink_proto::OutputPrefixType::from_i32(key.output_prefix_type)
                 .ok_or_else(|| TinkError::new("invalid key prefix type"))?,
-            crate::proto::KeyStatusType::from_i32(key.status)
+            tink_proto::KeyStatusType::from_i32(key.status)
                 .ok_or_else(|| TinkError::new("invalid key status"))?,
         );
         let retval = entry.clone();
@@ -133,8 +133,8 @@ pub struct TypedEntry<P: From<crate::Primitive>> {
     pub key_id: crate::KeyId,
     pub primitive: P,
     pub prefix: Vec<u8>,
-    pub prefix_type: crate::proto::OutputPrefixType,
-    pub status: crate::proto::KeyStatusType,
+    pub prefix_type: tink_proto::OutputPrefixType,
+    pub status: tink_proto::KeyStatusType,
 }
 
 impl<P: From<crate::Primitive>> From<Entry> for TypedEntry<P> {

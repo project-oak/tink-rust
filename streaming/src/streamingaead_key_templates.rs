@@ -18,7 +18,7 @@
 //! templates to generate new Keysets.
 
 use prost::Message;
-use tink::proto::{HashType, KeyTemplate, OutputPrefixType};
+use tink_proto::{HashType, KeyTemplate, OutputPrefixType};
 
 /// Return a [`KeyTemplate`] that generates an AES-GCM key with the following parameters:
 ///   - Main key size: 16 bytes
@@ -100,7 +100,7 @@ pub fn aes256_ctr_hmac_sha256_segment_1mb_key_template() -> KeyTemplate {
     new_aes_ctr_hmac_key_template(32, HashType::Sha256, 32, HashType::Sha256, 32, 1048576)
 }
 
-/// Create a [`KeyTemplate`] containing a [`tink::proto::AesGcmHkdfStreamingKeyFormat`] with
+/// Create a [`KeyTemplate`] containing a [`tink_proto::AesGcmHkdfStreamingKeyFormat`] with
 /// specified parameters.
 fn new_aes_gcm_hkdf_key_template(
     main_key_size: u32,
@@ -108,10 +108,10 @@ fn new_aes_gcm_hkdf_key_template(
     derived_key_size: u32,
     ciphertext_segment_size: u32,
 ) -> KeyTemplate {
-    let format = tink::proto::AesGcmHkdfStreamingKeyFormat {
+    let format = tink_proto::AesGcmHkdfStreamingKeyFormat {
         version: crate::AES_GCM_HKDF_KEY_VERSION,
         key_size: main_key_size,
-        params: Some(tink::proto::AesGcmHkdfStreamingParams {
+        params: Some(tink_proto::AesGcmHkdfStreamingParams {
             ciphertext_segment_size,
             derived_key_size,
             hkdf_hash_type: hkdf_hash_type as i32,
@@ -126,7 +126,7 @@ fn new_aes_gcm_hkdf_key_template(
     }
 }
 
-/// Create a KeyTemplate containing a [`tink::proto::AesCtrHmacStreamingKeyFormat`] with the
+/// Create a KeyTemplate containing a [`tink_proto::AesCtrHmacStreamingKeyFormat`] with the
 /// specified parameters.
 fn new_aes_ctr_hmac_key_template(
     main_key_size: u32,
@@ -136,14 +136,14 @@ fn new_aes_ctr_hmac_key_template(
     tag_size: u32,
     ciphertext_segment_size: u32,
 ) -> KeyTemplate {
-    let format = tink::proto::AesCtrHmacStreamingKeyFormat {
+    let format = tink_proto::AesCtrHmacStreamingKeyFormat {
         version: crate::AES_CTR_HMAC_KEY_VERSION,
         key_size: main_key_size,
-        params: Some(tink::proto::AesCtrHmacStreamingParams {
+        params: Some(tink_proto::AesCtrHmacStreamingParams {
             ciphertext_segment_size,
             derived_key_size,
             hkdf_hash_type: hkdf_hash_type as i32,
-            hmac_params: Some(tink::proto::HmacParams {
+            hmac_params: Some(tink_proto::HmacParams {
                 hash: tag_alg as i32,
                 tag_size,
             }),

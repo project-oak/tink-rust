@@ -28,7 +28,7 @@ fn test_aes_siv_key_template() {
     assert!(test_encrypt_decrypt(&template).is_ok());
 }
 
-fn test_encrypt_decrypt(template: &tink::proto::KeyTemplate) -> Result<(), TinkError> {
+fn test_encrypt_decrypt(template: &tink_proto::KeyTemplate) -> Result<(), TinkError> {
     let sk = tink::registry::new_key(template)?;
     let p = tink::registry::primitive(&template.type_url, &sk)?;
 
