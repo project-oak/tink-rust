@@ -10,7 +10,7 @@ ed25519-dalek = "^1.0.1"
 generic-array = "^0.14"
 p256 = { version = "^0.7", features = ["ecdsa"] }
 prost = "^0.6.1"
-rand = "^0.7"
+rand = "^0.8"
 signature = "^1.2.2"
 tink = "^0.1"
 

@@ -10,7 +10,7 @@ aes-ctr = "^0.6"
 # Need the `std` feature for Error type conversion
 aes-gcm = { version = "^0.8", features = ["std"] }
 prost = "^0.6.1"
-rand = "^0.7"
+rand = "^0.8"
 tink = "^0.1"
 tink-mac = "^0.1"
 

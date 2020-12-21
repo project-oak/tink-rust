@@ -18,7 +18,7 @@ digest = "^0.9"
 hkdf = "^0.10"
 lazy_static = "^1.4"
 prost = "^0.6.1"
-rand = "^0.7"
+rand = "^0.8"
 serde = { version = "^1.0.118", features = ["derive"], optional = true }
 serde_json = { version = "^1.0.60", optional = true }
 sha-1 = "^0.9.1"

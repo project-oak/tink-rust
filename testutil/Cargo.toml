@@ -11,7 +11,7 @@ generic-array = "^0.14.4"
 hex = "^0.4.2"
 p256 = { version = "^0.7", features = ["ecdsa"] }
 prost = "^0.6.1"
-rand = "^0.7"
+rand = "^0.8"
 serde = { version = "^1.0.118", features = ["derive"] }
 # Depending on tink-testutil will turn on the `insecure` feature of `tink`.
 tink = { version = "^0.1", features = ["insecure"] }
