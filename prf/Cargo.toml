@@ -4,6 +4,10 @@ version = "0.1.0"
 authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 license = "Apache-2.0"
+description = "PRF functionality for Rust port of Google's Tink cryptography library"
+repository = "https://github.com/project-oak/tink-rust"
+keywords = ["cryptography", "tink", "prf"]
+categories = ["cryptography"]
 
 [dependencies]
 aes = "^0.6"
