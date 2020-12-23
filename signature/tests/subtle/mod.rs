@@ -17,3 +17,42 @@
 mod ecdsa_signer_verifier_test;
 mod ecdsa_test;
 mod ed25519_signer_verifier_test;
+
+#[test]
+fn test_element_from_padded_slice() {
+    let testcases = vec![
+        (
+            "b10512bae3eddcfe467828128bad2903269919f7086069c8c4df6c732838",
+            true, // two bytes skipped at start
+        ),
+        (
+            "00b10512bae3eddcfe467828128bad2903269919f7086069c8c4df6c732838",
+            true, // one byte skipped, one byte zeroed
+        ),
+        (
+            "0000b10512bae3eddcfe467828128bad2903269919f7086069c8c4df6c732838",
+            true, // first two bytes zeroed
+        ),
+        (
+            "2927b10512bae3eddcfe467828128bad2903269919f7086069c8c4df6c732838",
+            true, // correct 32-byte field element
+        ),
+        (
+            "00002927b10512bae3eddcfe467828128bad2903269919f7086069c8c4df6c732838",
+            true, // extra leading zero bytes ('0000')
+        ),
+        (
+            "00012927b10512bae3eddcfe467828128bad2903269919f7086069c8c4df6c732838",
+            false, // extra leading non-zero byte ('0001')
+        ),
+    ];
+    for (value, valid) in testcases {
+        let x = hex::decode(value).unwrap(); // safe: test
+        let result = tink_signature::subtle::element_from_padded_slice::<p256::NistP256>(&x);
+        if valid {
+            assert!(result.is_ok());
+        } else {
+            assert!(result.is_err());
+        }
+    }
+}
