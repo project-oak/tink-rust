@@ -77,7 +77,8 @@ impl EcdsaVerifier {
     }
 }
 
-fn element_from_padded_slice<C: elliptic_curve::Curve>(
+/// Produce an elliptic field element from a byte slice, allowing for padding
+pub fn element_from_padded_slice<C: elliptic_curve::Curve>(
     data: &[u8],
 ) -> Result<elliptic_curve::FieldBytes<C>, TinkError> {
     let point_len = C::FieldSize::to_usize();
@@ -116,47 +117,6 @@ impl tink::Verifier for EcdsaVerifier {
             EcdsaPublicKey::NistP256(verify_key) => verify_key
                 .verify(&data, &signature)
                 .map_err(|e| wrap_err("EcdsaVerifier: invalid signature", e)),
-        }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn test_element_from_padded_slice() {
-        let testcases = vec![
-            (
-                "b10512bae3eddcfe467828128bad2903269919f7086069c8c4df6c732838",
-                true, // two bytes skipped at start
-            ),
-            (
-                "00b10512bae3eddcfe467828128bad2903269919f7086069c8c4df6c732838",
-                true, // one byte skipped, one byte zeroed
-            ),
-            (
-                "0000b10512bae3eddcfe467828128bad2903269919f7086069c8c4df6c732838",
-                true, // first two bytes zeroed
-            ),
-            (
-                "2927b10512bae3eddcfe467828128bad2903269919f7086069c8c4df6c732838",
-                true, // correct 32-byte field element
-            ),
-            (
-                "00002927b10512bae3eddcfe467828128bad2903269919f7086069c8c4df6c732838",
-                true, // extra leading zero bytes ('0000')
-            ),
-            (
-                "00012927b10512bae3eddcfe467828128bad2903269919f7086069c8c4df6c732838",
-                false, // extra leading non-zero byte ('0001')
-            ),
-        ];
-        for (value, valid) in testcases {
-            let x = hex::decode(value).unwrap(); // safe: test
-            if valid {
-                assert!(super::element_from_padded_slice::<p256::NistP256>(&x).is_ok());
-            } else {
-                assert!(super::element_from_padded_slice::<p256::NistP256>(&x).is_err());
-            }
         }
     }
 }
