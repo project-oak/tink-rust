@@ -14,12 +14,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use crate::cryptofmt;
+use tink::cryptofmt;
 
 #[test]
-fn test_output_prefix() {
+fn test_cryptofmt_output_prefix() {
     struct Case {
-        key_id: crate::KeyId,
+        key_id: tink::KeyId,
         result: Vec<u8>,
     };
     let tests = vec![
