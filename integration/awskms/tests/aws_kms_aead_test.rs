@@ -37,8 +37,8 @@ fn init() {
 }
 
 fn setup_kms(cf: &str) {
-    let g =
-        crate::AwsClient::new_with_credentials(KEY_URI, cf).expect("error setting up aws client");
+    let g = tink_awskms::AwsClient::new_with_credentials(KEY_URI, cf)
+        .expect("error setting up aws client");
     tink::registry::register_kms_client(g);
 }
 
