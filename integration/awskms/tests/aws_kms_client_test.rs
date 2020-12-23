@@ -14,9 +14,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use crate::AwsClient;
 use std::path::PathBuf;
 use tink::registry::KmsClient;
+use tink_awskms::AwsClient;
 
 #[test]
 fn test_new_client_good_uri_prefix_with_aws_partition() {

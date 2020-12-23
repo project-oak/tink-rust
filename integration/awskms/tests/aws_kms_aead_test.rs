@@ -37,8 +37,8 @@ fn init() {
 }
 
 fn setup_kms(cf: &std::path::Path) {
-    let g =
-        crate::AwsClient::new_with_credentials(KEY_URI, cf).expect("error setting up aws client");
+    let g = tink_awskms::AwsClient::new_with_credentials(KEY_URI, cf)
+        .expect("error setting up aws client");
     tink::registry::register_kms_client(g);
 }
 
@@ -96,7 +96,7 @@ fn test_basic_aead_without_additional_data() {
 fn test_aead_with_invalid_key_fail() {
     init();
     let key_uri = "aws-kms://arn:aws:kms:us-east-2:1234567:key/aaaaa-bbbb-cccc-dddd-eeeee";
-    let client = crate::AwsClient::new(key_uri).unwrap();
+    let client = tink_awskms::AwsClient::new(key_uri).unwrap();
     let aead = client.get_aead(key_uri).unwrap();
 
     // Not a valid key URI so everything will fail.
