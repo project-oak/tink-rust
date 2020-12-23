@@ -14,10 +14,10 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use crate::subtle::AesCmacPrf;
 use maplit::hashmap;
 use serde::Deserialize;
 use tink::Prf;
+use tink_prf::subtle::AesCmacPrf;
 
 #[test]
 fn test_vectors_rfc4493() {
@@ -140,11 +140,11 @@ fn test_vectors_wycheproof() {
 #[test]
 fn test_validate_aes_cmac_prf_params() {
     assert!(
-        crate::subtle::validate_aes_cmac_prf_params(32).is_ok(),
+        tink_prf::subtle::validate_aes_cmac_prf_params(32).is_ok(),
         "Unexpected error validating AES CMAC PRF Params"
     );
     assert!(
-        crate::subtle::validate_aes_cmac_prf_params(2).is_err(),
+        tink_prf::subtle::validate_aes_cmac_prf_params(2).is_err(),
         "Unexpected validation of too short key for AES CMAC PRF Params"
     );
 }

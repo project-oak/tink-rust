@@ -22,6 +22,3 @@ mod hkdf;
 pub use self::hkdf::*;
 mod hmac;
 pub use self::hmac::*;
-
-#[cfg(test)]
-mod tests;
