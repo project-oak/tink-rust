@@ -17,7 +17,9 @@
 use tink::subtle;
 use tink_proto::HashType;
 
-mod random;
+mod cryptofmt_test;
+mod hkdf_hmac_test;
+mod random_test;
 
 #[test]
 fn test_compute_hash() {
