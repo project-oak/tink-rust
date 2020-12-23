@@ -23,11 +23,7 @@ use tink_proto::HashType;
 
 mod hkdf;
 pub use self::hkdf::*;
-
 pub mod random;
-
-#[cfg(test)]
-mod tests;
 
 /// Return the digest size of the specified hash algorithm.
 pub fn get_hash_digest_size(hash: HashType) -> Result<usize, TinkError> {

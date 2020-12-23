@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use crate::subtle::{hkdf::compute_hkdf, random::get_random_bytes};
+use tink::subtle::{compute_hkdf, random::get_random_bytes};
 use tink_proto::HashType;
 
 // Tests sourced from

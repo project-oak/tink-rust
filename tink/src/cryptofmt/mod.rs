@@ -19,9 +19,6 @@
 use crate::TinkError;
 use tink_proto::OutputPrefixType;
 
-#[cfg(test)]
-mod tests;
-
 /// Prefix size of Tink and Legacy key types.
 pub const NON_RAW_PREFIX_SIZE: usize = 5;
 
