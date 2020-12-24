@@ -19,7 +19,3 @@ rusoto_kms = "^0.45"
 tink = "^0.1"
 # Match the version of tokio required by rusoto_* v0.45.0
 tokio = "^0.2.22"
-
-[dev-dependencies]
-tink-aead = "^0.1"
-tink-tests = "^0.1"

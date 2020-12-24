@@ -71,7 +71,7 @@ fn test_new_client_with_credentials_with_good_credentials_csv() {
 
     let good_csv_cred_file: PathBuf = [
         env!("CARGO_MANIFEST_DIR"),
-        "../../testdata",
+        "../testdata",
         "credentials_aws.csv",
     ]
     .iter()
@@ -88,7 +88,7 @@ fn test_new_client_with_credentials_with_good_credentials_ini() {
         "aws-kms://arn:aws:kms:us-east-2:235739564943:key/3ee50705-5a82-4f5b-9753-05c4f473922f";
     let cred_ini_file: PathBuf = [
         env!("CARGO_MANIFEST_DIR"),
-        "../../testdata",
+        "../testdata",
         "credentials_aws.cred",
     ]
     .iter()
@@ -105,7 +105,7 @@ fn test_new_client_with_credentials_with_bad_credentials() {
         "aws-kms://arn:aws:kms:us-east-2:235739564943:key/3ee50705-5a82-4f5b-9753-05c4f473922f";
     let bad_cred_file: PathBuf = [
         env!("CARGO_MANIFEST_DIR"),
-        "../../testdata",
+        "../testdata",
         "bad_access_keys_aws.csv",
     ]
     .iter()
@@ -119,7 +119,7 @@ fn test_new_client_with_credentials_with_bad_credentials() {
 fn test_new_client_with_credentials_with_empty_credentials() {
     let uri_prefix =
         "aws-kms://arn:aws:kms:us-east-2:235739564943:key/3ee50705-5a82-4f5b-9753-05c4f473922f";
-    let bad_cred_file: PathBuf = [env!("CARGO_MANIFEST_DIR"), "../../testdata", "empty.csv"]
+    let bad_cred_file: PathBuf = [env!("CARGO_MANIFEST_DIR"), "../testdata", "empty.csv"]
         .iter()
         .collect();
 

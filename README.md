@@ -41,9 +41,8 @@ Individual cryptographic primitives are implemented in `tink-<primitive>` crates
 For example, the `tink-aead` crate provides code that performs authenticated encryption with additional data (AEAD),
 implementing the `tink::Aead` trait.
 
-(However, integration tests can and do include `dev-dependencies` on both core `tink` and particular primitive crates.  For
-example, `tink` tests depend on `tink-mac` and `tink-tests`, the latter of which depends on the `insecure` feature
-of `tink` itself.)
+All of the tests for the Tink crates are integration tests (i.e. only use public APIs) and reside in a separate
+`tink-tests` crate.
 
 ## Rust Port Design
 

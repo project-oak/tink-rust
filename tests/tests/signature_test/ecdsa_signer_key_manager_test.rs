@@ -22,8 +22,7 @@ use tink_proto::{
     EllipticCurveType, HashType,
 };
 
-mod common;
-use common::*;
+use super::common::*;
 
 #[test]
 fn test_ecdsa_signer_get_primitive_basic() {

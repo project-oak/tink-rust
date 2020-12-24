@@ -14,8 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-mod common;
-use common::*;
+use super::common::*;
 
 // This test is ignored because it requires a valid live GCP key URI (and GCP credentials) to
 // succeed.

@@ -19,8 +19,6 @@ use std::fs;
 use tink::subtle::random::get_random_bytes;
 use tink_tests::SharedBuf;
 
-mod subtle;
-
 #[test]
 fn example() {
     tink_streaming_aead::init();
