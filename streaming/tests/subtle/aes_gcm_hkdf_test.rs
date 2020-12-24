@@ -257,7 +257,7 @@ fn test_aes_gcm_hkdf_invalid_params() {
             tc.segment_size,
             tc.first_segment_offset,
         );
-        tink_testutil::expect_err(result, tc.err_msg);
+        tink_tests::expect_err(result, tc.err_msg);
     }
 }
 

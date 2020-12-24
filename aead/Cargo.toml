@@ -30,4 +30,4 @@ serde = { version = "^1.0.118", features = ["derive"] }
 serde_json = "^1.0.60"
 tink-awskms = "^0.1"
 tink-signature = "^0.1"
-tink-testutil = "^0.1"
+tink-tests = "^0.1"

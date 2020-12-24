@@ -112,7 +112,7 @@ fn test_new_client_with_credentials_with_bad_credentials() {
     .collect();
 
     let result = AwsClient::new_with_credentials(uri_prefix, &bad_cred_file);
-    tink_testutil::expect_err(result, "malformed credential");
+    tink_tests::expect_err(result, "malformed credential");
 }
 
 #[test]
@@ -124,7 +124,7 @@ fn test_new_client_with_credentials_with_empty_credentials() {
         .collect();
 
     let result = AwsClient::new_with_credentials(uri_prefix, &bad_cred_file);
-    tink_testutil::expect_err(result, "malformed credential");
+    tink_tests::expect_err(result, "malformed credential");
 }
 
 #[test]
@@ -133,7 +133,7 @@ fn test_new_client_with_missing_credentials() {
         "aws-kms://arn:aws:kms:us-east-2:235739564943:key/3ee50705-5a82-4f5b-9753-05c4f473922f";
 
     let result = AwsClient::new_with_credentials(uri_prefix, &std::path::PathBuf::from(""));
-    tink_testutil::expect_err(result, "invalid credential path");
+    tink_tests::expect_err(result, "invalid credential path");
 }
 
 #[test]
@@ -178,7 +178,7 @@ fn test_get_aead_non_supported_uri() {
     let non_supported_key_uri = "aws-kms://arn:aws-us-gov:kms:us-gov-east-DOES-NOT-EXIST:key/";
 
     let client = AwsClient::new(uri_prefix).unwrap();
-    tink_testutil::expect_err(
+    tink_tests::expect_err(
         client.get_aead(non_supported_key_uri),
         "must start with prefix",
     );

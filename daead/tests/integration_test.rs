@@ -41,5 +41,5 @@ fn example() {
 fn test_deterministic_aead_init() {
     // Check for AES-SIV key manager.
     tink_daead::init();
-    assert!(tink::registry::get_key_manager(tink_testutil::AES_SIV_TYPE_URL).is_ok());
+    assert!(tink::registry::get_key_manager(tink_tests::AES_SIV_TYPE_URL).is_ok());
 }

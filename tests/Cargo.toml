@@ -1,10 +1,10 @@
 [package]
-name = "tink-testutil"
+name = "tink-tests"
 version = "0.1.0"
 authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 license = "Apache-2.0"
-description = "Testing utilities for Rust port of Google's Tink cryptography library"
+description = "Tests for Rust port of Google's Tink cryptography library"
 repository = "https://github.com/project-oak/tink-rust"
 keywords = ["cryptography", "tink", "testing"]
 categories = ["cryptography"]
@@ -17,7 +17,7 @@ p256 = { version = "^0.7", features = ["ecdsa"] }
 prost = "^0.6.1"
 rand = "^0.7"
 serde = { version = "^1.0.118", features = ["derive"] }
-# Depending on tink-testutil will turn on the `insecure` feature of `tink`.
+# Depending on tink-tests will turn on the `insecure` feature of `tink`.
 tink = { version = "^0.1", features = ["insecure"] }
 tink-daead = "^0.1"
 tink-mac = "^0.1"

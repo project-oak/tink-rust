@@ -17,12 +17,12 @@
 use prost::Message;
 use std::collections::HashSet;
 use tink::{utils::wrap_err, Mac, TinkError};
-use tink_testutil::proto_encode;
+use tink_tests::proto_encode;
 
 #[test]
 fn test_get_primitive_cmac_basic() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_testutil::AES_CMAC_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
         .expect("AES-CMAC key manager not found");
     let test_keys = gen_valid_cmac_keys();
     for test_key in test_keys {
@@ -35,7 +35,7 @@ fn test_get_primitive_cmac_basic() {
 #[test]
 fn test_get_primitive_cmac_with_invalid_input() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_testutil::AES_CMAC_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
         .expect("AES CMAC key manager not found");
     // invalid key
     let test_keys = gen_invalid_cmac_keys();
@@ -56,9 +56,9 @@ fn test_get_primitive_cmac_with_invalid_input() {
 #[test]
 fn test_new_key_cmac_multiple_times() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_testutil::AES_CMAC_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
         .expect("AES CMAC key manager not found");
-    let serialized_format = proto_encode(&tink_testutil::new_aes_cmac_key_format(16));
+    let serialized_format = proto_encode(&tink_tests::new_aes_cmac_key_format(16));
     let mut keys = HashSet::new();
     let n_test = 26;
     for _i in 0..n_test {
@@ -74,7 +74,7 @@ fn test_new_key_cmac_multiple_times() {
 #[test]
 fn test_new_key_cmac_basic() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_testutil::AES_CMAC_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
         .expect("AES CMAC key manager not found");
     let test_formats = gen_valid_cmac_key_formats();
     for (i, test_format) in test_formats.iter().enumerate() {
@@ -90,7 +90,7 @@ fn test_new_key_cmac_basic() {
 #[test]
 fn test_new_key_cmac_with_invalid_input() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_testutil::AES_CMAC_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
         .expect("AES CMAC key manager not found");
     // invalid key formats
     let test_formats = gen_invalid_cmac_key_formats();
@@ -111,7 +111,7 @@ fn test_new_key_cmac_with_invalid_input() {
 #[test]
 fn test_new_key_data_cmac_basic() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_testutil::AES_CMAC_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
         .expect("AES CMAC key manager not found");
     let test_formats = gen_valid_cmac_key_formats();
     for (i, test_format) in test_formats.iter().enumerate() {
@@ -121,7 +121,7 @@ fn test_new_key_data_cmac_basic() {
             .unwrap_or_else(|e| panic!("unexpected error in test case {}: {:?}", i, e));
         assert_eq!(
             key_data.type_url,
-            tink_testutil::AES_CMAC_TYPE_URL,
+            tink_tests::AES_CMAC_TYPE_URL,
             "incorrect type url in test case {}",
             i
         );
@@ -140,7 +140,7 @@ fn test_new_key_data_cmac_basic() {
 #[test]
 fn test_new_key_data_cmac_with_invalid_input() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_testutil::AES_CMAC_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
         .expect("AES CMAC key manager not found");
 
     // invalid key formats
@@ -162,28 +162,28 @@ fn test_new_key_data_cmac_with_invalid_input() {
 #[test]
 fn test_does_support_cmac() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_testutil::AES_CMAC_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
         .expect("AES CMAC key manager not found");
     assert!(
-        km.does_support(tink_testutil::AES_CMAC_TYPE_URL),
+        km.does_support(tink_tests::AES_CMAC_TYPE_URL),
         "AesCmacKeyManager must support {}",
-        tink_testutil::AES_CMAC_TYPE_URL
+        tink_tests::AES_CMAC_TYPE_URL
     );
     assert!(
         !km.does_support("some bad type"),
         "AesCmacKeyManager must support only {}",
-        tink_testutil::AES_CMAC_TYPE_URL
+        tink_tests::AES_CMAC_TYPE_URL
     );
 }
 
 #[test]
 fn test_cmac_type_url() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_testutil::AES_CMAC_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
         .expect("AES CMAC key manager not found");
     assert_eq!(
         km.type_url(),
-        tink_testutil::AES_CMAC_TYPE_URL,
+        tink_tests::AES_CMAC_TYPE_URL,
         "incorrect key_type()"
     );
     assert_eq!(
@@ -194,32 +194,32 @@ fn test_cmac_type_url() {
 }
 
 fn gen_invalid_cmac_keys() -> Vec<Vec<u8>> {
-    let mut bad_version_key = tink_testutil::new_aes_cmac_key(16);
+    let mut bad_version_key = tink_tests::new_aes_cmac_key(16);
     bad_version_key.version += 1;
-    let mut short_key = tink_testutil::new_aes_cmac_key(16);
+    let mut short_key = tink_tests::new_aes_cmac_key(16);
     short_key.key_value = vec![1, 1];
-    let non_key = tink_testutil::new_aes_cmac_params(16);
+    let non_key = tink_tests::new_aes_cmac_params(16);
 
     vec![
         proto_encode(&non_key),
         proto_encode(&bad_version_key),
-        proto_encode(&tink_testutil::new_aes_cmac_key(17)),
-        proto_encode(&tink_testutil::new_aes_cmac_key(1)),
+        proto_encode(&tink_tests::new_aes_cmac_key(17)),
+        proto_encode(&tink_tests::new_aes_cmac_key(1)),
         proto_encode(&short_key),
     ]
 }
 
 fn gen_invalid_cmac_key_formats() -> Vec<Vec<u8>> {
-    let mut short_key_format = tink_testutil::new_aes_cmac_key_format(16);
+    let mut short_key_format = tink_tests::new_aes_cmac_key_format(16);
     short_key_format.key_size = 1;
 
     vec![
         // not a `AesCmacKeyFormat`
-        proto_encode(&tink_testutil::new_aes_cmac_params(16)),
+        proto_encode(&tink_tests::new_aes_cmac_params(16)),
         // tag size too big
-        proto_encode(&tink_testutil::new_aes_cmac_key_format(17)),
+        proto_encode(&tink_tests::new_aes_cmac_key_format(17)),
         // tag size too small
-        proto_encode(&tink_testutil::new_aes_cmac_key_format(1)),
+        proto_encode(&tink_tests::new_aes_cmac_key_format(1)),
         // key too short
         proto_encode(&short_key_format),
     ]
@@ -227,15 +227,15 @@ fn gen_invalid_cmac_key_formats() -> Vec<Vec<u8>> {
 
 fn gen_valid_cmac_key_formats() -> Vec<tink_proto::AesCmacKeyFormat> {
     vec![
-        tink_testutil::new_aes_cmac_key_format(10),
-        tink_testutil::new_aes_cmac_key_format(16),
+        tink_tests::new_aes_cmac_key_format(10),
+        tink_tests::new_aes_cmac_key_format(16),
     ]
 }
 
 fn gen_valid_cmac_keys() -> Vec<tink_proto::AesCmacKey> {
     vec![
-        tink_testutil::new_aes_cmac_key(10),
-        tink_testutil::new_aes_cmac_key(16),
+        tink_tests::new_aes_cmac_key(10),
+        tink_tests::new_aes_cmac_key(16),
     ]
 }
 

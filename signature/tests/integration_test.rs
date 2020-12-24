@@ -19,11 +19,11 @@ mod subtle;
 #[test]
 fn test_signature_init() {
     tink_signature::init();
-    assert!(tink::registry::get_key_manager(tink_testutil::ECDSA_SIGNER_TYPE_URL).is_ok());
-    assert!(tink::registry::get_key_manager(tink_testutil::ECDSA_VERIFIER_TYPE_URL).is_ok());
+    assert!(tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL).is_ok());
+    assert!(tink::registry::get_key_manager(tink_tests::ECDSA_VERIFIER_TYPE_URL).is_ok());
 
-    assert!(tink::registry::get_key_manager(tink_testutil::ED25519_SIGNER_TYPE_URL).is_ok());
-    assert!(tink::registry::get_key_manager(tink_testutil::ED25519_VERIFIER_TYPE_URL).is_ok());
+    assert!(tink::registry::get_key_manager(tink_tests::ED25519_SIGNER_TYPE_URL).is_ok());
+    assert!(tink::registry::get_key_manager(tink_tests::ED25519_VERIFIER_TYPE_URL).is_ok());
 }
 
 #[test]

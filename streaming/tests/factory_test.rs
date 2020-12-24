@@ -22,7 +22,7 @@ use common::encrypt_decrypt;
 #[test]
 fn test_factory_multiple_keys() {
     tink_streaming_aead::init();
-    let keyset = tink_testutil::new_test_aes_gcm_hkdf_keyset();
+    let keyset = tink_tests::new_test_aes_gcm_hkdf_keyset();
     let raw_key = keyset.key[1].clone();
     let keyset_handle = tink::keyset::insecure::new_handle(keyset).unwrap();
     let a = tink_streaming_aead::new(&keyset_handle).expect("tink_streaming_aead::new failed");
@@ -36,17 +36,17 @@ fn test_factory_multiple_keys() {
         tink_proto::OutputPrefixType::Raw as i32,
         "expect a raw key"
     );
-    let keyset2 = tink_testutil::new_keyset(raw_key.key_id, vec![raw_key]);
+    let keyset2 = tink_tests::new_keyset(raw_key.key_id, vec![raw_key]);
     let keyset_handle2 = tink::keyset::insecure::new_handle(keyset2).unwrap();
     let a2 = tink_streaming_aead::new(&keyset_handle2).expect("tink_streaming_aead::new failed");
     validate_factory_cipher(a2.box_clone(), a.box_clone()).expect("invalid cipher");
 
     // Encrypt with a random key not in the keyset, decrypt with the keyset should fail
-    let keyset2 = tink_testutil::new_test_aes_gcm_hkdf_keyset();
+    let keyset2 = tink_tests::new_test_aes_gcm_hkdf_keyset();
     let keyset_handle2 = tink::keyset::insecure::new_handle(keyset2).unwrap();
     let a2 = tink_streaming_aead::new(&keyset_handle2).expect("tink_streaming_aead::new failed");
     let result = validate_factory_cipher(a2.box_clone(), a.box_clone());
-    tink_testutil::expect_err(result, "no matching key");
+    tink_tests::expect_err(result, "no matching key");
 }
 
 fn validate_factory_cipher(
@@ -73,7 +73,7 @@ fn test_factory_with_invalid_primitive_set_type() {
     tink_streaming_aead::init();
     let wrong_kh = tink::keyset::Handle::new(&tink_mac::hmac_sha256_tag128_key_template())
         .expect("failed to build keyset.Handle");
-    tink_testutil::expect_err(
+    tink_tests::expect_err(
         tink_streaming_aead::new(&wrong_kh),
         "not a StreamingAead primitive",
     );
@@ -83,7 +83,7 @@ fn test_factory_with_invalid_primitive_set_type() {
     km.rotate(&tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template())
         .unwrap();
     let wronger_kh = km.handle().unwrap();
-    tink_testutil::expect_err(
+    tink_tests::expect_err(
         tink_streaming_aead::new(&wronger_kh),
         "not a StreamingAead primitive",
     );

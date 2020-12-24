@@ -18,7 +18,7 @@ use super::wycheproof;
 use std::collections::HashSet;
 use tink::{subtle::random::get_random_bytes, Aead};
 use tink_aead::subtle;
-use tink_testutil::WycheproofResult;
+use tink_tests::WycheproofResult;
 
 const KEY_SIZES: &[usize] = &[16, 32];
 
@@ -170,7 +170,7 @@ fn test_aes_gcm_siv_random_nonce() {
 fn test_aes_gcm_siv_vectors() {
     let filename = "testvectors/aes_gcm_siv_test.json";
     println!("wycheproof file '{}'", filename);
-    let bytes = tink_testutil::wycheproof_data(filename);
+    let bytes = tink_tests::wycheproof_data(filename);
     let data: wycheproof::TestData = serde_json::from_slice(&bytes).unwrap();
     assert_eq!("AES-GCM-SIV", data.suite.algorithm);
 

@@ -18,7 +18,7 @@ use ed25519_dalek::Keypair;
 use serde::Deserialize;
 use tink::{subtle::random::get_random_bytes, Signer, TinkError, Verifier};
 use tink_signature::subtle::{Ed25519Signer, Ed25519Verifier};
-use tink_testutil::WycheproofResult;
+use tink_tests::WycheproofResult;
 
 #[test]
 fn test_ed25519_deterministic() {
@@ -83,7 +83,7 @@ fn test_ed25519_verify_truncated_signature() {
     let sign = signer.sign(&data).expect("unexpected error when signing");
 
     let result = verifier.verify(&sign[..sign.len() - 1], &data);
-    tink_testutil::expect_err(result, "length of the signature");
+    tink_tests::expect_err(result, "length of the signature");
 }
 
 #[test]
@@ -144,15 +144,15 @@ fn test_ed25519_sign_verify() {
 #[test]
 fn test_ed25519_signer_invalid_seed() {
     let result = tink_signature::subtle::Ed25519Signer::new(&[]);
-    tink_testutil::expect_err(result, "invalid key");
+    tink_tests::expect_err(result, "invalid key");
     let result = tink_signature::subtle::Ed25519Signer::new(&[1, 2, 3]);
-    tink_testutil::expect_err(result, "invalid key");
+    tink_tests::expect_err(result, "invalid key");
 }
 
 #[derive(Debug, Deserialize)]
 struct TestDataEd25519 {
     #[serde(flatten)]
-    pub suite: tink_testutil::WycheproofSuite,
+    pub suite: tink_tests::WycheproofSuite,
     #[serde(rename = "testGroups")]
     pub test_groups: Vec<TestGroupEd25519>,
 }
@@ -160,7 +160,7 @@ struct TestDataEd25519 {
 #[derive(Debug, Deserialize)]
 struct TestGroupEd25519 {
     #[serde(flatten)]
-    pub group: tink_testutil::WycheproofGroup,
+    pub group: tink_tests::WycheproofGroup,
     #[serde(rename = "keyDer")]
     pub key_der: String,
     #[serde(rename = "keyPem")]
@@ -171,19 +171,19 @@ struct TestGroupEd25519 {
 
 #[derive(Debug, Deserialize)]
 struct TestKeyEd25519 {
-    #[serde(with = "tink_testutil::hex_string")]
+    #[serde(with = "tink_tests::hex_string")]
     sk: Vec<u8>,
-    #[serde(with = "tink_testutil::hex_string")]
+    #[serde(with = "tink_tests::hex_string")]
     pk: Vec<u8>,
 }
 
 #[derive(Debug, Deserialize)]
 struct TestCaseEd25519 {
     #[serde(flatten)]
-    pub case: tink_testutil::WycheproofCase,
-    #[serde(with = "tink_testutil::hex_string")]
+    pub case: tink_tests::WycheproofCase,
+    #[serde(with = "tink_tests::hex_string")]
     pub msg: Vec<u8>,
-    #[serde(with = "tink_testutil::hex_string")]
+    #[serde(with = "tink_tests::hex_string")]
     pub sig: Vec<u8>,
 }
 
@@ -192,7 +192,7 @@ fn test_vectors_ed25519() {
     // signing tests are same between ecdsa and ed25519
     let filename = "testvectors/eddsa_test.json";
     println!("wycheproof file '{}'", filename);
-    let bytes = tink_testutil::wycheproof_data(filename);
+    let bytes = tink_tests::wycheproof_data(filename);
     let data: TestDataEd25519 = serde_json::from_slice(&bytes).unwrap();
     for g in &data.test_groups {
         println!(
@@ -220,7 +220,7 @@ fn test_vectors_ed25519() {
                 tc.case.case_id, tc.case.result, tc.case.comment
             );
             let result = signer.sign(&tc.msg);
-            if tc.case.result == tink_testutil::WycheproofResult::Valid {
+            if tc.case.result == tink_tests::WycheproofResult::Valid {
                 match result {
                     Err(e) => panic!(
                         "sign failed in test case {}: with error {:?}",

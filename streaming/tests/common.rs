@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use tink::{subtle::random::get_random_bytes, utils::wrap_err, TinkError};
-use tink_testutil::SharedBuf;
+use tink_tests::SharedBuf;
 
 pub fn encrypt_decrypt(
     encrypt_cipher: Box<dyn tink::StreamingAead>,

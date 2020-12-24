@@ -19,7 +19,7 @@ use rand::{thread_rng, Rng};
 use std::collections::HashSet;
 use tink::{subtle::random::get_random_bytes, Aead};
 use tink_aead::subtle;
-use tink_testutil::WycheproofResult;
+use tink_tests::WycheproofResult;
 
 #[test]
 fn test_x_cha_cha20_poly1305_encrypt_decrypt() {
@@ -156,7 +156,7 @@ fn test_cha_cha20_poly1305_short_ciphertext() {
 
     let ct = ca.encrypt(&pt, &[]).unwrap();
     let result = ca.decrypt(&ct[..2], &[]);
-    tink_testutil::expect_err(result, "ciphertext too short");
+    tink_tests::expect_err(result, "ciphertext too short");
 }
 
 #[test]
@@ -216,14 +216,14 @@ fn test_x_cha_cha20_poly1305_random_nonce() {
 fn test_cha_cha20_poly1305_invalid_key() {
     let key = get_random_bytes(tink_aead::subtle::X_CHA_CHA20_KEY_SIZE - 1);
     let result = subtle::XChaCha20Poly1305::new(&key);
-    tink_testutil::expect_err(result, "bad key length");
+    tink_tests::expect_err(result, "bad key length");
 }
 
 #[test]
 fn test_x_cha_cha20_poly1305_wycheproof_vectors() {
     let filename = "testvectors/xchacha20_poly1305_test.json";
     println!("wycheproof file '{}'", filename);
-    let bytes = tink_testutil::wycheproof_data(filename);
+    let bytes = tink_tests::wycheproof_data(filename);
     let data: TestData = serde_json::from_slice(&bytes).unwrap();
     assert_eq!("XCHACHA20-POLY1305", data.suite.algorithm);
 

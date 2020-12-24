@@ -34,7 +34,7 @@ fn test_keyset_manager_basic() {
     assert_eq!(ks.key[0].key_id, ks.primary_key_id);
     assert_eq!(
         ks.key[0].key_data.as_ref().unwrap().type_url,
-        tink_testutil::HMAC_TYPE_URL
+        tink_tests::HMAC_TYPE_URL
     );
     assert_eq!(ks.key[0].status, tink_proto::KeyStatusType::Enabled as i32);
     assert_eq!(
@@ -69,7 +69,7 @@ fn test_keyset_manager_operations() {
     );
     assert_eq!(
         keyset.key[0].key_data.as_ref().unwrap().type_url,
-        tink_testutil::AES_GCM_TYPE_URL
+        tink_tests::AES_GCM_TYPE_URL
     );
     assert_eq!(
         tink_proto::key_data::KeyMaterialType::Symmetric as i32,
@@ -96,7 +96,7 @@ fn test_keyset_manager_operations() {
     );
     assert_eq!(
         keyset.key[1].key_data.as_ref().unwrap().type_url,
-        tink_testutil::AES_GCM_TYPE_URL
+        tink_tests::AES_GCM_TYPE_URL
     );
     assert_eq!(
         tink_proto::key_data::KeyMaterialType::Symmetric as i32,
@@ -122,7 +122,7 @@ fn test_keyset_manager_operations() {
     );
     assert_eq!(
         keyset.key[2].key_data.as_ref().unwrap().type_url,
-        tink_testutil::AES_GCM_TYPE_URL
+        tink_tests::AES_GCM_TYPE_URL
     );
     assert_eq!(
         tink_proto::key_data::KeyMaterialType::Symmetric as i32,
@@ -155,7 +155,7 @@ fn test_keyset_manager_operations() {
     );
 
     let result = keyset_manager.set_primary(key_id_2);
-    tink_testutil::expect_err(result, "must be Enabled");
+    tink_tests::expect_err(result, "must be Enabled");
     let keyset = insecure::keyset_material(&keyset_manager.handle().unwrap());
     assert_eq!(key_id_1, keyset.primary_key_id);
 
@@ -201,9 +201,9 @@ fn test_keyset_manager_operations() {
     assert!(keyset.key[2].key_data.is_none());
 
     let result = keyset_manager.enable(key_id_2);
-    tink_testutil::expect_err(result, "Cannot enable key");
+    tink_tests::expect_err(result, "Cannot enable key");
     let result = keyset_manager.disable(key_id_2);
-    tink_testutil::expect_err(result, "Cannot disable key");
+    tink_tests::expect_err(result, "Cannot disable key");
     let keyset = insecure::keyset_material(&keyset_manager.handle().unwrap());
     assert_eq!(
         keyset.key[2].status,
@@ -218,23 +218,23 @@ fn test_keyset_manager_operations() {
     assert_eq!(2, keyset.key.len());
 
     let result = keyset_manager.destroy(key_id_2);
-    tink_testutil::expect_err(result, "not found");
+    tink_tests::expect_err(result, "not found");
 
     let result = keyset_manager.delete(key_id_2);
-    tink_testutil::expect_err(result, "not found");
+    tink_tests::expect_err(result, "not found");
 
     // Try disabling/destroying/deleting the primary key.
     let keyset = insecure::keyset_material(&keyset_manager.handle().unwrap());
     assert_eq!(key_id_1, keyset.primary_key_id);
 
     let result = keyset_manager.disable(key_id_1);
-    tink_testutil::expect_err(result, "Cannot disable primary");
+    tink_tests::expect_err(result, "Cannot disable primary");
 
     let result = keyset_manager.destroy(key_id_1);
-    tink_testutil::expect_err(result, "Cannot destroy primary");
+    tink_tests::expect_err(result, "Cannot destroy primary");
 
     let result = keyset_manager.delete(key_id_1);
-    tink_testutil::expect_err(result, "Cannot delete primary");
+    tink_tests::expect_err(result, "Cannot delete primary");
 
     let keyset = insecure::keyset_material(&keyset_manager.handle().unwrap());
     assert_eq!(key_id_1, keyset.primary_key_id);
@@ -246,7 +246,7 @@ fn test_keyset_manager_operations() {
     assert_eq!(key_id_1, keyset.key[0].key_id);
 
     let result = keyset_manager.set_primary(key_id_0);
-    tink_testutil::expect_err(result, "not found");
+    tink_tests::expect_err(result, "not found");
     assert_eq!(1, keyset_manager.key_count());
 
     // Operations with invalid key ID fail
@@ -275,13 +275,13 @@ fn test_keyset_manager_corrupt_primary_key() {
 
     // All operations shoud fail.
     let result = km.enable(key_id);
-    tink_testutil::expect_err(result, "Cannot enable");
+    tink_tests::expect_err(result, "Cannot enable");
     let result = km.disable(key_id);
-    tink_testutil::expect_err(result, "Cannot disable");
+    tink_tests::expect_err(result, "Cannot disable");
     let result = km.destroy(key_id);
-    tink_testutil::expect_err(result, "Cannot destroy");
+    tink_tests::expect_err(result, "Cannot destroy");
     let result = km.set_primary(key_id);
-    tink_testutil::expect_err(result, "must be Enabled");
+    tink_tests::expect_err(result, "must be Enabled");
 }
 
 #[test]
@@ -302,13 +302,13 @@ fn test_keyset_manager_corrupt_secondary_key() {
 
     // All operations shoud fail.
     let result = km.enable(secondary_key_id);
-    tink_testutil::expect_err(result, "Cannot enable");
+    tink_tests::expect_err(result, "Cannot enable");
     let result = km.disable(secondary_key_id);
-    tink_testutil::expect_err(result, "Cannot disable");
+    tink_tests::expect_err(result, "Cannot disable");
     let result = km.destroy(secondary_key_id);
-    tink_testutil::expect_err(result, "Cannot destroy");
+    tink_tests::expect_err(result, "Cannot destroy");
     let result = km.set_primary(secondary_key_id);
-    tink_testutil::expect_err(result, "must be Enabled");
+    tink_tests::expect_err(result, "must be Enabled");
 }
 
 #[test]
@@ -323,13 +323,13 @@ fn test_keyset_manager_invalid_key_id() {
     // All operations shoud fail with an invalid key_id.
     let key_id = 9999;
     let result = km.enable(key_id);
-    tink_testutil::expect_err(result, "not found");
+    tink_tests::expect_err(result, "not found");
     let result = km.disable(key_id);
-    tink_testutil::expect_err(result, "not found");
+    tink_tests::expect_err(result, "not found");
     let result = km.destroy(key_id);
-    tink_testutil::expect_err(result, "not found");
+    tink_tests::expect_err(result, "not found");
     let result = km.set_primary(key_id);
-    tink_testutil::expect_err(result, "not found");
+    tink_tests::expect_err(result, "not found");
 }
 
 #[test]

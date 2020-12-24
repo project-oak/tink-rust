@@ -23,7 +23,7 @@ use tink_signature::{
     subtle,
     subtle::{EcdsaPrivateKey, EcdsaPublicKey},
 };
-use tink_testutil::{hex_string, WycheproofResult};
+use tink_tests::{hex_string, WycheproofResult};
 
 #[test]
 fn test_sign_verify() {
@@ -109,7 +109,7 @@ fn test_ecdsa_invalid_signer_params() {
         EcdsaSignatureEncoding::Der,
         &priv_key_bytes,
     );
-    tink_testutil::expect_err(result, "unsupported curve");
+    tink_tests::expect_err(result, "unsupported curve");
 
     let result = subtle::EcdsaSigner::new(
         HashType::Sha256,
@@ -117,7 +117,7 @@ fn test_ecdsa_invalid_signer_params() {
         EcdsaSignatureEncoding::UnknownEncoding,
         &priv_key_bytes,
     );
-    tink_testutil::expect_err(result, "unsupported encoding");
+    tink_tests::expect_err(result, "unsupported encoding");
 }
 
 #[test]
@@ -140,7 +140,7 @@ fn test_ecdsa_invalid_verifier_params() {
         &x,
         &y,
     );
-    tink_testutil::expect_err(result, "unsupported curve");
+    tink_tests::expect_err(result, "unsupported curve");
 
     let result = subtle::EcdsaVerifier::new(
         HashType::Sha256,
@@ -149,13 +149,13 @@ fn test_ecdsa_invalid_verifier_params() {
         &x,
         &y,
     );
-    tink_testutil::expect_err(result, "unsupported encoding");
+    tink_tests::expect_err(result, "unsupported encoding");
 }
 
 #[derive(Debug, Deserialize)]
 struct TestData {
     #[serde(flatten)]
-    pub suite: tink_testutil::WycheproofSuite,
+    pub suite: tink_tests::WycheproofSuite,
     #[serde(rename = "testGroups")]
     pub test_groups: Vec<TestGroup>,
 }
@@ -163,7 +163,7 @@ struct TestData {
 #[derive(Debug, Deserialize)]
 struct TestGroup {
     #[serde(flatten)]
-    pub group: tink_testutil::WycheproofGroup,
+    pub group: tink_tests::WycheproofGroup,
     pub jwk: Option<Jwk>,
     #[serde(rename = "keyDer")]
     pub key_der: String,
@@ -197,7 +197,7 @@ struct Jwk {
 #[derive(Debug, Deserialize)]
 struct TestCase {
     #[serde(flatten)]
-    pub case: tink_testutil::WycheproofCase,
+    pub case: tink_tests::WycheproofCase,
     #[serde(with = "hex_string")]
     pub msg: Vec<u8>,
     #[serde(with = "hex_string")]
@@ -240,7 +240,7 @@ fn wycheproof_test(filename: &str, encoding: EcdsaSignatureEncoding) {
         "wycheproof file 'testvectors/{}', encoding '{:?}'",
         filename, encoding
     );
-    let bytes = tink_testutil::wycheproof_data(&format!("testvectors/{}", filename));
+    let bytes = tink_tests::wycheproof_data(&format!("testvectors/{}", filename));
     let data: TestData = serde_json::from_slice(&bytes).unwrap();
     let mut skipped_hashes = HashSet::new();
     let mut skipped_curves = HashSet::new();

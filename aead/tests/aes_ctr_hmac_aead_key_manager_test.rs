@@ -25,7 +25,7 @@ fn test_new_key_multiple_times() {
     let _aead_key_format = tink_proto::AesCtrHmacAeadKeyFormat::decode(key_template.value.as_ref())
         .expect("cannot unmarshal AES128_CTR_HMAC_SHA256 key template");
 
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_CTR_HMAC_AEAD_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_CTR_HMAC_AEAD_TYPE_URL)
         .expect("cannot obtain AES-CTR-HMAC-AEAD key manager");
 
     let mut keys = HashSet::new();
@@ -54,12 +54,12 @@ fn test_new_key_multiple_times() {
 fn test_new_key_with_corrupted_format() {
     tink_aead::init();
     let key_template = tink_proto::KeyTemplate {
-        type_url: tink_testutil::AES_CTR_HMAC_AEAD_TYPE_URL.to_string(),
+        type_url: tink_tests::AES_CTR_HMAC_AEAD_TYPE_URL.to_string(),
         value: vec![0, 128],
         output_prefix_type: tink_proto::OutputPrefixType::UnknownPrefix as i32,
     };
 
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_CTR_HMAC_AEAD_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_CTR_HMAC_AEAD_TYPE_URL)
         .expect("cannot obtain AES-CTR-HMAC-AEAD key manager");
 
     key_manager
@@ -73,12 +73,12 @@ fn test_new_key_with_corrupted_format() {
 #[test]
 fn test_key_manager_params() {
     tink_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_CTR_HMAC_AEAD_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_CTR_HMAC_AEAD_TYPE_URL)
         .expect("cannot obtain AES-CTR-HMAC-AEAD key manager");
 
     assert_eq!(
         key_manager.type_url(),
-        tink_testutil::AES_CTR_HMAC_AEAD_TYPE_URL
+        tink_tests::AES_CTR_HMAC_AEAD_TYPE_URL
     );
     assert_eq!(
         key_manager.key_material_type(),
@@ -90,7 +90,7 @@ fn test_key_manager_params() {
 #[test]
 fn test_new_key_with_invalid_format() {
     tink_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_CTR_HMAC_AEAD_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_CTR_HMAC_AEAD_TYPE_URL)
         .expect("cannot obtain AES-CTR-HMAC-AEAD key manager");
 
     let invalid_formats = vec![
@@ -269,18 +269,18 @@ fn test_new_key_with_invalid_format() {
         */
     ];
     for (err_msg, format) in &invalid_formats {
-        let serialized_format = tink_testutil::proto_encode(format);
+        let serialized_format = tink_tests::proto_encode(format);
         let result = key_manager.new_key(&serialized_format);
-        tink_testutil::expect_err(result, err_msg);
+        tink_tests::expect_err(result, err_msg);
     }
     let result = key_manager.new_key(&[]);
-    tink_testutil::expect_err(result, "empty");
+    tink_tests::expect_err(result, "empty");
 }
 
 #[test]
 fn test_primitive_with_invalid_key() {
     tink_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_CTR_HMAC_AEAD_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_CTR_HMAC_AEAD_TYPE_URL)
         .expect("cannot obtain AES-CTR-HMAC-AEAD key manager");
 
     let invalid_keys = vec![
@@ -480,10 +480,10 @@ fn test_primitive_with_invalid_key() {
         */
     ];
     for (err_msg, key) in &invalid_keys {
-        let serialized_key = tink_testutil::proto_encode(key);
+        let serialized_key = tink_tests::proto_encode(key);
         let result = key_manager.primitive(&serialized_key);
-        tink_testutil::expect_err(result, err_msg);
+        tink_tests::expect_err(result, err_msg);
     }
     let result = key_manager.primitive(&[]);
-    tink_testutil::expect_err(result, "empty");
+    tink_tests::expect_err(result, "empty");
 }

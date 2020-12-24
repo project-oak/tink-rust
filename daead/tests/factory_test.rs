@@ -20,7 +20,7 @@ use tink::{subtle::random::get_random_bytes, TinkError};
 fn test_factory_multiple_keys() {
     tink_daead::init();
     // encrypt with non-raw key.
-    let keyset = tink_testutil::new_test_aes_siv_keyset(tink_proto::OutputPrefixType::Tink);
+    let keyset = tink_tests::new_test_aes_siv_keyset(tink_proto::OutputPrefixType::Tink);
     let primary_key = keyset.key[0].clone();
     let raw_key = keyset.key[1].clone();
     assert_ne!(
@@ -41,7 +41,7 @@ fn test_factory_multiple_keys() {
             tink_proto::OutputPrefixType::Raw as i32,
             "expect a raw key"
         );
-        let keyset2 = tink_testutil::new_keyset(raw_key.key_id, vec![raw_key]);
+        let keyset2 = tink_tests::new_keyset(raw_key.key_id, vec![raw_key]);
         let keyset_handle2 = tink::keyset::insecure::new_handle(keyset2).unwrap();
         let d2 = tink_daead::new(&keyset_handle2).unwrap();
         assert!(
@@ -52,7 +52,7 @@ fn test_factory_multiple_keys() {
 
     // encrypt with a random key from a new keyset, decrypt with the original keyset should fail.
     {
-        let keyset2 = tink_testutil::new_test_aes_siv_keyset(tink_proto::OutputPrefixType::Tink);
+        let keyset2 = tink_tests::new_test_aes_siv_keyset(tink_proto::OutputPrefixType::Tink);
         let new_pk = keyset2.key[0].clone();
         assert_ne!(
             new_pk.output_prefix_type,
@@ -72,7 +72,7 @@ fn test_factory_multiple_keys() {
 #[test]
 fn test_factory_raw_key_as_primary() {
     tink_daead::init();
-    let keyset = tink_testutil::new_test_aes_siv_keyset(tink_proto::OutputPrefixType::Raw);
+    let keyset = tink_tests::new_test_aes_siv_keyset(tink_proto::OutputPrefixType::Raw);
     assert_eq!(
         keyset.key[0].output_prefix_type,
         tink_proto::OutputPrefixType::Raw as i32,

@@ -25,12 +25,13 @@ use common::*;
 fn test_ecdsa_verify_get_primitive_basic() {
     tink_signature::init();
     let test_params = gen_valid_ecdsa_params();
-    let km = tink::registry::get_key_manager(tink_testutil::ECDSA_VERIFIER_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::ECDSA_VERIFIER_TYPE_URL)
         .expect("cannot obtain EcdsaVerifier key manager");
     for (i, test_param) in test_params.iter().enumerate() {
-        let serialized_key = tink_testutil::proto_encode(
-            &tink_testutil::new_random_ecdsa_public_key(test_param.hash_type, test_param.curve),
-        );
+        let serialized_key = tink_tests::proto_encode(&tink_tests::new_random_ecdsa_public_key(
+            test_param.hash_type,
+            test_param.curve,
+        ));
         assert!(
             km.primitive(&serialized_key).is_ok(),
             "unexpected error in test case {}",
@@ -43,12 +44,13 @@ fn test_ecdsa_verify_get_primitive_basic() {
 fn test_ecdsa_verify_get_primitive_with_invalid_input() {
     tink_signature::init();
     let test_params = gen_invalid_ecdsa_params();
-    let km = tink::registry::get_key_manager(tink_testutil::ECDSA_VERIFIER_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::ECDSA_VERIFIER_TYPE_URL)
         .expect("cannot obtain EcdsaVerifier key manager");
     for (i, test_param) in test_params.iter().enumerate() {
-        let serialized_key = tink_testutil::proto_encode(
-            &tink_testutil::new_random_ecdsa_private_key(test_param.hash_type, test_param.curve),
-        );
+        let serialized_key = tink_tests::proto_encode(&tink_tests::new_random_ecdsa_private_key(
+            test_param.hash_type,
+            test_param.curve,
+        ));
         assert!(
             km.primitive(&serialized_key).is_err(),
             "expect an error in test case {}",
@@ -56,12 +58,12 @@ fn test_ecdsa_verify_get_primitive_with_invalid_input() {
         );
     }
     // invalid version
-    let mut key = tink_testutil::new_random_ecdsa_public_key(
+    let mut key = tink_tests::new_random_ecdsa_public_key(
         tink_proto::HashType::Sha256,
         tink_proto::EllipticCurveType::NistP256,
     );
-    key.version = tink_testutil::ECDSA_VERIFIER_KEY_VERSION + 1;
-    let serialized_key = tink_testutil::proto_encode(&key);
+    key.version = tink_tests::ECDSA_VERIFIER_KEY_VERSION + 1;
+    let serialized_key = tink_tests::proto_encode(&key);
     assert!(
         km.primitive(&serialized_key).is_err(),
         "expect an error when version is invalid"
@@ -76,7 +78,7 @@ fn test_ecdsa_verify_get_primitive_with_invalid_input() {
 #[test]
 fn test_new_key_fails() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_testutil::ECDSA_VERIFIER_TYPE_URL).unwrap();
+    let km = tink::registry::get_key_manager(tink_tests::ECDSA_VERIFIER_TYPE_URL).unwrap();
 
     assert!(km.new_key(&[]).is_err());
     assert!(km.new_key_data(&[]).is_err());
@@ -85,9 +87,9 @@ fn test_new_key_fails() {
 #[test]
 fn test_key_manager_params() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_testutil::ECDSA_VERIFIER_TYPE_URL).unwrap();
+    let km = tink::registry::get_key_manager(tink_tests::ECDSA_VERIFIER_TYPE_URL).unwrap();
 
-    assert_eq!(km.type_url(), tink_testutil::ECDSA_VERIFIER_TYPE_URL);
+    assert_eq!(km.type_url(), tink_tests::ECDSA_VERIFIER_TYPE_URL);
     assert_eq!(
         km.key_material_type(),
         tink_proto::key_data::KeyMaterialType::AsymmetricPublic
@@ -98,7 +100,7 @@ fn test_key_manager_params() {
 #[test]
 fn test_primitive_with_invalid_key() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_testutil::ECDSA_VERIFIER_TYPE_URL).unwrap();
+    let km = tink::registry::get_key_manager(tink_tests::ECDSA_VERIFIER_TYPE_URL).unwrap();
     let pub_x_data =
         hex::decode("7ea7cc506e46cfb2bbdb1503b0fb5f4edbf6e9830459b64a4064455045a7a58c").unwrap();
     let pub_y_data =
@@ -185,7 +187,7 @@ fn test_primitive_with_invalid_key() {
          */
     ];
     for key in &invalid_keys {
-        let serialized_key = tink_testutil::proto_encode(key);
+        let serialized_key = tink_tests::proto_encode(key);
         assert!(
             km.primitive(&serialized_key).is_err(),
             "unexpected success with {:?}",

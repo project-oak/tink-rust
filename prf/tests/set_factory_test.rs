@@ -176,14 +176,14 @@ fn test_non_prf_primitives() {
 
 fn run_z_tests(results: Vec<Vec<u8>>) {
     for (i, result1) in results.iter().enumerate() {
-        tink_testutil::z_test_uniform_string(result1)
+        tink_tests::z_test_uniform_string(result1)
             .expect("Expected PRF output to pass uniformity z test");
         if result1.len() <= MAX_AUTOCORRELATION {
-            tink_testutil::z_test_autocorrelation_uniform_string(result1)
+            tink_tests::z_test_autocorrelation_uniform_string(result1)
                 .expect("Expected PRF output to pass autocorrelation test");
         }
         for result2 in results.iter().skip(i + 1) {
-            tink_testutil::z_test_crosscorrelation_uniform_strings(result1, result2)
+            tink_tests::z_test_crosscorrelation_uniform_strings(result1, result2)
                 .expect("Expected different PRF outputs to be uncorrelated");
         }
     }
