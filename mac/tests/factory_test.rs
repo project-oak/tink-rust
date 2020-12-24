@@ -20,7 +20,7 @@ use tink::{utils::wrap_err, TinkError};
 fn test_factory_multiple_keys() {
     tink_mac::init();
     let tag_size = 16;
-    let keyset = tink_testutil::new_test_hmac_keyset(tag_size, tink_proto::OutputPrefixType::Tink);
+    let keyset = tink_tests::new_test_hmac_keyset(tag_size, tink_proto::OutputPrefixType::Tink);
     let primary_key = keyset.key[0].clone();
     assert_eq!(
         primary_key.output_prefix_type,
@@ -39,7 +39,7 @@ fn test_factory_multiple_keys() {
         raw_key.output_prefix_type,
         tink_proto::OutputPrefixType::Raw as i32
     );
-    let keyset2 = tink_testutil::new_keyset(raw_key.key_id, vec![raw_key]);
+    let keyset2 = tink_tests::new_keyset(raw_key.key_id, vec![raw_key]);
     let keyset_handle2 = tink::keyset::insecure::new_handle(keyset2).unwrap();
 
     let p2 = tink_mac::new(&keyset_handle2).unwrap();
@@ -47,7 +47,7 @@ fn test_factory_multiple_keys() {
         .expect("invalid primitive");
 
     // mac with a random key not in the keyset, verify with the keyset should fail
-    let keyset2 = tink_testutil::new_test_hmac_keyset(tag_size, tink_proto::OutputPrefixType::Tink);
+    let keyset2 = tink_tests::new_test_hmac_keyset(tag_size, tink_proto::OutputPrefixType::Tink);
     let primary_key = keyset2.key[0].clone();
     let expected_prefix = tink::cryptofmt::output_prefix(&primary_key).unwrap();
     let keyset_handle2 = tink::keyset::insecure::new_handle(keyset2).unwrap();
@@ -66,7 +66,7 @@ fn test_factory_multiple_keys() {
 fn test_factory_raw_key() {
     tink_mac::init();
     let tag_size = 16;
-    let keyset = tink_testutil::new_test_hmac_keyset(tag_size, tink_proto::OutputPrefixType::Raw);
+    let keyset = tink_tests::new_test_hmac_keyset(tag_size, tink_proto::OutputPrefixType::Raw);
     let primary_key = keyset.key[0].clone();
     assert_eq!(
         primary_key.output_prefix_type,

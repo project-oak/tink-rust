@@ -22,7 +22,7 @@ fn test_aes_siv_key_template() {
     let template = tink_daead::aes_siv_key_template();
     assert_eq!(
         template.type_url,
-        tink_testutil::AES_SIV_TYPE_URL,
+        tink_tests::AES_SIV_TYPE_URL,
         "incorrect type url"
     );
     assert!(test_encrypt_decrypt(&template).is_ok());

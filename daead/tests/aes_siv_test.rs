@@ -16,7 +16,7 @@
 
 use serde::Deserialize;
 use tink::{subtle::random::get_random_bytes, DeterministicAead};
-use tink_testutil::WycheproofResult;
+use tink_tests::WycheproofResult;
 
 #[test]
 fn test_aes_siv_encrypt_decrypt() {
@@ -182,13 +182,13 @@ fn test_aes_siv_ciphertext_too_short() {
     let ct = a.encrypt_deterministically(msg, aad).unwrap();
 
     let result = a.decrypt_deterministically(&ct[..2], aad);
-    tink_testutil::expect_err(result, "too short");
+    tink_tests::expect_err(result, "too short");
 }
 
 #[derive(Debug, Deserialize)]
 struct TestData {
     #[serde(flatten)]
-    pub suite: tink_testutil::WycheproofSuite,
+    pub suite: tink_tests::WycheproofSuite,
     #[serde(rename = "testGroups")]
     pub test_groups: Vec<TestGroup>,
 }
@@ -196,7 +196,7 @@ struct TestData {
 #[derive(Debug, Deserialize)]
 struct TestGroup {
     #[serde(flatten)]
-    pub group: tink_testutil::WycheproofGroup,
+    pub group: tink_tests::WycheproofGroup,
     #[serde(rename = "keySize")]
     pub key_size: u32,
     pub tests: Vec<TestCase>,
@@ -205,14 +205,14 @@ struct TestGroup {
 #[derive(Debug, Deserialize)]
 struct TestCase {
     #[serde(flatten)]
-    pub case: tink_testutil::WycheproofCase,
-    #[serde(with = "tink_testutil::hex_string")]
+    pub case: tink_tests::WycheproofCase,
+    #[serde(with = "tink_tests::hex_string")]
     pub key: Vec<u8>,
-    #[serde(with = "tink_testutil::hex_string")]
+    #[serde(with = "tink_tests::hex_string")]
     pub aad: Vec<u8>,
-    #[serde(with = "tink_testutil::hex_string")]
+    #[serde(with = "tink_tests::hex_string")]
     pub msg: Vec<u8>,
-    #[serde(with = "tink_testutil::hex_string")]
+    #[serde(with = "tink_tests::hex_string")]
     pub ct: Vec<u8>,
 }
 
@@ -220,7 +220,7 @@ struct TestCase {
 fn test_aes_siv_wycheproof_vectors() {
     let filename = "testvectors/aes_siv_cmac_test.json";
     println!("wycheproof file '{}'", filename);
-    let bytes = tink_testutil::wycheproof_data(filename);
+    let bytes = tink_tests::wycheproof_data(filename);
     let data: TestData = serde_json::from_slice(&bytes).unwrap();
 
     for g in &data.test_groups {

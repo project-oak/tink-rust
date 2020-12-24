@@ -31,7 +31,7 @@ fn test_ecdsa_key_templates() {
     let flag_tests = vec![
         FlagTest {
             tc_name: "P-256 with SHA256, DER format and TINK output prefix",
-            type_url: tink_testutil::ECDSA_SIGNER_TYPE_URL,
+            type_url: tink_tests::ECDSA_SIGNER_TYPE_URL,
             sig_template: tink_signature::ecdsa_p256_key_template(),
             curve_type: tink_proto::EllipticCurveType::NistP256,
             hash_type: tink_proto::HashType::Sha256,
@@ -40,7 +40,7 @@ fn test_ecdsa_key_templates() {
         },
         FlagTest {
             tc_name: "P-384 with SHA512, DER format and TINK output prefix",
-            type_url: tink_testutil::ECDSA_SIGNER_TYPE_URL,
+            type_url: tink_tests::ECDSA_SIGNER_TYPE_URL,
             sig_template: tink_signature::ecdsa_p384_key_template(),
             curve_type: tink_proto::EllipticCurveType::NistP384,
             hash_type: tink_proto::HashType::Sha512,
@@ -49,7 +49,7 @@ fn test_ecdsa_key_templates() {
         },
         FlagTest {
             tc_name: "P-521 with SHA512, DER format and TINK output prefix",
-            type_url: tink_testutil::ECDSA_SIGNER_TYPE_URL,
+            type_url: tink_tests::ECDSA_SIGNER_TYPE_URL,
             sig_template: tink_signature::ecdsa_p521_key_template(),
             curve_type: tink_proto::EllipticCurveType::NistP521,
             hash_type: tink_proto::HashType::Sha512,
@@ -58,7 +58,7 @@ fn test_ecdsa_key_templates() {
         },
         FlagTest {
             tc_name: "P-256 with SHA256, DER format and RAW output prefix",
-            type_url: tink_testutil::ECDSA_SIGNER_TYPE_URL,
+            type_url: tink_tests::ECDSA_SIGNER_TYPE_URL,
             sig_template: tink_signature::ecdsa_p256_key_without_prefix_template(),
             curve_type: tink_proto::EllipticCurveType::NistP256,
             hash_type: tink_proto::HashType::Sha256,
@@ -67,7 +67,7 @@ fn test_ecdsa_key_templates() {
         },
         FlagTest {
             tc_name: "P-384 with SHA512, DER format and RAW output prefix",
-            type_url: tink_testutil::ECDSA_SIGNER_TYPE_URL,
+            type_url: tink_tests::ECDSA_SIGNER_TYPE_URL,
             sig_template: tink_signature::ecdsa_p384_key_without_prefix_template(),
             curve_type: tink_proto::EllipticCurveType::NistP384,
             hash_type: tink_proto::HashType::Sha512,
@@ -76,7 +76,7 @@ fn test_ecdsa_key_templates() {
         },
         FlagTest {
             tc_name: "P-521 with SHA512, DER format and RAW output prefix",
-            type_url: tink_testutil::ECDSA_SIGNER_TYPE_URL,
+            type_url: tink_tests::ECDSA_SIGNER_TYPE_URL,
             sig_template: tink_signature::ecdsa_p521_key_without_prefix_template(),
             curve_type: tink_proto::EllipticCurveType::NistP521,
             hash_type: tink_proto::HashType::Sha512,
@@ -85,7 +85,7 @@ fn test_ecdsa_key_templates() {
         },
         FlagTest {
             tc_name: "P-256 with SHA256, P1363 format and TINK output prefix",
-            type_url: tink_testutil::ECDSA_SIGNER_TYPE_URL,
+            type_url: tink_tests::ECDSA_SIGNER_TYPE_URL,
             sig_template: tink_signature::ecdsa_p256_key_p1363_template(),
             curve_type: tink_proto::EllipticCurveType::NistP256,
             hash_type: tink_proto::HashType::Sha256,
@@ -119,13 +119,13 @@ fn test_ed25519_key_templates() {
     let flag_tests = vec![
         FlagTest {
             tc_name: "ED25519 with TINK output prefix",
-            type_url: tink_testutil::ED25519_SIGNER_TYPE_URL,
+            type_url: tink_tests::ED25519_SIGNER_TYPE_URL,
             sig_template: tink_signature::ed25519_key_template(),
             prefix_type: tink_proto::OutputPrefixType::Tink,
         },
         FlagTest {
             tc_name: "ED25519 with RAW output prefix",
-            type_url: tink_testutil::ED25519_SIGNER_TYPE_URL,
+            type_url: tink_tests::ED25519_SIGNER_TYPE_URL,
             sig_template: tink_signature::ed25519_key_without_prefix_template(),
             prefix_type: tink_proto::OutputPrefixType::Raw,
         },

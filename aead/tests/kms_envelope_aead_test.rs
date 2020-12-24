@@ -58,8 +58,8 @@ fn test_kms_envelope_short_ciphertext() {
     let a = create_kms_envelope_aead();
 
     let result = a.decrypt(&[1], &[]); // not enough data for a 4-byte length header
-    tink_testutil::expect_err(result, "invalid ciphertext");
+    tink_tests::expect_err(result, "invalid ciphertext");
 
     let result = a.decrypt(&[0, 0, 0, 3, 1], &[]); // length of 3, only 1 byte available
-    tink_testutil::expect_err(result, "invalid ciphertext");
+    tink_tests::expect_err(result, "invalid ciphertext");
 }

@@ -71,7 +71,7 @@ fn check_aes_gcm_hkdf_key_template(
     ciphertext_segment_size: usize,
     output_prefix_type: tink_proto::OutputPrefixType,
 ) -> Result<(), TinkError> {
-    if template.type_url != tink_testutil::AES_GCM_HKDF_TYPE_URL {
+    if template.type_url != tink_tests::AES_GCM_HKDF_TYPE_URL {
         return Err("incorrect type url".into());
     }
     if template.output_prefix_type != output_prefix_type as i32 {
@@ -185,7 +185,7 @@ fn check_aes_ctr_hmac_key_template(
     ciphertext_segment_size: usize,
     output_prefix_type: tink_proto::OutputPrefixType,
 ) -> Result<(), TinkError> {
-    if template.type_url != tink_testutil::AES_CTR_HMAC_TYPE_URL {
+    if template.type_url != tink_tests::AES_CTR_HMAC_TYPE_URL {
         return Err("incorrect type url".into());
     }
     if template.output_prefix_type != output_prefix_type as i32 {

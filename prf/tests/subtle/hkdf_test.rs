@@ -109,7 +109,7 @@ fn test_vectors_rfc5869() {
 #[derive(Debug, Deserialize)]
 struct HkdfTestData {
     #[serde(flatten)]
-    pub suite: tink_testutil::WycheproofSuite,
+    pub suite: tink_tests::WycheproofSuite,
     #[serde(rename = "testGroups")]
     pub test_groups: Vec<HkdfTestGroup>,
 }
@@ -117,7 +117,7 @@ struct HkdfTestData {
 #[derive(Debug, Deserialize)]
 struct HkdfTestGroup {
     #[serde(flatten)]
-    pub group: tink_testutil::WycheproofGroup,
+    pub group: tink_tests::WycheproofGroup,
     #[serde(rename = "keySize")]
     pub key_size: u32,
     pub tests: Vec<HkdfTestCase>,
@@ -126,15 +126,15 @@ struct HkdfTestGroup {
 #[derive(Debug, Deserialize)]
 struct HkdfTestCase {
     #[serde(flatten)]
-    pub case: tink_testutil::WycheproofCase,
-    #[serde(with = "tink_testutil::hex_string")]
+    pub case: tink_tests::WycheproofCase,
+    #[serde(with = "tink_tests::hex_string")]
     pub ikm: Vec<u8>,
-    #[serde(with = "tink_testutil::hex_string")]
+    #[serde(with = "tink_tests::hex_string")]
     pub salt: Vec<u8>,
-    #[serde(with = "tink_testutil::hex_string")]
+    #[serde(with = "tink_tests::hex_string")]
     pub info: Vec<u8>,
     pub size: usize,
-    #[serde(with = "tink_testutil::hex_string")]
+    #[serde(with = "tink_tests::hex_string")]
     pub okm: Vec<u8>,
 }
 
@@ -144,7 +144,7 @@ fn test_vectors_hkdf_wycheproof() {
         let hash_name = format!("{:?}", hash);
         let filename = format!("testvectors/hkdf_{}_test.json", hash_name.to_lowercase());
         println!("wycheproof file '{}' hash {}", filename, hash_name);
-        let bytes = tink_testutil::wycheproof_data(&filename);
+        let bytes = tink_tests::wycheproof_data(&filename);
         let data: HkdfTestData = serde_json::from_slice(&bytes).unwrap();
 
         for g in &data.test_groups {
@@ -156,7 +156,7 @@ fn test_vectors_hkdf_wycheproof() {
                 );
                 assert_eq!(tc.ikm.len() * 8, g.key_size as usize);
                 let hkdf_prf = HkdfPrf::new(*hash, &tc.ikm, &tc.salt);
-                let valid = tc.case.result == tink_testutil::WycheproofResult::Valid;
+                let valid = tc.case.result == tink_tests::WycheproofResult::Valid;
                 if valid && hkdf_prf.is_err() {
                     panic!(
                         "Could not create HKDF {:?} PRF for test case {} ({})",

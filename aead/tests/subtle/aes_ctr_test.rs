@@ -155,9 +155,9 @@ fn test_decrypt_failure() {
     let ct = stream.encrypt(plaintext).expect("encryption failed");
 
     let result = stream.decrypt(&ct[..2]);
-    tink_testutil::expect_err(result, "ciphertext too short");
+    tink_tests::expect_err(result, "ciphertext too short");
     let result = stream.decrypt(&[]);
-    tink_testutil::expect_err(result, "ciphertext too short");
+    tink_tests::expect_err(result, "ciphertext too short");
 }
 
 #[test]

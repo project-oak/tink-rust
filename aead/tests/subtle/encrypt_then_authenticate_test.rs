@@ -187,13 +187,13 @@ fn test_eta_invalid_tag_size() {
     let mac_key_size = 16;
     let tag_size = 9; // Invalid!
     let result = create_aead(key_size, iv_size, HashType::Sha1, mac_key_size, tag_size);
-    tink_testutil::expect_err(result, "tag size too small");
+    tink_tests::expect_err(result, "tag size too small");
 
     // Repeat but with a direct call to `EncryptThenAuthenticate::new`.
     let ctr = subtle::AesCtr::new(&[0; 16], iv_size).unwrap();
     let mac = tink_mac::subtle::Hmac::new(HashType::Sha1, &[0; 16], 16).unwrap();
     let result = subtle::EncryptThenAuthenticate::new(Box::new(ctr), Box::new(mac), tag_size);
-    tink_testutil::expect_err(result, "tag size too small");
+    tink_tests::expect_err(result, "tag size too small");
 }
 
 #[test]

@@ -42,7 +42,7 @@ fn check_hmac_template(
     tag_size: usize,
     hash_type: tink_proto::HashType,
 ) -> Result<(), TinkError> {
-    if template.type_url != tink_testutil::HMAC_TYPE_URL {
+    if template.type_url != tink_tests::HMAC_TYPE_URL {
         return Err("type_url is incorrect".into());
     }
     let format = tink_proto::HmacKeyFormat::decode(template.value.as_ref())
@@ -53,7 +53,7 @@ fn check_hmac_template(
     {
         return Err("KeyFormat is incorrect".into());
     }
-    let keymanager = tink::registry::get_key_manager(tink_testutil::HMAC_TYPE_URL)
+    let keymanager = tink::registry::get_key_manager(tink_tests::HMAC_TYPE_URL)
         .expect("HMAC key manager not found");
     keymanager
         .new_key(&template.value)
@@ -66,7 +66,7 @@ fn check_cmac_template(
     key_size: usize,
     tag_size: usize,
 ) -> Result<(), TinkError> {
-    if template.type_url != tink_testutil::AES_CMAC_TYPE_URL {
+    if template.type_url != tink_tests::AES_CMAC_TYPE_URL {
         return Err("TypeUrl is incorrect".into());
     }
     let format = tink_proto::AesCmacKeyFormat::decode(template.value.as_ref())
@@ -76,7 +76,7 @@ fn check_cmac_template(
     {
         return Err("KeyFormat is incorrect".into());
     }
-    let keymanager = tink::registry::get_key_manager(tink_testutil::AES_CMAC_TYPE_URL)
+    let keymanager = tink::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
         .expect("AES CMAC key manager not found");
     keymanager
         .new_key(&template.value)

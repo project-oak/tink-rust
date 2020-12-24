@@ -18,12 +18,12 @@ use prost::Message;
 use std::collections::HashSet;
 use tink::{utils::wrap_err, Prf, TinkError};
 use tink_proto::HashType;
-use tink_testutil::proto_encode;
+use tink_tests::proto_encode;
 
 #[test]
 fn test_get_primitive_hkdf_basic() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_testutil::HKDF_PRF_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
         .expect("HKDF PRF key manager not found");
     let test_keys = gen_valid_hkdf_keys();
     for test_key in test_keys {
@@ -36,7 +36,7 @@ fn test_get_primitive_hkdf_basic() {
 #[test]
 fn test_get_primitive_hkdf_with_invalid_input() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_testutil::HKDF_PRF_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
         .expect("HKDF PRF key manager not found");
     // invalid key
     let test_keys = gen_invalid_hkdf_keys();
@@ -57,13 +57,11 @@ fn test_get_primitive_hkdf_with_invalid_input() {
 #[test]
 fn test_new_key_hkdf_multiple_times() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_testutil::HKDF_PRF_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
         .expect("HKDF PRF key manager not found");
 
-    let serialized_format = proto_encode(&tink_testutil::new_hkdf_prf_key_format(
-        HashType::Sha256,
-        &[],
-    ));
+    let serialized_format =
+        proto_encode(&tink_tests::new_hkdf_prf_key_format(HashType::Sha256, &[]));
     let mut keys = HashSet::new();
     let n_test = 26;
     for _i in 0..n_test {
@@ -79,7 +77,7 @@ fn test_new_key_hkdf_multiple_times() {
 #[test]
 fn test_new_key_hkdf_basic() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_testutil::HKDF_PRF_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
         .expect("HKDF PRF key manager not found");
     let test_formats = gen_valid_hkdf_key_formats();
     for (i, test_format) in test_formats.iter().enumerate() {
@@ -95,7 +93,7 @@ fn test_new_key_hkdf_basic() {
 #[test]
 fn test_new_key_hkdf_with_invalid_input() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_testutil::HKDF_PRF_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
         .expect("HKDF PRF key manager not found");
 
     // invalid key formats
@@ -117,7 +115,7 @@ fn test_new_key_hkdf_with_invalid_input() {
 #[test]
 fn test_new_key_data_hkdf_basic() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_testutil::HKDF_PRF_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
         .expect("HKDF PRF key manager not found");
 
     let test_formats = gen_valid_hkdf_key_formats();
@@ -128,7 +126,7 @@ fn test_new_key_data_hkdf_basic() {
             .unwrap_or_else(|e| panic!("unexpected error in test case {}: {:?}", i, e));
         assert_eq!(
             key_data.type_url,
-            tink_testutil::HKDF_PRF_TYPE_URL,
+            tink_tests::HKDF_PRF_TYPE_URL,
             "incorrect type url in test case {}",
             i
         );
@@ -147,7 +145,7 @@ fn test_new_key_data_hkdf_basic() {
 #[test]
 fn test_new_key_data_hkdf_with_invalid_input() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_testutil::HKDF_PRF_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
         .expect("HKDF PRF key manager not found");
 
     // invalid key formats
@@ -169,30 +167,30 @@ fn test_new_key_data_hkdf_with_invalid_input() {
 #[test]
 fn test_hkdf_does_support() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_testutil::HKDF_PRF_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
         .expect("HKDF PRF key manager not found");
 
     assert!(
-        km.does_support(tink_testutil::HKDF_PRF_TYPE_URL),
+        km.does_support(tink_tests::HKDF_PRF_TYPE_URL),
         "HkdfPrfKeyManager must support {}",
-        tink_testutil::HKDF_PRF_TYPE_URL
+        tink_tests::HKDF_PRF_TYPE_URL
     );
     assert!(
         !km.does_support("some bad type"),
         "HkdfPrfKeyManager must support only {}",
-        tink_testutil::HKDF_PRF_TYPE_URL
+        tink_tests::HKDF_PRF_TYPE_URL
     );
 }
 
 #[test]
 fn test_hkdf_type_url() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_testutil::HKDF_PRF_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
         .expect("HKDF PRF key manager not found");
 
     assert_eq!(
         km.type_url(),
-        tink_testutil::HKDF_PRF_TYPE_URL,
+        tink_tests::HKDF_PRF_TYPE_URL,
         "incorrect key_type()"
     );
     assert_eq!(
@@ -203,13 +201,13 @@ fn test_hkdf_type_url() {
 }
 
 fn gen_invalid_hkdf_keys() -> Vec<Vec<u8>> {
-    let mut bad_version_key = tink_testutil::new_hkdf_prf_key(HashType::Sha256, &[]);
+    let mut bad_version_key = tink_tests::new_hkdf_prf_key(HashType::Sha256, &[]);
     bad_version_key.version += 1;
-    let mut short_key = tink_testutil::new_hkdf_prf_key(HashType::Sha256, &[]);
+    let mut short_key = tink_tests::new_hkdf_prf_key(HashType::Sha256, &[]);
     short_key.key_value = vec![1, 1];
-    let sha1_key = tink_testutil::new_hkdf_prf_key(HashType::Sha1, &[]);
-    let unknown_hash_key = tink_testutil::new_hkdf_prf_key(HashType::UnknownHash, &[]);
-    let non_key = tink_testutil::new_hkdf_prf_params(HashType::Sha256, &[]);
+    let sha1_key = tink_tests::new_hkdf_prf_key(HashType::Sha1, &[]);
+    let unknown_hash_key = tink_tests::new_hkdf_prf_key(HashType::UnknownHash, &[]);
+    let non_key = tink_tests::new_hkdf_prf_params(HashType::Sha256, &[]);
 
     vec![
         proto_encode(&non_key),
@@ -221,18 +219,18 @@ fn gen_invalid_hkdf_keys() -> Vec<Vec<u8>> {
 }
 
 fn gen_invalid_hkdf_key_formats() -> Vec<Vec<u8>> {
-    let mut short_key_format = tink_testutil::new_hkdf_prf_key_format(HashType::Sha256, &[]);
+    let mut short_key_format = tink_tests::new_hkdf_prf_key_format(HashType::Sha256, &[]);
     short_key_format.key_size = 1;
 
     vec![
         // not a `HkdfPrfKeyFormat`
-        proto_encode(&tink_testutil::new_hmac_params(HashType::Sha256, 32)),
+        proto_encode(&tink_tests::new_hmac_params(HashType::Sha256, 32)),
         // key too short
         proto_encode(&short_key_format),
         // SHA-1
-        proto_encode(&tink_testutil::new_hkdf_prf_key_format(HashType::Sha1, &[])),
+        proto_encode(&tink_tests::new_hkdf_prf_key_format(HashType::Sha1, &[])),
         // unknown hash type
-        proto_encode(&tink_testutil::new_hkdf_prf_key_format(
+        proto_encode(&tink_tests::new_hkdf_prf_key_format(
             HashType::UnknownHash,
             &[],
         )),
@@ -241,19 +239,19 @@ fn gen_invalid_hkdf_key_formats() -> Vec<Vec<u8>> {
 
 fn gen_valid_hkdf_key_formats() -> Vec<tink_proto::HkdfPrfKeyFormat> {
     vec![
-        tink_testutil::new_hkdf_prf_key_format(HashType::Sha256, &[]),
-        tink_testutil::new_hkdf_prf_key_format(HashType::Sha512, &[]),
-        tink_testutil::new_hkdf_prf_key_format(HashType::Sha256, &[0x01, 0x03, 0x42]),
-        tink_testutil::new_hkdf_prf_key_format(HashType::Sha512, &[0x01, 0x03, 0x42]),
+        tink_tests::new_hkdf_prf_key_format(HashType::Sha256, &[]),
+        tink_tests::new_hkdf_prf_key_format(HashType::Sha512, &[]),
+        tink_tests::new_hkdf_prf_key_format(HashType::Sha256, &[0x01, 0x03, 0x42]),
+        tink_tests::new_hkdf_prf_key_format(HashType::Sha512, &[0x01, 0x03, 0x42]),
     ]
 }
 
 fn gen_valid_hkdf_keys() -> Vec<tink_proto::HkdfPrfKey> {
     vec![
-        tink_testutil::new_hkdf_prf_key(HashType::Sha256, &[]),
-        tink_testutil::new_hkdf_prf_key(HashType::Sha512, &[]),
-        tink_testutil::new_hkdf_prf_key(HashType::Sha256, &[0x01, 0x03, 0x42]),
-        tink_testutil::new_hkdf_prf_key(HashType::Sha512, &[0x01, 0x03, 0x42]),
+        tink_tests::new_hkdf_prf_key(HashType::Sha256, &[]),
+        tink_tests::new_hkdf_prf_key(HashType::Sha512, &[]),
+        tink_tests::new_hkdf_prf_key(HashType::Sha256, &[0x01, 0x03, 0x42]),
+        tink_tests::new_hkdf_prf_key(HashType::Sha512, &[0x01, 0x03, 0x42]),
     ]
 }
 

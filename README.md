@@ -42,7 +42,7 @@ For example, the `tink-aead` crate provides code that performs authenticated enc
 implementing the `tink::Aead` trait.
 
 (However, integration tests can and do include `dev-dependencies` on both core `tink` and particular primitive crates.  For
-example, `tink` tests depend on `tink-mac` and `tink-testutil`, the latter of which depends on the `insecure` feature
+example, `tink` tests depend on `tink-mac` and `tink-tests`, the latter of which depends on the `insecure` feature
 of `tink` itself.)
 
 ## Rust Port Design
@@ -253,7 +253,7 @@ This section describes the mapping between the upstream Go packages and the equi
 | `tink::keyset::insecure` | `insecurecleartextkeyset` | Gated on (non-default) `insecure` feature |
 | `tink::keyset::insecure` | `internal` | Gated on (non-default) `insecure` feature |
 | `tink::keyset::insecure` | `testkeyset` | Gated on (non-default) `insecure` feature |
-| `tink-testutil`          | `testutil` | Depends on `insecure` feature of `tink` crate |
+| `tink-tests`          | `testutil` | Depends on `insecure` feature of `tink` crate |
 | `tink-testing`           | `services` (`/testing/go/`) |
 | `tink-testing::proto`    | `testing_api_go_grpc` (`/proto/testing/`) |
 |                          | `main` (`/tools/testing/go/`) |

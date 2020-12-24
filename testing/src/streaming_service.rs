@@ -18,7 +18,7 @@
 
 use crate::proto;
 use tink::{utils::wrap_err, TinkError};
-use tink_testutil::SharedBuf;
+use tink_tests::SharedBuf;
 
 #[derive(Debug, Default)]
 pub struct StreamingAeadServerImpl;

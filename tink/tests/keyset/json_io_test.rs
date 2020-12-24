@@ -22,7 +22,7 @@ use tink_proto::{key_data::KeyMaterialType, KeyStatusType, OutputPrefixType};
 fn test_json_io_unencrypted() {
     tink_mac::init();
 
-    let manager = tink_testutil::new_hmac_keyset_manager();
+    let manager = tink_tests::new_hmac_keyset_manager();
     let h = manager.handle().expect("cannot get keyset handle");
     let ks1 = tink::keyset::insecure::keyset_material(&h);
 
@@ -44,11 +44,9 @@ fn test_json_io_unencrypted() {
 #[test]
 fn test_json_reader() {
     tink_mac::init();
-    let gcm_key = tink_testutil::proto_encode(&tink_testutil::new_aes_gcm_key(0, 16));
-    let eax_key = tink_testutil::proto_encode(&tink_testutil::new_hmac_key(
-        tink_proto::HashType::Sha512,
-        32,
-    ));
+    let gcm_key = tink_tests::proto_encode(&tink_tests::new_aes_gcm_key(0, 16));
+    let eax_key =
+        tink_tests::proto_encode(&tink_tests::new_hmac_key(tink_proto::HashType::Sha512, 32));
 
     let json_keyset = format!(
         r#"{{
@@ -117,7 +115,7 @@ fn test_json_reader() {
 #[test]
 fn test_json_reader_large_ids() {
     tink_mac::init();
-    let gcm_key = tink_testutil::proto_encode(&tink_testutil::new_aes_gcm_key(0, 16));
+    let gcm_key = tink_tests::proto_encode(&tink_tests::new_aes_gcm_key(0, 16));
     let json_keyset = format!(
         r#"{{
          "primaryKeyId":4294967275,
@@ -162,7 +160,7 @@ fn test_json_reader_large_ids() {
 #[test]
 fn test_json_reader_negative_ids() {
     tink_mac::init();
-    let gcm_key = tink_testutil::proto_encode(&tink_testutil::new_aes_gcm_key(0, 16));
+    let gcm_key = tink_tests::proto_encode(&tink_tests::new_aes_gcm_key(0, 16));
     let json_keyset = format!(
         r#"{{
          "primaryKeyId": -10,
@@ -192,10 +190,8 @@ fn test_json_reader_negative_ids() {
 #[test]
 fn test_json_writer_large_id() {
     tink_mac::init();
-    let eax_key = tink_testutil::proto_encode(&tink_testutil::new_hmac_key(
-        tink_proto::HashType::Sha512,
-        32,
-    ));
+    let eax_key =
+        tink_tests::proto_encode(&tink_tests::new_hmac_key(tink_proto::HashType::Sha512, 32));
 
     let ks = tink_proto::Keyset {
         primary_key_id: 4294967275,
@@ -266,10 +262,8 @@ fn test_json_io_read_fail_decode() {
 
 #[test]
 fn test_json_io_fail() {
-    let eax_key = tink_testutil::proto_encode(&tink_testutil::new_hmac_key(
-        tink_proto::HashType::Sha512,
-        32,
-    ));
+    let eax_key =
+        tink_tests::proto_encode(&tink_tests::new_hmac_key(tink_proto::HashType::Sha512, 32));
     let ks = tink_proto::Keyset {
         primary_key_id: 4294967275,
         key: vec![tink_proto::keyset::Key {
@@ -288,19 +282,19 @@ fn test_json_io_fail() {
         keyset_info: None,
     };
 
-    let mut sink = tink_testutil::IoFailure {};
+    let mut sink = tink_tests::IoFailure {};
     let mut w = tink::keyset::JsonWriter::new(&mut sink);
     assert!(w.write(&ks).is_err());
 
-    let mut sink = tink_testutil::IoFailure {};
+    let mut sink = tink_tests::IoFailure {};
     let mut w = tink::keyset::JsonWriter::new(&mut sink);
     assert!(w.write_encrypted(&kse).is_err());
 
-    let src = tink_testutil::IoFailure {};
+    let src = tink_tests::IoFailure {};
     let mut r = tink::keyset::JsonReader::new(src);
     assert!(r.read().is_err());
 
-    let src = tink_testutil::IoFailure {};
+    let src = tink_tests::IoFailure {};
     let mut r = tink::keyset::JsonReader::new(src);
     assert!(r.read_encrypted().is_err());
 }
@@ -308,7 +302,7 @@ fn test_json_io_fail() {
 #[test]
 fn test_json_reader_all_enums() {
     tink_mac::init();
-    let gcm_key = tink_testutil::proto_encode(&tink_testutil::new_aes_gcm_key(0, 16));
+    let gcm_key = tink_tests::proto_encode(&tink_tests::new_aes_gcm_key(0, 16));
 
     let materials = vec![
         ("SYMMETRIC", KeyMaterialType::Symmetric),
@@ -415,5 +409,5 @@ fn test_json_read_invalid_b64() {
     let mut r = tink::keyset::JsonReader::new(&buf[..]);
 
     let result = r.read();
-    tink_testutil::expect_err(result, "base64");
+    tink_tests::expect_err(result, "base64");
 }

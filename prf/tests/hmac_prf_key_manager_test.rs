@@ -18,12 +18,12 @@ use prost::Message;
 use std::collections::HashSet;
 use tink::{utils::wrap_err, Prf, TinkError};
 use tink_proto::HashType;
-use tink_testutil::proto_encode;
+use tink_tests::proto_encode;
 
 #[test]
 fn test_get_primitive_hmac_basic() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_testutil::HMAC_PRF_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::HMAC_PRF_TYPE_URL)
         .expect("HMAC PRF key manager not found");
     let test_keys = gen_valid_hmac_prf_keys();
     for test_key in test_keys {
@@ -36,7 +36,7 @@ fn test_get_primitive_hmac_basic() {
 #[test]
 fn test_get_primitive_hmac_with_invalid_input() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_testutil::HMAC_PRF_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::HMAC_PRF_TYPE_URL)
         .expect("HMAC PRF key manager not found");
     // invalid key
     let test_keys = gen_invalid_hmac_prf_keys();
@@ -57,9 +57,9 @@ fn test_get_primitive_hmac_with_invalid_input() {
 #[test]
 fn test_new_key_hmac_multiple_times() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_testutil::HMAC_PRF_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::HMAC_PRF_TYPE_URL)
         .expect("HMAC PRF key manager not found");
-    let serialized_format = proto_encode(&tink_testutil::new_hmac_prf_key_format(
+    let serialized_format = proto_encode(&tink_tests::new_hmac_prf_key_format(
         tink_proto::HashType::Sha256,
     ));
     let mut keys = HashSet::new();
@@ -77,7 +77,7 @@ fn test_new_key_hmac_multiple_times() {
 #[test]
 fn test_new_key_hmac_basic() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_testutil::HMAC_PRF_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::HMAC_PRF_TYPE_URL)
         .expect("HMAC PRF key manager not found");
     let test_formats = gen_valid_hmac_prf_key_formats();
     for (i, test_format) in test_formats.iter().enumerate() {
@@ -93,7 +93,7 @@ fn test_new_key_hmac_basic() {
 #[test]
 fn test_new_key_hmac_with_invalid_input() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_testutil::HMAC_PRF_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::HMAC_PRF_TYPE_URL)
         .expect("HMAC PRF key manager not found");
     // invalid key formats
     let test_formats = gen_invalid_hmac_prf_key_formats();
@@ -114,7 +114,7 @@ fn test_new_key_hmac_with_invalid_input() {
 #[test]
 fn test_new_key_data_hmac_basic() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_testutil::HMAC_PRF_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::HMAC_PRF_TYPE_URL)
         .expect("HMAC PRF key manager not found");
 
     let test_formats = gen_valid_hmac_prf_key_formats();
@@ -125,7 +125,7 @@ fn test_new_key_data_hmac_basic() {
             .unwrap_or_else(|e| panic!("unexpected error in test case {}: {:?}", i, e));
         assert_eq!(
             key_data.type_url,
-            tink_testutil::HMAC_PRF_TYPE_URL,
+            tink_tests::HMAC_PRF_TYPE_URL,
             "incorrect type url in test case {}",
             i
         );
@@ -144,7 +144,7 @@ fn test_new_key_data_hmac_basic() {
 #[test]
 fn test_new_key_data_hmac_with_invalid_input() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_testutil::HMAC_PRF_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::HMAC_PRF_TYPE_URL)
         .expect("HMAC PRF key manager not found");
     // invalid key formats
     let test_formats = gen_invalid_hmac_prf_key_formats();
@@ -165,29 +165,29 @@ fn test_new_key_data_hmac_with_invalid_input() {
 #[test]
 fn test_hmac_does_support() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_testutil::HMAC_PRF_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::HMAC_PRF_TYPE_URL)
         .expect("HMAC PRF key manager not found");
 
     assert!(
-        km.does_support(tink_testutil::HMAC_PRF_TYPE_URL),
+        km.does_support(tink_tests::HMAC_PRF_TYPE_URL),
         "HmacPrfKeyManager must support {}",
-        tink_testutil::HMAC_PRF_TYPE_URL
+        tink_tests::HMAC_PRF_TYPE_URL
     );
     assert!(
         !km.does_support("some bad type"),
         "HmacPrfKeyManager must support only {}",
-        tink_testutil::HMAC_PRF_TYPE_URL
+        tink_tests::HMAC_PRF_TYPE_URL
     );
 }
 
 #[test]
 fn test_hmac_type_url() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_testutil::HMAC_PRF_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::HMAC_PRF_TYPE_URL)
         .expect("HMAC PRF key manager not found");
     assert_eq!(
         km.type_url(),
-        tink_testutil::HMAC_PRF_TYPE_URL,
+        tink_tests::HMAC_PRF_TYPE_URL,
         "incorrect key_type()"
     );
     assert_eq!(
@@ -198,12 +198,12 @@ fn test_hmac_type_url() {
 }
 
 fn gen_invalid_hmac_prf_keys() -> Vec<Vec<u8>> {
-    let mut bad_version_key = tink_testutil::new_hmac_prf_key(tink_proto::HashType::Sha256);
+    let mut bad_version_key = tink_tests::new_hmac_prf_key(tink_proto::HashType::Sha256);
     bad_version_key.version = 1;
-    let mut short_key = tink_testutil::new_hmac_prf_key(tink_proto::HashType::Sha256);
+    let mut short_key = tink_tests::new_hmac_prf_key(tink_proto::HashType::Sha256);
     short_key.key_value = vec![1, 1];
-    let non_key = tink_testutil::new_hmac_params(tink_proto::HashType::Sha256, 32);
-    let unknown_hash_key = tink_testutil::new_hmac_prf_key(tink_proto::HashType::UnknownHash);
+    let non_key = tink_tests::new_hmac_params(tink_proto::HashType::Sha256, 32);
+    let unknown_hash_key = tink_tests::new_hmac_prf_key(tink_proto::HashType::UnknownHash);
 
     vec![
         proto_encode(&non_key),
@@ -214,19 +214,19 @@ fn gen_invalid_hmac_prf_keys() -> Vec<Vec<u8>> {
 }
 
 fn gen_invalid_hmac_prf_key_formats() -> Vec<Vec<u8>> {
-    let mut short_key_format = tink_testutil::new_hmac_prf_key_format(tink_proto::HashType::Sha256);
+    let mut short_key_format = tink_tests::new_hmac_prf_key_format(tink_proto::HashType::Sha256);
     short_key_format.key_size = 1;
 
     vec![
         // not a `HmacPrfKeyFormat`
-        proto_encode(&tink_testutil::new_hmac_params(
+        proto_encode(&tink_tests::new_hmac_params(
             tink_proto::HashType::Sha256,
             32,
         )),
         // key too short
         proto_encode(&short_key_format),
         // unknown hash type
-        proto_encode(&tink_testutil::new_hmac_prf_key_format(
+        proto_encode(&tink_tests::new_hmac_prf_key_format(
             tink_proto::HashType::UnknownHash,
         )),
     ]
@@ -234,19 +234,19 @@ fn gen_invalid_hmac_prf_key_formats() -> Vec<Vec<u8>> {
 
 fn gen_valid_hmac_prf_key_formats() -> Vec<tink_proto::HmacPrfKeyFormat> {
     vec![
-        tink_testutil::new_hmac_prf_key_format(tink_proto::HashType::Sha1),
-        tink_testutil::new_hmac_prf_key_format(tink_proto::HashType::Sha256),
-        tink_testutil::new_hmac_prf_key_format(tink_proto::HashType::Sha384),
-        tink_testutil::new_hmac_prf_key_format(tink_proto::HashType::Sha512),
+        tink_tests::new_hmac_prf_key_format(tink_proto::HashType::Sha1),
+        tink_tests::new_hmac_prf_key_format(tink_proto::HashType::Sha256),
+        tink_tests::new_hmac_prf_key_format(tink_proto::HashType::Sha384),
+        tink_tests::new_hmac_prf_key_format(tink_proto::HashType::Sha512),
     ]
 }
 
 fn gen_valid_hmac_prf_keys() -> Vec<tink_proto::HmacPrfKey> {
     vec![
-        tink_testutil::new_hmac_prf_key(tink_proto::HashType::Sha1),
-        tink_testutil::new_hmac_prf_key(tink_proto::HashType::Sha256),
-        tink_testutil::new_hmac_prf_key(tink_proto::HashType::Sha384),
-        tink_testutil::new_hmac_prf_key(tink_proto::HashType::Sha512),
+        tink_tests::new_hmac_prf_key(tink_proto::HashType::Sha1),
+        tink_tests::new_hmac_prf_key(tink_proto::HashType::Sha256),
+        tink_tests::new_hmac_prf_key(tink_proto::HashType::Sha384),
+        tink_tests::new_hmac_prf_key(tink_proto::HashType::Sha512),
     ]
 }
 
@@ -306,7 +306,7 @@ fn validate_hmac_prf_primitive(
         hex::encode(res2),
         "prf computation did not produce the same output for the same key and input"
     );
-    tink_testutil::expect_err(
+    tink_tests::expect_err(
         prf_primitive.compute_prf(&data, 999999),
         "output_length must be between 0 and",
     );

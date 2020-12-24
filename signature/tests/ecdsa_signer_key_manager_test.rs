@@ -29,12 +29,13 @@ use common::*;
 fn test_ecdsa_signer_get_primitive_basic() {
     tink_signature::init();
     let test_params = gen_valid_ecdsa_params();
-    let km = tink::registry::get_key_manager(tink_testutil::ECDSA_SIGNER_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
         .expect("cannot obtain EcdsaSigner key manager");
     for (i, test_param) in test_params.iter().enumerate() {
-        let serialized_key = tink_testutil::proto_encode(
-            &tink_testutil::new_random_ecdsa_private_key(test_param.hash_type, test_param.curve),
-        );
+        let serialized_key = tink_tests::proto_encode(&tink_tests::new_random_ecdsa_private_key(
+            test_param.hash_type,
+            test_param.curve,
+        ));
         assert!(
             km.primitive(&serialized_key).is_ok(),
             "unexpected error in test case {}",
@@ -48,12 +49,13 @@ fn test_ecdsa_sign_get_primitive_with_invalid_input() {
     tink_signature::init();
     // invalid params
     let test_params = gen_invalid_ecdsa_params();
-    let km = tink::registry::get_key_manager(tink_testutil::ECDSA_SIGNER_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
         .expect("cannot obtain EcdsaSigner key manager");
     for (i, test_param) in test_params.iter().enumerate() {
-        let serialized_key = tink_testutil::proto_encode(
-            &tink_testutil::new_random_ecdsa_private_key(test_param.hash_type, test_param.curve),
-        );
+        let serialized_key = tink_tests::proto_encode(&tink_tests::new_random_ecdsa_private_key(
+            test_param.hash_type,
+            test_param.curve,
+        ));
         assert!(
             km.primitive(&serialized_key).is_err(),
             "expect an error in test case {}",
@@ -62,9 +64,9 @@ fn test_ecdsa_sign_get_primitive_with_invalid_input() {
     }
     // invalid version
     let mut key =
-        tink_testutil::new_random_ecdsa_private_key(HashType::Sha256, EllipticCurveType::NistP256);
-    key.version = tink_testutil::ECDSA_SIGNER_KEY_VERSION + 1;
-    let serialized_key = tink_testutil::proto_encode(&key);
+        tink_tests::new_random_ecdsa_private_key(HashType::Sha256, EllipticCurveType::NistP256);
+    key.version = tink_tests::ECDSA_SIGNER_KEY_VERSION + 1;
+    let serialized_key = tink_tests::proto_encode(&key);
     assert!(
         km.primitive(&serialized_key).is_err(),
         "expect an error when version is invalid"
@@ -80,16 +82,16 @@ fn test_ecdsa_sign_get_primitive_with_invalid_input() {
 fn test_ecdsa_sign_new_key_basic() {
     tink_signature::init();
     let test_params = gen_valid_ecdsa_params();
-    let km = tink::registry::get_key_manager(tink_testutil::ECDSA_SIGNER_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
         .expect("cannot obtain EcdsaSigner key manager");
     for (i, test_param) in test_params.iter().enumerate() {
-        let params = tink_testutil::new_ecdsa_params(
+        let params = tink_tests::new_ecdsa_params(
             test_param.hash_type,
             test_param.curve,
             tink_proto::EcdsaSignatureEncoding::Der,
         );
         let serialized_format =
-            tink_testutil::proto_encode(&tink_testutil::new_ecdsa_key_format(&params));
+            tink_tests::proto_encode(&tink_tests::new_ecdsa_key_format(&params));
         let tmp = km.new_key(&serialized_format).unwrap();
         let key = tink_proto::EcdsaPrivateKey::decode(tmp.as_ref()).unwrap();
         assert!(
@@ -103,7 +105,7 @@ fn test_ecdsa_sign_new_key_basic() {
 #[test]
 fn test_ecdsa_sign_new_key_with_invalid_input() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_testutil::ECDSA_SIGNER_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
         .expect("cannot obtain EcdsaSigner key manager");
     // invalid hash and curve type
     let test_params = vec![
@@ -140,7 +142,7 @@ fn test_ecdsa_sign_new_key_with_invalid_input() {
     ];
     for (i, params) in test_params.iter().enumerate() {
         let serialized_format =
-            tink_testutil::proto_encode(&tink_testutil::new_ecdsa_key_format(&params));
+            tink_tests::proto_encode(&tink_tests::new_ecdsa_key_format(&params));
         assert!(
             km.new_key(&serialized_format).is_err(),
             "expect an error in test case {}",
@@ -151,13 +153,13 @@ fn test_ecdsa_sign_new_key_with_invalid_input() {
     // invalid encoding
     let test_params = gen_valid_ecdsa_params();
     for (i, test_param) in test_params.iter().enumerate() {
-        let params = tink_testutil::new_ecdsa_params(
+        let params = tink_tests::new_ecdsa_params(
             test_param.hash_type,
             test_param.curve,
             tink_proto::EcdsaSignatureEncoding::UnknownEncoding,
         );
         let serialized_format =
-            tink_testutil::proto_encode(&tink_testutil::new_ecdsa_key_format(&params));
+            tink_tests::proto_encode(&tink_tests::new_ecdsa_key_format(&params));
         assert!(
             km.new_key(&serialized_format).is_err(),
             "expect an error in test case {}",
@@ -174,19 +176,19 @@ fn test_ecdsa_sign_new_key_with_invalid_input() {
 #[test]
 fn test_ecdsa_sign_new_key_multiple_times() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_testutil::ECDSA_SIGNER_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
         .expect("cannot obtain EcdsaSigner key manager");
     let test_params = gen_valid_ecdsa_params();
     let n_test = 27;
     for test_param in test_params {
         let mut keys = HashSet::new();
-        let params = tink_testutil::new_ecdsa_params(
+        let params = tink_tests::new_ecdsa_params(
             test_param.hash_type,
             test_param.curve,
             tink_proto::EcdsaSignatureEncoding::Der,
         );
-        let format = tink_testutil::new_ecdsa_key_format(&params);
-        let serialized_format = tink_testutil::proto_encode(&format);
+        let format = tink_tests::new_ecdsa_key_format(&params);
+        let serialized_format = tink_tests::proto_encode(&format);
         for _j in 0..n_test {
             let serialized_key = km.new_key(&serialized_format).unwrap();
             keys.insert(serialized_key);
@@ -207,24 +209,24 @@ fn test_ecdsa_sign_new_key_multiple_times() {
 #[test]
 fn test_ecdsa_sign_new_key_data_basic() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_testutil::ECDSA_SIGNER_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
         .expect("cannot obtain EcdsaSigner key manager");
     let test_params = gen_valid_ecdsa_params();
     for (i, test_param) in test_params.iter().enumerate() {
-        let params = tink_testutil::new_ecdsa_params(
+        let params = tink_tests::new_ecdsa_params(
             test_param.hash_type,
             test_param.curve,
             tink_proto::EcdsaSignatureEncoding::Der,
         );
         let serialized_format =
-            tink_testutil::proto_encode(&tink_testutil::new_ecdsa_key_format(&params));
+            tink_tests::proto_encode(&tink_tests::new_ecdsa_key_format(&params));
 
         let key_data = km
             .new_key_data(&serialized_format)
             .unwrap_or_else(|e| panic!("unexpected error in test case  {}: {:?}", i, e));
         assert_eq!(
             key_data.type_url,
-            tink_testutil::ECDSA_SIGNER_TYPE_URL,
+            tink_tests::ECDSA_SIGNER_TYPE_URL,
             "incorrect type url in test case {}",
             i
         );
@@ -247,17 +249,17 @@ fn test_ecdsa_sign_new_key_data_basic() {
 #[test]
 fn test_ecdsa_sign_new_key_data_with_invalid_input() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_testutil::ECDSA_SIGNER_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
         .expect("cannot obtain EcdsaSigner key manager");
     let test_params = gen_invalid_ecdsa_params();
     for (i, test_param) in test_params.iter().enumerate() {
-        let params = tink_testutil::new_ecdsa_params(
+        let params = tink_tests::new_ecdsa_params(
             test_param.hash_type,
             test_param.curve,
             tink_proto::EcdsaSignatureEncoding::Der,
         );
-        let format = tink_testutil::new_ecdsa_key_format(&params);
-        let serialized_format = tink_testutil::proto_encode(&format);
+        let format = tink_tests::new_ecdsa_key_format(&params);
+        let serialized_format = tink_tests::proto_encode(&format);
 
         assert!(
             km.new_key_data(&serialized_format).is_err(),
@@ -276,23 +278,22 @@ fn test_ecdsa_sign_new_key_data_with_invalid_input() {
 fn test_public_key_data_basic() {
     tink_signature::init();
     let test_params = gen_valid_ecdsa_params();
-    let km = tink::registry::get_key_manager(tink_testutil::ECDSA_SIGNER_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
         .expect("cannot obtain EcdsaSigner key manager");
     assert!(
         km.supports_private_keys(),
         "key manager does not support private keys"
     );
     for (i, test_param) in test_params.iter().enumerate() {
-        let key =
-            tink_testutil::new_random_ecdsa_private_key(test_param.hash_type, test_param.curve);
-        let serialized_key = tink_testutil::proto_encode(&key);
+        let key = tink_tests::new_random_ecdsa_private_key(test_param.hash_type, test_param.curve);
+        let serialized_key = tink_tests::proto_encode(&key);
 
         let pub_key_data = km
             .public_key_data(&serialized_key)
             .unwrap_or_else(|e| panic!("unexpected error in test case {}: {:?}", i, e));
         assert_eq!(
             pub_key_data.type_url,
-            tink_testutil::ECDSA_VERIFIER_TYPE_URL,
+            tink_tests::ECDSA_VERIFIER_TYPE_URL,
             "incorrect type url"
         );
         assert_eq!(
@@ -308,7 +309,7 @@ fn test_public_key_data_basic() {
 #[test]
 fn test_public_key_data_with_invalid_input() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_testutil::ECDSA_SIGNER_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
         .expect("cannot obtain EcdsaSigner key manager");
     assert!(
         km.supports_private_keys(),
@@ -316,8 +317,8 @@ fn test_public_key_data_with_invalid_input() {
     );
     // modified key
     let key =
-        tink_testutil::new_random_ecdsa_private_key(HashType::Sha256, EllipticCurveType::NistP256);
-    let mut serialized_key = tink_testutil::proto_encode(&key);
+        tink_tests::new_random_ecdsa_private_key(HashType::Sha256, EllipticCurveType::NistP256);
+    let mut serialized_key = tink_tests::proto_encode(&key);
     serialized_key[0] = 0;
     assert!(
         km.public_key_data(&serialized_key).is_err(),
@@ -334,10 +335,10 @@ fn validate_ecdsa_private_key(
     key: &tink_proto::EcdsaPrivateKey,
     params: &tink_proto::EcdsaParams,
 ) -> Result<(), TinkError> {
-    if key.version != tink_testutil::ECDSA_SIGNER_KEY_VERSION {
+    if key.version != tink_tests::ECDSA_SIGNER_KEY_VERSION {
         return Err(format!(
             "incorrect private key's version: expect {}, got {}",
-            tink_testutil::ECDSA_SIGNER_KEY_VERSION,
+            tink_tests::ECDSA_SIGNER_KEY_VERSION,
             key.version
         )
         .into());
@@ -346,10 +347,10 @@ fn validate_ecdsa_private_key(
         .public_key
         .as_ref()
         .ok_or_else(|| TinkError::new("no public key!"))?;
-    if public_key.version != tink_testutil::ECDSA_SIGNER_KEY_VERSION {
+    if public_key.version != tink_tests::ECDSA_SIGNER_KEY_VERSION {
         return Err(format!(
             "incorrect public key's version: expect {}, got {}",
-            tink_testutil::ECDSA_SIGNER_KEY_VERSION,
+            tink_tests::ECDSA_SIGNER_KEY_VERSION,
             key.version
         )
         .into());
@@ -392,7 +393,7 @@ fn validate_ecdsa_private_key(
         _ => return Err("unknown curve type".into()),
     }
     // try to sign and verify with the key
-    let (hash, curve, encoding) = tink_testutil::get_ecdsa_params(
+    let (hash, curve, encoding) = tink_tests::get_ecdsa_params(
         public_key
             .params
             .as_ref()
@@ -421,9 +422,9 @@ fn validate_ecdsa_private_key(
 #[test]
 fn test_key_manager_params() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_testutil::ECDSA_SIGNER_TYPE_URL).unwrap();
+    let km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL).unwrap();
 
-    assert_eq!(km.type_url(), tink_testutil::ECDSA_SIGNER_TYPE_URL);
+    assert_eq!(km.type_url(), tink_tests::ECDSA_SIGNER_TYPE_URL);
     assert_eq!(
         km.key_material_type(),
         tink_proto::key_data::KeyMaterialType::AsymmetricPrivate
@@ -434,7 +435,7 @@ fn test_key_manager_params() {
 #[test]
 fn test_new_key_with_invalid_format() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_testutil::ECDSA_SIGNER_TYPE_URL).unwrap();
+    let km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL).unwrap();
 
     let invalid_formats = vec![
         (
@@ -504,16 +505,16 @@ fn test_new_key_with_invalid_format() {
          */
     ];
     for (err_msg, format) in &invalid_formats {
-        let serialized_format = tink_testutil::proto_encode(format);
+        let serialized_format = tink_tests::proto_encode(format);
         let result = km.new_key(&serialized_format);
-        tink_testutil::expect_err(result, err_msg);
+        tink_tests::expect_err(result, err_msg);
     }
 }
 
 #[test]
 fn test_primitive_with_invalid_key() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_testutil::ECDSA_SIGNER_TYPE_URL).unwrap();
+    let km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL).unwrap();
     let pub_x_data =
         hex::decode("7ea7cc506e46cfb2bbdb1503b0fb5f4edbf6e9830459b64a4064455045a7a58c").unwrap();
     let pub_y_data =
@@ -697,8 +698,8 @@ fn test_primitive_with_invalid_key() {
          */
     ];
     for (err_msg, key) in &invalid_keys {
-        let serialized_key = tink_testutil::proto_encode(key);
+        let serialized_key = tink_tests::proto_encode(key);
         let result = km.primitive(&serialized_key);
-        tink_testutil::expect_err(result, err_msg);
+        tink_tests::expect_err(result, err_msg);
     }
 }
