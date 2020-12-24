@@ -2304,7 +2304,7 @@ dependencies = [
  "tink-mac",
  "tink-proto",
  "tink-signature",
- "tink-testutil",
+ "tink-tests",
 ]
 
 [[package]]
@@ -2328,7 +2328,7 @@ dependencies = [
  "tink-mac",
  "tink-proto",
  "tink-signature",
- "tink-testutil",
+ "tink-tests",
 ]
 
 [[package]]
@@ -2343,7 +2343,7 @@ dependencies = [
  "rusoto_kms",
  "tink",
  "tink-aead",
- "tink-testutil",
+ "tink-tests",
  "tokio",
 ]
 
@@ -2361,7 +2361,7 @@ dependencies = [
  "tink",
  "tink-proto",
  "tink-signature",
- "tink-testutil",
+ "tink-tests",
 ]
 
 [[package]]
@@ -2375,7 +2375,7 @@ dependencies = [
  "serde_json",
  "tink",
  "tink-aead",
- "tink-testutil",
+ "tink-tests",
  "yup-oauth2",
 ]
 
@@ -2393,7 +2393,7 @@ dependencies = [
  "tink",
  "tink-prf",
  "tink-proto",
- "tink-testutil",
+ "tink-tests",
 ]
 
 [[package]]
@@ -2416,7 +2416,7 @@ dependencies = [
  "tink",
  "tink-mac",
  "tink-proto",
- "tink-testutil",
+ "tink-tests",
 ]
 
 [[package]]
@@ -2446,7 +2446,7 @@ dependencies = [
  "tink",
  "tink-mac",
  "tink-proto",
- "tink-testutil",
+ "tink-tests",
 ]
 
 [[package]]
@@ -2462,7 +2462,7 @@ dependencies = [
  "tink",
  "tink-mac",
  "tink-proto",
- "tink-testutil",
+ "tink-tests",
 ]
 
 [[package]]
@@ -2482,14 +2482,14 @@ dependencies = [
  "tink-proto",
  "tink-signature",
  "tink-streaming-aead",
- "tink-testutil",
+ "tink-tests",
  "tokio",
  "tonic",
  "tonic-build",
 ]
 
 [[package]]
-name = "tink-testutil"
+name = "tink-tests"
 version = "0.1.0"
 dependencies = [
  "ed25519-dalek",

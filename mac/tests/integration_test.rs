@@ -19,8 +19,8 @@ mod subtle;
 #[test]
 fn test_mac_init() {
     tink_mac::init();
-    assert!(tink::registry::get_key_manager(tink_testutil::HMAC_TYPE_URL).is_ok());
-    assert!(tink::registry::get_key_manager(tink_testutil::AES_CMAC_TYPE_URL).is_ok());
+    assert!(tink::registry::get_key_manager(tink_tests::HMAC_TYPE_URL).is_ok());
+    assert!(tink::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL).is_ok());
 }
 
 #[test]

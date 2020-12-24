@@ -22,4 +22,4 @@ tokio = "^0.2.22"
 
 [dev-dependencies]
 tink-aead = "^0.1"
-tink-testutil = "^0.1"
+tink-tests = "^0.1"

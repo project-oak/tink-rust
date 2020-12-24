@@ -17,23 +17,22 @@
 use prost::Message;
 use std::collections::HashSet;
 use tink::{subtle::random::get_random_bytes, TinkError};
-use tink_testutil::proto_encode;
+use tink_tests::proto_encode;
 
 const KEY_SIZES: &[u32] = &[16, 32];
 
 #[test]
 fn test_aes_gcm_siv_get_primitive_basic() {
     tink_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_GCM_SIV_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_GCM_SIV_TYPE_URL)
         .expect("cannot obtain AES-GCM-SIV key manager");
-    assert_eq!(key_manager.type_url(), tink_testutil::AES_GCM_SIV_TYPE_URL);
+    assert_eq!(key_manager.type_url(), tink_tests::AES_GCM_SIV_TYPE_URL);
     assert_eq!(
         key_manager.key_material_type(),
         tink_proto::key_data::KeyMaterialType::Symmetric
     );
     for key_size in KEY_SIZES {
-        let key =
-            tink_testutil::new_aes_gcm_siv_key(tink_testutil::AES_GCM_SIV_KEY_VERSION, *key_size);
+        let key = tink_tests::new_aes_gcm_siv_key(tink_tests::AES_GCM_SIV_KEY_VERSION, *key_size);
         let serialized_key = proto_encode(&key);
         let p = key_manager.primitive(&serialized_key).unwrap();
         validate_aes_gcm_siv_primitive(p, &key).unwrap();
@@ -43,7 +42,7 @@ fn test_aes_gcm_siv_get_primitive_basic() {
 #[test]
 fn test_aes_gcm_siv_get_primitive_with_invalid_input() {
     tink_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_GCM_SIV_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_GCM_SIV_TYPE_URL)
         .expect("cannot obtain AES-GCM-SIV key manager");
     // invalid AES_GCM_SIVKey
     let test_keys = gen_invalid_aes_gcm_siv_keys();
@@ -64,9 +63,9 @@ fn test_aes_gcm_siv_get_primitive_with_invalid_input() {
 #[test]
 fn test_aes_gcm_siv_new_key_multiple_times() {
     tink_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_GCM_SIV_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_GCM_SIV_TYPE_URL)
         .expect("cannot obtain AES-GCM-SIV key manager");
-    let format = tink_testutil::new_aes_gcm_siv_key_format(32);
+    let format = tink_tests::new_aes_gcm_siv_key_format(32);
     let serialized_format = proto_encode(&format);
     let mut keys = HashSet::new();
     let n_test = 26;
@@ -85,10 +84,10 @@ fn test_aes_gcm_siv_new_key_multiple_times() {
 #[test]
 fn test_aes_gcm_siv_new_key_basic() {
     tink_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_GCM_SIV_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_GCM_SIV_TYPE_URL)
         .expect("cannot obtain AES-GCM-SIV key manager");
     for key_size in KEY_SIZES {
-        let format = tink_testutil::new_aes_gcm_siv_key_format(*key_size);
+        let format = tink_tests::new_aes_gcm_siv_key_format(*key_size);
         let serialized_format = proto_encode(&format);
         let m = key_manager.new_key(&serialized_format).unwrap();
         let key = tink_proto::AesGcmSivKey::decode(m.as_ref()).unwrap();
@@ -99,7 +98,7 @@ fn test_aes_gcm_siv_new_key_basic() {
 #[test]
 fn test_aes_gcm_siv_new_key_with_invalid_input() {
     tink_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_GCM_SIV_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_GCM_SIV_TYPE_URL)
         .expect("cannot obtain AES-GCM-SIV key manager");
     // bad format
     let bad_formats = gen_invalid_aes_gcm_siv_key_formats();
@@ -117,15 +116,15 @@ fn test_aes_gcm_siv_new_key_with_invalid_input() {
 #[test]
 fn test_aes_gcm_siv_new_key_data_basic() {
     tink_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_GCM_SIV_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_GCM_SIV_TYPE_URL)
         .expect("cannot obtain AES-GCM-SIV key manager");
     for key_size in KEY_SIZES {
-        let format = tink_testutil::new_aes_gcm_siv_key_format(*key_size);
+        let format = tink_tests::new_aes_gcm_siv_key_format(*key_size);
         let serialized_format = proto_encode(&format);
         let key_data = key_manager.new_key_data(&serialized_format).unwrap();
         assert_eq!(
             key_data.type_url,
-            tink_testutil::AES_GCM_SIV_TYPE_URL,
+            tink_tests::AES_GCM_SIV_TYPE_URL,
             "incorrect type url"
         );
         assert_eq!(
@@ -140,7 +139,7 @@ fn test_aes_gcm_siv_new_key_data_basic() {
 #[test]
 fn test_aes_gcm_siv_new_key_data_with_invalid_input() {
     tink_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_GCM_SIV_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_GCM_SIV_TYPE_URL)
         .expect("cannot obtain AES-GCM-SIV key manager");
     let bad_formats = gen_invalid_aes_gcm_siv_key_formats();
     for (i, serialized_format) in bad_formats.iter().enumerate() {
@@ -157,28 +156,28 @@ fn test_aes_gcm_siv_new_key_data_with_invalid_input() {
 #[test]
 fn test_aes_gcm_siv_does_support() {
     tink_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_GCM_SIV_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_GCM_SIV_TYPE_URL)
         .expect("cannot obtain AES-GCM-SIV key manager");
     assert!(
-        key_manager.does_support(tink_testutil::AES_GCM_SIV_TYPE_URL),
+        key_manager.does_support(tink_tests::AES_GCM_SIV_TYPE_URL),
         "AesGcmSivKeyManager must support {}",
-        tink_testutil::AES_GCM_SIV_TYPE_URL
+        tink_tests::AES_GCM_SIV_TYPE_URL
     );
     assert!(
         !key_manager.does_support("some bad type"),
         "AesGcmSivKeyManager must support only {}",
-        tink_testutil::AES_GCM_SIV_TYPE_URL
+        tink_tests::AES_GCM_SIV_TYPE_URL
     );
 }
 
 #[test]
 fn test_aes_gcm_siv_type_url() {
     tink_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_GCM_SIV_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_GCM_SIV_TYPE_URL)
         .expect("cannot obtain AES-GCM-SIV key manager");
     assert_eq!(
         key_manager.type_url(),
-        tink_testutil::AES_GCM_SIV_TYPE_URL,
+        tink_tests::AES_GCM_SIV_TYPE_URL,
         "incorrect key type"
     );
     assert_eq!(
@@ -191,23 +190,23 @@ fn test_aes_gcm_siv_type_url() {
 fn gen_invalid_aes_gcm_siv_keys() -> Vec<Vec<u8>> {
     vec![
         // not a AES_GCM_SIVKey
-        proto_encode(&tink_testutil::new_aes_gcm_siv_key_format(32)),
+        proto_encode(&tink_tests::new_aes_gcm_siv_key_format(32)),
         // bad key size
-        proto_encode(&tink_testutil::new_aes_gcm_siv_key(
-            tink_testutil::AES_GCM_SIV_KEY_VERSION,
+        proto_encode(&tink_tests::new_aes_gcm_siv_key(
+            tink_tests::AES_GCM_SIV_KEY_VERSION,
             17,
         )),
-        proto_encode(&tink_testutil::new_aes_gcm_siv_key(
-            tink_testutil::AES_GCM_SIV_KEY_VERSION,
+        proto_encode(&tink_tests::new_aes_gcm_siv_key(
+            tink_tests::AES_GCM_SIV_KEY_VERSION,
             25,
         )),
-        proto_encode(&tink_testutil::new_aes_gcm_siv_key(
-            tink_testutil::AES_GCM_SIV_KEY_VERSION,
+        proto_encode(&tink_tests::new_aes_gcm_siv_key(
+            tink_tests::AES_GCM_SIV_KEY_VERSION,
             33,
         )),
         // bad version
-        proto_encode(&tink_testutil::new_aes_gcm_siv_key(
-            tink_testutil::AES_GCM_SIV_KEY_VERSION + 1,
+        proto_encode(&tink_tests::new_aes_gcm_siv_key(
+            tink_tests::AES_GCM_SIV_KEY_VERSION + 1,
             16,
         )),
     ]
@@ -216,14 +215,14 @@ fn gen_invalid_aes_gcm_siv_keys() -> Vec<Vec<u8>> {
 fn gen_invalid_aes_gcm_siv_key_formats() -> Vec<Vec<u8>> {
     vec![
         // not AES_GCM_SIVKeyFormat
-        proto_encode(&tink_testutil::new_aes_gcm_siv_key(
-            tink_testutil::AES_GCM_SIV_KEY_VERSION,
+        proto_encode(&tink_tests::new_aes_gcm_siv_key(
+            tink_tests::AES_GCM_SIV_KEY_VERSION,
             16,
         )),
         // invalid key size
-        proto_encode(&tink_testutil::new_aes_gcm_siv_key_format(15)),
-        proto_encode(&tink_testutil::new_aes_gcm_siv_key_format(23)),
-        proto_encode(&tink_testutil::new_aes_gcm_siv_key_format(31)),
+        proto_encode(&tink_tests::new_aes_gcm_siv_key_format(15)),
+        proto_encode(&tink_tests::new_aes_gcm_siv_key_format(23)),
+        proto_encode(&tink_tests::new_aes_gcm_siv_key_format(31)),
     ]
 }
 
@@ -234,7 +233,7 @@ fn validate_aes_gcm_siv_key(
     if key.key_value.len() != format.key_size as usize {
         return Err("incorrect key size".into());
     }
-    if key.version != tink_testutil::AES_GCM_SIV_KEY_VERSION {
+    if key.version != tink_tests::AES_GCM_SIV_KEY_VERSION {
         return Err("incorrect key version".into());
     }
     // try to encrypt and decrypt

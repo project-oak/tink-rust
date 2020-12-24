@@ -17,7 +17,7 @@
 use rand::Rng;
 use std::fs;
 use tink::subtle::random::get_random_bytes;
-use tink_testutil::SharedBuf;
+use tink_tests::SharedBuf;
 
 mod subtle;
 
@@ -120,7 +120,7 @@ fn test_closed_write() {
     w.close().unwrap();
 
     let result = w.write_all(&pt);
-    tink_testutil::expect_err(result, "write on closed writer");
+    tink_tests::expect_err(result, "write on closed writer");
 }
 
 #[test]
@@ -149,9 +149,9 @@ fn test_multiple_failed_read() {
     let mut r = a.new_decrypting_reader(Box::new(buf), &aad).unwrap();
     let mut recovered = vec![];
     let result = r.read_to_end(&mut recovered);
-    tink_testutil::expect_err(result, "no matching key found");
+    tink_tests::expect_err(result, "no matching key found");
     let result = r.read_to_end(&mut recovered);
-    tink_testutil::expect_err(result, "read previously failed");
+    tink_tests::expect_err(result, "read previously failed");
 }
 
 const PARTIAL_CHUNK: usize = 17;

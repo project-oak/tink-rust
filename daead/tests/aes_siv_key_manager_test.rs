@@ -20,7 +20,7 @@ use tink::{subtle::random::get_random_bytes, TinkError};
 #[test]
 fn test_aes_siv_primitive() {
     tink_daead::init();
-    let km = tink::registry::get_key_manager(tink_testutil::AES_SIV_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::AES_SIV_TYPE_URL)
         .expect("cannot obtain AESSIV key manager");
     let serialized_key = km.new_key(&[]).unwrap();
     let p = km.primitive(&serialized_key).unwrap();
@@ -30,7 +30,7 @@ fn test_aes_siv_primitive() {
 #[test]
 fn test_aes_siv_primitive_with_invalid_keys() {
     tink_daead::init();
-    let km = tink::registry::get_key_manager(tink_testutil::AES_SIV_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::AES_SIV_TYPE_URL)
         .expect("cannot obtain AESSIV key manager");
     let invalid_keys = gen_invalid_aes_siv_keys();
     for key in invalid_keys {
@@ -47,10 +47,9 @@ fn test_aes_siv_primitive_with_wrong_primary_key() {
     tink_signature::init();
 
     let kh = tink::keyset::Handle::new(&tink_signature::ecdsa_p256_key_template()).unwrap();
-    let signature_km =
-        tink::registry::get_key_manager(tink_testutil::ECDSA_SIGNER_TYPE_URL).unwrap();
+    let signature_km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL).unwrap();
     let result = tink_daead::new_with_key_manager(&kh, Some(signature_km));
-    tink_testutil::expect_err(result, "not a DeterministicAEAD");
+    tink_tests::expect_err(result, "not a DeterministicAEAD");
 }
 
 #[test]
@@ -69,13 +68,13 @@ fn test_aes_siv_primitive_with_wrong_later_key() {
     let kh = ksm.handle().unwrap();
 
     let result = tink_daead::new(&kh);
-    tink_testutil::expect_err(result, "not a DeterministicAEAD");
+    tink_tests::expect_err(result, "not a DeterministicAEAD");
 }
 
 #[test]
 fn test_aes_siv_new_key() {
     tink_daead::init();
-    let km = tink::registry::get_key_manager(tink_testutil::AES_SIV_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::AES_SIV_TYPE_URL)
         .expect("cannot obtain AESSIV key manager");
     let sk = km.new_key(&[]).unwrap();
     let key = tink_proto::AesSivKey::decode(sk.as_ref()).unwrap();
@@ -85,10 +84,10 @@ fn test_aes_siv_new_key() {
 #[test]
 fn test_aes_siv_new_key_data() {
     tink_daead::init();
-    let km = tink::registry::get_key_manager(tink_testutil::AES_SIV_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::AES_SIV_TYPE_URL)
         .expect("cannot obtain AESSIV key manager");
     let kd = km.new_key_data(&[]).unwrap();
-    assert_eq!(kd.type_url, tink_testutil::AES_SIV_TYPE_URL);
+    assert_eq!(kd.type_url, tink_tests::AES_SIV_TYPE_URL);
     assert_eq!(
         kd.key_material_type,
         tink_proto::key_data::KeyMaterialType::Symmetric as i32
@@ -101,7 +100,7 @@ fn test_aes_siv_new_key_data() {
 #[test]
 fn test_aes_siv_new_key_invalid() {
     tink_daead::init();
-    let km = tink::registry::get_key_manager(tink_testutil::AES_SIV_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::AES_SIV_TYPE_URL)
         .expect("cannot obtain AESSIV key manager");
     let key_format = tink_proto::AesSivKeyFormat {
         key_size: (tink_daead::subtle::AES_SIV_KEY_SIZE - 1) as u32,
@@ -109,33 +108,33 @@ fn test_aes_siv_new_key_invalid() {
     let mut serialized_key_format = Vec::new();
     key_format.encode(&mut serialized_key_format).unwrap();
     let result = km.new_key(&serialized_key_format);
-    tink_testutil::expect_err(result, "key_size != 64");
+    tink_tests::expect_err(result, "key_size != 64");
 }
 
 #[test]
 fn test_aes_siv_does_support() {
     tink_daead::init();
-    let km = tink::registry::get_key_manager(tink_testutil::AES_SIV_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::AES_SIV_TYPE_URL)
         .expect("cannot obtain AESSIV key manager");
 
     assert!(
-        km.does_support(tink_testutil::AES_SIV_TYPE_URL),
+        km.does_support(tink_tests::AES_SIV_TYPE_URL),
         "AESSIVKeyManager must support {}",
-        tink_testutil::AES_SIV_TYPE_URL
+        tink_tests::AES_SIV_TYPE_URL
     );
     assert!(
         !km.does_support("some bad type"),
         "AESSIVKeyManager must only support {}",
-        tink_testutil::AES_SIV_TYPE_URL
+        tink_tests::AES_SIV_TYPE_URL
     );
 }
 
 #[test]
 fn test_aes_siv_type_url() {
     tink_daead::init();
-    let km = tink::registry::get_key_manager(tink_testutil::AES_SIV_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::AES_SIV_TYPE_URL)
         .expect("cannot obtain AESSIV key manager");
-    assert_eq!(km.type_url(), tink_testutil::AES_SIV_TYPE_URL);
+    assert_eq!(km.type_url(), tink_tests::AES_SIV_TYPE_URL);
 
     // Also check other parameters.
     assert_eq!(
@@ -163,10 +162,10 @@ fn validate_aes_siv_primitive(p: tink::Primitive) -> Result<(), TinkError> {
 }
 
 fn validate_aes_siv_key(key: &tink_proto::AesSivKey) -> Result<(), TinkError> {
-    if key.version != tink_testutil::AES_SIV_KEY_VERSION {
+    if key.version != tink_tests::AES_SIV_KEY_VERSION {
         return Err(format!(
             "incorrect key version: key_version != {}",
-            tink_testutil::AES_SIV_KEY_VERSION,
+            tink_tests::AES_SIV_KEY_VERSION,
         )
         .into());
     }
@@ -187,24 +186,24 @@ fn gen_invalid_aes_siv_keys() -> Vec<tink_proto::AesSivKey> {
     vec![
         // Bad key size.
         tink_proto::AesSivKey {
-            version: tink_testutil::AES_SIV_KEY_VERSION,
+            version: tink_tests::AES_SIV_KEY_VERSION,
             key_value: get_random_bytes(16),
         },
         tink_proto::AesSivKey {
-            version: tink_testutil::AES_SIV_KEY_VERSION,
+            version: tink_tests::AES_SIV_KEY_VERSION,
             key_value: get_random_bytes(32),
         },
         tink_proto::AesSivKey {
-            version: tink_testutil::AES_SIV_KEY_VERSION,
+            version: tink_tests::AES_SIV_KEY_VERSION,
             key_value: get_random_bytes(63),
         },
         tink_proto::AesSivKey {
-            version: tink_testutil::AES_SIV_KEY_VERSION,
+            version: tink_tests::AES_SIV_KEY_VERSION,
             key_value: get_random_bytes(65),
         },
         // Bad version.
         tink_proto::AesSivKey {
-            version: tink_testutil::AES_SIV_KEY_VERSION + 1,
+            version: tink_tests::AES_SIV_KEY_VERSION + 1,
             key_value: get_random_bytes(tink_daead::subtle::AES_SIV_KEY_SIZE),
         },
     ]

@@ -43,11 +43,11 @@ fn test_aead_init() {
     tink_aead::init();
 
     // Check for AES-GCM key manager.
-    tink::registry::get_key_manager(tink_testutil::AES_GCM_TYPE_URL).unwrap();
+    tink::registry::get_key_manager(tink_tests::AES_GCM_TYPE_URL).unwrap();
 
     // Check for ChaCha20Poly1305 key manager.
-    tink::registry::get_key_manager(tink_testutil::CHA_CHA20_POLY1305_TYPE_URL).unwrap();
+    tink::registry::get_key_manager(tink_tests::CHA_CHA20_POLY1305_TYPE_URL).unwrap();
 
     // Check for XChaCha20Poly1305 key manager.
-    tink::registry::get_key_manager(tink_testutil::X_CHA_CHA20_POLY1305_TYPE_URL).unwrap();
+    tink::registry::get_key_manager(tink_tests::X_CHA_CHA20_POLY1305_TYPE_URL).unwrap();
 }

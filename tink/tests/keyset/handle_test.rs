@@ -58,18 +58,18 @@ fn test_read() {
     let main_key = Box::new(tink_aead::subtle::AesGcm::new(&[b'A'; 32]).unwrap());
 
     // Create a keyset
-    let key_data = tink_testutil::new_key_data(
+    let key_data = tink_tests::new_key_data(
         "some type url",
         &[42, 42, 0x42, 0x42, 0o42, 0o42], // 42 in all possible formats
         KeyMaterialType::Symmetric,
     );
-    let key = tink_testutil::new_key(
+    let key = tink_tests::new_key(
         &key_data,
         tink_proto::KeyStatusType::Enabled,
         1,
         tink_proto::OutputPrefixType::Tink,
     );
-    let ks = tink_testutil::new_keyset(1, vec![key]);
+    let ks = tink_tests::new_keyset(1, vec![key]);
     let h = insecure::new_handle(ks).unwrap();
 
     // Also check that debug output of handle doesn't include key material.
@@ -92,14 +92,14 @@ fn test_read() {
 fn test_read_with_no_secrets() {
     // Create a keyset containing public key material
     let key_data =
-        tink_testutil::new_key_data("some type url", &[0], KeyMaterialType::AsymmetricPublic);
-    let key = tink_testutil::new_key(
+        tink_tests::new_key_data("some type url", &[0], KeyMaterialType::AsymmetricPublic);
+    let key = tink_tests::new_key(
         &key_data,
         tink_proto::KeyStatusType::Enabled,
         1,
         tink_proto::OutputPrefixType::Tink,
     );
-    let ks = tink_testutil::new_keyset(1, vec![key]);
+    let ks = tink_tests::new_keyset(1, vec![key]);
     let h = insecure::new_handle(ks).unwrap();
 
     let mem_keyset = &mut tink::keyset::MemReaderWriter::default();
@@ -118,14 +118,14 @@ fn test_read_with_no_secrets() {
 #[test]
 fn test_with_no_secrets_functions_fail_when_handling_secret_key_material() {
     // Create a keyset containing secret key material (symmetric)
-    let key_data = tink_testutil::new_key_data("some type url", &[0], KeyMaterialType::Symmetric);
-    let key = tink_testutil::new_key(
+    let key_data = tink_tests::new_key_data("some type url", &[0], KeyMaterialType::Symmetric);
+    let key = tink_tests::new_key(
         &key_data,
         tink_proto::KeyStatusType::Enabled,
         1,
         tink_proto::OutputPrefixType::Tink,
     );
-    let ks = tink_testutil::new_keyset(1, vec![key]);
+    let ks = tink_tests::new_keyset(1, vec![key]);
     let h = insecure::new_handle(ks).unwrap();
 
     assert!(
@@ -148,14 +148,14 @@ fn test_with_no_secrets_functions_fail_when_handling_secret_key_material() {
 fn test_with_no_secrets_functions_fail_when_unknown_key_material() {
     // Create a keyset containing secret key material (symmetric)
     let key_data =
-        tink_testutil::new_key_data("some type url", &[0], KeyMaterialType::UnknownKeymaterial);
-    let key = tink_testutil::new_key(
+        tink_tests::new_key_data("some type url", &[0], KeyMaterialType::UnknownKeymaterial);
+    let key = tink_tests::new_key(
         &key_data,
         tink_proto::KeyStatusType::Enabled,
         1,
         tink_proto::OutputPrefixType::Tink,
     );
-    let ks = tink_testutil::new_keyset(1, vec![key]);
+    let ks = tink_tests::new_keyset(1, vec![key]);
     let h = insecure::new_handle(ks).unwrap();
 
     assert!(
@@ -178,14 +178,14 @@ fn test_with_no_secrets_functions_fail_when_unknown_key_material() {
 fn test_with_no_secrets_functions_fail_with_asymmetric_private_key_material() {
     // Create a keyset containing secret key material (asymmetric)
     let key_data =
-        tink_testutil::new_key_data("some type url", &[0], KeyMaterialType::AsymmetricPrivate);
-    let key = tink_testutil::new_key(
+        tink_tests::new_key_data("some type url", &[0], KeyMaterialType::AsymmetricPrivate);
+    let key = tink_tests::new_key(
         &key_data,
         tink_proto::KeyStatusType::Enabled,
         1,
         tink_proto::OutputPrefixType::Tink,
     );
-    let ks = tink_testutil::new_keyset(1, vec![key]);
+    let ks = tink_tests::new_keyset(1, vec![key]);
     let h = insecure::new_handle(ks).unwrap();
 
     assert!(
@@ -299,7 +299,7 @@ fn test_handle_public() {
 
     // handle.public() only works for asymmetric private keys.
     let result = kh_public.public();
-    tink_testutil::expect_err(result, "contains a non-private key");
+    tink_tests::expect_err(result, "contains a non-private key");
 }
 
 #[test]
@@ -319,7 +319,7 @@ fn test_handle_public_destroyed_key() {
     let kh = ksm.handle().unwrap();
 
     let result = kh.public();
-    tink_testutil::expect_err(result, "invalid keyset");
+    tink_tests::expect_err(result, "invalid keyset");
 }
 
 #[test]
@@ -330,24 +330,24 @@ fn test_handle_public_wrong_keymanager() {
 
     // Manually corrupt the keyset to refer to the wrong key manager.
     let mut ks = insecure::keyset_material(&kh);
-    ks.key[0].key_data.as_mut().unwrap().type_url = tink_testutil::HMAC_TYPE_URL.to_string();
+    ks.key[0].key_data.as_mut().unwrap().type_url = tink_tests::HMAC_TYPE_URL.to_string();
     let invalid_kh = insecure::new_handle(ks).unwrap();
 
     let result = invalid_kh.public();
-    tink_testutil::expect_err(result, "handles private keys");
+    tink_tests::expect_err(result, "handles private keys");
 }
 
 #[test]
 fn test_mem_read_with_no_secrets_empty() {
     let result = Handle::read_with_no_secrets(&mut tink::keyset::MemReaderWriter::default());
-    tink_testutil::expect_err(result, "no keyset available");
+    tink_tests::expect_err(result, "no keyset available");
 }
 
 #[test]
 fn test_mem_read_empty() {
     let main_key = Box::new(tink_aead::subtle::AesGcm::new(&[b'A'; 32]).unwrap());
     let result = Handle::read(&mut tink::keyset::MemReaderWriter::default(), main_key);
-    tink_testutil::expect_err(result, "no keyset available");
+    tink_tests::expect_err(result, "no keyset available");
 }
 
 #[test]
@@ -373,5 +373,5 @@ fn test_insecure_read_empty() {
         ..Default::default()
     };
     let result = insecure::read(&mut mem_keyset);
-    tink_testutil::expect_err(result, "insecure: invalid keyset");
+    tink_tests::expect_err(result, "insecure: invalid keyset");
 }

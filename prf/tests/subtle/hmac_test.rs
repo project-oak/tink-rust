@@ -103,7 +103,7 @@ fn test_vectors_hmac_wycheproof() {
         let hash_name = format!("{:?}", hash);
         let filename = format!("testvectors/hmac_{}_test.json", hash_name.to_lowercase());
         println!("wycheproof file '{}' hash {}", filename, hash_name);
-        let bytes = tink_testutil::wycheproof_data(&filename);
+        let bytes = tink_tests::wycheproof_data(&filename);
         let data: TestData = serde_json::from_slice(&bytes).unwrap();
 
         for g in &data.test_groups {
@@ -115,7 +115,7 @@ fn test_vectors_hmac_wycheproof() {
                 assert_eq!(tc.key.len() * 8, g.key_size as usize);
 
                 let h = HmacPrf::new(*hash, &tc.key);
-                let valid = tc.case.result == tink_testutil::WycheproofResult::Valid;
+                let valid = tc.case.result == tink_tests::WycheproofResult::Valid;
                 if valid && h.is_err() {
                     panic!(
                         "Could not create HmacPrf for test case {} ({})",

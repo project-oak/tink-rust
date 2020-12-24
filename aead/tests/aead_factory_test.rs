@@ -22,7 +22,7 @@ use tink_proto::OutputPrefixType;
 fn test_factory_multiple_keys() {
     tink_aead::init();
     // encrypt with non-raw key
-    let keyset = tink_testutil::new_test_aes_gcm_keyset(OutputPrefixType::Tink);
+    let keyset = tink_tests::new_test_aes_gcm_keyset(OutputPrefixType::Tink);
     let primary_key = keyset.key[0].clone();
     let raw_key = keyset.key[1].clone();
     assert_ne!(
@@ -43,14 +43,14 @@ fn test_factory_multiple_keys() {
         "expect a raw key"
     );
 
-    let keyset2 = tink_testutil::new_keyset(raw_key.key_id, vec![raw_key]);
+    let keyset2 = tink_tests::new_keyset(raw_key.key_id, vec![raw_key]);
     let keyset_handle2 = tink::keyset::insecure::new_handle(keyset2).unwrap();
     let a2 = tink_aead::new(&keyset_handle2).expect("tink_aead::new failed");
     validate_aead_factory_cipher(a2.box_clone(), a.box_clone(), &tink::cryptofmt::RAW_PREFIX)
         .expect("invalid cipher");
 
     // encrypt with a random key not in the keyset, decrypt with the keyset should fail
-    let keyset2 = tink_testutil::new_test_aes_gcm_keyset(OutputPrefixType::Tink);
+    let keyset2 = tink_tests::new_test_aes_gcm_keyset(OutputPrefixType::Tink);
     let primary_key = keyset2.key[0].clone();
     let expected_prefix = tink::cryptofmt::output_prefix(&primary_key).unwrap();
     let keyset_handle2 = tink::keyset::insecure::new_handle(keyset2).unwrap();
@@ -67,7 +67,7 @@ fn test_factory_multiple_keys() {
 #[test]
 fn test_factory_raw_key_as_primary() {
     tink_aead::init();
-    let keyset = tink_testutil::new_test_aes_gcm_keyset(OutputPrefixType::Raw);
+    let keyset = tink_tests::new_test_aes_gcm_keyset(OutputPrefixType::Raw);
     assert_eq!(
         keyset.key[0].output_prefix_type,
         OutputPrefixType::Raw as i32,

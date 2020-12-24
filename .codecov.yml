@@ -20,7 +20,7 @@ ignore:
   - "examples/"
   - "rinkey/"
   - "testing/"
-  - "testutil/"
+  - "tests/"
   - "**/build.rs"
   - "**/benches/"
   - "**/tests/"

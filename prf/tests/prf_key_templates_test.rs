@@ -47,7 +47,7 @@ fn check_hmac_template(
     key_size: u32,
     hash_type: tink_proto::HashType,
 ) -> Result<(), TinkError> {
-    if template.type_url != tink_testutil::HMAC_PRF_TYPE_URL {
+    if template.type_url != tink_tests::HMAC_PRF_TYPE_URL {
         return Err("TypeUrl is incorrect".into());
     }
     if template.output_prefix_type != tink_proto::OutputPrefixType::Raw as i32 {
@@ -58,7 +58,7 @@ fn check_hmac_template(
     if format.key_size != key_size || format.params.unwrap().hash != hash_type as i32 {
         return Err("KeyFormat is incorrect".into());
     }
-    let keymanager = tink::registry::get_key_manager(tink_testutil::HMAC_PRF_TYPE_URL)
+    let keymanager = tink::registry::get_key_manager(tink_tests::HMAC_PRF_TYPE_URL)
         .map_err(|e| wrap_err("Could not obtain HMAC key manager", e))?;
     assert!(
         keymanager.new_key(&template.value).is_ok(),
@@ -73,7 +73,7 @@ fn check_hkdf_template(
     salt: &[u8],
     hash_type: tink_proto::HashType,
 ) -> Result<(), TinkError> {
-    if template.type_url != tink_testutil::HKDF_PRF_TYPE_URL {
+    if template.type_url != tink_tests::HKDF_PRF_TYPE_URL {
         return Err("TypeUrl is incorrect".into());
     }
     if template.output_prefix_type != tink_proto::OutputPrefixType::Raw as i32 {
@@ -88,7 +88,7 @@ fn check_hkdf_template(
     {
         return Err("KeyFormat is incorrect".into());
     }
-    let keymanager = tink::registry::get_key_manager(tink_testutil::HKDF_PRF_TYPE_URL)
+    let keymanager = tink::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
         .map_err(|e| wrap_err("Could not obtain HKDF key manager", e))?;
     assert!(
         keymanager.new_key(&template.value).is_ok(),
@@ -98,7 +98,7 @@ fn check_hkdf_template(
 }
 
 fn check_cmac_template(template: &tink_proto::KeyTemplate, key_size: u32) -> Result<(), TinkError> {
-    if template.type_url != tink_testutil::AES_CMAC_PRF_TYPE_URL {
+    if template.type_url != tink_tests::AES_CMAC_PRF_TYPE_URL {
         return Err("TypeUrl is incorrect".into());
     }
     if template.output_prefix_type != tink_proto::OutputPrefixType::Raw as i32 {
@@ -110,7 +110,7 @@ fn check_cmac_template(template: &tink_proto::KeyTemplate, key_size: u32) -> Res
     if format.key_size != key_size {
         return Err("KeyFormat is incorrect".into());
     }
-    let keymanager = tink::registry::get_key_manager(tink_testutil::AES_CMAC_PRF_TYPE_URL)
+    let keymanager = tink::registry::get_key_manager(tink_tests::AES_CMAC_PRF_TYPE_URL)
         .map_err(|e| wrap_err("Could not obtain AES-CMAC key manager", e))?;
     assert!(
         keymanager.new_key(&template.value).is_ok(),

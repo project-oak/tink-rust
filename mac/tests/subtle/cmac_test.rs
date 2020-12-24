@@ -37,7 +37,7 @@ lazy_static! {
 #[derive(Debug, Deserialize)]
 pub struct TestData {
     #[serde(flatten)]
-    pub suite: tink_testutil::WycheproofSuite,
+    pub suite: tink_tests::WycheproofSuite,
     #[serde(rename = "testGroups")]
     pub test_groups: Vec<TestGroup>,
 }
@@ -45,7 +45,7 @@ pub struct TestData {
 #[derive(Debug, Deserialize)]
 pub struct TestGroup {
     #[serde(flatten)]
-    pub group: tink_testutil::WycheproofGroup,
+    pub group: tink_tests::WycheproofGroup,
     #[serde(rename = "keySize")]
     pub key_size: u32,
     #[serde(rename = "tagSize")]
@@ -56,12 +56,12 @@ pub struct TestGroup {
 #[derive(Debug, Deserialize)]
 pub struct TestCase {
     #[serde(flatten)]
-    pub case: tink_testutil::WycheproofCase,
-    #[serde(with = "tink_testutil::hex_string")]
+    pub case: tink_tests::WycheproofCase,
+    #[serde(with = "tink_tests::hex_string")]
     pub key: Vec<u8>,
-    #[serde(with = "tink_testutil::hex_string")]
+    #[serde(with = "tink_tests::hex_string")]
     pub msg: Vec<u8>,
-    #[serde(with = "tink_testutil::hex_string")]
+    #[serde(with = "tink_tests::hex_string")]
     pub tag: Vec<u8>,
 }
 
@@ -69,7 +69,7 @@ pub struct TestCase {
 fn test_vectors_wycheproof() {
     let filename = "testvectors/aes_cmac_test.json";
     println!("wycheproof file '{}'", filename);
-    let bytes = tink_testutil::wycheproof_data(filename);
+    let bytes = tink_tests::wycheproof_data(filename);
     let data: TestData = serde_json::from_slice(&bytes).unwrap();
 
     for g in &data.test_groups {
@@ -92,7 +92,7 @@ fn test_vectors_wycheproof() {
                 g.tag_size
             );
 
-            let valid = tc.case.result == tink_testutil::WycheproofResult::Valid;
+            let valid = tc.case.result == tink_tests::WycheproofResult::Valid;
             let aes = match tink_mac::subtle::AesCmac::new(&tc.key, g.tag_size as usize / 8) {
                 Err(e) => {
                     if valid {

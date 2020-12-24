@@ -21,7 +21,7 @@ use tink_proto::{
     AesCtrHmacStreamingKey, AesCtrHmacStreamingKeyFormat, AesCtrHmacStreamingParams, HashType,
 };
 use tink_streaming_aead::subtle;
-use tink_testutil::proto_encode;
+use tink_tests::proto_encode;
 
 mod common;
 use common::encrypt_decrypt;
@@ -31,11 +31,11 @@ const AES_CTR_HMAC_KEY_SIZES: [u32; 2] = [16, 32];
 #[test]
 fn test_aes_ctr_hmac_get_primitive_basic() {
     tink_streaming_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_CTR_HMAC_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_CTR_HMAC_TYPE_URL)
         .expect("cannot obtain AES-CTR-HMAC key manager");
     for key_size in &AES_CTR_HMAC_KEY_SIZES {
-        let key = tink_testutil::new_aes_ctr_hmac_key(
-            tink_testutil::AES_CTR_HMAC_KEY_VERSION,
+        let key = tink_tests::new_aes_ctr_hmac_key(
+            tink_tests::AES_CTR_HMAC_KEY_VERSION,
             *key_size,
             HashType::Sha256,
             *key_size,
@@ -55,7 +55,7 @@ fn test_aes_ctr_hmac_get_primitive_basic() {
 #[test]
 fn test_aes_ctr_hmac_get_primitive_with_invalid_input() {
     tink_streaming_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_CTR_HMAC_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_CTR_HMAC_TYPE_URL)
         .expect("cannot obtain AES-CTR-HMAC key manager");
 
     let test_keys = gen_invalid_aes_ctr_hmac_keys();
@@ -76,9 +76,9 @@ fn test_aes_ctr_hmac_get_primitive_with_invalid_input() {
 #[test]
 fn test_aes_ctr_hmac_new_key_multiple_times() {
     tink_streaming_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_CTR_HMAC_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_CTR_HMAC_TYPE_URL)
         .expect("cannot obtain AES-CTR-HMAC key manager");
-    let format = tink_testutil::new_aes_ctr_hmac_key_format(
+    let format = tink_tests::new_aes_ctr_hmac_key_format(
         32,
         HashType::Sha256,
         32,
@@ -104,10 +104,10 @@ fn test_aes_ctr_hmac_new_key_multiple_times() {
 #[test]
 fn test_aes_ctr_hmac_new_key_basic() {
     tink_streaming_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_CTR_HMAC_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_CTR_HMAC_TYPE_URL)
         .expect("cannot obtain AES-CTR-HMAC key manager");
     for key_size in &AES_CTR_HMAC_KEY_SIZES {
-        let format = tink_testutil::new_aes_ctr_hmac_key_format(
+        let format = tink_tests::new_aes_ctr_hmac_key_format(
             *key_size,
             HashType::Sha256,
             *key_size,
@@ -125,7 +125,7 @@ fn test_aes_ctr_hmac_new_key_basic() {
 #[test]
 fn test_aes_ctr_hmac_new_key_with_invalid_input() {
     tink_streaming_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_CTR_HMAC_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_CTR_HMAC_TYPE_URL)
         .expect("cannot obtain AES-CTR-HMAC key manager");
     // bad format
     let bad_formats = gen_invalid_aes_ctr_hmac_key_formats();
@@ -146,10 +146,10 @@ fn test_aes_ctr_hmac_new_key_with_invalid_input() {
 #[test]
 fn test_aes_ctr_hmac_new_key_data_basic() {
     tink_streaming_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_CTR_HMAC_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_CTR_HMAC_TYPE_URL)
         .expect("cannot obtain AES-CTR-HMAC key manager");
     for key_size in &AES_CTR_HMAC_KEY_SIZES {
-        let format = tink_testutil::new_aes_ctr_hmac_key_format(
+        let format = tink_tests::new_aes_ctr_hmac_key_format(
             *key_size,
             HashType::Sha256,
             *key_size,
@@ -161,7 +161,7 @@ fn test_aes_ctr_hmac_new_key_data_basic() {
         let key_data = key_manager.new_key_data(&serialized_format).unwrap();
         assert_eq!(
             key_data.type_url,
-            tink_testutil::AES_CTR_HMAC_TYPE_URL,
+            tink_tests::AES_CTR_HMAC_TYPE_URL,
             "incorrect type url"
         );
         assert_eq!(
@@ -178,7 +178,7 @@ fn test_aes_ctr_hmac_new_key_data_basic() {
 #[test]
 fn test_aes_ctr_hmac_new_key_data_with_invalid_input() {
     tink_streaming_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_CTR_HMAC_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_CTR_HMAC_TYPE_URL)
         .expect("cannot obtain AES-CTR-HMAC key manager");
     let bad_formats = gen_invalid_aes_ctr_hmac_key_formats();
     for (i, serialized_format) in bad_formats.iter().enumerate() {
@@ -198,28 +198,28 @@ fn test_aes_ctr_hmac_new_key_data_with_invalid_input() {
 #[test]
 fn test_aes_ctr_hmac_does_support() {
     tink_streaming_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_CTR_HMAC_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_CTR_HMAC_TYPE_URL)
         .expect("cannot obtain AES-CTR-HMAC key manager");
     assert!(
-        key_manager.does_support(tink_testutil::AES_CTR_HMAC_TYPE_URL),
+        key_manager.does_support(tink_tests::AES_CTR_HMAC_TYPE_URL),
         "AesCtrHmacKeyManager must support {}",
-        tink_testutil::AES_CTR_HMAC_TYPE_URL,
+        tink_tests::AES_CTR_HMAC_TYPE_URL,
     );
     assert!(
         !key_manager.does_support("some bad type"),
         "AesCtrHmacKeyManager must support only {}",
-        tink_testutil::AES_CTR_HMAC_TYPE_URL,
+        tink_tests::AES_CTR_HMAC_TYPE_URL,
     );
 }
 
 #[test]
 fn test_aes_ctr_hmac_type_url() {
     tink_streaming_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_CTR_HMAC_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_CTR_HMAC_TYPE_URL)
         .expect("cannot obtain AES-CTR-HMAC key manager");
     assert_eq!(
         key_manager.type_url(),
-        tink_testutil::AES_CTR_HMAC_TYPE_URL,
+        tink_tests::AES_CTR_HMAC_TYPE_URL,
         "incorrect key type"
     );
 }
@@ -227,7 +227,7 @@ fn test_aes_ctr_hmac_type_url() {
 fn gen_invalid_aes_ctr_hmac_keys() -> Vec<Vec<u8>> {
     vec![
         // not a AES_CTR_HMACKey
-        proto_encode(&tink_testutil::new_aes_ctr_hmac_key_format(
+        proto_encode(&tink_tests::new_aes_ctr_hmac_key_format(
             32,
             HashType::Sha256,
             32,
@@ -236,8 +236,8 @@ fn gen_invalid_aes_ctr_hmac_keys() -> Vec<Vec<u8>> {
             4096,
         )),
         // bad key size
-        proto_encode(&tink_testutil::new_aes_ctr_hmac_key(
-            tink_testutil::AES_CTR_HMAC_KEY_VERSION,
+        proto_encode(&tink_tests::new_aes_ctr_hmac_key(
+            tink_tests::AES_CTR_HMAC_KEY_VERSION,
             17,
             HashType::Sha256,
             16,
@@ -245,8 +245,8 @@ fn gen_invalid_aes_ctr_hmac_keys() -> Vec<Vec<u8>> {
             16,
             4096,
         )),
-        proto_encode(&tink_testutil::new_aes_ctr_hmac_key(
-            tink_testutil::AES_CTR_HMAC_KEY_VERSION,
+        proto_encode(&tink_tests::new_aes_ctr_hmac_key(
+            tink_tests::AES_CTR_HMAC_KEY_VERSION,
             16,
             HashType::Sha256,
             17,
@@ -254,8 +254,8 @@ fn gen_invalid_aes_ctr_hmac_keys() -> Vec<Vec<u8>> {
             16,
             4096,
         )),
-        proto_encode(&tink_testutil::new_aes_ctr_hmac_key(
-            tink_testutil::AES_CTR_HMAC_KEY_VERSION,
+        proto_encode(&tink_tests::new_aes_ctr_hmac_key(
+            tink_tests::AES_CTR_HMAC_KEY_VERSION,
             33,
             HashType::Sha256,
             33,
@@ -264,8 +264,8 @@ fn gen_invalid_aes_ctr_hmac_keys() -> Vec<Vec<u8>> {
             4096,
         )),
         // bad version
-        proto_encode(&tink_testutil::new_aes_ctr_hmac_key(
-            tink_testutil::AES_CTR_HMAC_KEY_VERSION + 1,
+        proto_encode(&tink_tests::new_aes_ctr_hmac_key(
+            tink_tests::AES_CTR_HMAC_KEY_VERSION + 1,
             16,
             HashType::Sha256,
             16,
@@ -279,8 +279,8 @@ fn gen_invalid_aes_ctr_hmac_keys() -> Vec<Vec<u8>> {
 fn gen_invalid_aes_ctr_hmac_key_formats() -> Vec<Vec<u8>> {
     vec![
         // not AesCtrHmacKeyFormat
-        proto_encode(&tink_testutil::new_aes_ctr_hmac_key(
-            tink_testutil::AES_CTR_HMAC_KEY_VERSION,
+        proto_encode(&tink_tests::new_aes_ctr_hmac_key(
+            tink_tests::AES_CTR_HMAC_KEY_VERSION,
             16,
             HashType::Sha256,
             16,
@@ -289,7 +289,7 @@ fn gen_invalid_aes_ctr_hmac_key_formats() -> Vec<Vec<u8>> {
             4096,
         )),
         // invalid key size
-        proto_encode(&tink_testutil::new_aes_ctr_hmac_key_format(
+        proto_encode(&tink_tests::new_aes_ctr_hmac_key_format(
             17,
             HashType::Sha256,
             16,
@@ -297,7 +297,7 @@ fn gen_invalid_aes_ctr_hmac_key_formats() -> Vec<Vec<u8>> {
             16,
             4096,
         )),
-        proto_encode(&tink_testutil::new_aes_ctr_hmac_key_format(
+        proto_encode(&tink_tests::new_aes_ctr_hmac_key_format(
             16,
             HashType::Sha256,
             17,
@@ -305,7 +305,7 @@ fn gen_invalid_aes_ctr_hmac_key_formats() -> Vec<Vec<u8>> {
             16,
             4096,
         )),
-        proto_encode(&tink_testutil::new_aes_ctr_hmac_key_format(
+        proto_encode(&tink_tests::new_aes_ctr_hmac_key_format(
             33,
             HashType::Sha256,
             33,
@@ -323,7 +323,7 @@ fn validate_aes_ctr_hmac_key(
     if key.key_value.len() != (format.key_size as usize) {
         return Err("incorrect key size".into());
     }
-    if key.version != tink_testutil::AES_CTR_HMAC_KEY_VERSION {
+    if key.version != tink_tests::AES_CTR_HMAC_KEY_VERSION {
         return Err("incorrect key version".into());
     }
     let key_params = key
@@ -378,7 +378,7 @@ fn validate_aes_ctr_hmac_primitive(
 #[test]
 fn test_new_key_with_invalid_format() {
     tink_streaming_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_CTR_HMAC_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_CTR_HMAC_TYPE_URL)
         .expect("cannot obtain AES-CTR-HMAC key manager");
 
     let invalid_formats = vec![
@@ -580,16 +580,16 @@ fn test_new_key_with_invalid_format() {
         */
     ];
     for (err_msg, format) in &invalid_formats {
-        let serialized_format = tink_testutil::proto_encode(format);
+        let serialized_format = tink_tests::proto_encode(format);
         let result = key_manager.new_key(&serialized_format);
-        tink_testutil::expect_err(result, err_msg);
+        tink_tests::expect_err(result, err_msg);
     }
 }
 
 #[test]
 fn test_primitive_with_invalid_key() {
     tink_streaming_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_testutil::AES_CTR_HMAC_TYPE_URL)
+    let key_manager = tink::registry::get_key_manager(tink_tests::AES_CTR_HMAC_TYPE_URL)
         .expect("cannot obtain AES-CTR-HMAC key manager");
 
     let invalid_keys = vec![
@@ -791,9 +791,9 @@ fn test_primitive_with_invalid_key() {
          */
     ];
     for (err_msg, key) in &invalid_keys {
-        let serialized_key = tink_testutil::proto_encode(key);
+        let serialized_key = tink_tests::proto_encode(key);
         let result = key_manager.primitive(&serialized_key);
-        tink_testutil::expect_err(result, err_msg);
+        tink_tests::expect_err(result, err_msg);
     }
 }
 
@@ -893,6 +893,6 @@ fn test_aes_ctr_hmac_new_with_invalid_params() {
             params.ciphertext_segment_size as usize,
             0,
         );
-        tink_testutil::expect_err(result, err_msg);
+        tink_tests::expect_err(result, err_msg);
     }
 }

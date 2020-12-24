@@ -28,83 +28,83 @@ fn test_validate() {
     // empty keyset
     let empty_keys = vec![];
     assert!(
-        keyset::validate(&tink_testutil::new_keyset(1, empty_keys)).is_err(),
+        keyset::validate(&tink_tests::new_keyset(1, empty_keys)).is_err(),
         "expect an error when keyset is empty"
     );
     // no primary key
-    let keys = vec![tink_testutil::new_dummy_key(
+    let keys = vec![tink_tests::new_dummy_key(
         1,
         tink_proto::KeyStatusType::Enabled,
         tink_proto::OutputPrefixType::Tink,
     )];
     assert!(
-        keyset::validate(&tink_testutil::new_keyset(2, keys)).is_err(),
+        keyset::validate(&tink_tests::new_keyset(2, keys)).is_err(),
         "expect an error when there is no primary key"
     );
     // primary key is disabled
     let keys = vec![
-        tink_testutil::new_dummy_key(
+        tink_tests::new_dummy_key(
             1,
             tink_proto::KeyStatusType::Enabled,
             tink_proto::OutputPrefixType::Tink,
         ),
-        tink_testutil::new_dummy_key(
+        tink_tests::new_dummy_key(
             2,
             tink_proto::KeyStatusType::Disabled,
             tink_proto::OutputPrefixType::Legacy,
         ),
     ];
     assert!(
-        keyset::validate(&tink_testutil::new_keyset(2, keys)).is_err(),
+        keyset::validate(&tink_tests::new_keyset(2, keys)).is_err(),
         "expect an error when primary key is disabled"
     );
     // multiple primary keys
     let keys = vec![
-        tink_testutil::new_dummy_key(
+        tink_tests::new_dummy_key(
             1,
             tink_proto::KeyStatusType::Enabled,
             tink_proto::OutputPrefixType::Tink,
         ),
-        tink_testutil::new_dummy_key(
+        tink_tests::new_dummy_key(
             1,
             tink_proto::KeyStatusType::Enabled,
             tink_proto::OutputPrefixType::Legacy,
         ),
     ];
     assert!(
-        keyset::validate(&tink_testutil::new_keyset(1, keys)).is_err(),
+        keyset::validate(&tink_tests::new_keyset(1, keys)).is_err(),
         "expect an error when there are multiple primary keys"
     );
     // invalid keys
     let invalid_keys = generate_invalid_keys();
     for (i, key) in invalid_keys.into_iter().enumerate() {
         assert!(
-            keyset::validate(&tink_testutil::new_keyset(1, vec![key])).is_err(),
+            keyset::validate(&tink_tests::new_keyset(1, vec![key])).is_err(),
             "expect an error when validate invalid key {}",
             i
         );
     }
     // no primary keys
     let keys = vec![
-        tink_testutil::new_dummy_key(
+        tink_tests::new_dummy_key(
             1,
             tink_proto::KeyStatusType::Disabled,
             tink_proto::OutputPrefixType::Tink,
         ),
-        tink_testutil::new_dummy_key(
+        tink_tests::new_dummy_key(
             1,
             tink_proto::KeyStatusType::Disabled,
             tink_proto::OutputPrefixType::Legacy,
         ),
     ];
     assert!(
-        keyset::validate(&tink_testutil::new_keyset(1, keys)).is_err(),
+        keyset::validate(&tink_tests::new_keyset(1, keys)).is_err(),
         "expect an error when there are no primary keys"
     );
     // public key only
-    let keys = vec![tink_testutil::new_key(
-        &tink_testutil::new_key_data(
-            tink_testutil::ECIES_AEAD_HKDF_PUBLIC_KEY_TYPE_URL,
+    let keys = vec![tink_tests::new_key(
+        &tink_tests::new_key_data(
+            tink_tests::ECIES_AEAD_HKDF_PUBLIC_KEY_TYPE_URL,
             &get_random_bytes(10),
             tink_proto::key_data::KeyMaterialType::AsymmetricPublic,
         ),
@@ -113,14 +113,14 @@ fn test_validate() {
         tink_proto::OutputPrefixType::Tink,
     )];
     assert!(
-        keyset::validate(&tink_testutil::new_keyset(1, keys)).is_ok(),
+        keyset::validate(&tink_tests::new_keyset(1, keys)).is_ok(),
         "valid test failed when using public key only"
     );
     // private key
     let keys = vec![
-        tink_testutil::new_key(
-            &tink_testutil::new_key_data(
-                tink_testutil::ECIES_AEAD_HKDF_PUBLIC_KEY_TYPE_URL,
+        tink_tests::new_key(
+            &tink_tests::new_key_data(
+                tink_tests::ECIES_AEAD_HKDF_PUBLIC_KEY_TYPE_URL,
                 &get_random_bytes(10),
                 tink_proto::key_data::KeyMaterialType::AsymmetricPublic,
             ),
@@ -128,9 +128,9 @@ fn test_validate() {
             1,
             tink_proto::OutputPrefixType::Tink,
         ),
-        tink_testutil::new_key(
-            &tink_testutil::new_key_data(
-                tink_testutil::ECIES_AEAD_HKDF_PRIVATE_KEY_TYPE_URL,
+        tink_tests::new_key(
+            &tink_tests::new_key_data(
+                tink_tests::ECIES_AEAD_HKDF_PRIVATE_KEY_TYPE_URL,
                 &get_random_bytes(10),
                 tink_proto::key_data::KeyMaterialType::AsymmetricPrivate,
             ),
@@ -140,7 +140,7 @@ fn test_validate() {
         ),
     ];
     assert!(
-        keyset::validate(&tink_testutil::new_keyset(1, keys)).is_err(),
+        keyset::validate(&tink_tests::new_keyset(1, keys)).is_err(),
         "expect an error when there are keydata other than public"
     );
 }
@@ -148,21 +148,21 @@ fn test_validate() {
 fn generate_invalid_keys() -> Vec<tink_proto::keyset::Key> {
     vec![
         // unknown status
-        tink_testutil::new_key(
+        tink_tests::new_key(
             &tink_proto::KeyData::default(),
             tink_proto::KeyStatusType::UnknownStatus,
             1,
             tink_proto::OutputPrefixType::Tink,
         ),
         // unknown prefix
-        tink_testutil::new_key(
+        tink_tests::new_key(
             &tink_proto::KeyData::default(),
             tink_proto::KeyStatusType::Enabled,
             1,
             tink_proto::OutputPrefixType::UnknownPrefix,
         ),
         // zero key id
-        tink_testutil::new_key(
+        tink_tests::new_key(
             &tink_proto::KeyData::default(),
             tink_proto::KeyStatusType::Enabled,
             0,

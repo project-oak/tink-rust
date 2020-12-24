@@ -17,7 +17,7 @@
 use std::io::{Read, Write};
 use tink::{subtle::random::get_random_bytes, utils::wrap_err, EncryptingWrite, TinkError};
 use tink_streaming_aead::subtle::noncebased;
-use tink_testutil::SharedBuf;
+use tink_tests::SharedBuf;
 
 #[test]
 fn test_nonce_based() {
@@ -169,7 +169,7 @@ fn test_nonce_based_invalid_parameters() {
             first_ciphertext_segment_offset: tc.first_ciphertext_segment_offset,
         };
         let result = test_encrypt(tc.plaintext_size, tc.nonce_prefix_size, &test_params);
-        tink_testutil::expect_err_for_case(result, tc.expected_error, tc.name);
+        tink_tests::expect_err_for_case(result, tc.expected_error, tc.name);
 
         // Prepare empty input for test_decrypt().
         let ciphertext_segment_size = tc.plaintext_segment_size + tc.nonce_size;
@@ -190,7 +190,7 @@ fn test_nonce_based_invalid_parameters() {
             &test_params,
             &nonce_prefix,
         );
-        tink_testutil::expect_err_for_case(result, tc.expected_error, tc.name);
+        tink_tests::expect_err_for_case(result, tc.expected_error, tc.name);
     }
 }
 

@@ -21,9 +21,9 @@ use tink_aead::subtle;
 #[test]
 fn test_x_cha_cha20_poly1305_get_primitive() {
     tink_aead::init();
-    let km = tink::registry::get_key_manager(tink_testutil::X_CHA_CHA20_POLY1305_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::X_CHA_CHA20_POLY1305_TYPE_URL)
         .expect("cannot obtain XChaCha20Poly1305 key manager");
-    assert_eq!(km.type_url(), tink_testutil::X_CHA_CHA20_POLY1305_TYPE_URL);
+    assert_eq!(km.type_url(), tink_tests::X_CHA_CHA20_POLY1305_TYPE_URL);
     assert_eq!(
         km.key_material_type(),
         tink_proto::key_data::KeyMaterialType::Symmetric
@@ -37,11 +37,11 @@ fn test_x_cha_cha20_poly1305_get_primitive() {
 #[test]
 fn test_x_cha_cha20_poly1305_get_primitive_with_invalid_keys() {
     tink_aead::init();
-    let km = tink::registry::get_key_manager(tink_testutil::X_CHA_CHA20_POLY1305_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::X_CHA_CHA20_POLY1305_TYPE_URL)
         .expect("cannot obtain XChaCha20Poly1305 key manager");
     let invalid_keys = gen_invalid_x_cha_cha20_poly1305_keys();
     for key in invalid_keys {
-        let serialized_key = tink_testutil::proto_encode(&key);
+        let serialized_key = tink_tests::proto_encode(&key);
         assert!(km.primitive(&serialized_key).is_err());
     }
     assert!(km.primitive(&[]).is_err());
@@ -50,7 +50,7 @@ fn test_x_cha_cha20_poly1305_get_primitive_with_invalid_keys() {
 #[test]
 fn test_x_cha_cha20_poly1305_new_key() {
     tink_aead::init();
-    let km = tink::registry::get_key_manager(tink_testutil::X_CHA_CHA20_POLY1305_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::X_CHA_CHA20_POLY1305_TYPE_URL)
         .expect("cannot obtain XChaCha20Poly1305 key manager");
     let m = km.new_key(&[]).unwrap();
     let key = tink_proto::XChaCha20Poly1305Key::decode(m.as_ref()).unwrap();
@@ -60,10 +60,10 @@ fn test_x_cha_cha20_poly1305_new_key() {
 #[test]
 fn test_x_cha_cha20_poly1305_new_key_data() {
     tink_aead::init();
-    let km = tink::registry::get_key_manager(tink_testutil::X_CHA_CHA20_POLY1305_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::X_CHA_CHA20_POLY1305_TYPE_URL)
         .expect("cannot obtain XChaCha20Poly1305 key manager");
     let kd = km.new_key_data(&[]).unwrap();
-    assert_eq!(kd.type_url, tink_testutil::X_CHA_CHA20_POLY1305_TYPE_URL);
+    assert_eq!(kd.type_url, tink_tests::X_CHA_CHA20_POLY1305_TYPE_URL);
     assert_eq!(
         kd.key_material_type,
         tink_proto::key_data::KeyMaterialType::Symmetric as i32
@@ -75,26 +75,26 @@ fn test_x_cha_cha20_poly1305_new_key_data() {
 #[test]
 fn test_x_cha_cha20_poly1305_does_support() {
     tink_aead::init();
-    let km = tink::registry::get_key_manager(tink_testutil::X_CHA_CHA20_POLY1305_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::X_CHA_CHA20_POLY1305_TYPE_URL)
         .expect("cannot obtain XChaCha20Poly1305 key manager");
     assert!(
-        km.does_support(tink_testutil::X_CHA_CHA20_POLY1305_TYPE_URL),
+        km.does_support(tink_tests::X_CHA_CHA20_POLY1305_TYPE_URL),
         "XChaCha20Poly1305KeyManager must support {}",
-        tink_testutil::X_CHA_CHA20_POLY1305_TYPE_URL
+        tink_tests::X_CHA_CHA20_POLY1305_TYPE_URL
     );
     assert!(
         !km.does_support("some bad type"),
         "XChaCha20Poly1305KeyManager must only support {}",
-        tink_testutil::X_CHA_CHA20_POLY1305_TYPE_URL
+        tink_tests::X_CHA_CHA20_POLY1305_TYPE_URL
     );
 }
 
 #[test]
 fn test_x_cha_cha20_poly1305_type_url() {
     tink_aead::init();
-    let km = tink::registry::get_key_manager(tink_testutil::X_CHA_CHA20_POLY1305_TYPE_URL)
+    let km = tink::registry::get_key_manager(tink_tests::X_CHA_CHA20_POLY1305_TYPE_URL)
         .expect("cannot obtain XChaCha20Poly1305 key manager");
-    assert_eq!(km.type_url(), tink_testutil::X_CHA_CHA20_POLY1305_TYPE_URL);
+    assert_eq!(km.type_url(), tink_tests::X_CHA_CHA20_POLY1305_TYPE_URL);
     assert_eq!(
         km.key_material_type(),
         tink_proto::key_data::KeyMaterialType::Symmetric
@@ -106,20 +106,20 @@ fn gen_invalid_x_cha_cha20_poly1305_keys() -> Vec<tink_proto::XChaCha20Poly1305K
     vec![
         // Bad key size.
         tink_proto::XChaCha20Poly1305Key {
-            version: tink_testutil::X_CHA_CHA20_POLY1305_KEY_VERSION,
+            version: tink_tests::X_CHA_CHA20_POLY1305_KEY_VERSION,
             key_value: get_random_bytes(17),
         },
         tink_proto::XChaCha20Poly1305Key {
-            version: tink_testutil::X_CHA_CHA20_POLY1305_KEY_VERSION,
+            version: tink_tests::X_CHA_CHA20_POLY1305_KEY_VERSION,
             key_value: get_random_bytes(25),
         },
         tink_proto::XChaCha20Poly1305Key {
-            version: tink_testutil::X_CHA_CHA20_POLY1305_KEY_VERSION,
+            version: tink_tests::X_CHA_CHA20_POLY1305_KEY_VERSION,
             key_value: get_random_bytes(33),
         },
         // Bad version.
         tink_proto::XChaCha20Poly1305Key {
-            version: tink_testutil::X_CHA_CHA20_POLY1305_KEY_VERSION + 1,
+            version: tink_tests::X_CHA_CHA20_POLY1305_KEY_VERSION + 1,
             key_value: get_random_bytes(subtle::CHA_CHA20_KEY_SIZE),
         },
     ]
@@ -149,10 +149,10 @@ fn validate_x_cha_cha20_poly1305_primitive(
 fn validate_x_cha_cha20_poly1305_key(
     key: &tink_proto::XChaCha20Poly1305Key,
 ) -> Result<(), TinkError> {
-    if key.version != tink_testutil::X_CHA_CHA20_POLY1305_KEY_VERSION {
+    if key.version != tink_tests::X_CHA_CHA20_POLY1305_KEY_VERSION {
         return Err(format!(
             "incorrect key version: keyVersion != {}",
-            tink_testutil::X_CHA_CHA20_POLY1305_KEY_VERSION
+            tink_tests::X_CHA_CHA20_POLY1305_KEY_VERSION
         )
         .into());
     }

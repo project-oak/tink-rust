@@ -23,19 +23,19 @@ fn test_aes_gcm_key_templates() {
     let template = tink_aead::aes128_gcm_key_template();
     check_aes_gcm_key_template(&template, 16, tink_proto::OutputPrefixType::Tink)
         .expect("invalid AES-128 GCM key template");
-    test_encrypt_decrypt(&template, tink_testutil::AES_GCM_TYPE_URL).unwrap();
+    test_encrypt_decrypt(&template, tink_tests::AES_GCM_TYPE_URL).unwrap();
 
     // AES-GCM 256 bit
     let template = tink_aead::aes256_gcm_key_template();
     check_aes_gcm_key_template(&template, 32, tink_proto::OutputPrefixType::Tink)
         .expect("invalid AES-256 GCM key template");
-    test_encrypt_decrypt(&template, tink_testutil::AES_GCM_TYPE_URL).unwrap();
+    test_encrypt_decrypt(&template, tink_tests::AES_GCM_TYPE_URL).unwrap();
 
     // AES-GCM 256 bit No Prefix
     let template = tink_aead::aes256_gcm_no_prefix_key_template();
     check_aes_gcm_key_template(&template, 32, tink_proto::OutputPrefixType::Raw)
         .expect("invalid AES-256 GCM No Prefix key template");
-    test_encrypt_decrypt(&template, tink_testutil::AES_GCM_TYPE_URL).unwrap();
+    test_encrypt_decrypt(&template, tink_tests::AES_GCM_TYPE_URL).unwrap();
 }
 
 fn check_aes_gcm_key_template(
@@ -43,7 +43,7 @@ fn check_aes_gcm_key_template(
     key_size: u32,
     output_prefix_type: tink_proto::OutputPrefixType,
 ) -> Result<(), TinkError> {
-    if template.type_url != tink_testutil::AES_GCM_TYPE_URL {
+    if template.type_url != tink_tests::AES_GCM_TYPE_URL {
         return Err("incorrect type url".into());
     }
     if template.output_prefix_type != output_prefix_type as i32 {
@@ -67,19 +67,19 @@ fn test_aes_gcm_siv_key_templates() {
     let template = tink_aead::aes128_gcm_siv_key_template();
     check_aes_gcm_siv_key_template(&template, 16, tink_proto::OutputPrefixType::Tink)
         .expect("invalid AES-128 GCM SIV key template");
-    test_encrypt_decrypt(&template, tink_testutil::AES_GCM_SIV_TYPE_URL).unwrap();
+    test_encrypt_decrypt(&template, tink_tests::AES_GCM_SIV_TYPE_URL).unwrap();
 
     // AES-GCM-SIV 256 bit
     let template = tink_aead::aes256_gcm_siv_key_template();
     check_aes_gcm_siv_key_template(&template, 32, tink_proto::OutputPrefixType::Tink)
         .expect("invalid AES-256 GCM SIV key template");
-    test_encrypt_decrypt(&template, tink_testutil::AES_GCM_SIV_TYPE_URL).unwrap();
+    test_encrypt_decrypt(&template, tink_tests::AES_GCM_SIV_TYPE_URL).unwrap();
 
     // AES-GCM-SIV 256 bit No Prefix
     let template = tink_aead::aes256_gcm_siv_no_prefix_key_template();
     check_aes_gcm_siv_key_template(&template, 32, tink_proto::OutputPrefixType::Raw)
         .expect("invalid AES-256 GCM No Prefix key template");
-    test_encrypt_decrypt(&template, tink_testutil::AES_GCM_SIV_TYPE_URL).unwrap();
+    test_encrypt_decrypt(&template, tink_tests::AES_GCM_SIV_TYPE_URL).unwrap();
 }
 
 fn check_aes_gcm_siv_key_template(
@@ -87,7 +87,7 @@ fn check_aes_gcm_siv_key_template(
     key_size: u32,
     output_prefix_type: tink_proto::OutputPrefixType,
 ) -> Result<(), TinkError> {
-    if template.type_url != tink_testutil::AES_GCM_SIV_TYPE_URL {
+    if template.type_url != tink_tests::AES_GCM_SIV_TYPE_URL {
         return Err("incorrect type url".into());
     }
     if template.output_prefix_type != output_prefix_type as i32 {
@@ -111,13 +111,13 @@ fn test_aes_ctr_hmac_aead_key_templates() {
     let template = tink_aead::aes128_ctr_hmac_sha256_key_template();
     check_aes_ctr_hmac_aead_key_template(&template, 16, 16, 16)
         .expect("invalid AES-128 CTR HMAC SHA256 key template");
-    test_encrypt_decrypt(&template, tink_testutil::AES_CTR_HMAC_AEAD_TYPE_URL).unwrap();
+    test_encrypt_decrypt(&template, tink_tests::AES_CTR_HMAC_AEAD_TYPE_URL).unwrap();
 
     // AES-CTR 256 bit with HMAC SHA-256
     let template = tink_aead::aes256_ctr_hmac_sha256_key_template();
     check_aes_ctr_hmac_aead_key_template(&template, 32, 16, 32)
         .expect("invalid AES-256 CTR HMAC SHA256 key template");
-    test_encrypt_decrypt(&template, tink_testutil::AES_CTR_HMAC_AEAD_TYPE_URL).unwrap();
+    test_encrypt_decrypt(&template, tink_tests::AES_CTR_HMAC_AEAD_TYPE_URL).unwrap();
 }
 
 fn check_aes_ctr_hmac_aead_key_template(
@@ -126,7 +126,7 @@ fn check_aes_ctr_hmac_aead_key_template(
     iv_size: u32,
     tag_size: u32,
 ) -> Result<(), TinkError> {
-    if template.type_url != tink_testutil::AES_CTR_HMAC_AEAD_TYPE_URL {
+    if template.type_url != tink_tests::AES_CTR_HMAC_AEAD_TYPE_URL {
         return Err("incorrect type url".into());
     }
     let key_format = tink_proto::AesCtrHmacAeadKeyFormat::decode(template.value.as_ref())
@@ -188,10 +188,10 @@ fn test_cha_cha20_poly1305_key_template() {
     let template = tink_aead::cha_cha20_poly1305_key_template();
     assert_eq!(
         template.type_url,
-        tink_testutil::CHA_CHA20_POLY1305_TYPE_URL,
+        tink_tests::CHA_CHA20_POLY1305_TYPE_URL,
         "incorrect type url"
     );
-    test_encrypt_decrypt(&template, tink_testutil::CHA_CHA20_POLY1305_TYPE_URL).unwrap();
+    test_encrypt_decrypt(&template, tink_tests::CHA_CHA20_POLY1305_TYPE_URL).unwrap();
 }
 
 #[test]
@@ -199,10 +199,10 @@ fn test_x_cha_cha20_poly1305_key_template() {
     let template = tink_aead::x_cha_cha20_poly1305_key_template();
     assert_eq!(
         template.type_url,
-        tink_testutil::X_CHA_CHA20_POLY1305_TYPE_URL,
+        tink_tests::X_CHA_CHA20_POLY1305_TYPE_URL,
         "incorrect type url"
     );
-    test_encrypt_decrypt(&template, tink_testutil::X_CHA_CHA20_POLY1305_TYPE_URL).unwrap();
+    test_encrypt_decrypt(&template, tink_tests::X_CHA_CHA20_POLY1305_TYPE_URL).unwrap();
 }
 
 fn test_encrypt_decrypt(

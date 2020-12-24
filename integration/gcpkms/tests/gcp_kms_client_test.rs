@@ -33,7 +33,7 @@ fn test_new_client_good_uri_prefix_with_gcp_partition() {
 fn test_new_client_bad_uri_prefix() {
     let uri_prefix =
     "bad-prefix://projects/tink-rust-project/locations/global/keyRings/tink-rust-keyring/cryptoKeys";
-    tink_testutil::expect_err(
+    tink_tests::expect_err(
         GcpClient::new(uri_prefix),
         "uri_prefix must start with gcp-kms",
     );
@@ -71,7 +71,7 @@ fn test_new_client_with_credentials_with_bad_credentials() {
     .collect();
 
     let result = GcpClient::new_with_credentials(uri_prefix, &bad_cred_file);
-    tink_testutil::expect_err(result, "failed to decode credentials");
+    tink_tests::expect_err(result, "failed to decode credentials");
 }
 
 #[test]
@@ -83,7 +83,7 @@ fn test_new_client_with_credentials_with_empty_credentials() {
         .collect();
 
     let result = GcpClient::new_with_credentials(uri_prefix, &bad_cred_file);
-    tink_testutil::expect_err(result, "failed to decode credential");
+    tink_tests::expect_err(result, "failed to decode credential");
 }
 
 #[test]
@@ -92,7 +92,7 @@ fn test_new_client_with_missing_credentials() {
     "gcp-kms://projects/tink-rust-project/locations/global/keyRings/tink-rust-keyring/cryptoKeys";
 
     let result = GcpClient::new_with_credentials(uri_prefix, &std::path::PathBuf::from(""));
-    tink_testutil::expect_err(result, "invalid credential path");
+    tink_tests::expect_err(result, "invalid credential path");
 }
 
 #[test]
@@ -144,7 +144,7 @@ fn test_get_aead_non_supported_uri() {
     "gcp-kms://projects/tink-rust-project/locations/global/keyRings/different-keyring/cryptoKeys/tink-rust-key";
 
     let client = GcpClient::new(uri_prefix).unwrap();
-    tink_testutil::expect_err(
+    tink_tests::expect_err(
         client.get_aead(non_supported_key_uri),
         "unsupported key_uri",
     );
