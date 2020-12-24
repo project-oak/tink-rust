@@ -43,13 +43,9 @@ fn test_new_client_bad_uri_prefix() {
 fn test_new_client_with_credentials_with_good_credentials() {
     let uri_prefix =
     "gcp-kms://projects/tink-rust-project/locations/global/keyRings/tink-rust-keyring/cryptoKeys";
-    let cred_ini_file: PathBuf = [
-        env!("CARGO_MANIFEST_DIR"),
-        "../../testdata",
-        "credential.json",
-    ]
-    .iter()
-    .collect();
+    let cred_ini_file: PathBuf = [env!("CARGO_MANIFEST_DIR"), "../testdata", "credential.json"]
+        .iter()
+        .collect();
     let result = GcpClient::new_with_credentials(uri_prefix, &cred_ini_file);
     assert!(
         result.is_ok(),
@@ -64,7 +60,7 @@ fn test_new_client_with_credentials_with_bad_credentials() {
     "gcp-kms://projects/tink-rust-project/locations/global/keyRings/tink-rust-keyring/cryptoKeys";
     let bad_cred_file: PathBuf = [
         env!("CARGO_MANIFEST_DIR"),
-        "../../testdata",
+        "../testdata",
         "malformed_gcp_credential.json",
     ]
     .iter()
@@ -78,7 +74,7 @@ fn test_new_client_with_credentials_with_bad_credentials() {
 fn test_new_client_with_credentials_with_empty_credentials() {
     let uri_prefix =
     "gcp-kms://projects/tink-rust-project/locations/global/keyRings/tink-rust-keyring/cryptoKeys/tink-rust-key";
-    let bad_cred_file: PathBuf = [env!("CARGO_MANIFEST_DIR"), "../../testdata", "empty.csv"]
+    let bad_cred_file: PathBuf = [env!("CARGO_MANIFEST_DIR"), "../testdata", "empty.csv"]
         .iter()
         .collect();
 

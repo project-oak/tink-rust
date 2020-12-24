@@ -21,8 +21,7 @@ use tink_proto::HashType;
 use tink_streaming_aead::subtle;
 use tink_tests::proto_encode;
 
-mod common;
-use common::encrypt_decrypt;
+use super::common::encrypt_decrypt;
 
 const AES_GCM_HKDF_KEY_SIZES: [u32; 2] = [16, 32];
 

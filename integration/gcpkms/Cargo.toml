@@ -17,7 +17,3 @@ hyper-rustls = " ^0.6"
 serde_json = "^1.0.60"
 tink = "^0.1"
 yup-oauth2 = "^1.0.12"
-
-[dev-dependencies]
-tink-aead = "^0.1"
-tink-tests = "^0.1"

@@ -22,7 +22,7 @@ const CRED_FILE_ENV: &str = "TINK_GCP_TEST_CREDENTIALS";
 
 // Default values for key URI and credentials file.
 const DEFAULT_KEY_URI: &str = "gcp-kms://projects/tink-test-infrastructure/locations/global/keyRings/unit-and-integration-testing/cryptoKeys/aead-key";
-const DEFAULT_CRED_FILE: &str = "../../testdata/credential.json";
+const DEFAULT_CRED_FILE: &str = "../testdata/credential.json";
 
 pub fn key_uri() -> String {
     match env::var(KEY_URI_ENV) {

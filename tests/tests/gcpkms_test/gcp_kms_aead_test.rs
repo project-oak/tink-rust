@@ -17,14 +17,13 @@
 use std::{env, path::PathBuf};
 use tink::{registry::KmsClient, subtle::random::get_random_bytes, TinkError};
 
-mod common;
-use common::*;
+use super::common::*;
 
 fn init() {
     tink_aead::init();
     let path: PathBuf = [
         env!("CARGO_MANIFEST_DIR"),
-        "../../../third_party/pki.goog",
+        "../third_party/pki.goog",
         "roots.pem",
     ]
     .iter()
