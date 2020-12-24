@@ -18,9 +18,3 @@ rand = "^0.7"
 tink = "^0.1"
 tink-mac = "^0.1"
 tink-proto = "^0.1"
-
-[dev-dependencies]
-hex = "^0.4.2"
-tempfile = "^3.1"
-tink-mac = "^0.1"
-tink-tests = "^0.1"

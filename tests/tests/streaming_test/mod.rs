@@ -14,9 +14,11 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-mod binary_io_test;
-mod handle_test;
-#[cfg(feature = "json")]
-mod json_io_test;
-mod manager_test;
-mod validation_test;
+pub mod common;
+
+mod aes_ctr_hmac_key_manager_test;
+mod aes_gcm_hkdf_key_manager_test;
+mod factory_test;
+mod integration_test;
+mod key_templates_test;
+mod subtle;

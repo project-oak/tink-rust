@@ -17,11 +17,24 @@ p256 = { version = "^0.7", features = ["ecdsa"] }
 prost = "^0.6.1"
 rand = "^0.7"
 serde = { version = "^1.0.118", features = ["derive"] }
-# Depending on tink-tests will turn on the `insecure` feature of `tink`.
-tink = { version = "^0.1", features = ["insecure"] }
+tink = { version = "^0.1", features = ["insecure", "json"] }
 tink-daead = "^0.1"
 tink-mac = "^0.1"
 tink-proto = "^0.1"
 
 [dev-dependencies]
+base64 = "^0.12"
+hex = "^0.4.2"
+lazy_static = "^1.4"
+maplit = "^1.0.2"
+serde = { version = "^1.0.118", features = ["derive"] }
 serde_json = "^1.0.60"
+tempfile = "^3.1"
+tink-aead = "^0.1"
+tink-awskms = "^0.1"
+tink-daead = "^0.1"
+tink-mac = "^0.1"
+tink-prf = "^0.1"
+tink-signature = "^0.1"
+tink-streaming-aead = "^0.1"
+tink-tests = "^0.1"

@@ -16,8 +16,7 @@
 
 use tink::{utils::wrap_err, TinkError};
 
-mod common;
-use common::encrypt_decrypt;
+use super::common::encrypt_decrypt;
 
 #[test]
 fn test_factory_multiple_keys() {

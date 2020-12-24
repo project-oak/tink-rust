@@ -18,8 +18,7 @@ use tink_proto::{
     EcdsaParams, EcdsaPublicKey, EcdsaSignatureEncoding, EllipticCurveType, HashType,
 };
 
-mod common;
-use common::*;
+use super::common::*;
 
 #[test]
 fn test_ecdsa_verify_get_primitive_basic() {

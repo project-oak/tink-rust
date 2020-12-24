@@ -2109,9 +2109,7 @@ dependencies = [
 name = "tink"
 version = "0.1.0"
 dependencies = [
- "base64",
  "digest",
- "hex",
  "hkdf",
  "lazy_static",
  "prost",
@@ -2122,11 +2120,7 @@ dependencies = [
  "sha-1",
  "sha2",
  "subtle",
- "tink-aead",
- "tink-mac",
  "tink-proto",
- "tink-signature",
- "tink-tests",
 ]
 
 [[package]]
@@ -2137,20 +2131,13 @@ dependencies = [
  "aes-ctr",
  "aes-gcm",
  "aes-gcm-siv",
- "base64",
  "chacha20poly1305",
  "generic-array",
- "hex",
  "prost",
  "rand",
- "serde",
- "serde_json",
  "tink",
- "tink-awskms",
  "tink-mac",
  "tink-proto",
- "tink-signature",
- "tink-tests",
 ]
 
 [[package]]
@@ -2164,7 +2151,6 @@ dependencies = [
  "rusoto_credential",
  "rusoto_kms",
  "tink",
- "tink-aead",
  "tokio",
 ]
 
@@ -2174,32 +2160,19 @@ version = "0.1.0"
 dependencies = [
  "aead",
  "aes-siv",
- "base64",
- "hex",
  "prost",
- "serde",
- "serde_json",
  "tink",
  "tink-proto",
- "tink-signature",
- "tink-tests",
 ]
 
 [[package]]
 name = "tink-mac"
 version = "0.1.0"
 dependencies = [
- "base64",
- "hex",
- "lazy_static",
- "maplit",
  "prost",
- "serde",
- "serde_json",
  "tink",
  "tink-prf",
  "tink-proto",
- "tink-tests",
 ]
 
 [[package]]
@@ -2207,22 +2180,15 @@ name = "tink-prf"
 version = "0.1.0"
 dependencies = [
  "aes",
- "base64",
  "cmac",
  "digest",
- "hex",
  "hkdf",
  "hmac 0.10.1",
- "maplit",
  "prost",
- "serde",
- "serde_json",
  "sha-1",
  "sha2",
  "tink",
- "tink-mac",
  "tink-proto",
- "tink-tests",
 ]
 
 [[package]]
@@ -2239,20 +2205,14 @@ dependencies = [
 name = "tink-signature"
 version = "0.1.0"
 dependencies = [
- "base64",
  "ed25519-dalek",
  "generic-array",
- "hex",
  "p256",
  "prost",
  "rand",
- "serde",
- "serde_json",
  "signature",
  "tink",
- "tink-mac",
  "tink-proto",
- "tink-tests",
 ]
 
 [[package]]
@@ -2261,14 +2221,11 @@ version = "0.1.0"
 dependencies = [
  "aes-ctr",
  "aes-gcm",
- "hex",
  "prost",
  "rand",
- "tempfile",
  "tink",
  "tink-mac",
  "tink-proto",
- "tink-tests",
 ]
 
 [[package]]
@@ -2298,18 +2255,28 @@ dependencies = [
 name = "tink-tests"
 version = "0.1.0"
 dependencies = [
+ "base64",
  "ed25519-dalek",
  "generic-array",
  "hex",
+ "lazy_static",
+ "maplit",
  "p256",
  "prost",
  "rand",
  "serde",
  "serde_json",
+ "tempfile",
  "tink",
+ "tink-aead",
+ "tink-awskms",
  "tink-daead",
  "tink-mac",
+ "tink-prf",
  "tink-proto",
+ "tink-signature",
+ "tink-streaming-aead",
+ "tink-tests",
 ]
 
 [[package]]
