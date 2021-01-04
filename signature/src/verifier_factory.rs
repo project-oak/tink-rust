@@ -25,7 +25,7 @@ pub fn new_verifier(h: &tink::keyset::Handle) -> Result<Box<dyn tink::Verifier>,
 }
 
 /// Return a [`tink::Verifier`] primitive from the given keyset handle and custom key manager.
-pub fn new_verifier_with_key_manager(
+fn new_verifier_with_key_manager(
     h: &tink::keyset::Handle,
     km: Option<Arc<dyn tink::registry::KeyManager>>,
 ) -> Result<Box<dyn tink::Verifier>, TinkError> {

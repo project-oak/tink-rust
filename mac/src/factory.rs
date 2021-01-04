@@ -26,7 +26,7 @@ pub fn new(h: &tink::keyset::Handle) -> Result<Box<dyn tink::Mac>, TinkError> {
 }
 
 /// Create a [`tink::Mac`] primitive from the given keyset handle and a custom key manager.
-pub fn new_with_key_manager(
+fn new_with_key_manager(
     h: &tink::keyset::Handle,
     km: Option<Arc<dyn tink::registry::KeyManager>>,
 ) -> Result<Box<dyn tink::Mac>, TinkError> {

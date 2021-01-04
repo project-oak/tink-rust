@@ -25,7 +25,7 @@ pub fn new_signer(h: &tink::keyset::Handle) -> Result<Box<dyn tink::Signer>, Tin
 }
 
 /// Return a [`tink::Signer`] primitive from the given keyset handle and custom key manager.
-pub fn new_signer_with_key_manager(
+fn new_signer_with_key_manager(
     h: &tink::keyset::Handle,
     km: Option<Arc<dyn tink::registry::KeyManager>>,
 ) -> Result<Box<dyn tink::Signer>, TinkError> {
