@@ -37,7 +37,7 @@ impl Set {
     }
 
     /// Creates a [`Set`] primitive from the given keyset handle and a custom key manager.
-    pub fn new_with_key_manager(
+    fn new_with_key_manager(
         h: &tink::keyset::Handle,
         km: Option<Arc<dyn tink::registry::KeyManager>>,
     ) -> Result<Set, TinkError> {

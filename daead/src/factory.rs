@@ -26,7 +26,7 @@ pub fn new(h: &tink::keyset::Handle) -> Result<Box<dyn tink::DeterministicAead>,
 
 /// Return a [`tink::DeterministicAead`] primitive from the given keyset handle and custom key
 /// manager.
-pub fn new_with_key_manager(
+fn new_with_key_manager(
     h: &tink::keyset::Handle,
     km: Option<Arc<dyn tink::registry::KeyManager>>,
 ) -> Result<Box<dyn tink::DeterministicAead>, TinkError> {

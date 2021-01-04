@@ -46,9 +46,18 @@ fn test_aes_siv_primitive_with_wrong_primary_key() {
     tink_daead::init();
     tink_signature::init();
 
-    let kh = tink::keyset::Handle::new(&tink_signature::ecdsa_p256_key_template()).unwrap();
-    let signature_km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL).unwrap();
-    let result = tink_daead::new_with_key_manager(&kh, Some(signature_km));
+    // Build a keyset with a primary ECDSA key plus an AES-SIV key.
+    let mut ksm = tink::keyset::Manager::new();
+    ksm.rotate(&tink_signature::ecdsa_p256_key_template())
+        .unwrap();
+    ksm.add(
+        &tink_daead::aes_siv_key_template(),
+        /* primary= */ false,
+    )
+    .unwrap();
+    let kh = ksm.handle().unwrap();
+
+    let result = tink_daead::new(&kh);
     tink_tests::expect_err(result, "not a DeterministicAEAD");
 }
 
