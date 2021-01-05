@@ -14,6 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+use rand::Rng;
 use std::fs;
 use tink::subtle::random::get_random_bytes;
 use tink_testutil::SharedBuf;
@@ -151,4 +152,75 @@ fn test_multiple_failed_read() {
     tink_testutil::expect_err(result, "no matching key found");
     let result = r.read_to_end(&mut recovered);
     tink_testutil::expect_err(result, "read previously failed");
+}
+
+const PARTIAL_CHUNK: usize = 17;
+struct PartialReader {
+    data: Vec<u8>,
+    offset: usize,
+}
+
+impl PartialReader {
+    pub fn new(data: Vec<u8>) -> Self {
+        Self { data, offset: 0 }
+    }
+}
+
+impl std::io::Read for PartialReader {
+    // Implementation of `read()` that will return less data than requested, even
+    // when more data is available. This is valid for Rust's `std::io::Read`, but
+    // would not be valid for an `io::Writer` in Go.
+    fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
+        if rand::thread_rng().gen_range(0, 3) == 0 {
+            // Randomly pretend to have been interrupted.
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::Interrupted,
+                "fake interrupted",
+            ));
+        }
+        let size = std::cmp::min(
+            PARTIAL_CHUNK,
+            std::cmp::min(buf.len(), self.data.len() - self.offset),
+        );
+        buf[..size].copy_from_slice(&self.data[self.offset..self.offset + size]);
+        self.offset += size;
+        Ok(size)
+    }
+}
+
+#[test]
+fn streaming_partial_reads() {
+    tink_streaming_aead::init();
+    let pt = get_random_bytes(20_000);
+    let aad = get_random_bytes(100);
+
+    let dir = tempfile::tempdir().unwrap().into_path();
+    let src_filename = dir.join("plaintext.src");
+    let ct_filename = dir.join("ciphertext.bin");
+    let dst_filename = dir.join("plaintext.dst");
+    fs::write(src_filename.clone(), &pt).unwrap();
+
+    let kh = tink::keyset::Handle::new(&tink_streaming_aead::aes256_gcm_hkdf_4kb_key_template())
+        .unwrap();
+
+    // Encrypt file.
+    let a = tink_streaming_aead::new(&kh).unwrap();
+    let mut src_file = fs::File::open(src_filename).unwrap();
+    let ct_file = fs::File::create(ct_filename.clone()).unwrap();
+    let mut w = a.new_encrypting_writer(Box::new(ct_file), &aad).unwrap();
+    std::io::copy(&mut src_file, &mut w).unwrap();
+    w.close().unwrap();
+
+    // Decrypt file using a reader that does incomplete read()s.
+    let ct = fs::read(ct_filename).unwrap();
+    let partial_reader = PartialReader::new(ct);
+
+    let mut dst_file = fs::File::create(dst_filename.clone()).unwrap();
+    let mut r = a
+        .new_decrypting_reader(Box::new(partial_reader), &aad)
+        .unwrap();
+    std::io::copy(&mut r, &mut dst_file).unwrap();
+    let recovered = fs::read(dst_filename).unwrap();
+
+    assert_eq!(recovered, pt);
 }

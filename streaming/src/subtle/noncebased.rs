@@ -331,6 +331,48 @@ impl Reader {
     }
 }
 
+/// Extension trait for [`std::io::Read`] to support `read_full()` method.
+trait ReadFullExt {
+    /// Read the exact number of bytes required to fill `buf`, if possible.
+    ///
+    /// This function reads as many bytes as necessary to completely fill the
+    /// specified buffer `buf`.
+    ///
+    /// If this function encounters an error of the kind
+    /// [`std::io::ErrorKind::Interrupted`] then the error is ignored and the
+    /// operation will continue.
+    ///
+    /// If this function encounters an "end of file" before completely filling
+    /// the buffer, it returns an `Ok(n)` value holding the number of bytes read
+    /// into `buf`.
+    ///
+    /// If any other read error is encountered then this function immediately
+    /// returns. The contents of `buf` are unspecified in this case.
+    ///
+    /// (This is similar to `Read::read_exact` except for partial read behaviour,
+    /// and also behaves like Go's `io::ReadFull`, as used in the upstream Go code.)
+    fn read_full(&mut self, buf: &mut [u8]) -> std::io::Result<usize>;
+}
+
+impl ReadFullExt for dyn std::io::Read {
+    fn read_full(&mut self, mut buf: &mut [u8]) -> std::io::Result<usize> {
+        let mut count = 0;
+        while !buf.is_empty() {
+            match self.read(buf) {
+                Ok(0) => break,
+                Ok(n) => {
+                    count += n;
+                    let tmp = buf;
+                    buf = &mut tmp[n..];
+                }
+                Err(e) if e.kind() == std::io::ErrorKind::Interrupted => {}
+                Err(e) => return Err(e),
+            }
+        }
+        Ok(count)
+    }
+}
+
 impl io::Read for Reader {
     // Read decrypts data from underlying reader and passes it to `buf`.
     fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
@@ -353,7 +395,7 @@ impl io::Read for Reader {
         }
         let n = self
             .r
-            .read(&mut self.ciphertext[self.ciphertext_pos..ct_lim])?;
+            .read_full(&mut self.ciphertext[self.ciphertext_pos..ct_lim])?;
         if n == 0 {
             // No ciphertext available, so therefore no plaintext available for now.
             return Ok(0);
