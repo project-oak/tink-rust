@@ -22,7 +22,7 @@ fn test_kms_envelope_get_primitive() {
     tink_aead::init();
 
     let key_uri = "aws-kms://arn:aws:kms:us-east-2:1234:key/abcd-1234";
-    let ini_file = "../testdata/credentials_aws.ini";
+    let ini_file = "testdata/credentials_aws.ini";
     let g = tink_awskms::AwsClient::new_with_credentials(key_uri, ini_file).unwrap();
     tink::registry::register_kms_client(g);
 
@@ -65,7 +65,7 @@ fn test_kms_envelope_get_primitive_invalid() {
     tink_aead::init();
 
     let key_uri = "aws-kms://arn:aws:kms:us-east-2:1234:key/abcd-1234";
-    let ini_file = "../testdata/credentials_aws.ini";
+    let ini_file = "testdata/credentials_aws.ini";
     let g = tink_awskms::AwsClient::new_with_credentials(key_uri, ini_file).unwrap();
     tink::registry::register_kms_client(g);
 
