@@ -32,7 +32,7 @@ pub struct AwsClient {
 
 impl std::fmt::Debug for AwsClient {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("Point")
+        f.debug_struct("AwsClient")
             .field("key_uri_prefix", &self.key_uri_prefix)
             .finish()
     }
