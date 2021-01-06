@@ -13,7 +13,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use std::path::PathBuf;
-use tink::{subtle::random::get_random_bytes, TinkError};
+use tink::{registry::KmsClient, subtle::random::get_random_bytes, TinkError};
 
 const KEY_URI: &str =
     "aws-kms://arn:aws:kms:us-east-2:235739564943:key/3ee50705-5a82-4f5b-9753-05c4f473922f";
@@ -90,4 +90,22 @@ fn test_basic_aead_without_additional_data() {
             assert_eq!(dt, pt, "decrypt not inverse of encrypt");
         }
     }
+}
+
+#[test]
+fn test_aead_with_invalid_key_fail() {
+    init();
+    let key_uri = "aws-kms://arn:aws:kms:us-east-2:1234567:key/aaaaa-bbbb-cccc-dddd-eeeee";
+    let client = crate::AwsClient::new(key_uri).unwrap();
+    let aead = client.get_aead(key_uri).unwrap();
+
+    // Not a valid key URI so everything will fail.
+    let result = aead.encrypt(b"data", b"aad");
+    tink_testutil::expect_err(result, "request failed");
+    let result = aead.encrypt(b"data", b"");
+    tink_testutil::expect_err(result, "request failed");
+    let result = aead.decrypt(b"data", b"aad");
+    tink_testutil::expect_err(result, "request failed");
+    let result = aead.decrypt(b"data", b"");
+    tink_testutil::expect_err(result, "request failed");
 }

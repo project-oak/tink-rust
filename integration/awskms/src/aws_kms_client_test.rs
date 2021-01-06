@@ -27,6 +27,13 @@ fn test_new_client_good_uri_prefix_with_aws_partition() {
         "error getting new client with good URI prefix"
     );
 }
+#[test]
+fn test_client_debug() {
+    let uri_prefix =
+        "aws-kms://arn:aws:kms:us-east-2:235739564943:key/3ee50705-5a82-4f5b-9753-05c4f473922f";
+    let client = AwsClient::new(uri_prefix).unwrap();
+    assert_eq!(format!("{:?}", client), "AwsClient { key_uri_prefix: \"aws-kms://arn:aws:kms:us-east-2:235739564943:key/3ee50705-5a82-4f5b-9753-05c4f473922f\" }");
+}
 
 #[test]
 fn test_new_client_good_uri_prefix_with_aws_us_gov_partition() {
@@ -108,11 +115,29 @@ fn test_new_client_with_credentials_with_bad_credentials() {
     let bad_cred_file = path.to_str().unwrap();
 
     let result = AwsClient::new_with_credentials(uri_prefix, bad_cred_file);
-    assert!(
-        result.is_err(),
-        "does not reject two-column csv file, expect error"
-    );
-    assert!(format!("{:?}", result.unwrap_err()).contains("malformed credential"));
+    tink_testutil::expect_err(result, "malformed credential");
+}
+
+#[test]
+fn test_new_client_with_credentials_with_empty_credentials() {
+    let uri_prefix =
+        "aws-kms://arn:aws:kms:us-east-2:235739564943:key/3ee50705-5a82-4f5b-9753-05c4f473922f";
+    let path: PathBuf = [env!("CARGO_MANIFEST_DIR"), "../../testdata", "empty.csv"]
+        .iter()
+        .collect();
+    let bad_cred_file = path.to_str().unwrap();
+
+    let result = AwsClient::new_with_credentials(uri_prefix, bad_cred_file);
+    tink_testutil::expect_err(result, "malformed credential");
+}
+
+#[test]
+fn test_new_client_with_missing_credentials() {
+    let uri_prefix =
+        "aws-kms://arn:aws:kms:us-east-2:235739564943:key/3ee50705-5a82-4f5b-9753-05c4f473922f";
+
+    let result = AwsClient::new_with_credentials(uri_prefix, "");
+    tink_testutil::expect_err(result, "invalid credential path");
 }
 
 #[test]
@@ -157,10 +182,8 @@ fn test_get_aead_non_supported_uri() {
     let non_supported_key_uri = "aws-kms://arn:aws-us-gov:kms:us-gov-east-DOES-NOT-EXIST:key/";
 
     let client = AwsClient::new(uri_prefix).unwrap();
-    assert!(
-        client.get_aead(non_supported_key_uri).is_err(),
-        "client with URI prefix {} should NOT support key URI {}",
-        uri_prefix,
-        non_supported_key_uri
+    tink_testutil::expect_err(
+        client.get_aead(non_supported_key_uri),
+        "must start with prefix",
     );
 }
