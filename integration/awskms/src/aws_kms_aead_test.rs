@@ -36,7 +36,7 @@ fn init() {
     std::env::set_var("SSL_CERT_FILE", cert_path);
 }
 
-fn setup_kms(cf: &str) {
+fn setup_kms(cf: &std::path::Path) {
     let g =
         crate::AwsClient::new_with_credentials(KEY_URI, cf).expect("error setting up aws client");
     tink::registry::register_kms_client(g);
@@ -61,7 +61,7 @@ fn basic_aead_test(a: Box<dyn tink::Aead>) -> Result<(), TinkError> {
 fn test_basic_aead() {
     init();
     for file in &[CRED_FILE, CRED_INI_FILE] {
-        setup_kms(file);
+        setup_kms(&std::path::PathBuf::from(file));
         let dek = tink_aead::aes128_ctr_hmac_sha256_key_template();
         let kh =
             tink::keyset::Handle::new(&tink_aead::kms_envelope_aead_key_template(KEY_URI, dek))
@@ -76,7 +76,7 @@ fn test_basic_aead() {
 fn test_basic_aead_without_additional_data() {
     init();
     for file in &[CRED_FILE, CRED_INI_FILE] {
-        setup_kms(file);
+        setup_kms(&std::path::PathBuf::from(file));
         let dek = tink_aead::aes128_ctr_hmac_sha256_key_template();
         let kh =
             tink::keyset::Handle::new(&tink_aead::kms_envelope_aead_key_template(KEY_URI, dek))

@@ -16,6 +16,7 @@
 
 //! Example program demonstrating `tink-awskms`
 
+use std::path::PathBuf;
 use tink::{keyset::insecure, registry::KmsClient, AeadBoxClone};
 
 const KEY_URI: &str =
@@ -32,7 +33,9 @@ fn main() {
     // data-encryption key (DEK) for each encryption operation; the DEK is included in the
     // ciphertext emitted from the encryption operation, in encrypted form (encrypted by the
     // KMS main key).
-    let kms_client = tink_awskms::AwsClient::new_with_credentials(KEY_URI, CRED_INI_FILE).unwrap();
+    let kms_client =
+        tink_awskms::AwsClient::new_with_credentials(KEY_URI, &PathBuf::from(CRED_INI_FILE))
+            .unwrap();
     let backend = kms_client.get_aead(KEY_URI).unwrap();
     let main_key = Box::new(tink_aead::KmsEnvelopeAead::new(
         tink_aead::aes256_gcm_key_template(),
