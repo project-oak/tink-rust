@@ -69,16 +69,15 @@ fn test_new_client_with_credentials_with_good_credentials_csv() {
     let uri_prefix =
         "aws-kms://arn:aws:kms:us-east-2:235739564943:key/3ee50705-5a82-4f5b-9753-05c4f473922f";
 
-    let path: PathBuf = [
+    let good_csv_cred_file: PathBuf = [
         env!("CARGO_MANIFEST_DIR"),
         "../../testdata",
         "credentials_aws.csv",
     ]
     .iter()
     .collect();
-    let good_csv_cred_file = path.to_str().unwrap();
     assert!(
-        AwsClient::new_with_credentials(uri_prefix, good_csv_cred_file).is_ok(),
+        AwsClient::new_with_credentials(uri_prefix, &good_csv_cred_file).is_ok(),
         "reject good CSV cred file"
     );
 }
@@ -87,17 +86,16 @@ fn test_new_client_with_credentials_with_good_credentials_csv() {
 fn test_new_client_with_credentials_with_good_credentials_ini() {
     let uri_prefix =
         "aws-kms://arn:aws:kms:us-east-2:235739564943:key/3ee50705-5a82-4f5b-9753-05c4f473922f";
-    let path: PathBuf = [
+    let cred_ini_file: PathBuf = [
         env!("CARGO_MANIFEST_DIR"),
         "../../testdata",
         "credentials_aws.cred",
     ]
     .iter()
     .collect();
-    let cred_ini_file = path.to_str().unwrap();
     assert!(
-        AwsClient::new_with_credentials(uri_prefix, cred_ini_file).is_ok(),
-        "reject good CSV cred file"
+        AwsClient::new_with_credentials(uri_prefix, &cred_ini_file).is_ok(),
+        "reject good INI cred file"
     );
 }
 
@@ -105,16 +103,15 @@ fn test_new_client_with_credentials_with_good_credentials_ini() {
 fn test_new_client_with_credentials_with_bad_credentials() {
     let uri_prefix =
         "aws-kms://arn:aws:kms:us-east-2:235739564943:key/3ee50705-5a82-4f5b-9753-05c4f473922f";
-    let path: PathBuf = [
+    let bad_cred_file: PathBuf = [
         env!("CARGO_MANIFEST_DIR"),
         "../../testdata",
         "bad_access_keys_aws.csv",
     ]
     .iter()
     .collect();
-    let bad_cred_file = path.to_str().unwrap();
 
-    let result = AwsClient::new_with_credentials(uri_prefix, bad_cred_file);
+    let result = AwsClient::new_with_credentials(uri_prefix, &bad_cred_file);
     tink_testutil::expect_err(result, "malformed credential");
 }
 
@@ -122,12 +119,11 @@ fn test_new_client_with_credentials_with_bad_credentials() {
 fn test_new_client_with_credentials_with_empty_credentials() {
     let uri_prefix =
         "aws-kms://arn:aws:kms:us-east-2:235739564943:key/3ee50705-5a82-4f5b-9753-05c4f473922f";
-    let path: PathBuf = [env!("CARGO_MANIFEST_DIR"), "../../testdata", "empty.csv"]
+    let bad_cred_file: PathBuf = [env!("CARGO_MANIFEST_DIR"), "../../testdata", "empty.csv"]
         .iter()
         .collect();
-    let bad_cred_file = path.to_str().unwrap();
 
-    let result = AwsClient::new_with_credentials(uri_prefix, bad_cred_file);
+    let result = AwsClient::new_with_credentials(uri_prefix, &bad_cred_file);
     tink_testutil::expect_err(result, "malformed credential");
 }
 
@@ -136,7 +132,7 @@ fn test_new_client_with_missing_credentials() {
     let uri_prefix =
         "aws-kms://arn:aws:kms:us-east-2:235739564943:key/3ee50705-5a82-4f5b-9753-05c4f473922f";
 
-    let result = AwsClient::new_with_credentials(uri_prefix, "");
+    let result = AwsClient::new_with_credentials(uri_prefix, &std::path::PathBuf::from(""));
     tink_testutil::expect_err(result, "invalid credential path");
 }
 

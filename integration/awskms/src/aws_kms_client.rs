@@ -22,6 +22,7 @@ use rusoto_credential::AwsCredentials;
 use std::str::FromStr;
 use tink::{utils::wrap_err, TinkError};
 
+/// Prefix for any AWS-KMS key URIs.
 pub const AWS_PREFIX: &str = "aws-kms://";
 
 /// `AwsClient` represents a client that connects to the AWS KMS backend.
@@ -56,9 +57,9 @@ impl AwsClient {
     /// See http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html.
     pub fn new_with_credentials(
         uri_prefix: &str,
-        credential_path: &str,
+        credential_path: &std::path::Path,
     ) -> Result<AwsClient, TinkError> {
-        if credential_path.is_empty() {
+        if !credential_path.exists() {
             return Err("invalid credential path".into());
         }
         let region = get_region(uri_prefix)?;
@@ -140,7 +141,7 @@ enum CredentialsErr {
     TooFewColumns,
 }
 
-fn extract_creds_csv(filename: &str) -> Result<AwsCredentials, CredentialsErr> {
+fn extract_creds_csv(filename: &std::path::Path) -> Result<AwsCredentials, CredentialsErr> {
     let mut rdr = csv::Reader::from_path(filename).map_err(|_| CredentialsErr::BadFile)?;
     let mut lines = vec![];
     for result in rdr.records() {

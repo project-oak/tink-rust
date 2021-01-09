@@ -19,6 +19,7 @@
 use std::{
     cell::RefCell,
     fs::{File, OpenOptions},
+    path::PathBuf,
     rc::Rc,
     str::FromStr,
 };
@@ -513,7 +514,7 @@ fn get_kms_client(
         } else {
             tink_awskms::AwsClient::new_with_credentials(
                 &wrap_opts.master_key_uri,
-                &wrap_opts.credential_path,
+                &PathBuf::from(&wrap_opts.credential_path),
             )?
         };
         tink::registry::register_kms_client(g);
