@@ -519,6 +519,20 @@ fn get_kms_client(
         };
         tink::registry::register_kms_client(g);
         tink::registry::get_kms_client(&wrap_opts.master_key_uri)
+    } else if wrap_opts
+        .master_key_uri
+        .starts_with(tink_gcpkms::GCP_PREFIX)
+    {
+        let g = if wrap_opts.credential_path.is_empty() {
+            tink_gcpkms::GcpClient::new(&wrap_opts.master_key_uri)?
+        } else {
+            tink_gcpkms::GcpClient::new_with_credentials(
+                &wrap_opts.master_key_uri,
+                &PathBuf::from(&wrap_opts.credential_path),
+            )?
+        };
+        tink::registry::register_kms_client(g);
+        tink::registry::get_kms_client(&wrap_opts.master_key_uri)
     } else {
         Err("Unrecognized key URI".into())
     }
