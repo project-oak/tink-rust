@@ -1761,6 +1761,7 @@ dependencies = [
  "tink-aead",
  "tink-awskms",
  "tink-daead",
+ "tink-gcpkms",
  "tink-mac",
  "tink-prf",
  "tink-signature",
