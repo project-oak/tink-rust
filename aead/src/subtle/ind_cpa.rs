@@ -23,10 +23,10 @@
 pub trait IndCpaCipher: IndCpaCipherBoxClone {
     // Encrypt plaintext. The resulting ciphertext is indistinguishable under
     // chosen-plaintext attack. However, it does not have integrity protection.
-    fn encrypt(&self, plaintext: &[u8]) -> Result<Vec<u8>, tink::TinkError>;
+    fn encrypt(&self, plaintext: &[u8]) -> Result<Vec<u8>, tink_core::TinkError>;
 
     // Decrypt ciphertext and returns the resulting plaintext.
-    fn decrypt(&self, ciphertext: &[u8]) -> Result<Vec<u8>, tink::TinkError>;
+    fn decrypt(&self, ciphertext: &[u8]) -> Result<Vec<u8>, tink_core::TinkError>;
 }
 
 /// Trait bound to indicate that primitive trait objects should support cloning

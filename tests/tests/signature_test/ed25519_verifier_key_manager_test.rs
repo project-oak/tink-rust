@@ -19,7 +19,7 @@ use tink_proto::Ed25519PublicKey;
 #[test]
 fn test_ed25519_verify_get_primitive_basic() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_tests::ED25519_VERIFIER_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::ED25519_VERIFIER_TYPE_URL)
         .expect("cannot obtain Ed25519Verifier key manager");
     let serialized_key = tink_tests::proto_encode(&tink_tests::new_ed25519_public_key());
     assert!(
@@ -31,7 +31,7 @@ fn test_ed25519_verify_get_primitive_basic() {
 #[test]
 fn test_ed25519_verify_get_primitive_with_invalid_input() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_tests::ED25519_VERIFIER_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::ED25519_VERIFIER_TYPE_URL)
         .expect("cannot obtain Ed25519Verifier key manager");
 
     // invalid version
@@ -52,7 +52,7 @@ fn test_ed25519_verify_get_primitive_with_invalid_input() {
 #[test]
 fn test_new_key_fails() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_tests::ED25519_VERIFIER_TYPE_URL).unwrap();
+    let km = tink_core::registry::get_key_manager(tink_tests::ED25519_VERIFIER_TYPE_URL).unwrap();
 
     assert!(km.new_key(&[]).is_err());
     assert!(km.new_key_data(&[]).is_err());
@@ -61,7 +61,7 @@ fn test_new_key_fails() {
 #[test]
 fn test_key_manager_params() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_tests::ED25519_VERIFIER_TYPE_URL).unwrap();
+    let km = tink_core::registry::get_key_manager(tink_tests::ED25519_VERIFIER_TYPE_URL).unwrap();
 
     assert_eq!(km.type_url(), tink_tests::ED25519_VERIFIER_TYPE_URL);
     assert_eq!(
@@ -74,7 +74,7 @@ fn test_key_manager_params() {
 #[test]
 fn test_primitive_with_invalid_key() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_tests::ED25519_VERIFIER_TYPE_URL).unwrap();
+    let km = tink_core::registry::get_key_manager(tink_tests::ED25519_VERIFIER_TYPE_URL).unwrap();
 
     let invalid_keys = vec![
         Ed25519PublicKey {

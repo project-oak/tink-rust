@@ -16,7 +16,7 @@
 
 use ed25519_dalek::Keypair;
 use serde::Deserialize;
-use tink::{subtle::random::get_random_bytes, Signer, TinkError, Verifier};
+use tink_core::{subtle::random::get_random_bytes, Signer, TinkError, Verifier};
 use tink_signature::subtle::{Ed25519Signer, Ed25519Verifier};
 use tink_tests::WycheproofResult;
 

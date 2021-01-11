@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use prost::Message;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
 #[test]
 fn test_templates() {
@@ -53,7 +53,7 @@ fn check_hmac_template(
     {
         return Err("KeyFormat is incorrect".into());
     }
-    let keymanager = tink::registry::get_key_manager(tink_tests::HMAC_TYPE_URL)
+    let keymanager = tink_core::registry::get_key_manager(tink_tests::HMAC_TYPE_URL)
         .expect("HMAC key manager not found");
     keymanager
         .new_key(&template.value)
@@ -76,7 +76,7 @@ fn check_cmac_template(
     {
         return Err("KeyFormat is incorrect".into());
     }
-    let keymanager = tink::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
+    let keymanager = tink_core::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
         .expect("AES CMAC key manager not found");
     keymanager
         .new_key(&template.value)

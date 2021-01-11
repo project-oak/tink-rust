@@ -31,7 +31,7 @@ pub enum AesVariant {
 }
 
 /// Check if the given key size is a valid AES key size.
-pub fn validate_aes_key_size(size_in_bytes: usize) -> Result<AesVariant, tink::TinkError> {
+pub fn validate_aes_key_size(size_in_bytes: usize) -> Result<AesVariant, tink_core::TinkError> {
     match size_in_bytes {
         16 => Ok(AesVariant::Aes128),
         32 => Ok(AesVariant::Aes256),

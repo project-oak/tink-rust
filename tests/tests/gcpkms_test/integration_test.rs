@@ -33,10 +33,10 @@ fn gcpkms_example() {
         tink_gcpkms::GcpClient::new(&key_uri)
     }
     .unwrap();
-    tink::registry::register_kms_client(gcp_client);
+    tink_core::registry::register_kms_client(gcp_client);
 
     let dek_template = tink_aead::aes128_ctr_hmac_sha256_key_template();
-    let kh = tink::keyset::Handle::new(&tink_aead::kms_envelope_aead_key_template(
+    let kh = tink_core::keyset::Handle::new(&tink_aead::kms_envelope_aead_key_template(
         &key_uri,
         dek_template,
     ))

@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use std::io::Write;
-use tink::keyset::{Reader, Writer};
+use tink_core::keyset::{Reader, Writer};
 use tink_proto::{key_data::KeyMaterialType, KeyStatusType, OutputPrefixType};
 
 #[test]
@@ -24,15 +24,15 @@ fn test_json_io_unencrypted() {
 
     let manager = tink_tests::new_hmac_keyset_manager();
     let h = manager.handle().expect("cannot get keyset handle");
-    let ks1 = tink::keyset::insecure::keyset_material(&h);
+    let ks1 = tink_core::keyset::insecure::keyset_material(&h);
 
     let mut buf = Vec::new();
     {
-        let mut w = tink::keyset::JsonWriter::new(&mut buf);
+        let mut w = tink_core::keyset::JsonWriter::new(&mut buf);
         w.write(&ks1).expect("cannot write keyset");
     }
 
-    let mut r = tink::keyset::JsonReader::new(&buf[..]);
+    let mut r = tink_core::keyset::JsonReader::new(&buf[..]);
     let ks2 = r.read().expect("cannot read keyset");
     assert_eq!(
         ks1, ks2,
@@ -80,7 +80,7 @@ fn test_json_reader() {
 
     let mut buf = Vec::new();
     buf.write_all(json_keyset.as_bytes()).unwrap();
-    let mut r = tink::keyset::JsonReader::new(&buf[..]);
+    let mut r = tink_core::keyset::JsonReader::new(&buf[..]);
 
     let got = r.read().expect("cannot read keyset");
 
@@ -136,7 +136,7 @@ fn test_json_reader_large_ids() {
     );
     let mut buf = Vec::new();
     buf.write_all(json_keyset.as_bytes()).unwrap();
-    let mut r = tink::keyset::JsonReader::new(&buf[..]);
+    let mut r = tink_core::keyset::JsonReader::new(&buf[..]);
 
     let got = r.read().expect("cannot read keyset");
 
@@ -181,7 +181,7 @@ fn test_json_reader_negative_ids() {
     );
     let mut buf = Vec::new();
     buf.write_all(json_keyset.as_bytes()).unwrap();
-    let mut r = tink::keyset::JsonReader::new(&buf[..]);
+    let mut r = tink_core::keyset::JsonReader::new(&buf[..]);
 
     assert!(r.read().is_err(), "Expected failure due to negative key id");
 }
@@ -209,7 +209,7 @@ fn test_json_writer_large_id() {
 
     let mut buf = Vec::new();
     {
-        let mut w = tink::keyset::JsonWriter::new(&mut buf);
+        let mut w = tink_core::keyset::JsonWriter::new(&mut buf);
         w.write(&ks).expect("cannot write keyset");
     }
 
@@ -234,12 +234,12 @@ fn test_json_io_encrypted() {
         keyset_info: None,
     };
     {
-        let mut w = tink::keyset::JsonWriter::new(&mut buf);
+        let mut w = tink_core::keyset::JsonWriter::new(&mut buf);
         w.write_encrypted(&kse1)
             .expect("cannot write encrypted keyset");
     }
 
-    let mut r = tink::keyset::JsonReader::new(&buf[..]);
+    let mut r = tink_core::keyset::JsonReader::new(&buf[..]);
     let kse2 = r.read_encrypted().expect("cannot read encrypted keyset");
     assert_eq!(
         kse1, kse2,
@@ -252,11 +252,11 @@ fn test_json_io_encrypted() {
 fn test_json_io_read_fail_decode() {
     tink_mac::init();
     let buf = vec![1, 2, 3];
-    let mut r = tink::keyset::JsonReader::new(&buf[..]);
+    let mut r = tink_core::keyset::JsonReader::new(&buf[..]);
     assert!(r.read().is_err());
 
     let buf = vec![1, 2, 3];
-    let mut r = tink::keyset::JsonReader::new(&buf[..]);
+    let mut r = tink_core::keyset::JsonReader::new(&buf[..]);
     assert!(r.read_encrypted().is_err());
 }
 
@@ -283,19 +283,19 @@ fn test_json_io_fail() {
     };
 
     let mut sink = tink_tests::IoFailure {};
-    let mut w = tink::keyset::JsonWriter::new(&mut sink);
+    let mut w = tink_core::keyset::JsonWriter::new(&mut sink);
     assert!(w.write(&ks).is_err());
 
     let mut sink = tink_tests::IoFailure {};
-    let mut w = tink::keyset::JsonWriter::new(&mut sink);
+    let mut w = tink_core::keyset::JsonWriter::new(&mut sink);
     assert!(w.write_encrypted(&kse).is_err());
 
     let src = tink_tests::IoFailure {};
-    let mut r = tink::keyset::JsonReader::new(src);
+    let mut r = tink_core::keyset::JsonReader::new(src);
     assert!(r.read().is_err());
 
     let src = tink_tests::IoFailure {};
-    let mut r = tink::keyset::JsonReader::new(src);
+    let mut r = tink_core::keyset::JsonReader::new(src);
     assert!(r.read_encrypted().is_err());
 }
 
@@ -367,18 +367,18 @@ fn test_json_reader_all_enums() {
                 // Read from hand-crafted JSON
                 let mut buf = Vec::new();
                 buf.write_all(json_keyset.as_bytes()).unwrap();
-                let mut r = tink::keyset::JsonReader::new(&buf[..]);
+                let mut r = tink_core::keyset::JsonReader::new(&buf[..]);
                 let got = r.read().expect("cannot read keyset");
                 assert_eq!(got, want, "written keyset doesn't match expected keyset");
 
                 // Write to JSON and read back.
                 let mut buf = Vec::new();
                 {
-                    let mut w = tink::keyset::JsonWriter::new(&mut buf);
+                    let mut w = tink_core::keyset::JsonWriter::new(&mut buf);
                     w.write(&want).expect("cannot write keyset");
                 }
 
-                let mut r = tink::keyset::JsonReader::new(&buf[..]);
+                let mut r = tink_core::keyset::JsonReader::new(&buf[..]);
                 let got = r.read().expect("cannot read keyset");
                 assert_eq!(got, want, "written keyset doesn't match expected keyset");
             }
@@ -406,7 +406,7 @@ fn test_json_read_invalid_b64() {
 
     let mut buf = Vec::new();
     buf.write_all(json_keyset.as_bytes()).unwrap();
-    let mut r = tink::keyset::JsonReader::new(&buf[..]);
+    let mut r = tink_core::keyset::JsonReader::new(&buf[..]);
 
     let result = r.read();
     tink_tests::expect_err(result, "base64");

@@ -17,7 +17,7 @@
 //! Key manager for AES-CMAC keys for MAC.
 
 use prost::Message;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
 /// Maximal version of AES-CMAC keys.
 pub const CMAC_KEY_VERSION: u32 = 0;
@@ -28,10 +28,10 @@ pub const CMAC_TYPE_URL: &str = "type.googleapis.com/google.crypto.tink.AesCmacK
 #[derive(Default)]
 pub(crate) struct AesCmacKeyManager;
 
-impl tink::registry::KeyManager for AesCmacKeyManager {
+impl tink_core::registry::KeyManager for AesCmacKeyManager {
     /// Create an [`AesCmac`](crate::subtle::AesCmac) instance for the given serialized
-    /// [`AesCmacKey`](tink:;proto::AesCmacKey) proto.
-    fn primitive(&self, serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
+    /// [`AesCmacKey`](tink_proto::AesCmacKey) proto.
+    fn primitive(&self, serialized_key: &[u8]) -> Result<tink_core::Primitive, TinkError> {
         if serialized_key.is_empty() {
             return Err("AesCmacKeyManager: invalid key".into());
         }
@@ -40,7 +40,7 @@ impl tink::registry::KeyManager for AesCmacKeyManager {
             .map_err(|e| wrap_err("AesCmacKeyManager: decode failed", e))?;
         let tag_size = validate_key(&key)?;
         match crate::subtle::AesCmac::new(&key.key_value, tag_size) {
-            Ok(p) => Ok(tink::Primitive::Mac(Box::new(p))),
+            Ok(p) => Ok(tink_core::Primitive::Mac(Box::new(p))),
             Err(e) => Err(wrap_err(
                 "AesCmacKeyManager: cannot create new primitive",
                 e,
@@ -58,7 +58,7 @@ impl tink::registry::KeyManager for AesCmacKeyManager {
             .map_err(|_| TinkError::new("AesCmacKeyManager: invalid key format"))?;
         validate_key_format(&key_format)
             .map_err(|e| wrap_err("AesCmacKeyManager: invalid key format", e))?;
-        let key_value = tink::subtle::random::get_random_bytes(key_format.key_size as usize);
+        let key_value = tink_core::subtle::random::get_random_bytes(key_format.key_size as usize);
         let mut sk = Vec::new();
         tink_proto::AesCmacKey {
             version: CMAC_KEY_VERSION,
@@ -82,7 +82,7 @@ impl tink::registry::KeyManager for AesCmacKeyManager {
 /// Validate the given [`AesCmacKey`](tink_proto::AesCmacKey). It only validates the version of the
 /// key because other parameters will be validated in primitive construction.
 fn validate_key(key: &tink_proto::AesCmacKey) -> Result<usize, TinkError> {
-    tink::keyset::validate_key_version(key.version, CMAC_KEY_VERSION)
+    tink_core::keyset::validate_key_version(key.version, CMAC_KEY_VERSION)
         .map_err(|e| wrap_err("AesCmacKeyManager: invalid version", e))?;
     let key_size = key.key_value.len();
     match &key.params {

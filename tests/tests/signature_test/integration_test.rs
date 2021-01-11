@@ -17,18 +17,18 @@
 #[test]
 fn test_signature_init() {
     tink_signature::init();
-    assert!(tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL).is_ok());
-    assert!(tink::registry::get_key_manager(tink_tests::ECDSA_VERIFIER_TYPE_URL).is_ok());
+    assert!(tink_core::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL).is_ok());
+    assert!(tink_core::registry::get_key_manager(tink_tests::ECDSA_VERIFIER_TYPE_URL).is_ok());
 
-    assert!(tink::registry::get_key_manager(tink_tests::ED25519_SIGNER_TYPE_URL).is_ok());
-    assert!(tink::registry::get_key_manager(tink_tests::ED25519_VERIFIER_TYPE_URL).is_ok());
+    assert!(tink_core::registry::get_key_manager(tink_tests::ED25519_SIGNER_TYPE_URL).is_ok());
+    assert!(tink_core::registry::get_key_manager(tink_tests::ED25519_VERIFIER_TYPE_URL).is_ok());
 }
 
 #[test]
 fn example_ecdsa() {
     tink_signature::init();
     // Other key templates can also be used.
-    let kh = tink::keyset::Handle::new(&tink_signature::ecdsa_p256_key_template()).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_signature::ecdsa_p256_key_template()).unwrap();
 
     // NOTE: save the private keyset to a safe location. DO NOT hardcode it in source code.
     // Consider encrypting it with a remote key in Cloud KMS, AWS KMS or HashiCorp Vault.
@@ -54,7 +54,7 @@ fn example_ecdsa() {
 fn example_ed25519() {
     tink_signature::init();
     // Other key templates can also be used.
-    let kh = tink::keyset::Handle::new(&tink_signature::ed25519_key_template()).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_signature::ed25519_key_template()).unwrap();
     let s = tink_signature::new_signer(&kh).unwrap();
 
     let a = s.sign(b"this data needs to be signed").unwrap();
@@ -68,7 +68,7 @@ fn example_ed25519() {
 #[test]
 fn test_box_clone() {
     tink_signature::init();
-    let kh = tink::keyset::Handle::new(&tink_signature::ed25519_key_template()).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_signature::ed25519_key_template()).unwrap();
     let s = tink_signature::new_signer(&kh).unwrap();
 
     let a = s.box_clone().sign(b"this data needs to be signed").unwrap();

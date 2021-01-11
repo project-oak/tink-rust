@@ -30,8 +30,8 @@ impl proto::mac_server::Mac for MacServerImpl {
         let req = request.into_inner(); // discard metadata
         let closure = move || {
             let cursor = std::io::Cursor::new(req.keyset.clone());
-            let mut reader = tink::keyset::BinaryReader::new(cursor);
-            let handle = tink::keyset::insecure::read(&mut reader)?;
+            let mut reader = tink_core::keyset::BinaryReader::new(cursor);
+            let handle = tink_core::keyset::insecure::read(&mut reader)?;
             let primitive = tink_mac::new(&handle)?;
             primitive.compute_mac(&req.data)
         };
@@ -49,8 +49,8 @@ impl proto::mac_server::Mac for MacServerImpl {
         let req = request.into_inner(); // discard metadata
         let closure = move || {
             let cursor = std::io::Cursor::new(req.keyset.clone());
-            let mut reader = tink::keyset::BinaryReader::new(cursor);
-            let handle = tink::keyset::insecure::read(&mut reader)?;
+            let mut reader = tink_core::keyset::BinaryReader::new(cursor);
+            let handle = tink_core::keyset::insecure::read(&mut reader)?;
             let primitive = tink_mac::new(&handle)?;
             primitive.verify_mac(&req.mac_value, &req.data)
         };

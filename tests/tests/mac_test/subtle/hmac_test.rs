@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::{subtle::random::get_random_bytes, Mac, TinkError};
+use tink_core::{subtle::random::get_random_bytes, Mac, TinkError};
 use tink_proto::HashType;
 
 struct TestCase {

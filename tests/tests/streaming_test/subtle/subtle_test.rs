@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 use tink_tests::SharedBuf;
 
 pub const IKM: &[u8] = &[
@@ -25,7 +25,7 @@ pub const AAD: &[u8] = &[0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff];
 
 /// Generate a plaintext of size `plaintext_size` and encrypt it using the `cipher`. Upon success
 /// this function returns the actual plaintext and ciphertext bytes.
-pub fn encrypt<T: tink::StreamingAead>(
+pub fn encrypt<T: tink_core::StreamingAead>(
     cipher: &T,
     aad: &[u8],
     plaintext_size: usize,
@@ -56,7 +56,7 @@ pub fn encrypt<T: tink::StreamingAead>(
 
 /// Decrypt ciphertext `ct` using the `cipher` and validate that it's the
 /// same as the original plaintext `pt`.
-pub fn decrypt<T: tink::StreamingAead>(
+pub fn decrypt<T: tink_core::StreamingAead>(
     cipher: &T,
     aad: &[u8],
     pt: &[u8],

@@ -18,7 +18,7 @@
 
 use rusoto_kms::Kms;
 use std::{cell::RefCell, collections::HashMap, rc::Rc};
-use tink::utils::wrap_err;
+use tink_core::utils::wrap_err;
 
 /// `AwsAead` represents a AWS KMS service to a particular URI.
 #[derive(Clone)]
@@ -26,8 +26,9 @@ pub struct AwsAead {
     key_uri: String,
     kms: rusoto_kms::KmsClient,
     // The Tokio runtime to execute KMS requests on, wrapped in:
-    //  - a `RefCell` for interior mutability (the [`tink::Aead`] trait's methods take `&self`)
-    //  - an `Rc` to allow `Clone`, as required by the trait bound on [`tink::Aead`].
+    //  - a `RefCell` for interior mutability (the [`tink_core::Aead`] trait's methods take
+    //    `&self`)
+    //  - an `Rc` to allow `Clone`, as required by the trait bound on [`tink_core::Aead`].
     runtime: Rc<RefCell<tokio::runtime::Runtime>>,
 }
 
@@ -38,7 +39,7 @@ impl AwsAead {
     pub(crate) fn new(
         key_uri: &str,
         kms: rusoto_kms::KmsClient,
-    ) -> Result<AwsAead, tink::TinkError> {
+    ) -> Result<AwsAead, tink_core::TinkError> {
         Ok(AwsAead {
             key_uri: key_uri.to_string(),
             kms,
@@ -53,12 +54,12 @@ impl AwsAead {
     }
 }
 
-impl tink::Aead for AwsAead {
+impl tink_core::Aead for AwsAead {
     fn encrypt(
         &self,
         plaintext: &[u8],
         additional_data: &[u8],
-    ) -> Result<Vec<u8>, tink::TinkError> {
+    ) -> Result<Vec<u8>, tink_core::TinkError> {
         let ad = hex::encode(additional_data);
         let encryption_context = if ad.is_empty() {
             None
@@ -90,7 +91,7 @@ impl tink::Aead for AwsAead {
         &self,
         ciphertext: &[u8],
         additional_data: &[u8],
-    ) -> Result<Vec<u8>, tink::TinkError> {
+    ) -> Result<Vec<u8>, tink_core::TinkError> {
         let ad = hex::encode(additional_data);
         let encryption_context = if ad.is_empty() {
             None

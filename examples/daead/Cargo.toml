@@ -7,5 +7,5 @@ license = "Apache-2.0"
 
 [dependencies]
 hex = "^0.4.2"
-tink = "^0.1"
+tink-core = "^0.1"
 tink-daead = "^0.1"

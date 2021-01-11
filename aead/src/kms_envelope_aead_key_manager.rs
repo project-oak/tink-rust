@@ -17,7 +17,7 @@
 //! Key manager for keys wrapped by a KMS.
 
 use prost::Message;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
 /// Maximal version of KMS-wrapped keys.
 pub const KMS_ENVELOPE_AEAD_KEY_VERSION: u32 = 0;
@@ -25,16 +25,16 @@ pub const KMS_ENVELOPE_AEAD_KEY_VERSION: u32 = 0;
 pub const KMS_ENVELOPE_AEAD_TYPE_URL: &str =
     "type.googleapis.com/google.crypto.tink.KmsEnvelopeAeadKey";
 
-/// `KmsEnvelopeAeadKeyManager` is an implementation of the `tink::registry::KeyManager` trait.  It
-/// generates new [`KmsEnvelopeAeadKey`](tink_proto::KmsEnvelopeAeadKey) keys and produces new
+/// `KmsEnvelopeAeadKeyManager` is an implementation of the `tink_core::registry::KeyManager` trait.
+/// It generates new [`KmsEnvelopeAeadKey`](tink_proto::KmsEnvelopeAeadKey) keys and produces new
 /// instances of [`KmsEnvelopeAead`](crate::KmsEnvelopeAead).
 #[derive(Default)]
 pub(crate) struct KmsEnvelopeAeadKeyManager {}
 
-impl tink::registry::KeyManager for KmsEnvelopeAeadKeyManager {
+impl tink_core::registry::KeyManager for KmsEnvelopeAeadKeyManager {
     /// Create a [`crate::KmsEnvelopeAead`] for the given serialized
     /// [`tink_proto::KmsEnvelopeAeadKey`].
-    fn primitive(&self, serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
+    fn primitive(&self, serialized_key: &[u8]) -> Result<tink_core::Primitive, TinkError> {
         if serialized_key.is_empty() {
             return Err("KmsEnvelopeAeadKeyManager: empty key".into());
         }
@@ -45,12 +45,12 @@ impl tink::registry::KeyManager for KmsEnvelopeAeadKeyManager {
             .params
             .ok_or_else(|| TinkError::new("KmsEnvelopeAeadKeyManager: missing URI"))?;
         let uri = key_params.kek_uri;
-        let kms_client = tink::registry::get_kms_client(&uri)?;
+        let kms_client = tink_core::registry::get_kms_client(&uri)?;
         let backend = kms_client
             .get_aead(&uri)
             .map_err(|e| wrap_err("KmsEnvelopeAeadKeyManager: invalid aead backend", e))?;
 
-        Ok(tink::Primitive::Aead(Box::new(
+        Ok(tink_core::Primitive::Aead(Box::new(
             crate::KmsEnvelopeAead::new(
                 key_params.dek_template.ok_or_else(|| {
                     TinkError::new("KmsEnvelopeAeadKeyManager: missing DEK template")
@@ -89,6 +89,6 @@ impl tink::registry::KeyManager for KmsEnvelopeAeadKeyManager {
 
 /// Validate the given [`tink_proto::KmsEnvelopeAeadKey`].
 fn validate_key(key: &tink_proto::KmsEnvelopeAeadKey) -> Result<(), TinkError> {
-    tink::keyset::validate_key_version(key.version, KMS_ENVELOPE_AEAD_KEY_VERSION)
+    tink_core::keyset::validate_key_version(key.version, KMS_ENVELOPE_AEAD_KEY_VERSION)
         .map_err(|e| wrap_err("KmsEnvelopeAeadKeyManager", e))
 }

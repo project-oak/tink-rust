@@ -19,7 +19,7 @@ use p256::{
     ecdsa::signature::{RandomizedSigner, Signature},
     elliptic_curve,
 };
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 use tink_proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType};
 
 // An ECDSA private key.
@@ -40,7 +40,7 @@ impl Clone for EcdsaPrivateKey {
     }
 }
 
-/// `EcdsaSigner` is an implementation of [`tink::Signer`] for ECDSA.
+/// `EcdsaSigner` is an implementation of [`tink_core::Signer`] for ECDSA.
 /// At the moment, the implementation only accepts DER encoding.
 #[derive(Clone)]
 pub struct EcdsaSigner {
@@ -89,8 +89,8 @@ impl EcdsaSigner {
     }
 }
 
-impl tink::Signer for EcdsaSigner {
-    fn sign(&self, data: &[u8]) -> Result<Vec<u8>, tink::TinkError> {
+impl tink_core::Signer for EcdsaSigner {
+    fn sign(&self, data: &[u8]) -> Result<Vec<u8>, tink_core::TinkError> {
         let mut csprng = rand::rngs::OsRng {};
         match &self.private_key {
             EcdsaPrivateKey::NistP256(secret_key) => match self.encoding {

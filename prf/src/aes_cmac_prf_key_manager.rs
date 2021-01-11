@@ -18,7 +18,7 @@
 
 use crate::subtle;
 use prost::Message;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
 /// Maximal version of AES-CMAC PRF keys.
 pub const AES_CMAC_PRF_KEY_VERSION: u32 = 0;
@@ -29,10 +29,10 @@ pub const AES_CMAC_PRF_TYPE_URL: &str = "type.googleapis.com/google.crypto.tink.
 #[derive(Default)]
 pub(crate) struct AesCmacPrfKeyManager;
 
-impl tink::registry::KeyManager for AesCmacPrfKeyManager {
+impl tink_core::registry::KeyManager for AesCmacPrfKeyManager {
     /// Create an [`AesCmacPrf`](crate::subtle::AesCmacPrf) instance for the given serialized
-    /// [`AesCmacPrfKey`](tink:;proto::AesCmacPrfKey) proto.
-    fn primitive(&self, serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
+    /// [`AesCmacPrfKey`](tink_proto::AesCmacPrfKey) proto.
+    fn primitive(&self, serialized_key: &[u8]) -> Result<tink_core::Primitive, TinkError> {
         if serialized_key.is_empty() {
             return Err("AesCmacPrfKeyManager: invalid key".into());
         }
@@ -41,7 +41,7 @@ impl tink::registry::KeyManager for AesCmacPrfKeyManager {
             .map_err(|_| TinkError::new("AesCmacPrfKeyManager: invalid key"))?;
         validate_key(&key)?;
         match subtle::AesCmacPrf::new(&key.key_value) {
-            Ok(p) => Ok(tink::Primitive::Prf(Box::new(p))),
+            Ok(p) => Ok(tink_core::Primitive::Prf(Box::new(p))),
             Err(e) => Err(wrap_err(
                 "AesCmacPrfManager: cannot create new primitive",
                 e,
@@ -59,7 +59,7 @@ impl tink::registry::KeyManager for AesCmacPrfKeyManager {
             .map_err(|_| TinkError::new("AesCmacPrfKeyManager: invalid key format"))?;
         validate_key_format(&key_format)
             .map_err(|e| wrap_err("AesCmacPrfKeyManager: invalid key format", e))?;
-        let key_value = tink::subtle::random::get_random_bytes(key_format.key_size as usize);
+        let key_value = tink_core::subtle::random::get_random_bytes(key_format.key_size as usize);
 
         let mut sk = Vec::new();
         tink_proto::AesCmacPrfKey {
@@ -83,7 +83,7 @@ impl tink::registry::KeyManager for AesCmacPrfKeyManager {
 /// Validate the given [`AesCmacPrfKey`](tink_proto::AesCmacPrfKey). It only validates the version
 /// of the key because other parameters will be validated in primitive construction.
 fn validate_key(key: &tink_proto::AesCmacPrfKey) -> Result<(), TinkError> {
-    tink::keyset::validate_key_version(key.version, AES_CMAC_PRF_KEY_VERSION)
+    tink_core::keyset::validate_key_version(key.version, AES_CMAC_PRF_KEY_VERSION)
         .map_err(|e| wrap_err("AesCmacPrfKeyManager: invalid version", e))?;
     let key_size = key.key_value.len();
     subtle::validate_aes_cmac_prf_params(key_size)

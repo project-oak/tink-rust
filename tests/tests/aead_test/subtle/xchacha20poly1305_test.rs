@@ -17,8 +17,8 @@
 use super::{wycheproof::*, xchacha20poly1305_vectors::*};
 use rand::{thread_rng, Rng};
 use std::collections::HashSet;
-use tink::{subtle::random::get_random_bytes, Aead};
 use tink_aead::subtle;
+use tink_core::{subtle::random::get_random_bytes, Aead};
 use tink_tests::WycheproofResult;
 
 #[test]

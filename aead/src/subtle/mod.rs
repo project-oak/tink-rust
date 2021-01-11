@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-//! Provides subtle implementations of the `tink::Aead` primitive.
+//! Provides subtle implementations of the `tink_core::Aead` primitive.
 
 mod aead;
 pub use self::aead::*;

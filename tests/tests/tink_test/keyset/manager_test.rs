@@ -14,13 +14,13 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::keyset::insecure;
+use tink_core::keyset::insecure;
 
 #[test]
 fn test_keyset_manager_basic() {
     tink_mac::init();
     // Create a keyset that contains a single `HmacKey`.
-    let mut ksm = tink::keyset::Manager::new();
+    let mut ksm = tink_core::keyset::Manager::new();
     let kt = tink_mac::hmac_sha256_tag128_key_template();
     ksm.rotate(&kt)
         .expect("cannot rotate when key template is available");
@@ -49,7 +49,7 @@ fn test_keyset_manager_operations() {
     let mut key_template = tink_aead::aes128_gcm_key_template();
 
     // Create a keyset that contains a single key.
-    let mut keyset_manager = tink::keyset::Manager::new();
+    let mut keyset_manager = tink_core::keyset::Manager::new();
     keyset_manager
         .add(&key_template, /* as_primary= */ true)
         .unwrap();
@@ -137,7 +137,8 @@ fn test_keyset_manager_operations() {
     assert_eq!(key_id_1, keyset.primary_key_id);
 
     // Clone a keyset via the manager, and check equality.
-    let keyset_manager_2 = tink::keyset::Manager::new_from_handle(keyset_manager.handle().unwrap());
+    let keyset_manager_2 =
+        tink_core::keyset::Manager::new_from_handle(keyset_manager.handle().unwrap());
     let keyset_2 = insecure::keyset_material(&keyset_manager_2.handle().unwrap());
     assert_eq!(keyset, keyset_2);
 
@@ -264,14 +265,14 @@ fn test_keyset_manager_corrupt_primary_key() {
     let key_template = tink_aead::aes128_gcm_key_template();
 
     // Create a keyset that contains a single key which has an invalid status value.
-    let mut km = tink::keyset::Manager::new();
+    let mut km = tink_core::keyset::Manager::new();
     km.rotate(&key_template).unwrap();
     let mut keyset = insecure::keyset_material(&km.handle().unwrap());
     keyset.key[0].status = 999;
     let key_id = keyset.key[0].key_id;
 
     let kh = insecure::new_handle(keyset).unwrap();
-    let mut km = tink::keyset::Manager::new_from_handle(kh);
+    let mut km = tink_core::keyset::Manager::new_from_handle(kh);
 
     // All operations shoud fail.
     let result = km.enable(key_id);
@@ -291,14 +292,14 @@ fn test_keyset_manager_corrupt_secondary_key() {
 
     // Create a keyset that contains a valid primary key and a second key with an invalid status
     // value.
-    let mut km = tink::keyset::Manager::new();
+    let mut km = tink_core::keyset::Manager::new();
     let _primary_key_id = km.rotate(&key_template).unwrap();
     let secondary_key_id = km.add(&key_template, false).unwrap();
     let mut keyset = insecure::keyset_material(&km.handle().unwrap());
     keyset.key[1].status = 999;
 
     let kh = insecure::new_handle(keyset).unwrap();
-    let mut km = tink::keyset::Manager::new_from_handle(kh);
+    let mut km = tink_core::keyset::Manager::new_from_handle(kh);
 
     // All operations shoud fail.
     let result = km.enable(secondary_key_id);
@@ -317,7 +318,7 @@ fn test_keyset_manager_invalid_key_id() {
     let key_template = tink_aead::aes128_gcm_key_template();
 
     // Create a keyset that contains a single key.
-    let mut km = tink::keyset::Manager::new();
+    let mut km = tink_core::keyset::Manager::new();
     km.rotate(&key_template).unwrap();
 
     // All operations shoud fail with an invalid key_id.
@@ -339,7 +340,7 @@ fn test_keyset_manager_unknown_prefix_type() {
     for prefix_type in &[9999, tink_proto::OutputPrefixType::UnknownPrefix as i32] {
         key_template.output_prefix_type = *prefix_type;
 
-        let mut km = tink::keyset::Manager::new();
+        let mut km = tink_core::keyset::Manager::new();
         km.rotate(&key_template).unwrap();
         let kh = km.handle().unwrap();
         let ks = insecure::keyset_material(&kh);
@@ -354,7 +355,7 @@ fn test_keyset_manager_unknown_prefix_type() {
 fn test_existing_keyset() {
     tink_mac::init();
     // Create a keyset that contains a single `HmacKey`.
-    let mut ksm1 = tink::keyset::Manager::new();
+    let mut ksm1 = tink_core::keyset::Manager::new();
     let kt = tink_mac::hmac_sha256_tag128_key_template();
     ksm1.rotate(&kt)
         .expect("cannot rotate when key template is available");
@@ -362,7 +363,7 @@ fn test_existing_keyset() {
     let h1 = ksm1.handle().expect("cannot get keyset handle");
     let ks1 = insecure::keyset_material(&h1);
 
-    let mut ksm2 = tink::keyset::Manager::new_from_handle(h1);
+    let mut ksm2 = tink_core::keyset::Manager::new_from_handle(h1);
     ksm2.rotate(&kt).expect("failed to rotate");
     let h2 = ksm2.handle().expect("cannot get keyset handle");
     let ks2 = insecure::keyset_material(&h2);

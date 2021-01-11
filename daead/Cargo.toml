@@ -13,5 +13,5 @@ categories = ["cryptography"]
 aead = { version = "^0.3.2", features = ["std"] }
 aes-siv = "^0.5"
 prost = "^0.6.1"
-tink = "^0.1"
+tink-core = "^0.1"
 tink-proto = "^0.1"

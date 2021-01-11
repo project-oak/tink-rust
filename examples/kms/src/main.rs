@@ -17,7 +17,7 @@
 //! Example program demonstrating `tink-awskms`
 
 use std::path::PathBuf;
-use tink::{keyset::insecure, registry::KmsClient, AeadBoxClone};
+use tink_core::{keyset::insecure, registry::KmsClient, AeadBoxClone};
 
 const KEY_URI: &str =
     "aws-kms://arn:aws:kms:us-east-2:235739564943:key/3ee50705-5a82-4f5b-9753-05c4f473922f";
@@ -27,7 +27,7 @@ fn main() {
     tink_aead::init();
 
     // Generate a new key.
-    let kh1 = tink::keyset::Handle::new(&tink_aead::aes256_gcm_key_template()).unwrap();
+    let kh1 = tink_core::keyset::Handle::new(&tink_aead::aes256_gcm_key_template()).unwrap();
 
     // Set up the main key-encryption key at a KMS. This is an AEAD which will generate a new
     // data-encryption key (DEK) for each encryption operation; the DEK is included in the
@@ -44,7 +44,7 @@ fn main() {
 
     // The `keyset::Reader` and `keyset::Writer` traits allow for reading/writing a keyset to
     // some kind of store; this particular implementation just holds the keyset in memory.
-    let mut mem_keyset = tink::keyset::MemReaderWriter::default();
+    let mut mem_keyset = tink_core::keyset::MemReaderWriter::default();
 
     // The `Handle::write` method encrypts the keyset that is associated with the handle, using the
     // given AEAD (`main_key`), and then writes the encrypted keyset to the `keyset::Writer`
@@ -56,7 +56,7 @@ fn main() {
     // The `Handle::read` method reads the encrypted keyset back from the `keyset::Reader`
     // implementation and decrypts it using the AEAD used to encrypt it (`main_key`), giving a
     // handle to the recovered keyset.
-    let kh2 = tink::keyset::Handle::read(&mut mem_keyset, main_key).unwrap();
+    let kh2 = tink_core::keyset::Handle::read(&mut mem_keyset, main_key).unwrap();
 
     assert_eq!(
         insecure::keyset_material(&kh1),

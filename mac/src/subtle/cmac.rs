@@ -16,14 +16,14 @@
 
 //! Provides an implementation of MAC using AES-CMAC.
 
-use tink::{utils::wrap_err, Prf, TinkError};
+use tink_core::{utils::wrap_err, Prf, TinkError};
 
 const MIN_CMAC_KEY_SIZE_IN_BYTES: usize = 16;
 const RECOMMENDED_CMAC_KEY_SIZE_IN_BYTES: usize = 32;
 const MIN_TAG_LENGTH_IN_BYTES: usize = 10;
 const MAX_TAG_LENGTH_IN_BYTES: usize = 16;
 
-/// `AesCmac` represents an AES-CMAC struct that implements the [`tink::Mac`] interface.
+/// `AesCmac` represents an AES-CMAC struct that implements the [`tink_core::Mac`] interface.
 #[derive(Clone)]
 pub struct AesCmac {
     prf: tink_prf::subtle::AesCmacPrf,
@@ -31,7 +31,7 @@ pub struct AesCmac {
 }
 
 impl AesCmac {
-    /// Create a new [`AesCmac`] object that implements the [`tink::Mac`] interface.
+    /// Create a new [`AesCmac`] object that implements the [`tink_core::Mac`] interface.
     pub fn new(key: &[u8], tag_size: usize) -> Result<AesCmac, TinkError> {
         if key.len() < MIN_CMAC_KEY_SIZE_IN_BYTES {
             return Err("AesCmac: Only 256 bit keys are allowed".into());
@@ -56,7 +56,7 @@ impl AesCmac {
     }
 }
 
-impl tink::Mac for AesCmac {
+impl tink_core::Mac for AesCmac {
     fn compute_mac(&self, data: &[u8]) -> Result<Vec<u8>, TinkError> {
         self.prf.compute_prf(data, self.tag_size)
     }

@@ -48,7 +48,7 @@
 //!   ciphertext_segment_size - header_length() - first_ciphertext_segment_offset.
 
 use std::{convert::TryFrom, io};
-use tink::{utils::wrap_err, EncryptingWrite, TinkError};
+use tink_core::{utils::wrap_err, EncryptingWrite, TinkError};
 
 /// `SegmentEncrypter` facilitates implementing various streaming AEAD encryption modes.
 pub trait SegmentEncrypter {

@@ -16,7 +16,7 @@
 
 use rand::Rng;
 use std::fs;
-use tink::subtle::random::get_random_bytes;
+use tink_core::subtle::random::get_random_bytes;
 use tink_tests::SharedBuf;
 
 #[test]
@@ -28,8 +28,9 @@ fn example() {
     let dst_filename = dir.join("plaintext.dst");
     fs::write(src_filename.clone(), b"this data needs to be encrypted").unwrap();
 
-    let kh = tink::keyset::Handle::new(&tink_streaming_aead::aes256_gcm_hkdf_4kb_key_template())
-        .unwrap();
+    let kh =
+        tink_core::keyset::Handle::new(&tink_streaming_aead::aes256_gcm_hkdf_4kb_key_template())
+            .unwrap();
 
     // NOTE: save the keyset to a safe location. DO NOT hardcode it in source code.
     // Consider encrypting it with a remote key in Cloud KMS, AWS KMS or HashiCorp Vault.
@@ -66,9 +67,10 @@ fn test_streaming_roundtrip_chunks() {
         // Plaintext chunk size is 4080 (=4096-16), so try writing in chunks smaller than, bigger
         // than, and equal to that.
         for pt_chunk_size in &[20, 4079, 4080, 4081, 6000] {
-            let kh =
-                tink::keyset::Handle::new(&tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template())
-                    .unwrap();
+            let kh = tink_core::keyset::Handle::new(
+                &tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template(),
+            )
+            .unwrap();
             let a = tink_streaming_aead::new(&kh).unwrap();
             let buf = SharedBuf::new();
 
@@ -108,8 +110,9 @@ fn test_closed_write() {
     let pt = get_random_bytes(2000);
     let aad = get_random_bytes(100);
 
-    let kh = tink::keyset::Handle::new(&tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template())
-        .unwrap();
+    let kh =
+        tink_core::keyset::Handle::new(&tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template())
+            .unwrap();
     let a = tink_streaming_aead::new(&kh).unwrap();
     let buf = vec![];
 
@@ -127,8 +130,9 @@ fn test_multiple_failed_read() {
     let pt = get_random_bytes(2000);
     let aad = get_random_bytes(100);
 
-    let kh = tink::keyset::Handle::new(&tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template())
-        .unwrap();
+    let kh =
+        tink_core::keyset::Handle::new(&tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template())
+            .unwrap();
     let a = tink_streaming_aead::new(&kh).unwrap();
     let buf = SharedBuf::new();
 
@@ -141,8 +145,9 @@ fn test_multiple_failed_read() {
     }
 
     // Fail to decrypt-read with a different key.
-    let kh = tink::keyset::Handle::new(&tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template())
-        .unwrap();
+    let kh =
+        tink_core::keyset::Handle::new(&tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template())
+            .unwrap();
     let a = tink_streaming_aead::new(&kh).unwrap();
     let mut r = a.new_decrypting_reader(Box::new(buf), &aad).unwrap();
     let mut recovered = vec![];
@@ -198,8 +203,9 @@ fn streaming_partial_reads() {
     let dst_filename = dir.join("plaintext.dst");
     fs::write(src_filename.clone(), &pt).unwrap();
 
-    let kh = tink::keyset::Handle::new(&tink_streaming_aead::aes256_gcm_hkdf_4kb_key_template())
-        .unwrap();
+    let kh =
+        tink_core::keyset::Handle::new(&tink_streaming_aead::aes256_gcm_hkdf_4kb_key_template())
+            .unwrap();
 
     // Encrypt file.
     let a = tink_streaming_aead::new(&kh).unwrap();

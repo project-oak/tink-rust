@@ -14,12 +14,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
 const MAX_AUTOCORRELATION: usize = 100;
 
 fn add_key_and_return_id(
-    m: &mut tink::keyset::Manager,
+    m: &mut tink_core::keyset::Manager,
     template: &tink_proto::KeyTemplate,
 ) -> Result<u32, TinkError> {
     m.rotate(template)
@@ -36,7 +36,7 @@ fn add_key_and_return_id(
 #[test]
 fn test_factory_basic() {
     tink_prf::init();
-    let mut manager = tink::keyset::Manager::new();
+    let mut manager = tink_core::keyset::Manager::new();
     let aes_cmac_id = add_key_and_return_id(&mut manager, &tink_prf::aes_cmac_prf_key_template())
         .expect("Could not add AES CMAC PRF key");
     let hmac_sha256_id =
@@ -129,12 +129,12 @@ fn test_non_raw_keys() {
     tink_prf::init();
     let mut template = tink_prf::aes_cmac_prf_key_template();
     template.output_prefix_type = tink_proto::OutputPrefixType::Tink as i32;
-    let h = tink::keyset::Handle::new(&template).expect("Couldn't create keyset");
+    let h = tink_core::keyset::Handle::new(&template).expect("Couldn't create keyset");
     assert!(
         tink_prf::Set::new(&h).is_err(),
         "Expected non RAW prefix to fail to create prf.Set"
     );
-    let mut m = tink::keyset::Manager::new_from_handle(h);
+    let mut m = tink_core::keyset::Manager::new_from_handle(h);
     assert!(
         m.rotate(&tink_prf::hmac_sha256_prf_key_template()).is_ok(),
         "Expected to be able to add keys to the keyset"
@@ -154,13 +154,13 @@ fn test_non_prf_primitives() {
     tink_prf::init();
     let mut template = tink_mac::aes_cmac_tag128_key_template();
     template.output_prefix_type = tink_proto::OutputPrefixType::Raw as i32;
-    let h = tink::keyset::Handle::new(&template).expect("Couldn't create keyset");
+    let h = tink_core::keyset::Handle::new(&template).expect("Couldn't create keyset");
     assert!(
         tink_prf::Set::new(&h).is_err(),
         "Expected non PRF primitive to fail to create tink_prf::Set"
     );
 
-    let mut m = tink::keyset::Manager::new_from_handle(h);
+    let mut m = tink_core::keyset::Manager::new_from_handle(h);
     assert!(
         m.rotate(&tink_prf::hmac_sha256_prf_key_template()).is_ok(),
         "Expected to be able to add keys to the keyset"

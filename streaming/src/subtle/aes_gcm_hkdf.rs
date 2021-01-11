@@ -14,12 +14,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-//! AES-GCM-HKDF based implementation of the [`tink::StreamingAead`] trait.
+//! AES-GCM-HKDF based implementation of the [`tink_core::StreamingAead`] trait.
 
 use super::{noncebased, AesVariant};
 use aes_gcm::aead::{generic_array::GenericArray, Aead, NewAead};
 use std::convert::TryInto;
-use tink::{subtle::random::get_random_bytes, utils::wrap_err, TinkError};
+use tink_core::{subtle::random::get_random_bytes, utils::wrap_err, TinkError};
 use tink_proto::HashType;
 
 /// The size of the nonces used for GCM.
@@ -106,7 +106,7 @@ impl AesGcmHkdf {
 
     /// Return a key derived from the given main key using `salt` and `aad` parameters.
     fn derive_key(&self, salt: &[u8], aad: &[u8]) -> Result<Vec<u8>, TinkError> {
-        tink::subtle::compute_hkdf(
+        tink_core::subtle::compute_hkdf(
             self.hkdf_alg,
             &self.main_key,
             salt,
@@ -116,7 +116,7 @@ impl AesGcmHkdf {
     }
 }
 
-impl tink::StreamingAead for AesGcmHkdf {
+impl tink_core::StreamingAead for AesGcmHkdf {
     /// Return a wrapper around an underlying [`std::io::Write`], such that
     /// any write-operation via the wrapper results in AEAD-encryption of the
     /// written data, using aad as associated authenticated data. The associated
@@ -126,7 +126,7 @@ impl tink::StreamingAead for AesGcmHkdf {
         &self,
         mut w: Box<dyn std::io::Write>,
         aad: &[u8],
-    ) -> Result<Box<dyn tink::EncryptingWrite>, TinkError> {
+    ) -> Result<Box<dyn tink_core::EncryptingWrite>, TinkError> {
         let salt = get_random_bytes(self.aes_variant.key_size());
         let nonce_prefix = get_random_bytes(AES_GCM_HKDF_NONCE_PREFIX_SIZE_IN_BYTES);
 

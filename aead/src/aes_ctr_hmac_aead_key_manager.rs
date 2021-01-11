@@ -18,7 +18,7 @@
 
 use crate::subtle;
 use prost::Message;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 use tink_proto::HashType;
 
 /// Maximal version of AES-CTR-HMAC keys.
@@ -31,15 +31,15 @@ const MIN_HMAC_KEY_SIZE_IN_BYTES: usize = 16;
 /// Minimum tag size.
 const MIN_TAG_SIZE_IN_BYTES: usize = 10;
 
-/// `AesCtrHmacAeadKeyManager` is an implementation of the [`tink::registry::KeyManager`] trait.
-/// It generates new [`AesCtrHmacAeadKey`](tink_proto::AesCtrHmacAeadKey) keys and produces new
-/// instances of [`subtle::EncryptThenAuthenticate`] that use [`subtle::AesCtr`].
+/// `AesCtrHmacAeadKeyManager` is an implementation of the [`tink_core::registry::KeyManager`]
+/// trait. It generates new [`AesCtrHmacAeadKey`](tink_proto::AesCtrHmacAeadKey) keys and produces
+/// new instances of [`subtle::EncryptThenAuthenticate`] that use [`subtle::AesCtr`].
 #[derive(Default)]
 pub(crate) struct AesCtrHmacAeadKeyManager {}
 
-impl tink::registry::KeyManager for AesCtrHmacAeadKeyManager {
+impl tink_core::registry::KeyManager for AesCtrHmacAeadKeyManager {
     /// Create an AEAD for the given serialized [`tink_proto::AesCtrHmacAeadKey`].
-    fn primitive(&self, serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
+    fn primitive(&self, serialized_key: &[u8]) -> Result<tink_core::Primitive, TinkError> {
         if serialized_key.is_empty() {
             return Err("AesCtrHmacAeadKeyManager: empty key".into());
         }
@@ -61,7 +61,7 @@ impl tink::registry::KeyManager for AesCtrHmacAeadKeyManager {
             })?;
 
         match subtle::EncryptThenAuthenticate::new(Box::new(ctr), Box::new(hmac), hmac_params.tag_size as usize) {
-            Ok(p) => Ok(tink::Primitive::Aead(Box::new(p))),
+            Ok(p) => Ok(tink_core::Primitive::Aead(Box::new(p))),
             Err(e) => Err(wrap_err("AesCtrHmacAeadKeyManager: cannot create encrypt then authenticate primitive, error", e)),
         }
     }
@@ -79,14 +79,14 @@ impl tink::registry::KeyManager for AesCtrHmacAeadKeyManager {
             version: AES_CTR_HMAC_AEAD_KEY_VERSION,
             aes_ctr_key: Some(tink_proto::AesCtrKey {
                 version: AES_CTR_HMAC_AEAD_KEY_VERSION,
-                key_value: tink::subtle::random::get_random_bytes(
+                key_value: tink_core::subtle::random::get_random_bytes(
                     aes_ctr_key_format.key_size as usize,
                 ),
                 params: aes_ctr_key_format.params,
             }),
             hmac_key: Some(tink_proto::HmacKey {
                 version: AES_CTR_HMAC_AEAD_KEY_VERSION,
-                key_value: tink::subtle::random::get_random_bytes(
+                key_value: tink_core::subtle::random::get_random_bytes(
                     hmac_key_format.key_size as usize,
                 ),
                 params: hmac_key_format.params,
@@ -111,13 +111,13 @@ impl tink::registry::KeyManager for AesCtrHmacAeadKeyManager {
 fn validate_aes_key(
     key: &tink_proto::AesCtrHmacAeadKey,
 ) -> Result<(&tink_proto::AesCtrKey, &tink_proto::AesCtrParams), TinkError> {
-    tink::keyset::validate_key_version(key.version, AES_CTR_HMAC_AEAD_KEY_VERSION)
+    tink_core::keyset::validate_key_version(key.version, AES_CTR_HMAC_AEAD_KEY_VERSION)
         .map_err(|e| wrap_err("AesCtrHmacAeadKeyManager", e))?;
     let aes_ctr_key = key
         .aes_ctr_key
         .as_ref()
         .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: no AES key"))?;
-    tink::keyset::validate_key_version(aes_ctr_key.version, AES_CTR_HMAC_AEAD_KEY_VERSION)
+    tink_core::keyset::validate_key_version(aes_ctr_key.version, AES_CTR_HMAC_AEAD_KEY_VERSION)
         .map_err(|e| wrap_err("AesCtrHmacAeadKeyManager", e))?;
 
     // Validate `AesCtrKey`.
@@ -150,7 +150,7 @@ fn validate_hmac_key(
         .hmac_key
         .as_ref()
         .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: no HMAC key"))?;
-    tink::keyset::validate_key_version(hmac_key.version, AES_CTR_HMAC_AEAD_KEY_VERSION)
+    tink_core::keyset::validate_key_version(hmac_key.version, AES_CTR_HMAC_AEAD_KEY_VERSION)
         .map_err(|e| wrap_err("AesCtrHmacAeadKeyManager", e))?;
     let hmac_params = hmac_key
         .params

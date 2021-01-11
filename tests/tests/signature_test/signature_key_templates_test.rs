@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use prost::Message;
-use tink::TinkError;
+use tink_core::TinkError;
 
 #[test]
 fn test_ecdsa_key_templates() {

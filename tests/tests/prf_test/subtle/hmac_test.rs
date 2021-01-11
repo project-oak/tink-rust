@@ -17,7 +17,7 @@
 use super::aes_cmac_test::TestData;
 use maplit::hashmap;
 use std::collections::HashMap;
-use tink::Prf;
+use tink_core::Prf;
 use tink_prf::subtle::{validate_hmac_prf_params, HmacPrf};
 use tink_proto::HashType;
 

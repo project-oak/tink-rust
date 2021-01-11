@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use prost::Message;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
 #[test]
 fn test_templates() {
@@ -58,7 +58,7 @@ fn check_hmac_template(
     if format.key_size != key_size || format.params.unwrap().hash != hash_type as i32 {
         return Err("KeyFormat is incorrect".into());
     }
-    let keymanager = tink::registry::get_key_manager(tink_tests::HMAC_PRF_TYPE_URL)
+    let keymanager = tink_core::registry::get_key_manager(tink_tests::HMAC_PRF_TYPE_URL)
         .map_err(|e| wrap_err("Could not obtain HMAC key manager", e))?;
     assert!(
         keymanager.new_key(&template.value).is_ok(),
@@ -88,7 +88,7 @@ fn check_hkdf_template(
     {
         return Err("KeyFormat is incorrect".into());
     }
-    let keymanager = tink::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
+    let keymanager = tink_core::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
         .map_err(|e| wrap_err("Could not obtain HKDF key manager", e))?;
     assert!(
         keymanager.new_key(&template.value).is_ok(),
@@ -110,7 +110,7 @@ fn check_cmac_template(template: &tink_proto::KeyTemplate, key_size: u32) -> Res
     if format.key_size != key_size {
         return Err("KeyFormat is incorrect".into());
     }
-    let keymanager = tink::registry::get_key_manager(tink_tests::AES_CMAC_PRF_TYPE_URL)
+    let keymanager = tink_core::registry::get_key_manager(tink_tests::AES_CMAC_PRF_TYPE_URL)
         .map_err(|e| wrap_err("Could not obtain AES-CMAC key manager", e))?;
     assert!(
         keymanager.new_key(&template.value).is_ok(),

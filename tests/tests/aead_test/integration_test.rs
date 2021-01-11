@@ -17,7 +17,7 @@
 #[test]
 fn example() {
     tink_aead::init();
-    let kh = tink::keyset::Handle::new(&tink_aead::aes256_gcm_key_template()).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_aead::aes256_gcm_key_template()).unwrap();
 
     // NOTE: save the keyset to a safe location. DO NOT hardcode it in source code.
     // Consider encrypting it with a remote key in Cloud KMS, AWS KMS or HashiCorp Vault.
@@ -41,11 +41,11 @@ fn test_aead_init() {
     tink_aead::init();
 
     // Check for AES-GCM key manager.
-    tink::registry::get_key_manager(tink_tests::AES_GCM_TYPE_URL).unwrap();
+    tink_core::registry::get_key_manager(tink_tests::AES_GCM_TYPE_URL).unwrap();
 
     // Check for ChaCha20Poly1305 key manager.
-    tink::registry::get_key_manager(tink_tests::CHA_CHA20_POLY1305_TYPE_URL).unwrap();
+    tink_core::registry::get_key_manager(tink_tests::CHA_CHA20_POLY1305_TYPE_URL).unwrap();
 
     // Check for XChaCha20Poly1305 key manager.
-    tink::registry::get_key_manager(tink_tests::X_CHA_CHA20_POLY1305_TYPE_URL).unwrap();
+    tink_core::registry::get_key_manager(tink_tests::X_CHA_CHA20_POLY1305_TYPE_URL).unwrap();
 }

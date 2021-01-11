@@ -26,8 +26,9 @@ fn main() {
     tink_streaming_aead::init();
 
     // Generate fresh key material.
-    let kh = tink::keyset::Handle::new(&tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template())
-        .unwrap();
+    let kh =
+        tink_core::keyset::Handle::new(&tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template())
+            .unwrap();
 
     // Get the primitive that uses the key material.
     let a = tink_streaming_aead::new(&kh).unwrap();

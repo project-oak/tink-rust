@@ -17,7 +17,7 @@
 //! AEAD functionality via GCP KMS.
 
 use google_cloudkms1::{DecryptRequest, EncryptRequest};
-use tink::utils::wrap_err;
+use tink_core::utils::wrap_err;
 
 /// `GcpAead` represents a GCP KMS service to a particular URI.
 #[derive(Clone)]
@@ -36,12 +36,12 @@ impl GcpAead {
     }
 }
 
-impl tink::Aead for GcpAead {
+impl tink_core::Aead for GcpAead {
     fn encrypt(
         &self,
         plaintext: &[u8],
         additional_data: &[u8],
-    ) -> Result<Vec<u8>, tink::TinkError> {
+    ) -> Result<Vec<u8>, tink_core::TinkError> {
         let req = EncryptRequest {
             plaintext: Some(base64::encode_config(plaintext, base64::URL_SAFE)),
             additional_authenticated_data: Some(base64::encode_config(
@@ -71,7 +71,7 @@ impl tink::Aead for GcpAead {
         }
         let ct = rsp
             .ciphertext
-            .ok_or_else(|| tink::TinkError::new("no ciphertext"))?;
+            .ok_or_else(|| tink_core::TinkError::new("no ciphertext"))?;
         base64::decode(ct).map_err(|e| wrap_err("base64 decode failed", e))
     }
 
@@ -79,7 +79,7 @@ impl tink::Aead for GcpAead {
         &self,
         ciphertext: &[u8],
         additional_data: &[u8],
-    ) -> Result<Vec<u8>, tink::TinkError> {
+    ) -> Result<Vec<u8>, tink_core::TinkError> {
         let req = DecryptRequest {
             ciphertext: Some(base64::encode_config(ciphertext, base64::URL_SAFE)),
             additional_authenticated_data: Some(base64::encode_config(
@@ -110,7 +110,7 @@ impl tink::Aead for GcpAead {
 
         let pt = rsp
             .plaintext
-            .ok_or_else(|| tink::TinkError::new("no plaintext"))?;
+            .ok_or_else(|| tink_core::TinkError::new("no plaintext"))?;
         base64::decode(pt).map_err(|e| wrap_err("base64 decode failed", e))
     }
 }

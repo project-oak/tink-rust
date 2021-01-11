@@ -14,12 +14,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-//! This crate provides implementations of the [`tink::Prf`] primitive.
+//! This crate provides implementations of the [`tink_core::Prf`] primitive.
 
 #![deny(broken_intra_doc_links)]
 
 use std::sync::Once;
-use tink::registry::register_key_manager;
+use tink_core::registry::register_key_manager;
 
 mod aes_cmac_prf_key_manager;
 pub use aes_cmac_prf_key_manager::*;
@@ -51,15 +51,18 @@ pub fn init() {
         register_key_manager(std::sync::Arc::new(AesCmacPrfKeyManager::default()))
             .expect("tink_prf::init() failed"); // safe: init
 
-        tink::registry::register_template_generator("HKDF_SHA256", hkdf_sha256_prf_key_template);
-        tink::registry::register_template_generator(
+        tink_core::registry::register_template_generator(
+            "HKDF_SHA256",
+            hkdf_sha256_prf_key_template,
+        );
+        tink_core::registry::register_template_generator(
             "HMAC_SHA256_PRF",
             hmac_sha256_prf_key_template,
         );
-        tink::registry::register_template_generator(
+        tink_core::registry::register_template_generator(
             "HMAC_SHA512_PRF",
             hmac_sha512_prf_key_template,
         );
-        tink::registry::register_template_generator("AES_CMAC_PRF", aes_cmac_prf_key_template);
+        tink_core::registry::register_template_generator("AES_CMAC_PRF", aes_cmac_prf_key_template);
     });
 }

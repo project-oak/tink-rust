@@ -15,13 +15,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use prost::Message;
-use tink::{subtle::random::get_random_bytes, TinkError};
 use tink_aead::subtle;
+use tink_core::{subtle::random::get_random_bytes, TinkError};
 
 #[test]
 fn test_cha_cha20_poly1305_get_primitive() {
     tink_aead::init();
-    let km = tink::registry::get_key_manager(tink_tests::CHA_CHA20_POLY1305_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::CHA_CHA20_POLY1305_TYPE_URL)
         .expect("cannot obtain ChaCha20Poly1305 key manager");
     assert_eq!(km.type_url(), tink_tests::CHA_CHA20_POLY1305_TYPE_URL);
     assert_eq!(
@@ -37,7 +37,7 @@ fn test_cha_cha20_poly1305_get_primitive() {
 #[test]
 fn test_cha_cha20_poly1305_get_primitive_with_invalid_keys() {
     tink_aead::init();
-    let km = tink::registry::get_key_manager(tink_tests::CHA_CHA20_POLY1305_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::CHA_CHA20_POLY1305_TYPE_URL)
         .expect("cannot obtain ChaCha20Poly1305 key manager");
     let invalid_keys = gen_invalid_cha_cha20_poly1305_keys();
     for key in invalid_keys {
@@ -50,7 +50,7 @@ fn test_cha_cha20_poly1305_get_primitive_with_invalid_keys() {
 #[test]
 fn test_cha_cha20_poly1305_new_key() {
     tink_aead::init();
-    let km = tink::registry::get_key_manager(tink_tests::CHA_CHA20_POLY1305_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::CHA_CHA20_POLY1305_TYPE_URL)
         .expect("cannot obtain ChaCha20Poly1305 key manager");
     let m = km.new_key(&[]).unwrap();
     let key = tink_proto::ChaCha20Poly1305Key::decode(m.as_ref()).unwrap();
@@ -60,7 +60,7 @@ fn test_cha_cha20_poly1305_new_key() {
 #[test]
 fn test_cha_cha20_poly1305_new_key_data() {
     tink_aead::init();
-    let km = tink::registry::get_key_manager(tink_tests::CHA_CHA20_POLY1305_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::CHA_CHA20_POLY1305_TYPE_URL)
         .expect("cannot obtain ChaCha20Poly1305 key manager");
     let kd = km.new_key_data(&[]).unwrap();
     assert_eq!(kd.type_url, tink_tests::CHA_CHA20_POLY1305_TYPE_URL);
@@ -75,7 +75,7 @@ fn test_cha_cha20_poly1305_new_key_data() {
 #[test]
 fn test_cha_cha20_poly1305_does_support() {
     tink_aead::init();
-    let km = tink::registry::get_key_manager(tink_tests::CHA_CHA20_POLY1305_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::CHA_CHA20_POLY1305_TYPE_URL)
         .expect("cannot obtain ChaCha20Poly1305 key manager");
     assert!(
         km.does_support(tink_tests::CHA_CHA20_POLY1305_TYPE_URL),
@@ -92,7 +92,7 @@ fn test_cha_cha20_poly1305_does_support() {
 #[test]
 fn test_cha_cha20_poly1305_type_url() {
     tink_aead::init();
-    let km = tink::registry::get_key_manager(tink_tests::CHA_CHA20_POLY1305_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::CHA_CHA20_POLY1305_TYPE_URL)
         .expect("cannot obtain ChaCha20Poly1305 key manager");
     assert_eq!(km.type_url(), tink_tests::CHA_CHA20_POLY1305_TYPE_URL);
     assert_eq!(
@@ -126,11 +126,11 @@ fn gen_invalid_cha_cha20_poly1305_keys() -> Vec<tink_proto::ChaCha20Poly1305Key>
 }
 
 fn validate_cha_cha20_poly1305_primitive(
-    p: tink::Primitive,
+    p: tink_core::Primitive,
     _key: &tink_proto::ChaCha20Poly1305Key,
 ) -> Result<(), TinkError> {
     let cipher = match p {
-        tink::Primitive::Aead(p) => p,
+        tink_core::Primitive::Aead(p) => p,
         _ => return Err("key and primitive don't match".into()),
     };
 
@@ -164,5 +164,5 @@ fn validate_cha_cha20_poly1305_key(key: &tink_proto::ChaCha20Poly1305Key) -> Res
 
     // Try to encrypt and decrypt.
     let p = subtle::ChaCha20Poly1305::new(&key.key_value)?;
-    validate_cha_cha20_poly1305_primitive(tink::Primitive::Aead(Box::new(p)), key)
+    validate_cha_cha20_poly1305_primitive(tink_core::Primitive::Aead(Box::new(p)), key)
 }

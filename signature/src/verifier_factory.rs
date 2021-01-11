@@ -14,21 +14,23 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-//! Factory methods for [`tink::Verifier`] instances.
+//! Factory methods for [`tink_core::Verifier`] instances.
 
 use std::sync::Arc;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
-/// Return a [`tink::Verifier`] primitive from the given keyset handle.
-pub fn new_verifier(h: &tink::keyset::Handle) -> Result<Box<dyn tink::Verifier>, TinkError> {
+/// Return a [`tink_core::Verifier`] primitive from the given keyset handle.
+pub fn new_verifier(
+    h: &tink_core::keyset::Handle,
+) -> Result<Box<dyn tink_core::Verifier>, TinkError> {
     new_verifier_with_key_manager(h, None)
 }
 
-/// Return a [`tink::Verifier`] primitive from the given keyset handle and custom key manager.
+/// Return a [`tink_core::Verifier`] primitive from the given keyset handle and custom key manager.
 fn new_verifier_with_key_manager(
-    h: &tink::keyset::Handle,
-    km: Option<Arc<dyn tink::registry::KeyManager>>,
-) -> Result<Box<dyn tink::Verifier>, TinkError> {
+    h: &tink_core::keyset::Handle,
+    km: Option<Arc<dyn tink_core::registry::KeyManager>>,
+) -> Result<Box<dyn tink_core::Verifier>, TinkError> {
     let ps = h
         .primitives_with_key_manager(km)
         .map_err(|e| wrap_err("verifier::factory: cannot obtain primitive set", e))?;
@@ -37,26 +39,26 @@ fn new_verifier_with_key_manager(
     Ok(Box::new(ret))
 }
 
-/// A [`tink::Verifier`] implementation that uses the underlying primitive set for verifying.
+/// A [`tink_core::Verifier`] implementation that uses the underlying primitive set for verifying.
 #[derive(Clone)]
 struct WrappedVerifier {
-    ps: tink::primitiveset::TypedPrimitiveSet<Box<dyn tink::Verifier>>,
+    ps: tink_core::primitiveset::TypedPrimitiveSet<Box<dyn tink_core::Verifier>>,
 }
 
 impl WrappedVerifier {
-    fn new(ps: tink::primitiveset::PrimitiveSet) -> Result<WrappedVerifier, TinkError> {
+    fn new(ps: tink_core::primitiveset::PrimitiveSet) -> Result<WrappedVerifier, TinkError> {
         let primary = match &ps.primary {
             None => return Err("verifier::factory: no primary primitive".into()),
             Some(p) => p,
         };
         match primary.primitive {
-            tink::Primitive::Verifier(_) => {}
+            tink_core::Primitive::Verifier(_) => {}
             _ => return Err("verifier::factory: not a Verifier primitive".into()),
         };
         for (_, primitives) in ps.entries.iter() {
             for p in primitives {
                 match p.primitive {
-                    tink::Primitive::Verifier(_) => {}
+                    tink_core::Primitive::Verifier(_) => {}
                     _ => return Err("verifier::factory: not a Verifier primitive".into()),
                 };
             }
@@ -67,9 +69,9 @@ impl WrappedVerifier {
     }
 }
 
-impl tink::Verifier for WrappedVerifier {
+impl tink_core::Verifier for WrappedVerifier {
     fn verify(&self, signature: &[u8], data: &[u8]) -> Result<(), TinkError> {
-        let prefix_size = tink::cryptofmt::NON_RAW_PREFIX_SIZE;
+        let prefix_size = tink_core::cryptofmt::NON_RAW_PREFIX_SIZE;
         if signature.len() < prefix_size {
             return Err("verifier::factory: invalid signature".into());
         }
@@ -82,7 +84,7 @@ impl tink::Verifier for WrappedVerifier {
                 let result = if entry.prefix_type == tink_proto::OutputPrefixType::Legacy {
                     let mut signed_data_copy = Vec::with_capacity(data.len() + 1);
                     signed_data_copy.extend_from_slice(data);
-                    signed_data_copy.push(tink::cryptofmt::LEGACY_START_BYTE);
+                    signed_data_copy.push(tink_core::cryptofmt::LEGACY_START_BYTE);
                     entry
                         .primitive
                         .verify(signature_no_prefix, &signed_data_copy)

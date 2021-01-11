@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use std::{env, path::PathBuf};
-use tink::registry::KmsClient;
+use tink_core::registry::KmsClient;
 use tink_gcpkms::GcpClient;
 
 #[test]

@@ -24,7 +24,7 @@ use std::{
     str::FromStr,
 };
 use structopt::StructOpt;
-use tink::TinkError;
+use tink_core::TinkError;
 use tink_proto::{KeyStatusType, OutputPrefixType};
 
 /// File format for a keyset.
@@ -102,7 +102,7 @@ struct KeyTemplate(tink_proto::KeyTemplate);
 impl FromStr for KeyTemplate {
     type Err = String;
     fn from_str(template_name: &str) -> Result<Self, Self::Err> {
-        if let Some(generator) = tink::registry::get_template_generator(template_name) {
+        if let Some(generator) = tink_core::registry::get_template_generator(template_name) {
             Ok(KeyTemplate(generator()))
         } else {
             Err(format!("Unknown key template name {}", template_name))
@@ -239,7 +239,7 @@ struct KeyIdOptions {
     out_opts: OutOptions,
 
     #[structopt(long, help = "The target key id")]
-    key_id: tink::KeyId,
+    key_id: tink_core::KeyId,
 }
 
 /// Top-level command to perform.
@@ -320,7 +320,7 @@ fn convert_keyset(opts: ConvertKeysetOptions) {
 /// Create a new keyset
 fn create_keyset(opts: CreateKeysetOptions) {
     let template = opts.key_template.0;
-    let kh = tink::keyset::Handle::new(&template).expect("Invalid key template");
+    let kh = tink_core::keyset::Handle::new(&template).expect("Invalid key template");
     write_keyset(opts.out_opts, opts.wrap_opts, kh);
 }
 
@@ -403,7 +403,7 @@ fn list_keyset(opts: InOptions) {
 /// List available key template names
 fn list_key_templates() {
     println!("The following key templates are supported:");
-    for name in tink::registry::template_names() {
+    for name in tink_core::registry::template_names() {
         println!("{}", name);
     }
 }
@@ -425,71 +425,74 @@ fn promote_key(opts: KeyIdOptions) {
     put_manager(opts.out_opts, wrap_opts, mgr);
 }
 
-/// Return a [`tink::keyset::Manager`] for a keyset identified by [`InOptions`]
-fn get_manager(opts: InOptions) -> tink::keyset::Manager {
+/// Return a [`tink_core::keyset::Manager`] for a keyset identified by [`InOptions`]
+fn get_manager(opts: InOptions) -> tink_core::keyset::Manager {
     let kh = read_keyset(opts);
-    tink::keyset::Manager::new_from_handle(kh)
+    tink_core::keyset::Manager::new_from_handle(kh)
 }
 
-/// Write out the keyset identified by a [`tink::keyset::Manager`] with the specified output
+/// Write out the keyset identified by a [`tink_core::keyset::Manager`] with the specified output
 /// options.
-fn put_manager(opts: OutOptions, wrap_opts: WrappingOptions, mgr: tink::keyset::Manager) {
+fn put_manager(opts: OutOptions, wrap_opts: WrappingOptions, mgr: tink_core::keyset::Manager) {
     let new_kh = mgr.handle().expect("Failed to create new handle");
     write_keyset(opts, wrap_opts, new_kh);
 }
 
-/// Return a [`tink::keyset::Handle`] for a keyset identified by [`InOptions`]
-fn read_keyset(opts: InOptions) -> tink::keyset::Handle {
+/// Return a [`tink_core::keyset::Handle`] for a keyset identified by [`InOptions`]
+fn read_keyset(opts: InOptions) -> tink_core::keyset::Handle {
     match opts.in_format {
-        KeysetFormat::Json => {
-            read_keyset_with(tink::keyset::JsonReader::new(opts.in_file), opts.wrap_opts)
-        }
+        KeysetFormat::Json => read_keyset_with(
+            tink_core::keyset::JsonReader::new(opts.in_file),
+            opts.wrap_opts,
+        ),
         KeysetFormat::Binary => read_keyset_with(
-            tink::keyset::BinaryReader::new(opts.in_file),
+            tink_core::keyset::BinaryReader::new(opts.in_file),
             opts.wrap_opts,
         ),
     }
 }
 
-/// Return a [`tink::keyset::Handle`] for a keyset read in via `reader`.
-fn read_keyset_with<T: tink::keyset::Reader>(
+/// Return a [`tink_core::keyset::Handle`] for a keyset read in via `reader`.
+fn read_keyset_with<T: tink_core::keyset::Reader>(
     mut reader: T,
     wrap_opts: WrappingOptions,
-) -> tink::keyset::Handle {
+) -> tink_core::keyset::Handle {
     if wrap_opts.master_key_uri.is_empty() {
-        tink::keyset::insecure::read(&mut reader).expect("Read failure")
+        tink_core::keyset::insecure::read(&mut reader).expect("Read failure")
     } else {
         let kms_client = get_kms_client(&wrap_opts).expect("No KMS client found");
         let aead = kms_client
             .get_aead(&wrap_opts.master_key_uri)
             .expect("Failed to build KMS AEAD");
-        tink::keyset::Handle::read(&mut reader, aead).expect("Read failure")
+        tink_core::keyset::Handle::read(&mut reader, aead).expect("Read failure")
     }
 }
 
-/// Write out the keyset identified by a [`tink::keyset::Handle`] with the specified output
+/// Write out the keyset identified by a [`tink_core::keyset::Handle`] with the specified output
 /// options.
-fn write_keyset(opts: OutOptions, wrap_opts: WrappingOptions, kh: tink::keyset::Handle) {
+fn write_keyset(opts: OutOptions, wrap_opts: WrappingOptions, kh: tink_core::keyset::Handle) {
     match opts.out_format {
-        KeysetFormat::Json => {
-            write_keyset_with(tink::keyset::JsonWriter::new(opts.out_file), wrap_opts, kh)
-        }
+        KeysetFormat::Json => write_keyset_with(
+            tink_core::keyset::JsonWriter::new(opts.out_file),
+            wrap_opts,
+            kh,
+        ),
         KeysetFormat::Binary => write_keyset_with(
-            tink::keyset::BinaryWriter::new(opts.out_file),
+            tink_core::keyset::BinaryWriter::new(opts.out_file),
             wrap_opts,
             kh,
         ),
     }
 }
 
-/// Write out the keyset identified by a [`tink::keyset::Handle`] using the given `writer`.
-fn write_keyset_with<T: tink::keyset::Writer>(
+/// Write out the keyset identified by a [`tink_core::keyset::Handle`] using the given `writer`.
+fn write_keyset_with<T: tink_core::keyset::Writer>(
     mut writer: T,
     wrap_opts: WrappingOptions,
-    kh: tink::keyset::Handle,
+    kh: tink_core::keyset::Handle,
 ) {
     if wrap_opts.master_key_uri.is_empty() {
-        tink::keyset::insecure::write(&kh, &mut writer).expect("Write failure")
+        tink_core::keyset::insecure::write(&kh, &mut writer).expect("Write failure")
     } else {
         let kms_client = get_kms_client(&wrap_opts).expect("No KMS client found");
         let aead = kms_client
@@ -502,7 +505,7 @@ fn write_keyset_with<T: tink::keyset::Writer>(
 /// Build and register a KMS Client.
 fn get_kms_client(
     wrap_opts: &WrappingOptions,
-) -> Result<std::sync::Arc<dyn tink::registry::KmsClient>, TinkError> {
+) -> Result<std::sync::Arc<dyn tink_core::registry::KmsClient>, TinkError> {
     if wrap_opts
         .master_key_uri
         .starts_with(tink_awskms::AWS_PREFIX)
@@ -515,8 +518,8 @@ fn get_kms_client(
                 &PathBuf::from(&wrap_opts.credential_path),
             )?
         };
-        tink::registry::register_kms_client(g);
-        tink::registry::get_kms_client(&wrap_opts.master_key_uri)
+        tink_core::registry::register_kms_client(g);
+        tink_core::registry::get_kms_client(&wrap_opts.master_key_uri)
     } else if wrap_opts
         .master_key_uri
         .starts_with(tink_gcpkms::GCP_PREFIX)
@@ -529,8 +532,8 @@ fn get_kms_client(
                 &PathBuf::from(&wrap_opts.credential_path),
             )?
         };
-        tink::registry::register_kms_client(g);
-        tink::registry::get_kms_client(&wrap_opts.master_key_uri)
+        tink_core::registry::register_kms_client(g);
+        tink_core::registry::get_kms_client(&wrap_opts.master_key_uri)
     } else {
         Err("Unrecognized key URI".into())
     }

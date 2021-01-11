@@ -14,10 +14,10 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-//! AES-GCM-SIV based implementation of the [`tink::Aead`] trait.
+//! AES-GCM-SIV based implementation of the [`tink_core::Aead`] trait.
 
 use aes_gcm_siv::aead::{consts::U12, generic_array::GenericArray, Aead, NewAead, Payload};
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
 /// The only IV size that this implementation supports.
 pub const AES_GCM_SIV_NONCE_SIZE: usize = 12;
@@ -30,7 +30,7 @@ enum AesGcmSivVariant {
     Aes256(Box<aes_gcm_siv::Aes256GcmSiv>),
 }
 
-/// `AesGcmSiv` is an implementation of the [`tink::Aead`] trait.
+/// `AesGcmSiv` is an implementation of the [`tink_core::Aead`] trait.
 #[derive(Clone)]
 pub struct AesGcmSiv {
     key: AesGcmSivVariant,
@@ -54,7 +54,7 @@ impl AesGcmSiv {
     }
 }
 
-impl tink::Aead for AesGcmSiv {
+impl tink_core::Aead for AesGcmSiv {
     /// Encrypt `pt` with `aad` as additional authenticated data.
     ///
     /// The resulting ciphertext consists of two parts: (1) the IV used for encryption and (2) the
@@ -108,6 +108,6 @@ impl tink::Aead for AesGcmSiv {
 
 /// Create a new IV for encryption.
 fn new_iv() -> GenericArray<u8, U12> {
-    let iv = tink::subtle::random::get_random_bytes(AES_GCM_SIV_NONCE_SIZE);
+    let iv = tink_core::subtle::random::get_random_bytes(AES_GCM_SIV_NONCE_SIZE);
     *GenericArray::<u8, U12>::from_slice(&iv)
 }

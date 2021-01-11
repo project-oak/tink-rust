@@ -16,13 +16,13 @@
 
 use prost::Message;
 use std::collections::HashSet;
-use tink::{utils::wrap_err, Prf, TinkError};
+use tink_core::{utils::wrap_err, Prf, TinkError};
 use tink_tests::proto_encode;
 
 #[test]
 fn test_get_primitive_cmac_basic() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_PRF_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_CMAC_PRF_TYPE_URL)
         .expect("AES CMAC PRF key manager not found");
     let test_keys = gen_valid_cmac_keys();
     for test_key in test_keys {
@@ -35,7 +35,7 @@ fn test_get_primitive_cmac_basic() {
 #[test]
 fn test_get_primitive_cmac_with_invalid_input() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_PRF_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_CMAC_PRF_TYPE_URL)
         .expect("AES CMAC PRF key manager not found");
     // invalid key
     let test_keys = gen_invalid_cmac_keys();
@@ -56,7 +56,7 @@ fn test_get_primitive_cmac_with_invalid_input() {
 #[test]
 fn test_new_key_cmac_multiple_times() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_PRF_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_CMAC_PRF_TYPE_URL)
         .expect("AES CMAC PRF key manager not found");
     let serialized_format = proto_encode(&tink_tests::new_aes_cmac_prf_key_format());
     let mut keys = HashSet::new();
@@ -74,7 +74,7 @@ fn test_new_key_cmac_multiple_times() {
 #[test]
 fn test_new_key_cmac_basic() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_PRF_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_CMAC_PRF_TYPE_URL)
         .expect("AES CMAC PRF key manager not found");
     let test_formats = gen_valid_cmac_key_formats();
     for (i, test_format) in test_formats.iter().enumerate() {
@@ -90,7 +90,7 @@ fn test_new_key_cmac_basic() {
 #[test]
 fn test_new_key_cmac_with_invalid_input() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_PRF_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_CMAC_PRF_TYPE_URL)
         .expect("AES CMAC PRF key manager not found");
     // invalid key formats
     let test_formats = gen_invalid_cmac_key_formats();
@@ -111,7 +111,7 @@ fn test_new_key_cmac_with_invalid_input() {
 #[test]
 fn test_new_key_data_cmac_basic() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_PRF_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_CMAC_PRF_TYPE_URL)
         .expect("AES CMAC PRF key manager not found");
     let test_formats = gen_valid_cmac_key_formats();
     for (i, test_format) in test_formats.iter().enumerate() {
@@ -140,7 +140,7 @@ fn test_new_key_data_cmac_basic() {
 #[test]
 fn test_new_key_data_cmac_with_invalid_input() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_PRF_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_CMAC_PRF_TYPE_URL)
         .expect("AES CMAC PRF key manager not found");
 
     // invalid key formats
@@ -162,7 +162,7 @@ fn test_new_key_data_cmac_with_invalid_input() {
 #[test]
 fn test_cmac_does_support() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_PRF_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_CMAC_PRF_TYPE_URL)
         .expect("AES CMAC PRF key manager not found");
     assert!(
         km.does_support(tink_tests::AES_CMAC_PRF_TYPE_URL),
@@ -179,7 +179,7 @@ fn test_cmac_does_support() {
 #[test]
 fn test_cmac_type_url() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_PRF_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_CMAC_PRF_TYPE_URL)
         .expect("AES CMAC PRF key manager not found");
     assert_eq!(
         km.type_url(),
@@ -240,16 +240,16 @@ fn validate_cmac_key(
     }
     let p = tink_prf::subtle::AesCmacPrf::new(&key.key_value)
         .map_err(|e| wrap_err("cannot create primitive from key", e))?;
-    validate_cmac_primitive(tink::Primitive::Prf(Box::new(p)), key)
+    validate_cmac_primitive(tink_core::Primitive::Prf(Box::new(p)), key)
 }
 
 /// Check whether the given primitive matches the given `AesCmacPrfKey`.
 fn validate_cmac_primitive(
-    p: tink::Primitive,
+    p: tink_core::Primitive,
     key: &tink_proto::AesCmacPrfKey,
 ) -> Result<(), TinkError> {
     let cmac_primitive = match p {
-        tink::Primitive::Prf(prf) => prf,
+        tink_core::Primitive::Prf(prf) => prf,
         _ => return Err("not a Prf primitive".into()),
     };
     let prf_primitive = tink_prf::subtle::AesCmacPrf::new(&key.key_value).map_err(|e| {
@@ -262,7 +262,7 @@ fn validate_cmac_primitive(
         )
     })?;
 
-    let data = tink::subtle::random::get_random_bytes(20);
+    let data = tink_core::subtle::random::get_random_bytes(20);
     let res = cmac_primitive
         .compute_prf(&data, 16)
         .map_err(|e| wrap_err("prf computation failed", e))?;

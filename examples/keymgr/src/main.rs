@@ -20,12 +20,12 @@ fn main() {
     tink_aead::init();
 
     // Create a keyset with a single key in it, and encrypt something.
-    let kh = tink::keyset::Handle::new(&tink_aead::aes128_gcm_key_template()).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_aead::aes128_gcm_key_template()).unwrap();
     let cipher = tink_aead::new(&kh).unwrap();
     let ct = cipher.encrypt(b"data", b"aad").unwrap();
 
     // Move ownership of the `Handle` into a `keyset::Manager`.
-    let mut km = tink::keyset::Manager::new_from_handle(kh);
+    let mut km = tink_core::keyset::Manager::new_from_handle(kh);
 
     // Rotate in a new primary key, and add an additional secondary key.
     let key_id_a = km.rotate(&tink_aead::aes256_gcm_key_template()).unwrap();

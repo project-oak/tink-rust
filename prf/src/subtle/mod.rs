@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-//! Provides subtle implementations of the `tink::Prf` primitive.
+//! Provides subtle implementations of the `tink_core::Prf` primitive.
 
 mod aes_cmac;
 pub use self::aes_cmac::*;

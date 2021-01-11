@@ -21,7 +21,7 @@
 use generic_array::typenum::Unsigned;
 use p256::elliptic_curve;
 use std::convert::TryInto;
-use tink::{subtle::random::get_random_bytes, TinkError};
+use tink_core::{subtle::random::get_random_bytes, TinkError};
 use tink_proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType, KeyData, Keyset};
 
 mod constant;
@@ -50,9 +50,9 @@ impl Default for DummyAeadKeyManager {
     }
 }
 
-impl tink::registry::KeyManager for DummyAeadKeyManager {
-    fn primitive(&self, _serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
-        Ok(tink::Primitive::Aead(Box::new(DummyAead)))
+impl tink_core::registry::KeyManager for DummyAeadKeyManager {
+    fn primitive(&self, _serialized_key: &[u8]) -> Result<tink_core::Primitive, TinkError> {
+        Ok(tink_core::Primitive::Aead(Box::new(DummyAead)))
     }
 
     fn new_key(&self, _serialized_key_format: &[u8]) -> Result<Vec<u8>, TinkError> {
@@ -72,11 +72,11 @@ impl tink::registry::KeyManager for DummyAeadKeyManager {
     }
 }
 
-/// Dummy implementation of [`tink::Aead`] trait.
+/// Dummy implementation of [`tink_core::Aead`] trait.
 #[derive(Clone, Debug)]
 pub struct DummyAead;
 
-impl tink::Aead for DummyAead {
+impl tink_core::Aead for DummyAead {
     fn encrypt(&self, _plaintext: &[u8], _additional_data: &[u8]) -> Result<Vec<u8>, TinkError> {
         Err("dummy aead encrypt".into())
     }
@@ -86,13 +86,13 @@ impl tink::Aead for DummyAead {
     }
 }
 
-/// Dummy implementation of [`tink::Mac`] trait.
+/// Dummy implementation of [`tink_core::Mac`] trait.
 #[derive(Clone, Debug)]
 pub struct DummyMac {
     pub name: String,
 }
 
-impl tink::Mac for DummyMac {
+impl tink_core::Mac for DummyMac {
     // Computes message authentication code (MAC) for `data`.
     fn compute_mac(&self, data: &[u8]) -> Result<Vec<u8>, TinkError> {
         let mut m = Vec::new();
@@ -107,15 +107,15 @@ impl tink::Mac for DummyMac {
     }
 }
 
-/// Dummy implementation of a [`tink::registry::KmsClient`].
+/// Dummy implementation of a [`tink_core::registry::KmsClient`].
 pub struct DummyKmsClient;
 
-impl tink::registry::KmsClient for DummyKmsClient {
+impl tink_core::registry::KmsClient for DummyKmsClient {
     fn supported(&self, key_uri: &str) -> bool {
         key_uri == "dummy"
     }
 
-    fn get_aead(&self, _key_uri: &str) -> Result<Box<dyn tink::Aead>, TinkError> {
+    fn get_aead(&self, _key_uri: &str) -> Result<Box<dyn tink_core::Aead>, TinkError> {
         Ok(Box::new(DummyAead))
     }
 }
@@ -205,7 +205,7 @@ where
 
 /// Return a dummy key that doesn't contain actual key material.
 pub fn new_dummy_key(
-    key_id: tink::KeyId,
+    key_id: tink_core::KeyId,
     status: tink_proto::KeyStatusType,
     output_prefix_type: tink_proto::OutputPrefixType,
 ) -> tink_proto::keyset::Key {
@@ -578,9 +578,9 @@ pub fn new_aes_cmac_key_format(tag_size: u32) -> tink_proto::AesCmacKeyFormat {
     }
 }
 
-/// Return a new [`tink::keyset::Manager`] that contains a [`HmacKey`](tink_proto::HmacKey).
-pub fn new_hmac_keyset_manager() -> tink::keyset::Manager {
-    let mut ksm = tink::keyset::Manager::new();
+/// Return a new [`tink_core::keyset::Manager`] that contains a [`HmacKey`](tink_proto::HmacKey).
+pub fn new_hmac_keyset_manager() -> tink_core::keyset::Manager {
+    let mut ksm = tink_core::keyset::Manager::new();
     let kt = tink_mac::hmac_sha256_tag128_key_template();
     ksm.rotate(&kt).expect("cannot rotate keyset manager");
     ksm
@@ -692,7 +692,7 @@ pub fn new_key_data(
 pub fn new_key(
     key_data: &KeyData,
     status: tink_proto::KeyStatusType,
-    key_id: tink::KeyId,
+    key_id: tink_core::KeyId,
     prefix_type: tink_proto::OutputPrefixType,
 ) -> tink_proto::keyset::Key {
     tink_proto::keyset::Key {
@@ -704,7 +704,7 @@ pub fn new_key(
 }
 
 /// Create a new [`Keyset`] with the specified parameters.
-pub fn new_keyset(primary_key_id: tink::KeyId, keys: Vec<tink_proto::keyset::Key>) -> Keyset {
+pub fn new_keyset(primary_key_id: tink_core::KeyId, keys: Vec<tink_proto::keyset::Key>) -> Keyset {
     Keyset {
         primary_key_id,
         key: keys,
@@ -745,7 +745,7 @@ pub fn generate_mutations(src: &[u8]) -> Vec<Vec<u8>> {
 /// test is useful to detect things like strings that are entirely zero.
 ///
 /// Note: By itself, this is a very weak test for randomness.
-pub fn z_test_uniform_string(bytes: &[u8]) -> Result<(), tink::TinkError> {
+pub fn z_test_uniform_string(bytes: &[u8]) -> Result<(), tink_core::TinkError> {
     let expected = (bytes.len() as f64) * 8.0 / 2.0;
     let stddev = ((bytes.len() as f64) * 8.0 / 4.0).sqrt();
     let mut num_set_bits: i64 = 0;

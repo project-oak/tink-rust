@@ -17,7 +17,7 @@
 #[test]
 fn example() {
     tink_prf::init();
-    let kh = tink::keyset::Handle::new(&tink_prf::hmac_sha256_prf_key_template()).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_prf::hmac_sha256_prf_key_template()).unwrap();
 
     // NOTE: save the keyset to a safe location. DO NOT hardcode it in source code.
     // Consider encrypting it with a remote key in Cloud KMS, AWS KMS or HashiCorp Vault.

@@ -14,8 +14,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::{subtle::random::get_random_bytes, utils::wrap_err, TinkError};
 use tink_aead::subtle;
+use tink_core::{subtle::random::get_random_bytes, utils::wrap_err, TinkError};
 use tink_proto::OutputPrefixType;
 
 #[test]
@@ -30,9 +30,9 @@ fn test_factory_multiple_keys() {
         OutputPrefixType::Raw as i32,
         "expect a non-raw key"
     );
-    let keyset_handle = tink::keyset::insecure::new_handle(keyset).unwrap();
+    let keyset_handle = tink_core::keyset::insecure::new_handle(keyset).unwrap();
     let a = tink_aead::new(&keyset_handle).expect("tink_aead::new failed");
-    let expected_prefix = tink::cryptofmt::output_prefix(&primary_key).unwrap();
+    let expected_prefix = tink_core::cryptofmt::output_prefix(&primary_key).unwrap();
     validate_aead_factory_cipher(a.box_clone(), a.box_clone(), &expected_prefix)
         .expect("invalid cipher");
 
@@ -44,16 +44,20 @@ fn test_factory_multiple_keys() {
     );
 
     let keyset2 = tink_tests::new_keyset(raw_key.key_id, vec![raw_key]);
-    let keyset_handle2 = tink::keyset::insecure::new_handle(keyset2).unwrap();
+    let keyset_handle2 = tink_core::keyset::insecure::new_handle(keyset2).unwrap();
     let a2 = tink_aead::new(&keyset_handle2).expect("tink_aead::new failed");
-    validate_aead_factory_cipher(a2.box_clone(), a.box_clone(), &tink::cryptofmt::RAW_PREFIX)
-        .expect("invalid cipher");
+    validate_aead_factory_cipher(
+        a2.box_clone(),
+        a.box_clone(),
+        &tink_core::cryptofmt::RAW_PREFIX,
+    )
+    .expect("invalid cipher");
 
     // encrypt with a random key not in the keyset, decrypt with the keyset should fail
     let keyset2 = tink_tests::new_test_aes_gcm_keyset(OutputPrefixType::Tink);
     let primary_key = keyset2.key[0].clone();
-    let expected_prefix = tink::cryptofmt::output_prefix(&primary_key).unwrap();
-    let keyset_handle2 = tink::keyset::insecure::new_handle(keyset2).unwrap();
+    let expected_prefix = tink_core::cryptofmt::output_prefix(&primary_key).unwrap();
+    let keyset_handle2 = tink_core::keyset::insecure::new_handle(keyset2).unwrap();
     let a2 = tink_aead::new(&keyset_handle2).expect("tink_aead::new failed");
     let result = validate_aead_factory_cipher(a2.box_clone(), a.box_clone(), &expected_prefix);
     assert!(result.is_err(), "expect decryption to fail with random key");
@@ -73,16 +77,20 @@ fn test_factory_raw_key_as_primary() {
         OutputPrefixType::Raw as i32,
         "primary key is not a raw key"
     );
-    let keyset_handle = tink::keyset::insecure::new_handle(keyset).unwrap();
+    let keyset_handle = tink_core::keyset::insecure::new_handle(keyset).unwrap();
 
     let a = tink_aead::new(&keyset_handle).expect("cannot get primitive from keyset handle");
-    validate_aead_factory_cipher(a.box_clone(), a.box_clone(), &tink::cryptofmt::RAW_PREFIX)
-        .expect("invalid cipher");
+    validate_aead_factory_cipher(
+        a.box_clone(),
+        a.box_clone(),
+        &tink_core::cryptofmt::RAW_PREFIX,
+    )
+    .expect("invalid cipher");
 }
 
 fn validate_aead_factory_cipher(
-    encrypt_cipher: Box<dyn tink::Aead>,
-    decrypt_cipher: Box<dyn tink::Aead>,
+    encrypt_cipher: Box<dyn tink_core::Aead>,
+    decrypt_cipher: Box<dyn tink_core::Aead>,
     expected_prefix: &[u8],
 ) -> Result<(), TinkError> {
     let prefix_size = expected_prefix.len();
@@ -137,7 +145,7 @@ fn validate_aead_factory_cipher(
 fn test_factory_with_invalid_primitive_set_type() {
     tink_signature::init();
     tink_aead::init();
-    let wrong_kh = tink::keyset::Handle::new(&tink_signature::ecdsa_p256_key_template())
+    let wrong_kh = tink_core::keyset::Handle::new(&tink_signature::ecdsa_p256_key_template())
         .expect("failed to build keyset.Handle");
 
     assert!(
@@ -149,7 +157,7 @@ fn test_factory_with_invalid_primitive_set_type() {
 #[test]
 fn test_factory_with_valid_primitive_set_type() {
     tink_aead::init();
-    let good_kh = tink::keyset::Handle::new(&tink_aead::aes128_gcm_key_template())
+    let good_kh = tink_core::keyset::Handle::new(&tink_aead::aes128_gcm_key_template())
         .expect("failed to build keyset::Handle");
 
     tink_aead::new(&good_kh).expect("calling new() with good keyset::Handle failed");
@@ -158,7 +166,7 @@ fn test_factory_with_valid_primitive_set_type() {
 #[test]
 fn test_factory_with_aes256_ctr_hmac_sha512() {
     tink_aead::init();
-    let good_kh = tink::keyset::Handle::new(&tink_aead::aes256_ctr_hmac_sha512_key_template())
+    let good_kh = tink_core::keyset::Handle::new(&tink_aead::aes256_ctr_hmac_sha512_key_template())
         .expect("failed to build keyset::Handle");
 
     tink_aead::new(&good_kh).expect("calling new() with good keyset::Handle failed");

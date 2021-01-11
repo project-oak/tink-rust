@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::{subtle::random::get_random_bytes, Mac};
+use tink_core::{subtle::random::get_random_bytes, Mac};
 
 mod aead_test;
 mod awskms_test;

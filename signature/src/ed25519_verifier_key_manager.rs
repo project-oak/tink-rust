@@ -17,7 +17,7 @@
 //! Key manager for ED25519 verification keys.
 
 use prost::Message;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
 /// Maximal version of ED25519 keys.
 pub const ED25519_VERIFIER_KEY_VERSION: u32 = 0;
@@ -25,13 +25,13 @@ pub const ED25519_VERIFIER_KEY_VERSION: u32 = 0;
 pub const ED25519_VERIFIER_TYPE_URL: &str =
     "type.googleapis.com/google.crypto.tink.Ed25519PublicKey";
 
-/// An implementation of the [`tink::registry::KeyManager`] trait.
+/// An implementation of the [`tink_core::registry::KeyManager`] trait.
 /// It doesn't support key generation.
 #[derive(Default)]
 pub(crate) struct Ed25519VerifierKeyManager {}
 
-impl tink::registry::KeyManager for Ed25519VerifierKeyManager {
-    fn primitive(&self, serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
+impl tink_core::registry::KeyManager for Ed25519VerifierKeyManager {
+    fn primitive(&self, serialized_key: &[u8]) -> Result<tink_core::Primitive, TinkError> {
         if serialized_key.is_empty() {
             return Err("Ed25519VerifierKeyManager: invalid key".into());
         }
@@ -40,7 +40,7 @@ impl tink::registry::KeyManager for Ed25519VerifierKeyManager {
         validate_ed25519_public_key(&key).map_err(|e| wrap_err("Ed25519VerifierKeyManager", e))?;
 
         match crate::subtle::Ed25519Verifier::new(&key.key_value) {
-            Ok(p) => Ok(tink::Primitive::Verifier(Box::new(p))),
+            Ok(p) => Ok(tink_core::Primitive::Verifier(Box::new(p))),
             Err(e) => Err(wrap_err("Ed25519VerifierKeyManager: invalid key", e)),
         }
     }
@@ -62,7 +62,7 @@ impl tink::registry::KeyManager for Ed25519VerifierKeyManager {
 pub(crate) fn validate_ed25519_public_key(
     key: &tink_proto::Ed25519PublicKey,
 ) -> Result<(), TinkError> {
-    tink::keyset::validate_key_version(key.version, ED25519_VERIFIER_KEY_VERSION)?;
+    tink_core::keyset::validate_key_version(key.version, ED25519_VERIFIER_KEY_VERSION)?;
 
     if key.key_value.len() != ed25519_dalek::PUBLIC_KEY_LENGTH {
         Err(format!(

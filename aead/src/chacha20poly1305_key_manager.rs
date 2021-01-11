@@ -18,7 +18,7 @@
 
 use crate::subtle;
 use prost::Message;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
 /// Maximal version of ChaCha20Poly1305 keys.
 pub const CHA_CHA20_POLY1305_KEY_VERSION: u32 = 0;
@@ -26,16 +26,16 @@ pub const CHA_CHA20_POLY1305_KEY_VERSION: u32 = 0;
 pub const CHA_CHA20_POLY1305_TYPE_URL: &str =
     "type.googleapis.com/google.crypto.tink.ChaCha20Poly1305Key";
 
-/// `ChaCha20Poly1305KeyManager` is an implementation of the [`tink::registry::KeyManager`] trait.
-/// It generates new [`ChaCha20Poly1305Key`](tink_proto::ChaCha20Poly1305Key) keys and produces new
-/// instances of [`subtle::ChaCha20Poly1305`].
+/// `ChaCha20Poly1305KeyManager` is an implementation of the [`tink_core::registry::KeyManager`]
+/// trait. It generates new [`ChaCha20Poly1305Key`](tink_proto::ChaCha20Poly1305Key) keys and
+/// produces new instances of [`subtle::ChaCha20Poly1305`].
 #[derive(Default)]
 pub(crate) struct ChaCha20Poly1305KeyManager {}
 
-impl tink::registry::KeyManager for ChaCha20Poly1305KeyManager {
+impl tink_core::registry::KeyManager for ChaCha20Poly1305KeyManager {
     /// Create a [`subtle::ChaCha20Poly1305`] for the given serialized
     /// [`tink_proto::ChaCha20Poly1305Key`].
-    fn primitive(&self, serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
+    fn primitive(&self, serialized_key: &[u8]) -> Result<tink_core::Primitive, TinkError> {
         if serialized_key.is_empty() {
             return Err("ChaCha20Poly1305KeyManager: invalid key".into());
         }
@@ -43,7 +43,7 @@ impl tink::registry::KeyManager for ChaCha20Poly1305KeyManager {
             .map_err(|e| wrap_err("ChaCha20Poly1305KeyManager: invalid key", e))?;
         validate_key(&key)?;
         match subtle::ChaCha20Poly1305::new(&key.key_value) {
-            Ok(p) => Ok(tink::Primitive::Aead(Box::new(p))),
+            Ok(p) => Ok(tink_core::Primitive::Aead(Box::new(p))),
             Err(e) => Err(wrap_err(
                 "ChaCha20Poly1305KeyManager: cannot create new primitive",
                 e,
@@ -71,7 +71,7 @@ impl tink::registry::KeyManager for ChaCha20Poly1305KeyManager {
 }
 
 fn new_cha_cha20_poly1305_key() -> tink_proto::ChaCha20Poly1305Key {
-    let key_value = tink::subtle::random::get_random_bytes(subtle::CHA_CHA20_KEY_SIZE);
+    let key_value = tink_core::subtle::random::get_random_bytes(subtle::CHA_CHA20_KEY_SIZE);
     tink_proto::ChaCha20Poly1305Key {
         version: CHA_CHA20_POLY1305_KEY_VERSION,
         key_value,
@@ -80,7 +80,7 @@ fn new_cha_cha20_poly1305_key() -> tink_proto::ChaCha20Poly1305Key {
 
 /// Validate the given [`tink_proto::ChaCha20Poly1305Key`].
 fn validate_key(key: &tink_proto::ChaCha20Poly1305Key) -> Result<(), TinkError> {
-    tink::keyset::validate_key_version(key.version, CHA_CHA20_POLY1305_KEY_VERSION)
+    tink_core::keyset::validate_key_version(key.version, CHA_CHA20_POLY1305_KEY_VERSION)
         .map_err(|e| wrap_err("ChaCha20Poly1305KeyManager", e))?;
     let key_size = key.key_value.len();
     if key_size != subtle::CHA_CHA20_KEY_SIZE {

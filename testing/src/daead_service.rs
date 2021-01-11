@@ -30,8 +30,8 @@ impl proto::deterministic_aead_server::DeterministicAead for DaeadServerImpl {
         let req = request.into_inner(); // discard metadata
         let closure = move || {
             let cursor = std::io::Cursor::new(req.keyset);
-            let mut reader = tink::keyset::BinaryReader::new(cursor);
-            let handle = tink::keyset::insecure::read(&mut reader)?;
+            let mut reader = tink_core::keyset::BinaryReader::new(cursor);
+            let handle = tink_core::keyset::insecure::read(&mut reader)?;
             let cipher = tink_daead::new(&handle)?;
             cipher.encrypt_deterministically(&req.plaintext, &req.associated_data)
         };
@@ -54,8 +54,8 @@ impl proto::deterministic_aead_server::DeterministicAead for DaeadServerImpl {
         let req = request.into_inner(); // discard metadata
         let closure = move || {
             let cursor = std::io::Cursor::new(req.keyset);
-            let mut reader = tink::keyset::BinaryReader::new(cursor);
-            let handle = tink::keyset::insecure::read(&mut reader)?;
+            let mut reader = tink_core::keyset::BinaryReader::new(cursor);
+            let handle = tink_core::keyset::insecure::read(&mut reader)?;
             let cipher = tink_daead::new(&handle)?;
             cipher.decrypt_deterministically(&req.ciphertext, &req.associated_data)
         };

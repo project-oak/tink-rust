@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::subtle::random;
+use tink_core::subtle::random;
 
 #[test]
 fn test_get_random_bytes() {

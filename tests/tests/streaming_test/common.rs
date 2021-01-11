@@ -14,12 +14,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::{subtle::random::get_random_bytes, utils::wrap_err, TinkError};
+use tink_core::{subtle::random::get_random_bytes, utils::wrap_err, TinkError};
 use tink_tests::SharedBuf;
 
 pub fn encrypt_decrypt(
-    encrypt_cipher: Box<dyn tink::StreamingAead>,
-    decrypt_cipher: Box<dyn tink::StreamingAead>,
+    encrypt_cipher: Box<dyn tink_core::StreamingAead>,
+    decrypt_cipher: Box<dyn tink_core::StreamingAead>,
     pt_size: usize,
     aad_size: usize,
 ) -> Result<(), TinkError> {

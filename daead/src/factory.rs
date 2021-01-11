@@ -17,19 +17,21 @@
 //! Provides an implementation of deterministic AEAD using a set of underlying implementations.
 
 use std::sync::Arc;
-use tink::utils::{wrap_err, TinkError};
+use tink_core::utils::{wrap_err, TinkError};
 
-/// Return a [`tink::DeterministicAead`] primitive from the given keyset handle.
-pub fn new(h: &tink::keyset::Handle) -> Result<Box<dyn tink::DeterministicAead>, TinkError> {
+/// Return a [`tink_core::DeterministicAead`] primitive from the given keyset handle.
+pub fn new(
+    h: &tink_core::keyset::Handle,
+) -> Result<Box<dyn tink_core::DeterministicAead>, TinkError> {
     new_with_key_manager(h, None)
 }
 
-/// Return a [`tink::DeterministicAead`] primitive from the given keyset handle and custom key
+/// Return a [`tink_core::DeterministicAead`] primitive from the given keyset handle and custom key
 /// manager.
 fn new_with_key_manager(
-    h: &tink::keyset::Handle,
-    km: Option<Arc<dyn tink::registry::KeyManager>>,
-) -> Result<Box<dyn tink::DeterministicAead>, TinkError> {
+    h: &tink_core::keyset::Handle,
+    km: Option<Arc<dyn tink_core::registry::KeyManager>>,
+) -> Result<Box<dyn tink_core::DeterministicAead>, TinkError> {
     let ps = h
         .primitives_with_key_manager(km)
         .map_err(|e| wrap_err("daead::factory: cannot obtain primitive set", e))?;
@@ -38,27 +40,29 @@ fn new_with_key_manager(
     Ok(Box::new(ret))
 }
 
-/// A [`tink::DeterministicAead`] implementation that uses the underlying primitive set
+/// A [`tink_core::DeterministicAead`] implementation that uses the underlying primitive set
 /// for deterministic encryption and decryption.
 #[derive(Clone)]
 struct WrappedDeterministicAead {
-    ps: tink::primitiveset::TypedPrimitiveSet<Box<dyn tink::DeterministicAead>>,
+    ps: tink_core::primitiveset::TypedPrimitiveSet<Box<dyn tink_core::DeterministicAead>>,
 }
 
 impl WrappedDeterministicAead {
-    fn new(ps: tink::primitiveset::PrimitiveSet) -> Result<WrappedDeterministicAead, TinkError> {
+    fn new(
+        ps: tink_core::primitiveset::PrimitiveSet,
+    ) -> Result<WrappedDeterministicAead, TinkError> {
         let entry = match &ps.primary {
             None => return Err("daead::factory: no primary primitive".into()),
             Some(p) => p,
         };
         match entry.primitive {
-            tink::Primitive::DeterministicAead(_) => {}
+            tink_core::Primitive::DeterministicAead(_) => {}
             _ => return Err("daead::factory: not a DeterministicAEAD primitive".into()),
         };
         for (_, primitives) in ps.entries.iter() {
             for p in primitives {
                 match p.primitive {
-                    tink::Primitive::DeterministicAead(_) => {}
+                    tink_core::Primitive::DeterministicAead(_) => {}
                     _ => return Err("daead::factory: not a DeterministicAEAD primitive".into()),
                 };
             }
@@ -69,7 +73,7 @@ impl WrappedDeterministicAead {
     }
 }
 
-impl tink::DeterministicAead for WrappedDeterministicAead {
+impl tink_core::DeterministicAead for WrappedDeterministicAead {
     fn encrypt_deterministically(&self, pt: &[u8], aad: &[u8]) -> Result<Vec<u8>, TinkError> {
         let primary = self
             .ps
@@ -87,7 +91,7 @@ impl tink::DeterministicAead for WrappedDeterministicAead {
 
     fn decrypt_deterministically(&self, ct: &[u8], aad: &[u8]) -> Result<Vec<u8>, TinkError> {
         // try non-raw keys
-        let prefix_size = tink::cryptofmt::NON_RAW_PREFIX_SIZE;
+        let prefix_size = tink_core::cryptofmt::NON_RAW_PREFIX_SIZE;
         if ct.len() > prefix_size {
             let prefix = &ct[..prefix_size];
             let ct_no_prefix = &ct[prefix_size..];

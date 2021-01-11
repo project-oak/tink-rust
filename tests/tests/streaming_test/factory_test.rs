@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
 use super::common::encrypt_decrypt;
 
@@ -23,7 +23,7 @@ fn test_factory_multiple_keys() {
     tink_streaming_aead::init();
     let keyset = tink_tests::new_test_aes_gcm_hkdf_keyset();
     let raw_key = keyset.key[1].clone();
-    let keyset_handle = tink::keyset::insecure::new_handle(keyset).unwrap();
+    let keyset_handle = tink_core::keyset::insecure::new_handle(keyset).unwrap();
     let a = tink_streaming_aead::new(&keyset_handle).expect("tink_streaming_aead::new failed");
 
     // Encrypt with a primary RAW key and decrypt with the keyset
@@ -36,21 +36,21 @@ fn test_factory_multiple_keys() {
         "expect a raw key"
     );
     let keyset2 = tink_tests::new_keyset(raw_key.key_id, vec![raw_key]);
-    let keyset_handle2 = tink::keyset::insecure::new_handle(keyset2).unwrap();
+    let keyset_handle2 = tink_core::keyset::insecure::new_handle(keyset2).unwrap();
     let a2 = tink_streaming_aead::new(&keyset_handle2).expect("tink_streaming_aead::new failed");
     validate_factory_cipher(a2.box_clone(), a.box_clone()).expect("invalid cipher");
 
     // Encrypt with a random key not in the keyset, decrypt with the keyset should fail
     let keyset2 = tink_tests::new_test_aes_gcm_hkdf_keyset();
-    let keyset_handle2 = tink::keyset::insecure::new_handle(keyset2).unwrap();
+    let keyset_handle2 = tink_core::keyset::insecure::new_handle(keyset2).unwrap();
     let a2 = tink_streaming_aead::new(&keyset_handle2).expect("tink_streaming_aead::new failed");
     let result = validate_factory_cipher(a2.box_clone(), a.box_clone());
     tink_tests::expect_err(result, "no matching key");
 }
 
 fn validate_factory_cipher(
-    encrypt_cipher: Box<dyn tink::StreamingAead>,
-    decrypt_cipher: Box<dyn tink::StreamingAead>,
+    encrypt_cipher: Box<dyn tink_core::StreamingAead>,
+    decrypt_cipher: Box<dyn tink_core::StreamingAead>,
 ) -> Result<(), TinkError> {
     let tt = vec![1, 16, 4095, 4096, 4097, 16384];
 
@@ -70,7 +70,7 @@ fn validate_factory_cipher(
 fn test_factory_with_invalid_primitive_set_type() {
     tink_mac::init();
     tink_streaming_aead::init();
-    let wrong_kh = tink::keyset::Handle::new(&tink_mac::hmac_sha256_tag128_key_template())
+    let wrong_kh = tink_core::keyset::Handle::new(&tink_mac::hmac_sha256_tag128_key_template())
         .expect("failed to build keyset.Handle");
     tink_tests::expect_err(
         tink_streaming_aead::new(&wrong_kh),
@@ -78,7 +78,7 @@ fn test_factory_with_invalid_primitive_set_type() {
     );
 
     // Now arrange a keyset where the primary key is correct but secondary key is not.
-    let mut km = tink::keyset::Manager::new_from_handle(wrong_kh);
+    let mut km = tink_core::keyset::Manager::new_from_handle(wrong_kh);
     km.rotate(&tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template())
         .unwrap();
     let wronger_kh = km.handle().unwrap();
@@ -92,7 +92,7 @@ fn test_factory_with_invalid_primitive_set_type() {
 fn test_factory_with_valid_primitive_set_type() {
     tink_streaming_aead::init();
     let good_kh =
-        tink::keyset::Handle::new(&tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template())
+        tink_core::keyset::Handle::new(&tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template())
             .expect("failed to build keyset.Handle");
 
     assert!(
@@ -113,7 +113,7 @@ fn test_key_rotation() {
     // with *=primary, ()=disabled
     let kt_a = tink_streaming_aead::aes128_ctr_hmac_sha256_segment_4kb_key_template();
     let kt_b = tink_streaming_aead::aes256_ctr_hmac_sha256_segment_4kb_key_template();
-    let mut ksm = tink::keyset::Manager::new();
+    let mut ksm = tink_core::keyset::Manager::new();
     let id_a = ksm.rotate(&kt_a).unwrap();
     let h1 = ksm.handle().unwrap();
     let id_b = ksm.add(&kt_b, /* primary= */ false).unwrap();

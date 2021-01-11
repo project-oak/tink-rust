@@ -16,7 +16,7 @@
 
 use maplit::hashmap;
 use serde::Deserialize;
-use tink::Prf;
+use tink_core::Prf;
 use tink_prf::subtle::AesCmacPrf;
 
 #[test]

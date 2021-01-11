@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::TinkError;
+use tink_core::TinkError;
 
 #[test]
 fn test_aes_siv_key_template() {
@@ -29,11 +29,11 @@ fn test_aes_siv_key_template() {
 }
 
 fn test_encrypt_decrypt(template: &tink_proto::KeyTemplate) -> Result<(), TinkError> {
-    let sk = tink::registry::new_key(template)?;
-    let p = tink::registry::primitive(&template.type_url, &sk)?;
+    let sk = tink_core::registry::new_key(template)?;
+    let p = tink_core::registry::primitive(&template.type_url, &sk)?;
 
     let primitive = match p {
-        tink::Primitive::DeterministicAead(p) => p,
+        tink_core::Primitive::DeterministicAead(p) => p,
         _ => return Err("failed to find DeterministicAEAD primitive".into()),
     };
 

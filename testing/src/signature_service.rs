@@ -30,8 +30,8 @@ impl proto::signature_server::Signature for SignatureServerImpl {
         let req = request.into_inner(); // discard metadata
         let closure = move || {
             let cursor = std::io::Cursor::new(req.private_keyset.clone());
-            let mut reader = tink::keyset::BinaryReader::new(cursor);
-            let handle = tink::keyset::insecure::read(&mut reader)?;
+            let mut reader = tink_core::keyset::BinaryReader::new(cursor);
+            let handle = tink_core::keyset::insecure::read(&mut reader)?;
             let signer = tink_signature::new_signer(&handle)?;
             signer.sign(&req.data)
         };
@@ -50,8 +50,8 @@ impl proto::signature_server::Signature for SignatureServerImpl {
         let req = request.into_inner(); // discard metadata
         let closure = move || {
             let cursor = std::io::Cursor::new(req.public_keyset.clone());
-            let mut reader = tink::keyset::BinaryReader::new(cursor);
-            let handle = tink::keyset::insecure::read(&mut reader)?;
+            let mut reader = tink_core::keyset::BinaryReader::new(cursor);
+            let handle = tink_core::keyset::insecure::read(&mut reader)?;
             let verifier = tink_signature::new_verifier(&handle)?;
             verifier.verify(&req.signature, &req.data)
         };

@@ -14,10 +14,10 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-//! General AEAD implementation combining an `IndCpaCipher` with a `tink::Mac`
+//! General AEAD implementation combining an `IndCpaCipher` with a `tink_core::Mac`
 
 use super::IndCpaCipher;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
 /// `EncryptThenAuthenticate` performs an encrypt-then-MAC operation on plaintext
 /// and additional authenticated data (aad). The MAC is computed over (aad ||
@@ -25,7 +25,7 @@ use tink::{utils::wrap_err, TinkError};
 /// http://tools.ietf.org/html/draft-mcgrew-aead-aes-cbc-hmac-sha2-05.
 pub struct EncryptThenAuthenticate {
     ind_cpa_cipher: Box<dyn IndCpaCipher>,
-    mac: Box<dyn tink::Mac>,
+    mac: Box<dyn tink_core::Mac>,
     tag_size: usize,
 }
 
@@ -47,7 +47,7 @@ impl EncryptThenAuthenticate {
     /// Return a new instance of EncryptThenAuthenticate.
     pub fn new(
         ind_cpa_cipher: Box<dyn IndCpaCipher>,
-        mac: Box<dyn tink::Mac>,
+        mac: Box<dyn tink_core::Mac>,
         tag_size: usize,
     ) -> Result<EncryptThenAuthenticate, TinkError> {
         if tag_size < MIN_TAG_SIZE_IN_BYTES {
@@ -61,7 +61,7 @@ impl EncryptThenAuthenticate {
     }
 }
 
-impl tink::Aead for EncryptThenAuthenticate {
+impl tink_core::Aead for EncryptThenAuthenticate {
     /// Encrypt `plaintext` with `additional_data` as additional authenticated
     /// data. The resulting ciphertext allows for checking authenticity and
     /// integrity of additional data, but does not guarantee its secrecy.

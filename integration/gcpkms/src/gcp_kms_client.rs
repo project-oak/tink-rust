@@ -18,7 +18,7 @@
 
 use google_cloudkms1::CloudKMS;
 use std::sync::{Arc, Mutex};
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 use yup_oauth2::{
     ApplicationSecret, Authenticator, DefaultAuthenticatorDelegate, MemoryStorage,
     ServiceAccountAccess,
@@ -69,7 +69,7 @@ impl GcpClient {
         let mut kms_service = google_cloudkms1::CloudKMS::new(client, auth);
         kms_service.user_agent(format!(
             "Tink-Rust/{}  Rust/{}",
-            tink::UPSTREAM_VERSION,
+            tink_core::UPSTREAM_VERSION,
             env!("CARGO_PKG_VERSION")
         ));
         Ok(GcpClient {
@@ -105,7 +105,7 @@ impl GcpClient {
         let mut kms_service = google_cloudkms1::CloudKMS::new(client, sa_access);
         kms_service.user_agent(format!(
             "Tink-Rust/{}  Rust/{}",
-            tink::UPSTREAM_VERSION,
+            tink_core::UPSTREAM_VERSION,
             env!("CARGO_PKG_VERSION")
         ));
         Ok(GcpClient {
@@ -115,11 +115,11 @@ impl GcpClient {
     }
 }
 
-impl tink::registry::KmsClient for GcpClient {
+impl tink_core::registry::KmsClient for GcpClient {
     fn supported(&self, key_uri: &str) -> bool {
         key_uri.starts_with(&self.key_uri_prefix)
     }
-    fn get_aead(&self, key_uri: &str) -> Result<Box<dyn tink::Aead>, tink::TinkError> {
+    fn get_aead(&self, key_uri: &str) -> Result<Box<dyn tink_core::Aead>, tink_core::TinkError> {
         if !self.supported(key_uri) {
             return Err("unsupported key_uri".into());
         }

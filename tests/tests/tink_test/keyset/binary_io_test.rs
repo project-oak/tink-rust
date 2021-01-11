@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::keyset::{Reader, Writer};
+use tink_core::keyset::{Reader, Writer};
 
 #[test]
 fn test_binary_io_unencrypted() {
@@ -22,15 +22,15 @@ fn test_binary_io_unencrypted() {
 
     let manager = tink_tests::new_hmac_keyset_manager();
     let h = manager.handle().expect("cannot get keyset handle");
-    let ks1 = tink::keyset::insecure::keyset_material(&h);
+    let ks1 = tink_core::keyset::insecure::keyset_material(&h);
 
     let mut buf = Vec::new();
     {
-        let mut w = tink::keyset::BinaryWriter::new(&mut buf);
+        let mut w = tink_core::keyset::BinaryWriter::new(&mut buf);
         w.write(&ks1).expect("cannot write keyset");
     }
 
-    let mut r = tink::keyset::BinaryReader::new(&buf[..]);
+    let mut r = tink_core::keyset::BinaryReader::new(&buf[..]);
     let ks2 = r.read().expect("cannot read keyset");
     assert_eq!(
         ks1, ks2,
@@ -48,12 +48,12 @@ fn test_binary_io_encrypted() {
 
     let mut buf = Vec::new();
     {
-        let mut w = tink::keyset::BinaryWriter::new(&mut buf);
+        let mut w = tink_core::keyset::BinaryWriter::new(&mut buf);
         w.write_encrypted(&kse1)
             .expect("cannot write encrypted keyset");
     }
 
-    let mut r = tink::keyset::BinaryReader::new(&buf[..]);
+    let mut r = tink_core::keyset::BinaryReader::new(&buf[..]);
     let kse2 = r.read_encrypted().expect("cannot read encrypted keyset");
     assert_eq!(
         kse1, kse2,
@@ -64,12 +64,12 @@ fn test_binary_io_encrypted() {
 
 #[test]
 fn test_binary_io_read_fail() {
-    let mut r = tink::keyset::BinaryReader::new(tink_tests::IoFailure {});
+    let mut r = tink_core::keyset::BinaryReader::new(tink_tests::IoFailure {});
     let result = r.read();
     tink_tests::expect_err(result, "read failed");
 
     let buf = vec![1, 2, 3];
-    let mut r = tink::keyset::BinaryReader::new(&buf[..]);
+    let mut r = tink_core::keyset::BinaryReader::new(&buf[..]);
     let result = r.read();
     tink_tests::expect_err(result, "decode failed");
 }
@@ -79,10 +79,10 @@ fn test_binary_io_write_fail() {
     tink_mac::init();
     let manager = tink_tests::new_hmac_keyset_manager();
     let h = manager.handle().expect("cannot get keyset handle");
-    let ks = tink::keyset::insecure::keyset_material(&h);
+    let ks = tink_core::keyset::insecure::keyset_material(&h);
 
     let mut failing_writer = tink_tests::IoFailure {};
-    let mut w = tink::keyset::BinaryWriter::new(&mut failing_writer);
+    let mut w = tink_core::keyset::BinaryWriter::new(&mut failing_writer);
     let result = w.write(&ks);
     tink_tests::expect_err(result, "write failed");
 }

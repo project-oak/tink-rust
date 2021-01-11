@@ -15,12 +15,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use prost::Message;
-use tink::{subtle::random::get_random_bytes, TinkError};
+use tink_core::{subtle::random::get_random_bytes, TinkError};
 
 #[test]
 fn test_aes_siv_primitive() {
     tink_daead::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_SIV_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_SIV_TYPE_URL)
         .expect("cannot obtain AESSIV key manager");
     let serialized_key = km.new_key(&[]).unwrap();
     let p = km.primitive(&serialized_key).unwrap();
@@ -30,7 +30,7 @@ fn test_aes_siv_primitive() {
 #[test]
 fn test_aes_siv_primitive_with_invalid_keys() {
     tink_daead::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_SIV_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_SIV_TYPE_URL)
         .expect("cannot obtain AESSIV key manager");
     let invalid_keys = gen_invalid_aes_siv_keys();
     for key in invalid_keys {
@@ -47,7 +47,7 @@ fn test_aes_siv_primitive_with_wrong_primary_key() {
     tink_signature::init();
 
     // Build a keyset with a primary ECDSA key plus an AES-SIV key.
-    let mut ksm = tink::keyset::Manager::new();
+    let mut ksm = tink_core::keyset::Manager::new();
     ksm.rotate(&tink_signature::ecdsa_p256_key_template())
         .unwrap();
     ksm.add(
@@ -67,7 +67,7 @@ fn test_aes_siv_primitive_with_wrong_later_key() {
     tink_signature::init();
 
     // Build a keyset with a primary AES-SIV key plus a later ECDSA key.
-    let mut ksm = tink::keyset::Manager::new();
+    let mut ksm = tink_core::keyset::Manager::new();
     ksm.rotate(&tink_daead::aes_siv_key_template()).unwrap();
     ksm.add(
         &tink_signature::ecdsa_p256_key_template(),
@@ -83,7 +83,7 @@ fn test_aes_siv_primitive_with_wrong_later_key() {
 #[test]
 fn test_aes_siv_new_key() {
     tink_daead::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_SIV_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_SIV_TYPE_URL)
         .expect("cannot obtain AESSIV key manager");
     let sk = km.new_key(&[]).unwrap();
     let key = tink_proto::AesSivKey::decode(sk.as_ref()).unwrap();
@@ -93,7 +93,7 @@ fn test_aes_siv_new_key() {
 #[test]
 fn test_aes_siv_new_key_data() {
     tink_daead::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_SIV_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_SIV_TYPE_URL)
         .expect("cannot obtain AESSIV key manager");
     let kd = km.new_key_data(&[]).unwrap();
     assert_eq!(kd.type_url, tink_tests::AES_SIV_TYPE_URL);
@@ -109,7 +109,7 @@ fn test_aes_siv_new_key_data() {
 #[test]
 fn test_aes_siv_new_key_invalid() {
     tink_daead::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_SIV_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_SIV_TYPE_URL)
         .expect("cannot obtain AESSIV key manager");
     let key_format = tink_proto::AesSivKeyFormat {
         key_size: (tink_daead::subtle::AES_SIV_KEY_SIZE - 1) as u32,
@@ -123,7 +123,7 @@ fn test_aes_siv_new_key_invalid() {
 #[test]
 fn test_aes_siv_does_support() {
     tink_daead::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_SIV_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_SIV_TYPE_URL)
         .expect("cannot obtain AESSIV key manager");
 
     assert!(
@@ -141,7 +141,7 @@ fn test_aes_siv_does_support() {
 #[test]
 fn test_aes_siv_type_url() {
     tink_daead::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_SIV_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_SIV_TYPE_URL)
         .expect("cannot obtain AESSIV key manager");
     assert_eq!(km.type_url(), tink_tests::AES_SIV_TYPE_URL);
 
@@ -153,9 +153,9 @@ fn test_aes_siv_type_url() {
     assert!(!km.supports_private_keys());
 }
 
-fn validate_aes_siv_primitive(p: tink::Primitive) -> Result<(), TinkError> {
+fn validate_aes_siv_primitive(p: tink_core::Primitive) -> Result<(), TinkError> {
     let cipher = match p {
-        tink::Primitive::DeterministicAead(c) => c,
+        tink_core::Primitive::DeterministicAead(c) => c,
         _ => panic!("not a DeterministicAEAD"),
     };
 
@@ -188,7 +188,7 @@ fn validate_aes_siv_key(key: &tink_proto::AesSivKey) -> Result<(), TinkError> {
 
     // Try to encrypt and decrypt.
     let p = tink_daead::subtle::AesSiv::new(&key.key_value)?;
-    validate_aes_siv_primitive(tink::Primitive::DeterministicAead(Box::new(p)))
+    validate_aes_siv_primitive(tink_core::Primitive::DeterministicAead(Box::new(p)))
 }
 
 fn gen_invalid_aes_siv_keys() -> Vec<tink_proto::AesSivKey> {

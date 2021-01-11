@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use std::sync::Arc;
-use tink::{
+use tink_core::{
     keyset::{insecure, Handle},
     TinkError,
 };
@@ -76,7 +76,7 @@ fn test_read() {
     let debug_output = format!("{:?}", h);
     assert!(!debug_output.contains("42"));
 
-    let mem_keyset = &mut tink::keyset::MemReaderWriter::default();
+    let mem_keyset = &mut tink_core::keyset::MemReaderWriter::default();
     assert!(h.write(mem_keyset, main_key.clone()).is_ok());
     let h2 = Handle::read(mem_keyset, main_key).unwrap();
     assert_eq!(
@@ -102,7 +102,7 @@ fn test_read_with_no_secrets() {
     let ks = tink_tests::new_keyset(1, vec![key]);
     let h = insecure::new_handle(ks).unwrap();
 
-    let mem_keyset = &mut tink::keyset::MemReaderWriter::default();
+    let mem_keyset = &mut tink_core::keyset::MemReaderWriter::default();
     assert!(h.write_with_no_secrets(mem_keyset).is_ok());
     let h2 = Handle::read_with_no_secrets(mem_keyset).unwrap();
 
@@ -129,13 +129,13 @@ fn test_with_no_secrets_functions_fail_when_handling_secret_key_material() {
     let h = insecure::new_handle(ks).unwrap();
 
     assert!(
-        h.write_with_no_secrets(&mut tink::keyset::MemReaderWriter::default())
+        h.write_with_no_secrets(&mut tink_core::keyset::MemReaderWriter::default())
             .is_err(),
         "handle.write_with_no_secrets() should fail when exporting secret key material"
     );
 
     assert!(
-        Handle::read_with_no_secrets(&mut tink::keyset::MemReaderWriter {
+        Handle::read_with_no_secrets(&mut tink_core::keyset::MemReaderWriter {
             keyset: Some(insecure::keyset_material(&h)),
             ..Default::default()
         })
@@ -159,13 +159,13 @@ fn test_with_no_secrets_functions_fail_when_unknown_key_material() {
     let h = insecure::new_handle(ks).unwrap();
 
     assert!(
-        h.write_with_no_secrets(&mut tink::keyset::MemReaderWriter::default())
+        h.write_with_no_secrets(&mut tink_core::keyset::MemReaderWriter::default())
             .is_err(),
         "handle.write_with_no_secrets() should fail when exporting secret key material"
     );
 
     assert!(
-        Handle::read_with_no_secrets(&mut tink::keyset::MemReaderWriter {
+        Handle::read_with_no_secrets(&mut tink_core::keyset::MemReaderWriter {
             keyset: Some(insecure::keyset_material(&h)),
             ..Default::default()
         })
@@ -189,13 +189,13 @@ fn test_with_no_secrets_functions_fail_with_asymmetric_private_key_material() {
     let h = insecure::new_handle(ks).unwrap();
 
     assert!(
-        h.write_with_no_secrets(&mut tink::keyset::MemReaderWriter::default())
+        h.write_with_no_secrets(&mut tink_core::keyset::MemReaderWriter::default())
             .is_err(),
         "handle.write_with_no_secrets() should fail when exporting secret key material"
     );
 
     assert!(
-        Handle::read_with_no_secrets(&mut tink::keyset::MemReaderWriter {
+        Handle::read_with_no_secrets(&mut tink_core::keyset::MemReaderWriter {
             keyset: Some(insecure::keyset_material(&h)),
             ..Default::default()
         })
@@ -208,7 +208,7 @@ fn test_with_no_secrets_functions_fail_with_asymmetric_private_key_material() {
 fn test_keyset_info() {
     tink_mac::init();
     let kt = tink_mac::hmac_sha256_tag128_key_template();
-    let kh = tink::keyset::Handle::new(&kt).unwrap();
+    let kh = tink_core::keyset::Handle::new(&kt).unwrap();
     let info = kh.keyset_info();
     assert_eq!(info.primary_key_id, info.key_info[0].key_id);
 }
@@ -233,8 +233,8 @@ fn test_invalid_keyset_from_manager() {
     // Use a key manager that generates invalid `KeyData`.
     pub struct InvalidKeyManager {}
 
-    impl tink::registry::KeyManager for InvalidKeyManager {
-        fn primitive(&self, _serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
+    impl tink_core::registry::KeyManager for InvalidKeyManager {
+        fn primitive(&self, _serialized_key: &[u8]) -> Result<tink_core::Primitive, TinkError> {
             Err("not implemented".into())
         }
 
@@ -258,14 +258,14 @@ fn test_invalid_keyset_from_manager() {
             })
         }
     }
-    tink::registry::register_key_manager(Arc::new(InvalidKeyManager {})).unwrap();
+    tink_core::registry::register_key_manager(Arc::new(InvalidKeyManager {})).unwrap();
     let kt = tink_proto::KeyTemplate {
         output_prefix_type: tink_proto::OutputPrefixType::Tink as i32,
         type_url: "InvalidKeyGenerator".to_string(),
         value: vec![],
     };
 
-    assert!(tink::keyset::Handle::new(&kt).is_err());
+    assert!(tink_core::keyset::Handle::new(&kt).is_err());
 }
 
 #[test]
@@ -306,7 +306,7 @@ fn test_handle_public() {
 fn test_handle_public_destroyed_key() {
     tink_signature::init();
 
-    let mut ksm = tink::keyset::Manager::new();
+    let mut ksm = tink_core::keyset::Manager::new();
     ksm.rotate(&tink_signature::ecdsa_p256_key_template())
         .unwrap();
     let key_id = ksm
@@ -339,14 +339,14 @@ fn test_handle_public_wrong_keymanager() {
 
 #[test]
 fn test_mem_read_with_no_secrets_empty() {
-    let result = Handle::read_with_no_secrets(&mut tink::keyset::MemReaderWriter::default());
+    let result = Handle::read_with_no_secrets(&mut tink_core::keyset::MemReaderWriter::default());
     tink_tests::expect_err(result, "no keyset available");
 }
 
 #[test]
 fn test_mem_read_empty() {
     let main_key = Box::new(tink_aead::subtle::AesGcm::new(&[b'A'; 32]).unwrap());
-    let result = Handle::read(&mut tink::keyset::MemReaderWriter::default(), main_key);
+    let result = Handle::read(&mut tink_core::keyset::MemReaderWriter::default(), main_key);
     tink_tests::expect_err(result, "no keyset available");
 }
 
@@ -354,7 +354,7 @@ fn test_mem_read_empty() {
 fn test_insecure_read_write() {
     tink_signature::init();
     let kh = Handle::new(&tink_signature::ecdsa_p256_key_template()).unwrap();
-    let mut mem_keyset = tink::keyset::MemReaderWriter::default();
+    let mut mem_keyset = tink_core::keyset::MemReaderWriter::default();
     insecure::write(&kh, &mut mem_keyset).unwrap();
 
     let kh2 = insecure::read(&mut mem_keyset).unwrap();
@@ -365,7 +365,7 @@ fn test_insecure_read_write() {
 
 #[test]
 fn test_insecure_read_empty() {
-    let mut mem_keyset = tink::keyset::MemReaderWriter {
+    let mut mem_keyset = tink_core::keyset::MemReaderWriter {
         keyset: Some(tink_proto::Keyset {
             key: vec![],
             primary_key_id: 1,

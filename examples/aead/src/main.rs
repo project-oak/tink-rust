@@ -18,7 +18,7 @@
 
 fn main() {
     tink_aead::init();
-    let kh = tink::keyset::Handle::new(&tink_aead::aes256_gcm_key_template()).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_aead::aes256_gcm_key_template()).unwrap();
     let a = tink_aead::new(&kh).unwrap();
 
     let pt = b"this data needs to be encrypted";

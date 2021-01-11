@@ -16,7 +16,7 @@
 
 use prost::Message;
 use std::collections::HashSet;
-use tink::TinkError;
+use tink_core::TinkError;
 use tink_proto::HashType;
 use tink_streaming_aead::subtle;
 use tink_tests::proto_encode;
@@ -28,7 +28,7 @@ const AES_GCM_HKDF_KEY_SIZES: [u32; 2] = [16, 32];
 #[test]
 fn test_aes_gcm_hkdf_get_primitive_basic() {
     tink_streaming_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_tests::AES_GCM_HKDF_TYPE_URL)
+    let key_manager = tink_core::registry::get_key_manager(tink_tests::AES_GCM_HKDF_TYPE_URL)
         .expect("cannot obtain AES-GCM-HKDF key manager");
     for key_size in &AES_GCM_HKDF_KEY_SIZES {
         let key = tink_tests::new_aes_gcm_hkdf_key(
@@ -40,7 +40,7 @@ fn test_aes_gcm_hkdf_get_primitive_basic() {
         );
         let serialized_key = proto_encode(&key);
         let p = match key_manager.primitive(&serialized_key) {
-            Ok(tink::Primitive::StreamingAead(p)) => p,
+            Ok(tink_core::Primitive::StreamingAead(p)) => p,
             _ => unreachable!(),
         };
         encrypt_decrypt(p.box_clone(), p.box_clone(), 32, 32).unwrap();
@@ -50,7 +50,7 @@ fn test_aes_gcm_hkdf_get_primitive_basic() {
 #[test]
 fn test_aes_gcm_hkdf_get_primitive_with_invalid_input() {
     tink_streaming_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_tests::AES_GCM_HKDF_TYPE_URL)
+    let key_manager = tink_core::registry::get_key_manager(tink_tests::AES_GCM_HKDF_TYPE_URL)
         .expect("cannot obtain AES-GCM-HKDF key manager");
 
     let test_keys = gen_invalid_aes_gcm_hkdf_keys();
@@ -72,7 +72,7 @@ fn test_aes_gcm_hkdf_get_primitive_with_invalid_input() {
 #[test]
 fn test_aes_gcm_hkdf_new_key_multiple_times() {
     tink_streaming_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_tests::AES_GCM_HKDF_TYPE_URL)
+    let key_manager = tink_core::registry::get_key_manager(tink_tests::AES_GCM_HKDF_TYPE_URL)
         .expect("cannot obtain AES-GCM-HKDF key manager");
     let format = tink_tests::new_aes_gcm_hkdf_key_format(32, 32, HashType::Sha256 as i32, 4096);
     let serialized_format = proto_encode(&format);
@@ -93,7 +93,7 @@ fn test_aes_gcm_hkdf_new_key_multiple_times() {
 #[test]
 fn test_aes_gcm_hkdf_new_key_basic() {
     tink_streaming_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_tests::AES_GCM_HKDF_TYPE_URL)
+    let key_manager = tink_core::registry::get_key_manager(tink_tests::AES_GCM_HKDF_TYPE_URL)
         .expect("cannot obtain AES-GCM-HKDF key manager");
     for key_size in &AES_GCM_HKDF_KEY_SIZES {
         let format = tink_tests::new_aes_gcm_hkdf_key_format(
@@ -112,7 +112,7 @@ fn test_aes_gcm_hkdf_new_key_basic() {
 #[test]
 fn test_aes_gcm_hkdf_new_key_with_invalid_input() {
     tink_streaming_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_tests::AES_GCM_HKDF_TYPE_URL)
+    let key_manager = tink_core::registry::get_key_manager(tink_tests::AES_GCM_HKDF_TYPE_URL)
         .expect("cannot obtain AES-GCM-HKDF key manager");
     // bad format
     let bad_formats = gen_invalid_aes_gcm_hkdf_key_formats();
@@ -133,7 +133,7 @@ fn test_aes_gcm_hkdf_new_key_with_invalid_input() {
 #[test]
 fn test_aes_gcm_hkdf_new_key_data_basic() {
     tink_streaming_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_tests::AES_GCM_HKDF_TYPE_URL)
+    let key_manager = tink_core::registry::get_key_manager(tink_tests::AES_GCM_HKDF_TYPE_URL)
         .expect("cannot obtain AES-GCM-HKDF key manager");
     for key_size in &AES_GCM_HKDF_KEY_SIZES {
         let format = tink_tests::new_aes_gcm_hkdf_key_format(
@@ -163,7 +163,7 @@ fn test_aes_gcm_hkdf_new_key_data_basic() {
 #[test]
 fn test_aes_gcm_hkdf_new_key_data_with_invalid_input() {
     tink_streaming_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_tests::AES_GCM_HKDF_TYPE_URL)
+    let key_manager = tink_core::registry::get_key_manager(tink_tests::AES_GCM_HKDF_TYPE_URL)
         .expect("cannot obtain AES-GCM-HKDF key manager");
     let bad_formats = gen_invalid_aes_gcm_hkdf_key_formats();
     for (i, serialized_format) in bad_formats.iter().enumerate() {
@@ -183,7 +183,7 @@ fn test_aes_gcm_hkdf_new_key_data_with_invalid_input() {
 #[test]
 fn test_aes_gcm_hkdf_does_support() {
     tink_streaming_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_tests::AES_GCM_HKDF_TYPE_URL)
+    let key_manager = tink_core::registry::get_key_manager(tink_tests::AES_GCM_HKDF_TYPE_URL)
         .expect("cannot obtain AES-GCM-HKDF key manager");
     assert!(
         key_manager.does_support(tink_tests::AES_GCM_HKDF_TYPE_URL),
@@ -200,7 +200,7 @@ fn test_aes_gcm_hkdf_does_support() {
 #[test]
 fn test_aes_gcm_hkdf_type_url() {
     tink_streaming_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_tests::AES_GCM_HKDF_TYPE_URL)
+    let key_manager = tink_core::registry::get_key_manager(tink_tests::AES_GCM_HKDF_TYPE_URL)
         .expect("cannot obtain AES-GCM-HKDF key manager");
     assert_eq!(
         key_manager.type_url(),

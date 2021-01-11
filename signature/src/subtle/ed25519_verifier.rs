@@ -15,9 +15,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use signature::{Signature, Verifier as RustCryptoVerifier};
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
-/// A [`tink::Verifier`] for ED25519.
+/// A [`tink_core::Verifier`] for ED25519.
 #[derive(Clone)]
 pub struct Ed25519Verifier {
     public_key: ed25519_dalek::PublicKey,
@@ -39,8 +39,8 @@ impl Ed25519Verifier {
     }
 }
 
-impl tink::Verifier for Ed25519Verifier {
-    fn verify(&self, signature: &[u8], data: &[u8]) -> Result<(), tink::TinkError> {
+impl tink_core::Verifier for Ed25519Verifier {
+    fn verify(&self, signature: &[u8], data: &[u8]) -> Result<(), tink_core::TinkError> {
         if signature.len() != ed25519_dalek::SIGNATURE_LENGTH {
             return Err(format!(
                 "the length of the signature is not {}",

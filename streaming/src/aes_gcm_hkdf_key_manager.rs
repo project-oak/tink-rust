@@ -18,21 +18,21 @@
 
 use crate::subtle;
 use prost::Message;
-use tink::{subtle::random::get_random_bytes, utils::wrap_err, TinkError};
+use tink_core::{subtle::random::get_random_bytes, utils::wrap_err, TinkError};
 use tink_proto::HashType;
 
 pub const AES_GCM_HKDF_KEY_VERSION: u32 = 0;
 pub const AES_GCM_HKDF_TYPE_URL: &str =
     "type.googleapis.com/google.crypto.tink.AesGcmHkdfStreamingKey";
 
-/// [`AesGcmHkdfKeyManager`] is an implementation of the [`tink::registry::KeyManager`] trait.
+/// [`AesGcmHkdfKeyManager`] is an implementation of the [`tink_core::registry::KeyManager`] trait.
 /// It generates new AESGCM_HKDFKey keys and produces new instances of [`subtle::AesGcmHkdf`].
 #[derive(Default)]
 pub(crate) struct AesGcmHkdfKeyManager {}
 
-impl tink::registry::KeyManager for AesGcmHkdfKeyManager {
+impl tink_core::registry::KeyManager for AesGcmHkdfKeyManager {
     /// Create an AEAD for the given serialized [`tink_proto::AesGcmHkdfStreamingKey`].
-    fn primitive(&self, serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
+    fn primitive(&self, serialized_key: &[u8]) -> Result<tink_core::Primitive, TinkError> {
         if serialized_key.is_empty() {
             return Err("AesGcmHkdfKeyManager: invalid key".into());
         }
@@ -48,7 +48,7 @@ impl tink::registry::KeyManager for AesGcmHkdfKeyManager {
             // no first segment offset
             0,
         ) {
-            Ok(p) => Ok(tink::Primitive::StreamingAead(Box::new(p))),
+            Ok(p) => Ok(tink_core::Primitive::StreamingAead(Box::new(p))),
             Err(e) => Err(wrap_err(
                 "AesGcmHkdfKeyManager: cannot create new primitive",
                 e,
@@ -89,7 +89,7 @@ impl tink::registry::KeyManager for AesGcmHkdfKeyManager {
 fn validate_key(
     key: &tink_proto::AesGcmHkdfStreamingKey,
 ) -> Result<(tink_proto::AesGcmHkdfStreamingParams, HashType), TinkError> {
-    tink::keyset::validate_key_version(key.version, AES_GCM_HKDF_KEY_VERSION)?;
+    tink_core::keyset::validate_key_version(key.version, AES_GCM_HKDF_KEY_VERSION)?;
     crate::subtle::validate_aes_key_size(key.key_value.len())?;
     let key_params = key
         .params

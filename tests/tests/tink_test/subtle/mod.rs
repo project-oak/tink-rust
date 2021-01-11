@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::subtle;
+use tink_core::subtle;
 use tink_proto::HashType;
 
 mod cryptofmt_test;
@@ -48,7 +48,7 @@ fn test_compute_hash() {
     ];
 
     for tt in tests {
-        let mut hash_func = tink::subtle::get_hash_func(tt.hf).unwrap();
+        let mut hash_func = tink_core::subtle::get_hash_func(tt.hf).unwrap();
         let hashed = subtle::compute_hash(&mut hash_func, data).unwrap();
         let got_hash = hex::encode(hashed);
         assert_eq!(tt.want, got_hash);

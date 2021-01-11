@@ -17,7 +17,7 @@
 //! XChaCha20 Poly1305 implementation of AEAD.
 
 use chacha20poly1305::aead::{Aead, NewAead, Payload};
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
 /// Size of an XChaCh20 key in bytes.
 pub const X_CHA_CHA20_KEY_SIZE: usize = 32;
@@ -26,7 +26,7 @@ pub const X_CHA_CHA20_NONCE_SIZE: usize = 24;
 /// Size of a Poly1305 tag in bytes.
 const POLY1305_TAG_SIZE: usize = 16;
 
-/// `XChaCha20Poly1305` is an implementation of the [`tink::Aead`] trait.
+/// `XChaCha20Poly1305` is an implementation of the [`tink_core::Aead`] trait.
 #[derive(Clone)]
 pub struct XChaCha20Poly1305 {
     key: chacha20poly1305::Key,
@@ -46,7 +46,7 @@ impl XChaCha20Poly1305 {
     }
 }
 
-impl tink::Aead for XChaCha20Poly1305 {
+impl tink_core::Aead for XChaCha20Poly1305 {
     /// Encrypt `pt` with `aad` as additional
     /// authenticated data. The resulting ciphertext consists of two parts:
     /// (1) the nonce used for encryption and (2) the actual ciphertext.
@@ -88,6 +88,6 @@ impl tink::Aead for XChaCha20Poly1305 {
 
 /// Create a new nonce for encryption.
 fn new_nonce() -> chacha20poly1305::XNonce {
-    let iv = tink::subtle::random::get_random_bytes(X_CHA_CHA20_NONCE_SIZE);
+    let iv = tink_core::subtle::random::get_random_bytes(X_CHA_CHA20_NONCE_SIZE);
     *chacha20poly1305::XNonce::from_slice(&iv)
 }
