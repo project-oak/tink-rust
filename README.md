@@ -200,7 +200,8 @@ places (e.g. hash function names, curve names).  Wherever possible, the Rust por
 
 ### JSON Output
 
-Tink supports the encoding of `Keyset` and `EncryptedKeyset` types as JSON, with the following conventions:
+Tink supports the encoding of `Keyset` and `EncryptedKeyset` types as JSON when the `json` feature of the `tink` crate
+is enabled, with the following conventions:
 
 - Values of type `bytes` are serialized to base64-encoded strings (standard encoding).
 - Enum values are serialized as capitalized strings (e.g. `"ASYMMETRIC_PRIVATE"`).
@@ -243,7 +244,7 @@ This section describes the mapping between the upstream Go packages and the equi
 | `tink-mac`           | `mac` |
 | `tink-prf`           | `prf` |
 | `tink-signature`     | `signature` |
-|                      | `streamingaead` |
+| `tink-streaming-aead`| `streamingaead` |
 
 #### Testing
 
@@ -262,5 +263,5 @@ This section describes the mapping between the upstream Go packages and the equi
 |  Rust Crate/Module   | Go Package |
 |----------------------|------------|
 | `tink-awskms`        | `integration/awskms` |
-|                      | `integration/gcpkms` |
+| `tink-gcpkms`        | `integration/gcpkms` |
 |                      | `integration/hcvault` |
