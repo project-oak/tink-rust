@@ -162,28 +162,6 @@ This is because a returned trait object of type `dyn prost::Message` would not b
 on the [`prost::Message` trait](https://docs.rs/prost/0.6.1/prost/trait.Message.html) require a `self` parameter that is
 [`Sized`](https://doc.rust-lang.org/std/marker/trait.Sized.html), and a bare trait object is *not* `Sized`.
 
-### `std` Support
-
-The Rust port of Tink requires `std`, primarily due to the use of [prost](https://crates.io/crates/prost) for protocol
-buffer support. If Prost gets [`no_std` support](https://github.com/danburkert/prost/issues/51), this can be revisited.
-
-The obvious changes needed to make Tink `no_std` compatible would include the following, but there are bound to be
-others:
-
-- Depend on `core` + `alloc` instead of `std`, and have a `std` feature for those things that definitely need `std`:
-    - keyset I/O (both binary and JSON-based)
-    - streaming AEAD
-- Changes to use `core` / `alloc` types:
-    - `Box` => `alloc::boxed::Box`
-    - `String` => `alloc::string::String`
-    - `Vec` => `alloc::vec::Vec`
-    - `std::sync::Arc` => `alloc::sync::Arc`
-    - `std::fmt::*` => `core::fmt::*`
-    - `std::collections::HashMap` => `alloc::collections::BTreeMap`
-    - `std::sync::RwLock` => `spin::RwLock`
-    - `std::convert::From` => `core::convert::From`
-    - Move `TinkError` to wrap something that just implements `core::fmt::Debug` rather than `std::error::Error`.
-
 ### Stringly-Typed Parameters
 
 The Go port uses [stringly-typed parameters](https://wiki.c2.com/?StringlyTyped) to indicate enumerations in various
