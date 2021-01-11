@@ -67,6 +67,13 @@
 <span id="64">64</span>
 <span id="65">65</span>
 <span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2020 The Tink-Rust Authors</span>
 <span class="comment">//</span>
@@ -106,7 +113,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">w</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">Write</span><span class="op">&gt;</span>,
         <span class="ident">aad</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">Write</span><span class="op">&gt;</span>, <span class="kw">crate</span>::<span class="ident">TinkError</span><span class="op">&gt;</span>;
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">EncryptingWrite</span><span class="op">&gt;</span>, <span class="kw">crate</span>::<span class="ident">TinkError</span><span class="op">&gt;</span>;
 
     <span class="doccomment">/// Return a wrapper around an underlying `std::io::Read`, such that any read-operation</span>
     <span class="doccomment">/// via the wrapper results in AEAD-decryption of the underlying ciphertext,</span>
@@ -116,6 +123,13 @@
         <span class="ident">r</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">Read</span><span class="op">&gt;</span>,
         <span class="ident">aad</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">Read</span><span class="op">&gt;</span>, <span class="kw">crate</span>::<span class="ident">TinkError</span><span class="op">&gt;</span>;
+}
+
+<span class="doccomment">/// Trait for an object that writes encrypted data.  Users must call `close()` to finish.</span>
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">EncryptingWrite</span>: <span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">Write</span> {
+    <span class="doccomment">/// Close the stream, writing any final buffered data.  Any operation</span>
+    <span class="doccomment">/// on the stream after this will fail.</span>
+    <span class="kw">fn</span> <span class="ident">close</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="kw">crate</span>::<span class="ident">TinkError</span><span class="op">&gt;</span>;
 }
 
 <span class="doccomment">/// Trait bound to indicate that primitive trait objects should support cloning</span>

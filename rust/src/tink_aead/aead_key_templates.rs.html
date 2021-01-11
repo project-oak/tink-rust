@@ -183,6 +183,16 @@
 <span id="180">180</span>
 <span id="181">181</span>
 <span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2020 The Tink-Rust Authors</span>
 <span class="comment">//</span>
@@ -266,6 +276,16 @@
 <span class="doccomment">///  - HMAC hash function: SHA256</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">aes256_ctr_hmac_sha256_key_template</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
     <span class="ident">create_aes_ctr_hmac_aead_key_template</span>(<span class="number">32</span>, <span class="number">16</span>, <span class="number">32</span>, <span class="number">32</span>, <span class="ident">HashType</span>::<span class="ident">Sha256</span>)
+}
+
+<span class="doccomment">/// Return a [`KeyTemplate`] that generates an AES-CTR-HMAC-AEAD key with the following parameters:</span>
+<span class="doccomment">///  - AES key size: 32 bytes</span>
+<span class="doccomment">///  - AES CTR IV size: 16 bytes</span>
+<span class="doccomment">///  - HMAC key size: 64 bytes</span>
+<span class="doccomment">///  - HMAC tag size: 64 bytes</span>
+<span class="doccomment">///  - HMAC hash function: SHA512</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">aes256_ctr_hmac_sha512_key_template</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
+    <span class="ident">create_aes_ctr_hmac_aead_key_template</span>(<span class="number">32</span>, <span class="number">16</span>, <span class="number">64</span>, <span class="number">64</span>, <span class="ident">HashType</span>::<span class="ident">Sha512</span>)
 }
 
 <span class="doccomment">/// Return a [`KeyTemplate`] that generates a CHACHA20_POLY1305 key.</span>

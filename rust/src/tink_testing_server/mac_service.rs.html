@@ -87,7 +87,7 @@
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">proto</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Default</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MacServerImpl</span> {}
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MacServerImpl</span>;
 
 <span class="attribute">#[<span class="ident">tonic</span>::<span class="ident">async_trait</span>]</span>
 <span class="kw">impl</span> <span class="ident">proto</span>::<span class="ident">mac_server</span>::<span class="ident">Mac</span> <span class="kw">for</span> <span class="ident">MacServerImpl</span> {

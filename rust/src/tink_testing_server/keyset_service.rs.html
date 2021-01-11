@@ -154,7 +154,7 @@
 <span class="kw">use</span> <span class="ident">tink</span>::{<span class="ident">utils</span>::<span class="ident">wrap_err</span>, <span class="ident">TinkError</span>};
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Default</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">KeysetServerImpl</span> {}
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">KeysetServerImpl</span>;
 
 <span class="attribute">#[<span class="ident">tonic</span>::<span class="ident">async_trait</span>]</span>
 <span class="kw">impl</span> <span class="ident">proto</span>::<span class="ident">keyset_server</span>::<span class="ident">Keyset</span> <span class="kw">for</span> <span class="ident">KeysetServerImpl</span> {

@@ -289,15 +289,15 @@
         <span class="kw">let</span> <span class="ident">key_data</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">registry</span>::<span class="ident">new_key_data</span>(<span class="ident">kt</span>)
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;keyset::Manager: cannot create KeyData&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">key_id</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">new_key_id</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">output_prefix_type</span> <span class="op">=</span> <span class="ident">kt</span>.<span class="ident">output_prefix_type</span>;
-        <span class="kw">if</span> <span class="ident">OutputPrefixType</span>::<span class="ident">from_i32</span>(<span class="ident">output_prefix_type</span>) <span class="op">=</span><span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">OutputPrefixType</span>::<span class="ident">UnknownPrefix</span>) {
-            <span class="ident">output_prefix_type</span> <span class="op">=</span> <span class="ident">OutputPrefixType</span>::<span class="ident">Tink</span> <span class="kw">as</span> <span class="ident">i32</span>;
-        }
+        <span class="kw">let</span> <span class="ident">output_prefix_type</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">OutputPrefixType</span>::<span class="ident">from_i32</span>(<span class="ident">kt</span>.<span class="ident">output_prefix_type</span>) {
+            <span class="prelude-val">None</span> <span class="op">|</span> <span class="prelude-val">Some</span>(<span class="ident">OutputPrefixType</span>::<span class="ident">UnknownPrefix</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">OutputPrefixType</span>::<span class="ident">Tink</span>,
+            <span class="prelude-val">Some</span>(<span class="ident">p</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">p</span>,
+        };
         <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">proto</span>::<span class="ident">keyset</span>::<span class="ident">Key</span> {
             <span class="ident">key_data</span>: <span class="prelude-val">Some</span>(<span class="ident">key_data</span>),
             <span class="ident">status</span>: <span class="kw">crate</span>::<span class="ident">proto</span>::<span class="ident">KeyStatusType</span>::<span class="ident">Enabled</span> <span class="kw">as</span> <span class="ident">i32</span>,
             <span class="ident">key_id</span>,
-            <span class="ident">output_prefix_type</span>,
+            <span class="ident">output_prefix_type</span>: <span class="ident">output_prefix_type</span> <span class="kw">as</span> <span class="ident">i32</span>,
         };
         <span class="self">self</span>.<span class="ident">ks</span>.<span class="ident">key</span>.<span class="ident">push</span>(<span class="ident">key</span>);
         <span class="kw">if</span> <span class="ident">as_primary</span> {

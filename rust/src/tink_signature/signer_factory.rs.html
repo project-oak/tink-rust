@@ -94,8 +94,6 @@
 <span id="91">91</span>
 <span id="92">92</span>
 <span id="93">93</span>
-<span id="94">94</span>
-<span id="95">95</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2020 The Tink-Rust Authors</span>
 <span class="comment">//</span>
@@ -139,7 +137,7 @@
 <span class="doccomment">/// A [`tink::Signer`] implementation that uses the underlying primitive set for signing.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span>
 <span class="kw">struct</span> <span class="ident">WrappedSigner</span> {
-    <span class="ident">ps</span>: <span class="ident">tink</span>::<span class="ident">primitiveset</span>::<span class="ident">PrimitiveSet</span>,
+    <span class="ident">ps</span>: <span class="ident">tink</span>::<span class="ident">primitiveset</span>::<span class="ident">TypedPrimitiveSet</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">tink</span>::<span class="ident">Signer</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">WrappedSigner</span> {
@@ -160,7 +158,9 @@
                 };
             }
         }
-        <span class="prelude-val">Ok</span>(<span class="ident">WrappedSigner</span> { <span class="ident">ps</span> })
+        <span class="comment">// The `.into()` call is only safe because we&#39;ve just checked that all entries have</span>
+        <span class="comment">// the right type of primitive</span>
+        <span class="prelude-val">Ok</span>(<span class="ident">WrappedSigner</span> { <span class="ident">ps</span>: <span class="ident">ps</span>.<span class="ident">into</span>() })
     }
 }
 
@@ -172,18 +172,14 @@
             <span class="prelude-val">Some</span>(<span class="ident">p</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">p</span>,
             <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="string">&quot;signer::factory: no primary primitive&quot;</span>.<span class="ident">into</span>()),
         };
-        <span class="kw">let</span> <span class="ident">primitive</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">primary</span>.<span class="ident">primitive</span> {
-            <span class="ident">tink</span>::<span class="ident">Primitive</span>::<span class="ident">Signer</span>(<span class="ident">p</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">p</span>,
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="string">&quot;signer::factory: not a Mac primitive&quot;</span>.<span class="ident">into</span>()),
-        };
 
         <span class="kw">let</span> <span class="ident">signature</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">primary</span>.<span class="ident">prefix_type</span> <span class="op">=</span><span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Legacy</span> {
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">signed_data_copy</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="ident">data</span>.<span class="ident">len</span>() <span class="op">+</span> <span class="number">1</span>);
             <span class="ident">signed_data_copy</span>.<span class="ident">extend_from_slice</span>(<span class="ident">data</span>);
             <span class="ident">signed_data_copy</span>.<span class="ident">push</span>(<span class="ident">tink</span>::<span class="ident">cryptofmt</span>::<span class="ident">LEGACY_START_BYTE</span>);
-            <span class="ident">primitive</span>.<span class="ident">sign</span>(<span class="kw-2">&amp;</span><span class="ident">signed_data_copy</span>)<span class="question-mark">?</span>
+            <span class="ident">primary</span>.<span class="ident">primitive</span>.<span class="ident">sign</span>(<span class="kw-2">&amp;</span><span class="ident">signed_data_copy</span>)<span class="question-mark">?</span>
         } <span class="kw">else</span> {
-            <span class="ident">primitive</span>.<span class="ident">sign</span>(<span class="ident">data</span>)<span class="question-mark">?</span>
+            <span class="ident">primary</span>.<span class="ident">primitive</span>.<span class="ident">sign</span>(<span class="ident">data</span>)<span class="question-mark">?</span>
         };
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ret</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="ident">primary</span>.<span class="ident">prefix</span>.<span class="ident">len</span>() <span class="op">+</span> <span class="ident">signature</span>.<span class="ident">len</span>());

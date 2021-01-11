@@ -108,7 +108,6 @@
 <span id="105">105</span>
 <span id="106">106</span>
 <span id="107">107</span>
-<span id="108">108</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2020 The Tink-Rust Authors</span>
 <span class="comment">//</span>
@@ -149,11 +148,7 @@
         }
         <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HkdfPrfKey</span>::<span class="ident">decode</span>(<span class="ident">serialized_key</span>)
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;HkdfPrfKeyManager: invalid key&quot;</span>))<span class="question-mark">?</span>;
-        <span class="ident">validate_key</span>(<span class="kw-2">&amp;</span><span class="ident">key</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="ident">key</span>
-            .<span class="ident">params</span>
-            .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;HkdfPrfKeyManager: no key parameters&quot;</span>))<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">hash</span> <span class="op">=</span> <span class="ident">HashType</span>::<span class="ident">from_i32</span>(<span class="ident">params</span>.<span class="ident">hash</span>).<span class="ident">unwrap_or</span>(<span class="ident">HashType</span>::<span class="ident">UnknownHash</span>);
+        <span class="kw">let</span> (<span class="ident">params</span>, <span class="ident">hash</span>) <span class="op">=</span> <span class="ident">validate_key</span>(<span class="kw-2">&amp;</span><span class="ident">key</span>).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;HkdfPrfKeyManager&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
 
         <span class="kw">match</span> <span class="ident">subtle</span>::<span class="ident">HkdfPrf</span>::<span class="ident">new</span>(<span class="ident">hash</span>, <span class="kw-2">&amp;</span><span class="ident">key</span>.<span class="ident">key_value</span>, <span class="kw-2">&amp;</span><span class="ident">params</span>.<span class="ident">salt</span>) {
             <span class="prelude-val">Ok</span>(<span class="ident">p</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">tink</span>::<span class="ident">Primitive</span>::<span class="ident">Prf</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">p</span>))),
@@ -197,7 +192,9 @@
 
 <span class="doccomment">/// Validate the given [`HkdfPrfKey`](tink::proto::HkdfPrfKey). It only validates the version of the</span>
 <span class="doccomment">/// key because other parameters will be validated in primitive construction.</span>
-<span class="kw">fn</span> <span class="ident">validate_key</span>(<span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HkdfPrfKey</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TinkError</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">validate_key</span>(
+    <span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HkdfPrfKey</span>,
+) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HkdfPrfParams</span>, <span class="ident">HashType</span>), <span class="ident">TinkError</span><span class="op">&gt;</span> {
     <span class="ident">tink</span>::<span class="ident">keyset</span>::<span class="ident">validate_key_version</span>(<span class="ident">key</span>.<span class="ident">version</span>, <span class="ident">HKDF_PRF_KEY_VERSION</span>)
         .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;HkdfPrfKeyManager: invalid version&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">key_size</span> <span class="op">=</span> <span class="ident">key</span>.<span class="ident">key_value</span>.<span class="ident">len</span>();
@@ -206,7 +203,8 @@
         <span class="prelude-val">Some</span>(<span class="ident">p</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">p</span>,
     };
     <span class="kw">let</span> <span class="ident">hash</span> <span class="op">=</span> <span class="ident">HashType</span>::<span class="ident">from_i32</span>(<span class="ident">params</span>.<span class="ident">hash</span>).<span class="ident">unwrap_or</span>(<span class="ident">HashType</span>::<span class="ident">UnknownHash</span>);
-    <span class="ident">subtle</span>::<span class="ident">validate_hkdf_prf_params</span>(<span class="ident">hash</span>, <span class="ident">key_size</span>, <span class="kw-2">&amp;</span><span class="ident">params</span>.<span class="ident">salt</span>)
+    <span class="ident">subtle</span>::<span class="ident">validate_hkdf_prf_params</span>(<span class="ident">hash</span>, <span class="ident">key_size</span>, <span class="kw-2">&amp;</span><span class="ident">params</span>.<span class="ident">salt</span>)<span class="question-mark">?</span>;
+    <span class="prelude-val">Ok</span>((<span class="ident">params</span>.<span class="ident">clone</span>(), <span class="ident">hash</span>))
 }
 
 <span class="doccomment">/// Validate the given [`HkdfPrfKeyFormat`](tink::proto::HkdfPrfKeyFormat).</span>
@@ -214,7 +212,7 @@
     <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="ident">format</span>
         .<span class="ident">params</span>
         .<span class="ident">as_ref</span>()
-        .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;no params&quot;</span>))<span class="question-mark">?</span>;
+        .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;no key params&quot;</span>))<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">hash</span> <span class="op">=</span> <span class="ident">HashType</span>::<span class="ident">from_i32</span>(<span class="ident">params</span>.<span class="ident">hash</span>).<span class="ident">unwrap_or</span>(<span class="ident">HashType</span>::<span class="ident">UnknownHash</span>);
     <span class="ident">subtle</span>::<span class="ident">validate_hkdf_prf_params</span>(<span class="ident">hash</span>, <span class="ident">format</span>.<span class="ident">key_size</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="kw-2">&amp;</span><span class="ident">params</span>.<span class="ident">salt</span>)
 }

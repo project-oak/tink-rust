@@ -524,6 +524,22 @@
 <span id="521">521</span>
 <span id="522">522</span>
 <span id="523">523</span>
+<span id="524">524</span>
+<span id="525">525</span>
+<span id="526">526</span>
+<span id="527">527</span>
+<span id="528">528</span>
+<span id="529">529</span>
+<span id="530">530</span>
+<span id="531">531</span>
+<span id="532">532</span>
+<span id="533">533</span>
+<span id="534">534</span>
+<span id="535">535</span>
+<span id="536">536</span>
+<span id="537">537</span>
+<span id="538">538</span>
+<span id="539">539</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2020 The Tink-Rust Authors</span>
 <span class="comment">//</span>
@@ -546,6 +562,7 @@
 <span class="kw">use</span> <span class="ident">std</span>::{
     <span class="ident">cell</span>::<span class="ident">RefCell</span>,
     <span class="ident">fs</span>::{<span class="ident">File</span>, <span class="ident">OpenOptions</span>},
+    <span class="ident">path</span>::<span class="ident">PathBuf</span>,
     <span class="ident">rc</span>::<span class="ident">Rc</span>,
     <span class="ident">str</span>::<span class="ident">FromStr</span>,
 };
@@ -807,6 +824,7 @@
     <span class="ident">tink_mac</span>::<span class="ident">init</span>();
     <span class="ident">tink_prf</span>::<span class="ident">init</span>();
     <span class="ident">tink_signature</span>::<span class="ident">init</span>();
+    <span class="ident">tink_streaming_aead</span>::<span class="ident">init</span>();
 
     <span class="kw">match</span> <span class="ident">Command</span>::<span class="ident">from_args</span>() {
         <span class="ident">Command</span>::<span class="ident">AddKey</span>(<span class="ident">opts</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">add_key</span>(<span class="ident">opts</span>),
@@ -1039,7 +1057,21 @@
         } <span class="kw">else</span> {
             <span class="ident">tink_awskms</span>::<span class="ident">AwsClient</span>::<span class="ident">new_with_credentials</span>(
                 <span class="kw-2">&amp;</span><span class="ident">wrap_opts</span>.<span class="ident">master_key_uri</span>,
-                <span class="kw-2">&amp;</span><span class="ident">wrap_opts</span>.<span class="ident">credential_path</span>,
+                <span class="kw-2">&amp;</span><span class="ident">PathBuf</span>::<span class="ident">from</span>(<span class="kw-2">&amp;</span><span class="ident">wrap_opts</span>.<span class="ident">credential_path</span>),
+            )<span class="question-mark">?</span>
+        };
+        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_kms_client</span>(<span class="ident">g</span>);
+        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">get_kms_client</span>(<span class="kw-2">&amp;</span><span class="ident">wrap_opts</span>.<span class="ident">master_key_uri</span>)
+    } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">wrap_opts</span>
+        .<span class="ident">master_key_uri</span>
+        .<span class="ident">starts_with</span>(<span class="ident">tink_gcpkms</span>::<span class="ident">GCP_PREFIX</span>)
+    {
+        <span class="kw">let</span> <span class="ident">g</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">wrap_opts</span>.<span class="ident">credential_path</span>.<span class="ident">is_empty</span>() {
+            <span class="ident">tink_gcpkms</span>::<span class="ident">GcpClient</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="ident">wrap_opts</span>.<span class="ident">master_key_uri</span>)<span class="question-mark">?</span>
+        } <span class="kw">else</span> {
+            <span class="ident">tink_gcpkms</span>::<span class="ident">GcpClient</span>::<span class="ident">new_with_credentials</span>(
+                <span class="kw-2">&amp;</span><span class="ident">wrap_opts</span>.<span class="ident">master_key_uri</span>,
+                <span class="kw-2">&amp;</span><span class="ident">PathBuf</span>::<span class="ident">from</span>(<span class="kw-2">&amp;</span><span class="ident">wrap_opts</span>.<span class="ident">credential_path</span>),
             )<span class="question-mark">?</span>
         };
         <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_kms_client</span>(<span class="ident">g</span>);

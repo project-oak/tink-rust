@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["AWS_PREFIX",""],["UPSTREAM_VERSION","The upstream Tink version that this Rust port is based on."]],"struct":[["AwsClient","`AwsClient` represents a client that connects to the AWS KMS backend."]]});
+initSidebarItems({"constant":[["AWS_PREFIX","Prefix for any AWS-KMS key URIs."],["UPSTREAM_VERSION","The upstream Tink version that this Rust port is based on."]],"struct":[["AwsClient","`AwsClient` represents a client that connects to the AWS KMS backend."]]});
