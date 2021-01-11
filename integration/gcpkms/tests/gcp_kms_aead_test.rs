@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use std::{env, path::PathBuf};
-use tink::{subtle::random::get_random_bytes, TinkError};
+use tink::{registry::KmsClient, subtle::random::get_random_bytes, TinkError};
 
 mod common;
 use common::*;
@@ -73,4 +73,22 @@ fn test_gcpkms_basic_aead() {
     let a = tink_aead::new(&kh).expect("error getting the primitive");
     let result = basic_aead_test(a);
     assert!(result.is_ok(), "error in basic aead tests: {:?}", result);
+}
+
+#[test]
+fn test_aead_with_invalid_key_fail() {
+    init();
+    let key_uri = "gcp-kms://projects/absent/locations/global/keyRings/nope/cryptoKeys/bogus";
+    let client = tink_gcpkms::GcpClient::new(key_uri).unwrap();
+    let aead = client.get_aead(key_uri).unwrap();
+
+    // Not a valid key URI so everything will fail.
+    let result = aead.encrypt(b"data", b"aad");
+    tink_testutil::expect_err(result, "request failed");
+    let result = aead.encrypt(b"data", b"");
+    tink_testutil::expect_err(result, "request failed");
+    let result = aead.decrypt(b"data", b"aad");
+    tink_testutil::expect_err(result, "request failed");
+    let result = aead.decrypt(b"data", b"");
+    tink_testutil::expect_err(result, "request failed");
 }

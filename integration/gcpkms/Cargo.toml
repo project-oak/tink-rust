@@ -16,3 +16,4 @@ yup-oauth2 = "^1.0.12"
 
 [dev-dependencies]
 tink-aead = "^0.1"
+tink-testutil = "^0.1"

@@ -39,7 +39,7 @@ gcloud kms keys create "${GCP_KEYNAME}" --project="${GCP_PROJECT}" --keyring="${
 cleanup() {
     gcloud kms keys versions destroy 1 --project="${GCP_PROJECT}" --keyring="${GCP_KEYRING}" --location="${GCP_LOCATION}" --key="${GCP_KEYNAME}"
     # Show key status on exit so any non-pending-destruction keys might get spotted.
-    gcloud kms keys list --project="${GCP_PROJECT}" --keyring="${GCP_KEYRING}" --location="${GCP_LOCATION}" | grep -v DESTROY_SCHEDULED
+    gcloud kms keys list --project="${GCP_PROJECT}" --keyring="${GCP_KEYRING}" --location="${GCP_LOCATION}" | grep -v DESTROY_SCHEDULED | grep -v DESTROYED
 }
 trap cleanup EXIT
 
