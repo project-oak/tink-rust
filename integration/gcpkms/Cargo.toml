@@ -10,7 +10,7 @@ keywords = ["cryptography", "tink", "kms", "gcp"]
 categories = ["cryptography"]
 
 [dependencies]
-base64 = "^0.12"
+base64 = "^0.13"
 google-cloudkms1 = "^1.0.14"
 hyper = "^0.10.16"
 hyper-rustls = " ^0.6"
