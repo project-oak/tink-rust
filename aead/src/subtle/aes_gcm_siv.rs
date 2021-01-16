@@ -20,12 +20,9 @@ use aes_gcm_siv::aead::{consts::U12, generic_array::GenericArray, Aead, NewAead,
 use tink::{utils::wrap_err, TinkError};
 
 /// The only IV size that this implementation supports.
-pub const AES_GCM_SIV_IV_SIZE: usize = 12;
+pub const AES_GCM_SIV_NONCE_SIZE: usize = 12;
 /// The only tag size that this implementation supports.
 pub const AES_GCM_SIV_TAG_SIZE: usize = 16;
-// TODO(#47): check whether this limit is needed and correct.
-/// The maximum supported plaintext size.
-const MAX_AES_GCM_SIV_PLAINTEXT_SIZE: usize = (1 << 36) - 32;
 
 #[derive(Clone)]
 enum AesGcmSivVariant {
@@ -58,14 +55,17 @@ impl AesGcmSiv {
 }
 
 impl tink::Aead for AesGcmSiv {
-    /// Encrypt `pt` with `aad` as additional authenticated data.  The resulting ciphertext consists
-    /// of two parts: (1) the IV used for encryption and (2) the actual ciphertext.
+    /// Encrypt `pt` with `aad` as additional authenticated data.
     ///
-    /// Note: AES-GCM-SIV implementation of crypto library always returns ciphertext with 128-bit
-    /// tag.
+    /// The resulting ciphertext consists of two parts: (1) the IV used for encryption and (2) the
+    /// actual ciphertext (which itself is built of two parts, the inner ciphertext followed by
+    /// an authentication tag).
     fn encrypt(&self, pt: &[u8], aad: &[u8]) -> Result<Vec<u8>, TinkError> {
-        if pt.len() > max_pt_size() {
+        if pt.len() > ((isize::MAX as usize) - AES_GCM_SIV_NONCE_SIZE - AES_GCM_SIV_TAG_SIZE) {
             return Err("AesGcmSiv: plaintext too long".into());
+        }
+        if aad.len() > (isize::MAX as usize) {
+            return Err("AesGcmSiv: additional-data too long".into());
         }
         let iv = new_iv();
         let payload = Payload { msg: pt, aad };
@@ -82,12 +82,19 @@ impl tink::Aead for AesGcmSiv {
 
     /// Decrypt `ct` with `aad` as the additional authenticated data.
     fn decrypt(&self, ct: &[u8], aad: &[u8]) -> Result<Vec<u8>, TinkError> {
-        if ct.len() < AES_GCM_SIV_IV_SIZE + AES_GCM_SIV_TAG_SIZE {
+        if ct.len() < AES_GCM_SIV_NONCE_SIZE + AES_GCM_SIV_TAG_SIZE {
             return Err("AesGcmSiv: ciphertext too short".into());
         }
-        let iv = GenericArray::from_slice(&ct[..AES_GCM_SIV_IV_SIZE]);
+        if ct.len() > (isize::MAX as usize) {
+            return Err("AesGcmSiv: ciphertext too long".into());
+        }
+        if aad.len() > (isize::MAX as usize) {
+            return Err("AesGcmSiv: additional-data too long".into());
+        }
+
+        let iv = GenericArray::from_slice(&ct[..AES_GCM_SIV_NONCE_SIZE]);
         let payload = Payload {
-            msg: &ct[AES_GCM_SIV_IV_SIZE..],
+            msg: &ct[AES_GCM_SIV_NONCE_SIZE..],
             aad,
         };
         let pt = match &self.key {
@@ -101,12 +108,6 @@ impl tink::Aead for AesGcmSiv {
 
 /// Create a new IV for encryption.
 fn new_iv() -> GenericArray<u8, U12> {
-    let iv = tink::subtle::random::get_random_bytes(AES_GCM_SIV_IV_SIZE);
+    let iv = tink::subtle::random::get_random_bytes(AES_GCM_SIV_NONCE_SIZE);
     *GenericArray::<u8, U12>::from_slice(&iv)
-}
-
-/// Maximum plaintext size.
-fn max_pt_size() -> usize {
-    let x = (isize::MAX as usize) - AES_GCM_SIV_IV_SIZE - AES_GCM_SIV_TAG_SIZE;
-    std::cmp::min(x, MAX_AES_GCM_SIV_PLAINTEXT_SIZE)
 }
