@@ -341,13 +341,8 @@ fn test_keyset_manager_unknown_prefix_type() {
         key_template.output_prefix_type = *prefix_type;
 
         let mut km = tink_core::keyset::Manager::new();
-        km.rotate(&key_template).unwrap();
-        let kh = km.handle().unwrap();
-        let ks = insecure::keyset_material(&kh);
-        assert_eq!(
-            ks.key[0].output_prefix_type,
-            tink_proto::OutputPrefixType::Tink as i32
-        );
+        let result = km.rotate(&key_template);
+        tink_tests::expect_err(result, "unknown output prefix type");
     }
 }
 
@@ -378,4 +373,13 @@ fn test_existing_keyset() {
         ks2.key[1].key_id, ks2.primary_key_id,
         "expect the second key to be primary"
     );
+}
+
+#[test]
+fn test_unknown_output_prefix_type_fails() {
+    let mut ksm1 = tink_core::keyset::Manager::new();
+    let mut kt = tink_mac::hmac_sha256_tag128_key_template();
+    kt.output_prefix_type = tink_proto::OutputPrefixType::UnknownPrefix as i32;
+    let result = ksm1.rotate(&kt);
+    tink_tests::expect_err(result, "unknown output prefix type");
 }
