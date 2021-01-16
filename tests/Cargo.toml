@@ -17,6 +17,7 @@ hex = "^0.4.3"
 p256 = "^0.8.1"
 prost = "^0.7"
 rand = "^0.7"
+regex = "^1.4.2"
 serde = { version = "^1.0.125", features = ["derive"] }
 tink-core = { version = "^0.1", features = ["insecure", "json"] }
 tink-aead = "^0.1"

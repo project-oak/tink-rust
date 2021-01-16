@@ -78,3 +78,14 @@ enough to find a pattern, though, as it is text."
     tink_tests::z_test_autocorrelation_uniform_string(&r1)
         .expect("Expected random 32 byte string to show not autocorrelation");
 }
+
+#[test]
+fn test_key_template_proto() {
+    let template = tink_tests::key_template_proto("aead", "AES256_GCM").unwrap();
+    assert_eq!(
+        template.type_url,
+        "type.googleapis.com/google.crypto.tink.AesGcmKey"
+    );
+    let result = tink_tests::key_template_proto("aead", "UNKNOWN");
+    tink_tests::expect_err(result, "Failed to open");
+}

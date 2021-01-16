@@ -29,6 +29,8 @@ pub use constant::*;
 pub mod fakekms;
 mod sharedbuf;
 pub use sharedbuf::*;
+mod testdata;
+pub use testdata::*;
 mod wycheproofutil;
 pub use wycheproofutil::*;
 
