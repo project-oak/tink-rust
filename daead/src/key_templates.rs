@@ -16,14 +16,17 @@
 
 //! This module contains pre-generated [`KeyTemplate`] instances for deterministic AEAD.
 
+use prost::Message;
 use tink_proto::KeyTemplate;
 
 /// Return a [`KeyTemplate`](tink_proto::KeyTemplate) that generates a AES-SIV key.
 pub fn aes_siv_key_template() -> KeyTemplate {
+    let format = tink_proto::AesSivKeyFormat { key_size: 64 };
+    let mut serialized_format = Vec::new();
+    format.encode(&mut serialized_format).unwrap(); // safe: proto-encode
     KeyTemplate {
-        // Don't set value because KeyFormat is not required.
-        value: Vec::new(),
         type_url: crate::AES_SIV_TYPE_URL.to_string(),
         output_prefix_type: tink_proto::OutputPrefixType::Tink as i32,
+        value: serialized_format,
     }
 }
