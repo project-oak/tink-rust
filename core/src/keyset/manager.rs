@@ -60,7 +60,9 @@ impl Manager {
             .map_err(|e| wrap_err("keyset::Manager: cannot create KeyData", e))?;
         let key_id = self.new_key_id();
         let output_prefix_type = match OutputPrefixType::from_i32(kt.output_prefix_type) {
-            None | Some(OutputPrefixType::UnknownPrefix) => OutputPrefixType::Tink,
+            None | Some(OutputPrefixType::UnknownPrefix) => {
+                return Err("keyset::Manager: unknown output prefix type".into())
+            }
             Some(p) => p,
         };
         let key = tink_proto::keyset::Key {
