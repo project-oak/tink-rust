@@ -22,6 +22,18 @@ use tink_tests::WycheproofResult;
 
 const KEY_SIZES: &[usize] = &[16, 32];
 
+#[test]
+fn test_aes_gcm_siv_rejects_invalid_key_length() {
+    let invalid_key_sizes = vec![4, 8, 12, 15, 17, 24, 30, 31, 33, 64, 128];
+
+    for key_size in invalid_key_sizes {
+        let key = get_random_bytes(key_size);
+
+        let result = subtle::AesGcmSiv::new(&key);
+        tink_tests::expect_err(result, "invalid AES key size");
+    }
+}
+
 // Check that the tag size is always 128 bit.
 #[test]
 fn test_aes_gcm_siv_tag_length() {
@@ -31,7 +43,7 @@ fn test_aes_gcm_siv_tag_length() {
         let ad = get_random_bytes(32);
         let pt = get_random_bytes(32);
         let ct = a.encrypt(&pt, &ad).unwrap();
-        let actual_tag_size = ct.len() - subtle::AES_GCM_SIV_IV_SIZE - pt.len();
+        let actual_tag_size = ct.len() - subtle::AES_GCM_SIV_NONCE_SIZE - pt.len();
         assert_eq!(
             actual_tag_size,
             subtle::AES_GCM_SIV_TAG_SIZE,
@@ -120,8 +132,8 @@ fn test_aes_gcm_siv_modify_ciphertext() {
                 "expect an error when flipping bit of ciphertext: byte {}, bit {}",
                 i, j
             ));
+            ct[i] = tmp;
         }
-        ct[i] = tmp;
     }
     // truncated ciphertext
     for i in 1..ct.len() {
@@ -147,7 +159,7 @@ fn test_aes_gcm_siv_modify_ciphertext() {
 // This is a very simple test for the randomness of the nonce. The test simply checks that the
 // multiple ciphertexts of the same message are distinct.
 #[test]
-fn test_aes_gcm_siv_random_nonce() {
+fn test_aes_gcm_siv_random_nonce_produces_different_ciphertexts() {
     let n_sample = 1 << 17;
     let key = get_random_bytes(16);
     let pt = &[];
@@ -167,7 +179,7 @@ fn test_aes_gcm_siv_random_nonce() {
 }
 
 #[test]
-fn test_aes_gcm_siv_vectors() {
+fn test_aes_gcm_siv_wycheproof_cases() {
     let filename = "testvectors/aes_gcm_siv_test.json";
     println!("wycheproof file '{}'", filename);
     let bytes = tink_tests::wycheproof_data(filename);
@@ -175,57 +187,104 @@ fn test_aes_gcm_siv_vectors() {
     assert_eq!("AES-GCM-SIV", data.suite.algorithm);
 
     for g in &data.test_groups {
-        if subtle::validate_aes_key_size(g.key_size as usize / 8).is_err() {
-            println!("   skipping tests for key_size={}", g.key_size);
-            continue;
-        }
-        if g.iv_size as usize != subtle::AES_GCM_SIV_IV_SIZE * 8 {
-            println!("   skipping tests for iv_size={}", g.iv_size);
-            continue;
-        }
         for tc in &g.tests {
             println!(
                 "     case {} [{}] {}",
                 tc.case.case_id, tc.case.result, tc.case.comment
             );
-            let mut combined_ct = Vec::new();
-            combined_ct.extend_from_slice(&tc.iv);
-            combined_ct.extend_from_slice(&tc.ct);
-            combined_ct.extend_from_slice(&tc.tag);
+            run_wycheproof_decrypt_only(&tc);
+            run_wycheproof_encrypt_decrypt(&tc);
+        }
+    }
+}
 
-            // create cipher and do decryption
-            let cipher = match subtle::AesGcmSiv::new(&tc.key) {
-                Ok(c) => c,
-                Err(e) => panic!(
-                    "cannot create new instance of AesGcmSiv in test case {}: {:?}",
-                    tc.case.case_id, e
-                ),
-            };
-            let result = cipher.decrypt(&combined_ct, &tc.aad);
-            match result {
-                Err(e) => {
-                    assert_ne!(
-                        tc.case.result,
-                        WycheproofResult::Valid,
-                        "unexpected error in test case {}: {}",
-                        tc.case.case_id,
-                        e
-                    );
-                }
-                Ok(decrypted) => {
-                    assert_ne!(
-                        tc.case.result,
-                        WycheproofResult::Invalid,
-                        "decrypted invalid test case {}",
-                        tc.case.case_id
-                    );
-                    assert_eq!(
-                        decrypted, tc.msg,
-                        "incorrect decryption in test case {}",
-                        tc.case.case_id,
-                    );
-                }
+fn run_wycheproof_decrypt_only(tc: &wycheproof::TestCase) {
+    let mut combined_ct = Vec::new();
+    combined_ct.extend_from_slice(&tc.iv);
+    combined_ct.extend_from_slice(&tc.ct);
+    combined_ct.extend_from_slice(&tc.tag);
+
+    let aead = match subtle::AesGcmSiv::new(&tc.key) {
+        Ok(c) => c,
+        Err(e) => panic!(
+            "cannot create new instance of AesGcmSiv in test case {}: {:?}",
+            tc.case.case_id, e
+        ),
+    };
+    let result = aead.decrypt(&combined_ct, &tc.aad);
+    match tc.case.result {
+        WycheproofResult::Valid => {
+            assert!(
+                result.is_ok(),
+                "unexpected error in test case {}: {:?}",
+                tc.case.case_id,
+                result.err()
+            );
+            let decrypted = result.unwrap();
+            assert_eq!(
+                decrypted, tc.msg,
+                "incorrect decryption in test case {}",
+                tc.case.case_id,
+            );
+        }
+        WycheproofResult::Invalid => {
+            if let Ok(decrypted) = result {
+                assert_ne!(
+                    tc.ct, decrypted,
+                    "successfully decrypted invalid test case {}",
+                    tc.case.case_id
+                );
             }
         }
+        _ => panic!("unknown test-case result {}", tc.case.result),
+    }
+}
+
+fn run_wycheproof_encrypt_decrypt(tc: &wycheproof::TestCase) {
+    let aead = match subtle::AesGcmSiv::new(&tc.key) {
+        Ok(c) => c,
+        Err(e) => panic!(
+            "cannot create new instance of AesGcmSiv in test case {}: {:?}",
+            tc.case.case_id, e
+        ),
+    };
+    let result = aead.encrypt(&tc.msg, &tc.aad);
+    if result.is_err() {
+        assert_eq!(
+            tc.case.result,
+            WycheproofResult::Invalid,
+            "unexpected error in test case {}: {:?}",
+            tc.case.case_id,
+            result.err(),
+        );
+        return;
+    }
+    let ct = result.unwrap();
+    let result = aead.decrypt(&ct, &tc.aad);
+    match tc.case.result {
+        WycheproofResult::Valid => {
+            assert!(
+                result.is_ok(),
+                "unexpected error in test case {}: {:?}",
+                tc.case.case_id,
+                result.err()
+            );
+            let decrypted = result.unwrap();
+            assert_eq!(
+                decrypted, tc.msg,
+                "incorrect decryption in test case {}",
+                tc.case.case_id,
+            );
+        }
+        WycheproofResult::Invalid => {
+            if let Ok(decrypted) = result {
+                assert_ne!(
+                    ct, decrypted,
+                    "successfully decrypted invalid test case {}",
+                    tc.case.case_id
+                );
+            }
+        }
+        _ => panic!("unknown test-case result {}", tc.case.result),
     }
 }
