@@ -2387,6 +2387,7 @@ dependencies = [
  "p256",
  "prost",
  "rand 0.7.3",
+ "regex",
  "serde",
  "serde_json",
  "tempfile",
