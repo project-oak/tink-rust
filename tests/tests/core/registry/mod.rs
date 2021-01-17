@@ -16,6 +16,7 @@
 
 use prost::Message;
 use std::sync::Arc;
+use tink_tests::fakekms;
 
 #[test]
 fn test_register_key_manager() {
@@ -175,10 +176,16 @@ fn test_primitive() {
 
 #[test]
 fn test_register_kms_client() {
-    let kms = tink_tests::DummyKmsClient {};
-    tink_core::registry::register_kms_client(kms);
-
-    tink_core::registry::get_kms_client("dummy").expect("error fetching dummy kms client");
+    tink_core::registry::clear_kms_clients();
+    let c1 = fakekms::FakeClient::new("fake-kms://prefix1").unwrap();
+    let c2 = fakekms::FakeClient::new("fake-kms://prefix2").unwrap();
+    tink_core::registry::register_kms_client(c1);
+    tink_core::registry::register_kms_client(c2);
+    let _output1 = tink_core::registry::get_kms_client("fake-kms://prefix1-postfix").unwrap();
+    let _output2 = tink_core::registry::get_kms_client("fake-kms://prefix2-postfix").unwrap();
+    // Upstream Go code compares output1 == c1, output2 == c2, but this requires downcasting.
+    assert!(tink_core::registry::get_kms_client("fake-kms://unknown-prefix").is_err());
+    assert!(tink_core::registry::get_kms_client("bad-kms://unknown-prefix").is_err());
 }
 
 fn dummy_key_generator() -> tink_proto::KeyTemplate {

@@ -205,6 +205,40 @@ fn test_x_cha_cha20_poly1305_key_template() {
     test_encrypt_decrypt(&template, tink_tests::X_CHA_CHA20_POLY1305_TYPE_URL).unwrap();
 }
 
+#[test]
+fn test_kms_envelope_aead_key_templates() {
+    tink_aead::init();
+    let fake_kms_client = tink_tests::fakekms::FakeClient::new("fake-kms://").unwrap();
+    tink_core::registry::register_kms_client(fake_kms_client);
+
+    let fixed_key_uri = "fake-kms://CM2b3_MDElQKSAowdHlwZS5nb29nbGVhcGlzLmNvbS9nb29nbGUuY3J5cHRvLnRpbmsuQWVzR2NtS2V5EhIaEIK75t5L-adlUwVhWvRuWUwYARABGM2b3_MDIAE";
+    let new_key_uri = tink_tests::fakekms::new_key_uri().unwrap();
+
+    let test_cases = vec![
+        (
+            "Fixed Fake KMS Envelope AEAD Key with AES128_GCM",
+            tink_aead::kms_envelope_aead_key_template(
+                fixed_key_uri,
+                tink_aead::aes128_gcm_key_template(),
+            ),
+        ),
+        (
+            "New Fake KMS Envelope AEAD Key with AES128_GCM",
+            tink_aead::kms_envelope_aead_key_template(
+                &new_key_uri,
+                tink_aead::aes128_gcm_key_template(),
+            ),
+        ),
+    ];
+    for (name, template) in test_cases {
+        assert!(
+            test_encrypt_decrypt(&template, &template.type_url).is_ok(),
+            "failed for {}",
+            name
+        );
+    }
+}
+
 fn test_encrypt_decrypt(
     template: &tink_proto::KeyTemplate,
     type_url: &str,
