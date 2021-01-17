@@ -409,19 +409,17 @@ pub enum EcdsaSignatureEncoding {
 
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeyTemplate {
-    /// Required.
-    ///
-    /// in format type.googleapis.com/packagename.messagename
+    /// Required. The type_url of the key type in format
+    /// type.googleapis.com/packagename.messagename -- see above for details.
+    /// This is typically the protobuf type URL of the *Key proto. In particular,
+    /// this is different of the protobuf type URL of the *KeyFormat proto.
     #[prost(string, tag="1")]
     pub type_url: ::prost::alloc::string::String,
-    /// Optional.
-    /// If missing, it means the key type doesn't require a *KeyFormat proto.
-    ///
-    /// contains specific serialized *KeyFormat proto
+    /// Required. The serialized *KeyFormat proto.
     #[prost(bytes="vec", tag="2")]
     pub value: ::prost::alloc::vec::Vec<u8>,
-    /// Optional.
-    /// If missing, uses OutputPrefixType.TINK.
+    /// Required. The type of prefix used when computing some primitives to
+    /// identify the ciphertext/signature, etc.
     #[prost(enumeration="OutputPrefixType", tag="3")]
     pub output_prefix_type: i32,
 }
