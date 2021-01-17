@@ -98,7 +98,7 @@ fn test_vectors_rfc4868() {
 }
 
 #[test]
-fn test_vectors_hmac_wycheproof() {
+fn test_hmac_prf_wycheproof_cases() {
     for hash in &[HashType::Sha1, HashType::Sha256, HashType::Sha512] {
         let hash_name = format!("{:?}", hash);
         let filename = format!("testvectors/hmac_{}_test.json", hash_name.to_lowercase());

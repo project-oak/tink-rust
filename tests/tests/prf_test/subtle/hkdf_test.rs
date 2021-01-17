@@ -139,7 +139,7 @@ struct HkdfTestCase {
 }
 
 #[test]
-fn test_vectors_hkdf_wycheproof() {
+fn test_hkdf_prf_wycheproof_cases() {
     for hash in &[HashType::Sha1, HashType::Sha256, HashType::Sha512] {
         let hash_name = format!("{:?}", hash);
         let filename = format!("testvectors/hkdf_{}_test.json", hash_name.to_lowercase());
