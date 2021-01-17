@@ -117,6 +117,12 @@ where
     kms_clients.push(Arc::new(k));
 }
 
+/// Remove all registered KMS clients.
+pub fn clear_kms_clients() {
+    let mut kms_clients = KMS_CLIENTS.write().expect(CERR); // safe: lock
+    kms_clients.clear();
+}
+
 /// Fetches a [`KmsClient`] by a given URI.
 pub fn get_kms_client(key_uri: &str) -> Result<Arc<dyn KmsClient>, TinkError> {
     let kms_clients = KMS_CLIENTS.read().expect(CERR); // safe: lock

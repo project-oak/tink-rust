@@ -39,6 +39,11 @@ fn init() {
 fn setup_kms(cf: &std::path::Path) {
     let g = tink_awskms::AwsClient::new_with_credentials(KEY_URI, cf)
         .expect("error setting up aws client");
+
+    // The registry will return the first KMS client that claims support for
+    // the keyURI.  The tests re-use the same keyURI, so clear any clients
+    // registered by earlier tests before registering the new client.
+    tink::registry::clear_kms_clients();
     tink::registry::register_kms_client(g);
 }
 
