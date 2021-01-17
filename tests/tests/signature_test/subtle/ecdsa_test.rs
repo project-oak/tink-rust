@@ -16,7 +16,7 @@
 
 use tink_proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType};
 
-struct ParamsTest {
+struct ParamsTestEcdsa {
     hash: HashType,
     curve: EllipticCurveType,
     encoding: EcdsaSignatureEncoding,
@@ -44,14 +44,14 @@ fn test_ecdsa_validate_params() {
     }
 }
 
-fn gen_ecdsa_invalid_params() -> Vec<ParamsTest> {
+fn gen_ecdsa_invalid_params() -> Vec<ParamsTestEcdsa> {
     let encodings = vec![
         EcdsaSignatureEncoding::Der,
         EcdsaSignatureEncoding::IeeeP1363,
     ];
     let mut test_cases = vec![
         // invalid encoding
-        ParamsTest {
+        ParamsTestEcdsa {
             hash: HashType::Sha256,
             curve: EllipticCurveType::NistP256,
             encoding: EcdsaSignatureEncoding::UnknownEncoding,
@@ -59,25 +59,25 @@ fn gen_ecdsa_invalid_params() -> Vec<ParamsTest> {
     ];
     for encoding in encodings {
         // invalid curve
-        test_cases.push(ParamsTest {
+        test_cases.push(ParamsTestEcdsa {
             hash: HashType::Sha256,
             curve: EllipticCurveType::UnknownCurve,
             encoding,
         });
         // invalid hash: P256 and SHA-512
-        test_cases.push(ParamsTest {
+        test_cases.push(ParamsTestEcdsa {
             hash: HashType::Sha512,
             curve: EllipticCurveType::NistP256,
             encoding,
         });
         // invalid hash: P521 and SHA-256
-        test_cases.push(ParamsTest {
+        test_cases.push(ParamsTestEcdsa {
             hash: HashType::Sha256,
             curve: EllipticCurveType::NistP521,
             encoding,
         });
         // invalid hash: P384 and SHA-256
-        test_cases.push(ParamsTest {
+        test_cases.push(ParamsTestEcdsa {
             hash: HashType::Sha256,
             curve: EllipticCurveType::NistP384,
             encoding,
@@ -86,44 +86,44 @@ fn gen_ecdsa_invalid_params() -> Vec<ParamsTest> {
     test_cases
 }
 
-fn gen_ecdsa_valid_params() -> Vec<ParamsTest> {
+fn gen_ecdsa_valid_params() -> Vec<ParamsTestEcdsa> {
     vec![
-        ParamsTest {
+        ParamsTestEcdsa {
             hash: HashType::Sha256,
             curve: EllipticCurveType::NistP256,
             encoding: EcdsaSignatureEncoding::Der,
         },
-        ParamsTest {
+        ParamsTestEcdsa {
             hash: HashType::Sha256,
             curve: EllipticCurveType::NistP256,
             encoding: EcdsaSignatureEncoding::IeeeP1363,
         },
-        ParamsTest {
+        ParamsTestEcdsa {
             hash: HashType::Sha384,
             curve: EllipticCurveType::NistP384,
             encoding: EcdsaSignatureEncoding::Der,
         },
-        ParamsTest {
+        ParamsTestEcdsa {
             hash: HashType::Sha384,
             curve: EllipticCurveType::NistP384,
             encoding: EcdsaSignatureEncoding::IeeeP1363,
         },
-        ParamsTest {
+        ParamsTestEcdsa {
             hash: HashType::Sha512,
             curve: EllipticCurveType::NistP384,
             encoding: EcdsaSignatureEncoding::Der,
         },
-        ParamsTest {
+        ParamsTestEcdsa {
             hash: HashType::Sha512,
             curve: EllipticCurveType::NistP384,
             encoding: EcdsaSignatureEncoding::IeeeP1363,
         },
-        ParamsTest {
+        ParamsTestEcdsa {
             hash: HashType::Sha512,
             curve: EllipticCurveType::NistP521,
             encoding: EcdsaSignatureEncoding::Der,
         },
-        ParamsTest {
+        ParamsTestEcdsa {
             hash: HashType::Sha512,
             curve: EllipticCurveType::NistP521,
             encoding: EcdsaSignatureEncoding::IeeeP1363,
