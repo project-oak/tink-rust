@@ -120,8 +120,8 @@ fn test_aes_gcm_modify_ciphertext() {
                 "expect an error when flipping bit of ciphertext: byte {}, bit {}",
                 i, j
             ));
+            ct[i] = tmp;
         }
-        ct[i] = tmp;
     }
     // truncated ciphertext
     for i in 1..ct.len() {
