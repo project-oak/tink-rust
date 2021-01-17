@@ -18,6 +18,41 @@ use prost::Message;
 use tink_core::{utils::wrap_err, TinkError};
 
 #[test]
+fn test_key_templates() {
+    tink_mac::init();
+    let test_cases = vec![
+        (
+            "HMAC_SHA256_128BITTAG",
+            tink_mac::hmac_sha256_tag128_key_template(),
+        ),
+        (
+            "HMAC_SHA256_256BITTAG",
+            tink_mac::hmac_sha256_tag256_key_template(),
+        ),
+        (
+            "HMAC_SHA512_256BITTAG",
+            tink_mac::hmac_sha512_tag256_key_template(),
+        ),
+        (
+            "HMAC_SHA512_512BITTAG",
+            tink_mac::hmac_sha512_tag512_key_template(),
+        ),
+        ("AES_CMAC", tink_mac::aes_cmac_tag128_key_template()),
+    ];
+    for (name, template) in test_cases {
+        let want = tink_tests::key_template_proto("mac", name).unwrap();
+        assert_eq!(want, template);
+
+        let handle = tink_core::keyset::Handle::new(&template).unwrap();
+        let primitive = tink_mac::new(&handle).unwrap();
+
+        let msg = b"this data needs to be authenticated";
+        let tag = primitive.compute_mac(msg).unwrap();
+        assert!(primitive.verify_mac(&tag, msg).is_ok());
+    }
+}
+
+#[test]
 fn test_templates() {
     tink_mac::init();
     let template = tink_mac::hmac_sha256_tag128_key_template();
