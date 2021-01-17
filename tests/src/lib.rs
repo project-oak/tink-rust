@@ -26,6 +26,7 @@ use tink_proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType, KeyData, K
 
 mod constant;
 pub use constant::*;
+pub mod fakekms;
 mod sharedbuf;
 pub use sharedbuf::*;
 mod wycheproofutil;
