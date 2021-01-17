@@ -19,29 +19,23 @@ use tink_core::TinkError;
 #[test]
 fn test_aes_siv_key_template() {
     tink_daead::init();
-    let template = tink_daead::aes_siv_key_template();
-    assert_eq!(
-        template.type_url,
-        tink_tests::AES_SIV_TYPE_URL,
-        "incorrect type url"
-    );
-    assert!(test_encrypt_decrypt(&template).is_ok());
+    let test_cases = vec![("AES256_SIV", tink_daead::aes_siv_key_template())];
+    for (name, template) in test_cases {
+        let want = tink_tests::key_template_proto("daead", name).unwrap();
+        assert_eq!(want, template);
+        assert!(test_encrypt_decrypt(&template).is_ok());
+    }
 }
 
 fn test_encrypt_decrypt(template: &tink_proto::KeyTemplate) -> Result<(), TinkError> {
-    let sk = tink_core::registry::new_key(template)?;
-    let p = tink_core::registry::primitive(&template.type_url, &sk)?;
-
-    let primitive = match p {
-        tink_core::Primitive::DeterministicAead(p) => p,
-        _ => return Err("failed to find DeterministicAEAD primitive".into()),
-    };
+    let handle = tink_core::keyset::Handle::new(template).unwrap();
+    let primitive = tink_daead::new(&handle).unwrap();
 
     let plaintext = b"some data to encrypt";
     let aad = b"extra data to authenticate";
     let ciphertext = primitive.encrypt_deterministically(plaintext, aad)?;
     let decrypted = primitive.decrypt_deterministically(&ciphertext, aad)?;
 
-    assert_eq!(plaintext.to_vec(), decrypted);
+    assert_eq!(&plaintext[..], decrypted);
     Ok(())
 }
