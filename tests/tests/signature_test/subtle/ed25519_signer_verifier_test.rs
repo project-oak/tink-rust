@@ -188,8 +188,7 @@ struct TestCaseEd25519 {
 }
 
 #[test]
-fn test_vectors_ed25519() {
-    // signing tests are same between ecdsa and ed25519
+fn test_ed25519_wycheproof_cases() {
     let filename = "testvectors/eddsa_test.json";
     println!("wycheproof file '{}'", filename);
     let bytes = tink_tests::wycheproof_data(filename);
@@ -220,46 +219,53 @@ fn test_vectors_ed25519() {
                 tc.case.case_id, tc.case.result, tc.case.comment
             );
             let result = signer.sign(&tc.msg);
-            if tc.case.result == tink_tests::WycheproofResult::Valid {
-                match result {
-                    Err(e) => panic!(
-                        "sign failed in test case {}: with error {:?}",
-                        tc.case.case_id, e
-                    ),
-                    Ok(got) =>
-                    // Ed25519 is deterministic.
-                    // Getting an alternative signature may leak the private key.
-                    // This is especially the case if an attacker can also learn the valid
-                    // signature.
-                    {
-                        assert_eq!(
-                            tc.sig,
-                            got,
-                            "sign failed in test case {}: invalid signature generated {}",
-                            tc.case.case_id,
-                            hex::encode(&got)
+            match tc.case.result {
+                tink_tests::WycheproofResult::Valid => {
+                    match result {
+                        Err(e) => panic!(
+                            "Ed25519Signer::sign failed in test case {}: with error {:?}",
+                            tc.case.case_id, e
+                        ),
+                        Ok(got) => {
+                            // Ed25519 is deterministic.
+                            // Getting an alternative signature may leak the private key.
+                            // This is especially the case if an attacker can also learn the valid
+                            // signature.
+                            assert_eq!(
+                                tc.sig,
+                                got,
+                                "Ed25519Signer::sign failed in test case {}: invalid signature generated {}",
+                                tc.case.case_id,
+                                hex::encode(&got)
+                            )
+                        }
+                    }
+                }
+                tink_tests::WycheproofResult::Invalid => {
+                    if result.is_ok() && tc.sig == result.unwrap() {
+                        panic!(
+                            "Ed25519Signer::sign failed in test case {}: invalid signature generated",
+                            tc.case.case_id
                         )
                     }
                 }
-            } else if result.is_ok() && tc.sig == result.unwrap() {
-                panic!(
-                    "sign failed in test case {}: invalid signature generated",
-                    tc.case.case_id
-                )
+                _ => panic!("unrecognized result {}", tc.case.result),
             }
 
             let result = verifier.verify(&tc.sig, &tc.msg);
-            if tc.case.result == WycheproofResult::Valid && result.is_err() {
-                panic!(
+            match tc.case.result {
+                WycheproofResult::Valid => assert!(
+                    result.is_ok(),
                     "verify failed in test case {}: valid signature is rejected with error {:?}",
-                    tc.case.case_id, result
-                )
-            }
-            if tc.case.result == WycheproofResult::Invalid && result.is_ok() {
-                panic!(
+                    tc.case.case_id,
+                    result
+                ),
+                WycheproofResult::Invalid => assert!(
+                    result.is_err(),
                     "verify failed in test case {}: invalid signature is accepted",
                     tc.case.case_id
-                )
+                ),
+                _ => panic!("unrecognized result {}", tc.case.result),
             }
         }
     }

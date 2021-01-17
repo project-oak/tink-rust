@@ -205,7 +205,7 @@ struct TestCase {
 }
 
 #[test]
-fn test_wycheproof_vectors() {
+fn test_ecdsa_wycheproof_cases() {
     struct TestVector {
         filename: &'static str,
         encoding: EcdsaSignatureEncoding,
