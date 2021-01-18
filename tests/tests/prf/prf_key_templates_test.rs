@@ -18,6 +18,28 @@ use prost::Message;
 use tink_core::{utils::wrap_err, TinkError};
 
 #[test]
+fn test_key_templates() {
+    tink_prf::init();
+    let test_cases = vec![
+        ("HMAC_PRF_SHA256", tink_prf::hmac_sha256_prf_key_template()),
+        ("HMAC_PRF_SHA512", tink_prf::hmac_sha512_prf_key_template()),
+        ("HKDF_PRF_SHA256", tink_prf::hkdf_sha256_prf_key_template()),
+        ("AES_CMAC_PRF", tink_prf::aes_cmac_prf_key_template()),
+    ];
+    for (name, template) in test_cases {
+        let want = tink_tests::key_template_proto("prf", name).unwrap();
+        assert_eq!(want, template);
+
+        let handle = tink_core::keyset::Handle::new(&template).unwrap();
+        let primitive = tink_prf::Set::new(&handle).unwrap();
+
+        let msg = b"This is an IF that needs to be redacted";
+        let output = primitive.compute_primary_prf(msg, 16).unwrap();
+        assert_eq!(output.len(), 16);
+    }
+}
+
+#[test]
 fn test_templates() {
     tink_prf::init();
     let template = tink_prf::hmac_sha256_prf_key_template();
