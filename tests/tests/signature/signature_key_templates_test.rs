@@ -14,189 +14,77 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use prost::Message;
 use tink_core::TinkError;
 
 #[test]
-fn test_ecdsa_key_templates() {
-    struct FlagTest {
-        tc_name: &'static str,
-        type_url: &'static str,
-        sig_template: tink_proto::KeyTemplate,
-        curve_type: tink_proto::EllipticCurveType,
-        hash_type: tink_proto::HashType,
-        sig_encoding: tink_proto::EcdsaSignatureEncoding,
-        prefix_type: tink_proto::OutputPrefixType,
-    };
-    let flag_tests = vec![
-        FlagTest {
-            tc_name: "P-256 with SHA256, DER format and TINK output prefix",
-            type_url: tink_tests::ECDSA_SIGNER_TYPE_URL,
-            sig_template: tink_signature::ecdsa_p256_key_template(),
-            curve_type: tink_proto::EllipticCurveType::NistP256,
-            hash_type: tink_proto::HashType::Sha256,
-            sig_encoding: tink_proto::EcdsaSignatureEncoding::Der,
-            prefix_type: tink_proto::OutputPrefixType::Tink,
-        },
-        FlagTest {
-            tc_name: "P-384 with SHA512, DER format and TINK output prefix",
-            type_url: tink_tests::ECDSA_SIGNER_TYPE_URL,
-            sig_template: tink_signature::ecdsa_p384_key_template(),
-            curve_type: tink_proto::EllipticCurveType::NistP384,
-            hash_type: tink_proto::HashType::Sha512,
-            sig_encoding: tink_proto::EcdsaSignatureEncoding::Der,
-            prefix_type: tink_proto::OutputPrefixType::Tink,
-        },
-        FlagTest {
-            tc_name: "P-521 with SHA512, DER format and TINK output prefix",
-            type_url: tink_tests::ECDSA_SIGNER_TYPE_URL,
-            sig_template: tink_signature::ecdsa_p521_key_template(),
-            curve_type: tink_proto::EllipticCurveType::NistP521,
-            hash_type: tink_proto::HashType::Sha512,
-            sig_encoding: tink_proto::EcdsaSignatureEncoding::Der,
-            prefix_type: tink_proto::OutputPrefixType::Tink,
-        },
-        FlagTest {
-            tc_name: "P-256 with SHA256, DER format and RAW output prefix",
-            type_url: tink_tests::ECDSA_SIGNER_TYPE_URL,
-            sig_template: tink_signature::ecdsa_p256_key_without_prefix_template(),
-            curve_type: tink_proto::EllipticCurveType::NistP256,
-            hash_type: tink_proto::HashType::Sha256,
-            sig_encoding: tink_proto::EcdsaSignatureEncoding::Der,
-            prefix_type: tink_proto::OutputPrefixType::Raw,
-        },
-        FlagTest {
-            tc_name: "P-384 with SHA512, DER format and RAW output prefix",
-            type_url: tink_tests::ECDSA_SIGNER_TYPE_URL,
-            sig_template: tink_signature::ecdsa_p384_key_without_prefix_template(),
-            curve_type: tink_proto::EllipticCurveType::NistP384,
-            hash_type: tink_proto::HashType::Sha512,
-            sig_encoding: tink_proto::EcdsaSignatureEncoding::Der,
-            prefix_type: tink_proto::OutputPrefixType::Raw,
-        },
-        FlagTest {
-            tc_name: "P-521 with SHA512, DER format and RAW output prefix",
-            type_url: tink_tests::ECDSA_SIGNER_TYPE_URL,
-            sig_template: tink_signature::ecdsa_p521_key_without_prefix_template(),
-            curve_type: tink_proto::EllipticCurveType::NistP521,
-            hash_type: tink_proto::HashType::Sha512,
-            sig_encoding: tink_proto::EcdsaSignatureEncoding::Der,
-            prefix_type: tink_proto::OutputPrefixType::Raw,
-        },
-        FlagTest {
-            tc_name: "P-256 with SHA256, P1363 format and TINK output prefix",
-            type_url: tink_tests::ECDSA_SIGNER_TYPE_URL,
-            sig_template: tink_signature::ecdsa_p256_key_p1363_template(),
-            curve_type: tink_proto::EllipticCurveType::NistP256,
-            hash_type: tink_proto::HashType::Sha256,
-            sig_encoding: tink_proto::EcdsaSignatureEncoding::IeeeP1363,
-            prefix_type: tink_proto::OutputPrefixType::Tink,
-        },
+fn test_key_templates() {
+    tink_signature::init();
+    let test_cases = vec![
+        (
+            "ECDSA_P256",
+            tink_signature::ecdsa_p256_key_template(),
+            true,
+        ),
+        (
+            "ECDSA_P384",
+            tink_signature::ecdsa_p384_key_template(),
+            false,
+        ),
+        (
+            "ECDSA_P521",
+            tink_signature::ecdsa_p521_key_template(),
+            false,
+        ),
     ];
-
-    for tt in flag_tests {
-        let tc_name = tt.tc_name;
-        check_ecdsa_key_template(
-            &tt.sig_template,
-            tt.type_url,
-            tt.hash_type,
-            tt.curve_type,
-            tt.sig_encoding,
-            tt.prefix_type,
-        )
-        .unwrap_or_else(|e| panic!("failed {}: {}", tc_name, e));
+    for (name, template, supported) in test_cases {
+        let want = tink_tests::key_template_proto("signature", name).unwrap();
+        assert_eq!(want, template);
+        // TODO(#16): more ECDSA curves
+        if supported {
+            assert!(test_sign_verify(&template).is_ok());
+        }
     }
 }
 
 #[test]
-fn test_ed25519_key_templates() {
-    struct FlagTest {
-        tc_name: &'static str,
-        type_url: &'static str,
-        sig_template: tink_proto::KeyTemplate,
-        prefix_type: tink_proto::OutputPrefixType,
-    };
-    let flag_tests = vec![
-        FlagTest {
-            tc_name: "ED25519 with TINK output prefix",
-            type_url: tink_tests::ED25519_SIGNER_TYPE_URL,
-            sig_template: tink_signature::ed25519_key_template(),
-            prefix_type: tink_proto::OutputPrefixType::Tink,
-        },
-        FlagTest {
-            tc_name: "ED25519 with RAW output prefix",
-            type_url: tink_tests::ED25519_SIGNER_TYPE_URL,
-            sig_template: tink_signature::ed25519_key_without_prefix_template(),
-            prefix_type: tink_proto::OutputPrefixType::Raw,
-        },
+fn test_no_prefix_key_templates() {
+    tink_signature::init();
+    let test_cases = vec![
+        (
+            "ECDSA_P256",
+            tink_signature::ecdsa_p256_key_without_prefix_template(),
+            true,
+        ),
+        (
+            "ECDSA_P384",
+            tink_signature::ecdsa_p384_key_without_prefix_template(),
+            false,
+        ),
+        (
+            "ECDSA_P521",
+            tink_signature::ecdsa_p521_key_without_prefix_template(),
+            false,
+        ),
     ];
-
-    for tt in flag_tests {
-        let tc_name = tt.tc_name;
-        check_key_type_and_output_prefix(&tt.sig_template, tt.type_url, tt.prefix_type)
-            .unwrap_or_else(|e| panic!("failed {}: {}", tc_name, e));
+    for (name, template, supported) in test_cases {
+        let mut want = tink_tests::key_template_proto("signature", name).unwrap();
+        want.output_prefix_type = tink_proto::OutputPrefixType::Raw as i32;
+        assert_eq!(want, template);
+        // TODO(#16): more ECDSA curves
+        if supported {
+            assert!(test_sign_verify(&template).is_ok());
+        }
     }
 }
 
-fn check_ecdsa_key_template(
-    template: &tink_proto::KeyTemplate,
-    type_url: &str,
-    hash_type: tink_proto::HashType,
-    curve: tink_proto::EllipticCurveType,
-    encoding: tink_proto::EcdsaSignatureEncoding,
-    prefix_type: tink_proto::OutputPrefixType,
-) -> Result<(), TinkError> {
-    check_key_type_and_output_prefix(template, type_url, prefix_type)?;
+fn test_sign_verify(template: &tink_proto::KeyTemplate) -> Result<(), TinkError> {
+    let private_handle = tink_core::keyset::Handle::new(template).unwrap();
+    let signer = tink_signature::new_signer(&private_handle).unwrap();
 
-    let format = tink_proto::EcdsaKeyFormat::decode(template.value.as_ref())
-        .map_err(|_| TinkError::new("cannot unmarshal key format"))?;
+    let msg = b"this data needs to be signed";
+    let sig = signer.sign(&msg[..]).unwrap();
 
-    let params = format
-        .params
-        .ok_or_else(|| TinkError::new("missing parameters"))?;
-    if params.hash_type != hash_type as i32 {
-        return Err(format!(
-            "incorrect hash type: expect {:?}, got {}",
-            hash_type, params.hash_type
-        )
-        .into());
-    }
-
-    if params.curve != curve as i32 {
-        return Err(format!("incorrect curve: expect {:?}, got {}", curve, params.curve).into());
-    }
-
-    if params.encoding != encoding as i32 {
-        return Err(format!(
-            "incorrect encoding: expect {:?}, got {}",
-            encoding, params.encoding
-        )
-        .into());
-    }
-
-    Ok(())
-}
-
-fn check_key_type_and_output_prefix(
-    template: &tink_proto::KeyTemplate,
-    type_url: &str,
-    prefix_type: tink_proto::OutputPrefixType,
-) -> Result<(), TinkError> {
-    if template.type_url != type_url {
-        return Err(format!(
-            "incorrect typeurl: expect {}, got {}",
-            type_url, template.type_url
-        )
-        .into());
-    }
-
-    if template.output_prefix_type != prefix_type as i32 {
-        return Err(format!(
-            "incorrect outputPrefixType: expect: {:?}, got {}",
-            prefix_type, template.output_prefix_type
-        )
-        .into());
-    }
-
-    Ok(())
+    let public_handle = private_handle.public().unwrap();
+    let verifier = tink_signature::new_verifier(&public_handle).unwrap();
+    verifier.verify(&sig, &msg[..])
 }
