@@ -17,7 +17,10 @@ This document contains instructions and Rust code snippets for common tasks in
 
 ## Setup Instructions
 
-To install the Tink-Rust repository locally run:
+The released versions of the Tink-Rust crates are available at <https://crates.io>, so Rust code using Tink just needs
+to add a dependency on the relevant `tink-<topic>` crates in `Cargo.toml`.
+
+To install the current development version of the Tink-Rust repository locally run:
 
 ```sh
 git clone https://github.com/project-oak/tink-rust
@@ -25,17 +28,17 @@ cd tink-rust
 git submodule update # get local copy of Wycheproof test vectors
 ```
 
-to run all the tests locally:
+This repository also includes the (unreleased) `tink-tests` crate, which holds a large collection of integration test
+for the Tink crates. To run all the tests locally:
 
 ```sh
 cargo test --all
 ```
 
-TODO(#32): replace with crates.io instructions
-
 ## Rustdoc
 
-Documentation for the Tink Rust API can be found [here](https://project-oak.github.io/tink-rust/).
+Documentation for the Tink Rust API can be found [here](https://project-oak.github.io/tink-rust/), or at the
+<https://docs.rs> locations for the individual crates ([example](https://docs.rs/tink-core)).
 
 ## Obtaining and Using Primitives
 
