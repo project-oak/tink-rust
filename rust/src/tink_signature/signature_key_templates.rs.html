@@ -185,7 +185,7 @@
 <span class="doccomment">//! This module contains pre-generated KeyTemplates for Signer and Verifier.</span>
 <span class="doccomment">/// One can use these templates to generate new Keysets.</span>
 <span class="kw">use</span> <span class="ident">prost</span>::<span class="ident">Message</span>;
-<span class="kw">use</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">KeyTemplate</span>;
+<span class="kw">use</span> <span class="ident">tink_proto</span>::<span class="ident">KeyTemplate</span>;
 
 <span class="doccomment">/// Return a [`KeyTemplate`] that generates a new ECDSA private key with the following parameters:</span>
 <span class="doccomment">///   - Hash function: SHA256</span>
@@ -194,10 +194,10 @@
 <span class="doccomment">///   - Output prefix type: TINK</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">ecdsa_p256_key_template</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
     <span class="ident">create_ecdsa_key_template</span>(
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha256</span>,
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EllipticCurveType</span>::<span class="ident">NistP256</span>,
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EcdsaSignatureEncoding</span>::<span class="ident">Der</span>,
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Tink</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha256</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">EllipticCurveType</span>::<span class="ident">NistP256</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">EcdsaSignatureEncoding</span>::<span class="ident">Der</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Tink</span>,
     )
 }
 
@@ -208,10 +208,10 @@
 <span class="doccomment">///   - Output prefix type: TINK</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">ecdsa_p256_key_p1363_template</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
     <span class="ident">create_ecdsa_key_template</span>(
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha256</span>,
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EllipticCurveType</span>::<span class="ident">NistP256</span>,
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EcdsaSignatureEncoding</span>::<span class="ident">IeeeP1363</span>,
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Tink</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha256</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">EllipticCurveType</span>::<span class="ident">NistP256</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">EcdsaSignatureEncoding</span>::<span class="ident">IeeeP1363</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Tink</span>,
     )
 }
 
@@ -223,10 +223,10 @@
 <span class="doccomment">///   - Output prefix type: RAW</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">ecdsa_p256_key_without_prefix_template</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
     <span class="ident">create_ecdsa_key_template</span>(
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha256</span>,
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EllipticCurveType</span>::<span class="ident">NistP256</span>,
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EcdsaSignatureEncoding</span>::<span class="ident">Der</span>,
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Raw</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha256</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">EllipticCurveType</span>::<span class="ident">NistP256</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">EcdsaSignatureEncoding</span>::<span class="ident">Der</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Raw</span>,
     )
 }
 
@@ -237,10 +237,10 @@
 <span class="doccomment">///   - Output prefix type: TINK</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">ecdsa_p384_key_template</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
     <span class="ident">create_ecdsa_key_template</span>(
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha512</span>,
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EllipticCurveType</span>::<span class="ident">NistP384</span>,
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EcdsaSignatureEncoding</span>::<span class="ident">Der</span>,
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Tink</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha512</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">EllipticCurveType</span>::<span class="ident">NistP384</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">EcdsaSignatureEncoding</span>::<span class="ident">Der</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Tink</span>,
     )
 }
 
@@ -252,10 +252,10 @@
 <span class="doccomment">///   - Output prefix type: RAW</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">ecdsa_p384_key_without_prefix_template</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
     <span class="ident">create_ecdsa_key_template</span>(
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha512</span>,
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EllipticCurveType</span>::<span class="ident">NistP384</span>,
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EcdsaSignatureEncoding</span>::<span class="ident">Der</span>,
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Raw</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha512</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">EllipticCurveType</span>::<span class="ident">NistP384</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">EcdsaSignatureEncoding</span>::<span class="ident">Der</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Raw</span>,
     )
 }
 
@@ -266,10 +266,10 @@
 <span class="doccomment">///   - Output prefix type: TINK</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">ecdsa_p521_key_template</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
     <span class="ident">create_ecdsa_key_template</span>(
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha512</span>,
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EllipticCurveType</span>::<span class="ident">NistP521</span>,
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EcdsaSignatureEncoding</span>::<span class="ident">Der</span>,
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Tink</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha512</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">EllipticCurveType</span>::<span class="ident">NistP521</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">EcdsaSignatureEncoding</span>::<span class="ident">Der</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Tink</span>,
     )
 }
 
@@ -281,27 +281,27 @@
 <span class="doccomment">///   - Output prefix type: RAW</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">ecdsa_p521_key_without_prefix_template</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
     <span class="ident">create_ecdsa_key_template</span>(
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha512</span>,
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EllipticCurveType</span>::<span class="ident">NistP521</span>,
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EcdsaSignatureEncoding</span>::<span class="ident">Der</span>,
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Raw</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha512</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">EllipticCurveType</span>::<span class="ident">NistP521</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">EcdsaSignatureEncoding</span>::<span class="ident">Der</span>,
+        <span class="ident">tink_proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Raw</span>,
     )
 }
 
 <span class="comment">// createECDSAKeyTemplate creates a KeyTemplate containing a EcdasKeyFormat</span>
 <span class="comment">// with the given parameters.</span>
 <span class="kw">fn</span> <span class="ident">create_ecdsa_key_template</span>(
-    <span class="ident">hash_type</span>: <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HashType</span>,
-    <span class="ident">curve</span>: <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EllipticCurveType</span>,
-    <span class="ident">encoding</span>: <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EcdsaSignatureEncoding</span>,
-    <span class="ident">prefix_type</span>: <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">OutputPrefixType</span>,
+    <span class="ident">hash_type</span>: <span class="ident">tink_proto</span>::<span class="ident">HashType</span>,
+    <span class="ident">curve</span>: <span class="ident">tink_proto</span>::<span class="ident">EllipticCurveType</span>,
+    <span class="ident">encoding</span>: <span class="ident">tink_proto</span>::<span class="ident">EcdsaSignatureEncoding</span>,
+    <span class="ident">prefix_type</span>: <span class="ident">tink_proto</span>::<span class="ident">OutputPrefixType</span>,
 ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
-    <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EcdsaParams</span> {
+    <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">EcdsaParams</span> {
         <span class="ident">hash_type</span>: <span class="ident">hash_type</span> <span class="kw">as</span> <span class="ident">i32</span>,
         <span class="ident">curve</span>: <span class="ident">curve</span> <span class="kw">as</span> <span class="ident">i32</span>,
         <span class="ident">encoding</span>: <span class="ident">encoding</span> <span class="kw">as</span> <span class="ident">i32</span>,
     };
-    <span class="kw">let</span> <span class="ident">format</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EcdsaKeyFormat</span> {
+    <span class="kw">let</span> <span class="ident">format</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">EcdsaKeyFormat</span> {
         <span class="ident">params</span>: <span class="prelude-val">Some</span>(<span class="ident">params</span>),
     };
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">serialized_format</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
@@ -317,7 +317,7 @@
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">ed25519_key_template</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
     <span class="ident">KeyTemplate</span> {
         <span class="ident">type_url</span>: <span class="kw">crate</span>::<span class="ident">ED25519_SIGNER_TYPE_URL</span>.<span class="ident">to_string</span>(),
-        <span class="ident">output_prefix_type</span>: <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Tink</span> <span class="kw">as</span> <span class="ident">i32</span>,
+        <span class="ident">output_prefix_type</span>: <span class="ident">tink_proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Tink</span> <span class="kw">as</span> <span class="ident">i32</span>,
         <span class="ident">value</span>: <span class="macro">vec</span><span class="macro">!</span>[],
     }
 }
@@ -326,7 +326,7 @@
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">ed25519_key_without_prefix_template</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
     <span class="ident">KeyTemplate</span> {
         <span class="ident">type_url</span>: <span class="kw">crate</span>::<span class="ident">ED25519_SIGNER_TYPE_URL</span>.<span class="ident">to_string</span>(),
-        <span class="ident">output_prefix_type</span>: <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Raw</span> <span class="kw">as</span> <span class="ident">i32</span>,
+        <span class="ident">output_prefix_type</span>: <span class="ident">tink_proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Raw</span> <span class="kw">as</span> <span class="ident">i32</span>,
         <span class="ident">value</span>: <span class="macro">vec</span><span class="macro">!</span>[],
     }
 }

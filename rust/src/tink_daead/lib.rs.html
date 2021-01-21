@@ -68,7 +68,7 @@
 <span class="comment">//</span>
 <span class="comment">////////////////////////////////////////////////////////////////////////////////</span>
 
-<span class="doccomment">//! This crate provides implementations of the [`tink::DeterministicAead`] primitive.</span>
+<span class="doccomment">//! This crate provides implementations of the [`tink_core::DeterministicAead`] primitive.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! Unlike AEAD, implementations of this interface are not semantically secure, because</span>
 <span class="doccomment">//! encrypting the same plaintex always yields the same ciphertext.</span>
@@ -93,13 +93,13 @@
 <span class="kw">static</span> <span class="ident">INIT</span>: <span class="ident">Once</span> <span class="op">=</span> <span class="ident">Once</span>::<span class="ident">new</span>();
 
 <span class="doccomment">/// Initialize the `tink-daead` crate, registering its primitives so they are available via</span>
-<span class="doccomment">/// tink.</span>
+<span class="doccomment">/// tink-core.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>() {
     <span class="ident">INIT</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> {
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_key_manager</span>(<span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">AesSivKeyManager</span>::<span class="ident">default</span>()))
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_key_manager</span>(<span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">AesSivKeyManager</span>::<span class="ident">default</span>()))
             .<span class="ident">expect</span>(<span class="string">&quot;tink_daead::init() failed&quot;</span>); <span class="comment">// safe: init</span>
 
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(<span class="string">&quot;AES256_SIV&quot;</span>, <span class="ident">aes_siv_key_template</span>);
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(<span class="string">&quot;AES256_SIV&quot;</span>, <span class="ident">aes_siv_key_template</span>);
     });
 }
 </pre></div>

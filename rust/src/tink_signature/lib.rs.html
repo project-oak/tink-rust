@@ -103,7 +103,7 @@
 <span class="attribute">#![<span class="ident">deny</span>(<span class="ident">broken_intra_doc_links</span>)]</span>
 
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Once</span>;
-<span class="kw">use</span> <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_key_manager</span>;
+<span class="kw">use</span> <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_key_manager</span>;
 
 <span class="kw">mod</span> <span class="ident">ecdsa_signer_key_manager</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">ecdsa_signer_key_manager</span>::<span class="kw-2">*</span>;
@@ -146,13 +146,13 @@
         <span class="ident">register_key_manager</span>(<span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">Ed25519VerifierKeyManager</span>::<span class="ident">default</span>()))
             .<span class="ident">expect</span>(<span class="string">&quot;tink_signature::init() failed&quot;</span>); <span class="comment">// safe: init</span>
 
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(<span class="string">&quot;ECDSA_P256&quot;</span>, <span class="ident">ecdsa_p256_key_template</span>);
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(<span class="string">&quot;ECDSA_P256&quot;</span>, <span class="ident">ecdsa_p256_key_template</span>);
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
             <span class="string">&quot;ECDSA_P256_IEEE_P1363&quot;</span>,
             <span class="ident">ecdsa_p256_key_p1363_template</span>,
         );
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(<span class="string">&quot;ED25519&quot;</span>, <span class="ident">ed25519_key_template</span>);
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(<span class="string">&quot;ED25519&quot;</span>, <span class="ident">ed25519_key_template</span>);
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
             <span class="string">&quot;ED25519WithRawOutput&quot;</span>,
             <span class="ident">ed25519_key_without_prefix_template</span>,
         );

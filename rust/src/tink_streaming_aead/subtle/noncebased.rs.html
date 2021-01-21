@@ -538,7 +538,7 @@
 <span class="doccomment">//!   ciphertext_segment_size - header_length() - first_ciphertext_segment_offset.</span>
 
 <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">convert</span>::<span class="ident">TryFrom</span>, <span class="ident">io</span>};
-<span class="kw">use</span> <span class="ident">tink</span>::{<span class="ident">utils</span>::<span class="ident">wrap_err</span>, <span class="ident">EncryptingWrite</span>, <span class="ident">TinkError</span>};
+<span class="kw">use</span> <span class="ident">tink_core</span>::{<span class="ident">utils</span>::<span class="ident">wrap_err</span>, <span class="ident">EncryptingWrite</span>, <span class="ident">TinkError</span>};
 
 <span class="doccomment">/// `SegmentEncrypter` facilitates implementing various streaming AEAD encryption modes.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">SegmentEncrypter</span> {

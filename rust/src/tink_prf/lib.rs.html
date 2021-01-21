@@ -66,6 +66,9 @@
 <span id="63">63</span>
 <span id="64">64</span>
 <span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2020 The Tink-Rust Authors</span>
 <span class="comment">//</span>
@@ -83,12 +86,12 @@
 <span class="comment">//</span>
 <span class="comment">////////////////////////////////////////////////////////////////////////////////</span>
 
-<span class="doccomment">//! This crate provides implementations of the [`tink::Prf`] primitive.</span>
+<span class="doccomment">//! This crate provides implementations of the [`tink_core::Prf`] primitive.</span>
 
 <span class="attribute">#![<span class="ident">deny</span>(<span class="ident">broken_intra_doc_links</span>)]</span>
 
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Once</span>;
-<span class="kw">use</span> <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_key_manager</span>;
+<span class="kw">use</span> <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_key_manager</span>;
 
 <span class="kw">mod</span> <span class="ident">aes_cmac_prf_key_manager</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">aes_cmac_prf_key_manager</span>::<span class="kw-2">*</span>;
@@ -120,16 +123,19 @@
         <span class="ident">register_key_manager</span>(<span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">AesCmacPrfKeyManager</span>::<span class="ident">default</span>()))
             .<span class="ident">expect</span>(<span class="string">&quot;tink_prf::init() failed&quot;</span>); <span class="comment">// safe: init</span>
 
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(<span class="string">&quot;HKDF_SHA256&quot;</span>, <span class="ident">hkdf_sha256_prf_key_template</span>);
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
+            <span class="string">&quot;HKDF_SHA256&quot;</span>,
+            <span class="ident">hkdf_sha256_prf_key_template</span>,
+        );
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
             <span class="string">&quot;HMAC_SHA256_PRF&quot;</span>,
             <span class="ident">hmac_sha256_prf_key_template</span>,
         );
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
             <span class="string">&quot;HMAC_SHA512_PRF&quot;</span>,
             <span class="ident">hmac_sha512_prf_key_template</span>,
         );
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(<span class="string">&quot;AES_CMAC_PRF&quot;</span>, <span class="ident">aes_cmac_prf_key_template</span>);
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(<span class="string">&quot;AES_CMAC_PRF&quot;</span>, <span class="ident">aes_cmac_prf_key_template</span>);
     });
 }
 </pre></div>

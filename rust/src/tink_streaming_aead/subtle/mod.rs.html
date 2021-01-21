@@ -85,7 +85,7 @@
 }
 
 <span class="doccomment">/// Check if the given key size is a valid AES key size.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validate_aes_key_size</span>(<span class="ident">size_in_bytes</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">AesVariant</span>, <span class="ident">tink</span>::<span class="ident">TinkError</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validate_aes_key_size</span>(<span class="ident">size_in_bytes</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">AesVariant</span>, <span class="ident">tink_core</span>::<span class="ident">TinkError</span><span class="op">&gt;</span> {
     <span class="kw">match</span> <span class="ident">size_in_bytes</span> {
         <span class="number">16</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">AesVariant</span>::<span class="ident">Aes128</span>),
         <span class="number">32</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">AesVariant</span>::<span class="ident">Aes256</span>),

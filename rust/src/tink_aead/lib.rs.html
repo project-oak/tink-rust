@@ -93,6 +93,12 @@
 <span id="90">90</span>
 <span id="91">91</span>
 <span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
+<span id="95">95</span>
+<span id="96">96</span>
+<span id="97">97</span>
+<span id="98">98</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2020 The Tink-Rust Authors</span>
 <span class="comment">//</span>
@@ -118,7 +124,7 @@
 <span class="attribute">#![<span class="ident">deny</span>(<span class="ident">broken_intra_doc_links</span>)]</span>
 
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Once</span>;
-<span class="kw">use</span> <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_key_manager</span>;
+<span class="kw">use</span> <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_key_manager</span>;
 
 <span class="kw">mod</span> <span class="ident">aead_factory</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">aead_factory</span>::<span class="kw-2">*</span>;
@@ -148,7 +154,7 @@
 <span class="kw">static</span> <span class="ident">INIT</span>: <span class="ident">Once</span> <span class="op">=</span> <span class="ident">Once</span>::<span class="ident">new</span>();
 
 <span class="doccomment">/// Initialize the `tink-aead` crate, registering its primitives so they are available via</span>
-<span class="doccomment">/// tink.</span>
+<span class="doccomment">/// tink-core.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>() {
     <span class="ident">INIT</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> {
         <span class="ident">register_key_manager</span>(<span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">AesCtrHmacAeadKeyManager</span>::<span class="ident">default</span>()))
@@ -164,23 +170,29 @@
         <span class="ident">register_key_manager</span>(<span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">KmsEnvelopeAeadKeyManager</span>::<span class="ident">default</span>()))
             .<span class="ident">expect</span>(<span class="string">&quot;tink_aead::init() failed&quot;</span>); <span class="comment">// safe:init</span>
 
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(<span class="string">&quot;AES128_GCM&quot;</span>, <span class="ident">aes128_gcm_key_template</span>);
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(<span class="string">&quot;AES256_GCM&quot;</span>, <span class="ident">aes256_gcm_key_template</span>);
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(<span class="string">&quot;AES128_GCM_SIV&quot;</span>, <span class="ident">aes128_gcm_siv_key_template</span>);
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(<span class="string">&quot;AES256_GCM_SIV&quot;</span>, <span class="ident">aes256_gcm_siv_key_template</span>);
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(<span class="string">&quot;AES128_GCM&quot;</span>, <span class="ident">aes128_gcm_key_template</span>);
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(<span class="string">&quot;AES256_GCM&quot;</span>, <span class="ident">aes256_gcm_key_template</span>);
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
+            <span class="string">&quot;AES128_GCM_SIV&quot;</span>,
+            <span class="ident">aes128_gcm_siv_key_template</span>,
+        );
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
+            <span class="string">&quot;AES256_GCM_SIV&quot;</span>,
+            <span class="ident">aes256_gcm_siv_key_template</span>,
+        );
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
             <span class="string">&quot;AES128_CTR_HMAC_SHA256&quot;</span>,
             <span class="ident">aes128_ctr_hmac_sha256_key_template</span>,
         );
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
             <span class="string">&quot;AES256_CTR_HMAC_SHA256&quot;</span>,
             <span class="ident">aes256_ctr_hmac_sha256_key_template</span>,
         );
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
             <span class="string">&quot;CHACHA20_POLY1305&quot;</span>,
             <span class="ident">cha_cha20_poly1305_key_template</span>,
         );
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
             <span class="string">&quot;XCHACHA20_POLY1305&quot;</span>,
             <span class="ident">x_cha_cha20_poly1305_key_template</span>,
         );

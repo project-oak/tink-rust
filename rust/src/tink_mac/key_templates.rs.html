@@ -120,14 +120,14 @@
 <span class="doccomment">//! This module contains pre-generated [`KeyTemplate`] instances for MAC.</span>
 
 <span class="kw">use</span> <span class="ident">prost</span>::<span class="ident">Message</span>;
-<span class="kw">use</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">KeyTemplate</span>;
+<span class="kw">use</span> <span class="ident">tink_proto</span>::<span class="ident">KeyTemplate</span>;
 
 <span class="doccomment">/// Return a [`KeyTemplate`] that generates a HMAC key with the following parameters:</span>
 <span class="doccomment">///  - Key size: 32 bytes</span>
 <span class="doccomment">///  - Tag size: 16 bytes</span>
 <span class="doccomment">///  - Hash function: SHA256</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">hmac_sha256_tag128_key_template</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
-    <span class="ident">create_hmac_key_template</span>(<span class="number">32</span>, <span class="number">16</span>, <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha256</span>)
+    <span class="ident">create_hmac_key_template</span>(<span class="number">32</span>, <span class="number">16</span>, <span class="ident">tink_proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha256</span>)
 }
 
 <span class="doccomment">/// Return a [`KeyTemplate`] that generates a HMAC key with the following parameters:</span>
@@ -135,7 +135,7 @@
 <span class="doccomment">///  - Tag size: 32 bytes</span>
 <span class="doccomment">///  - Hash function: SHA256</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">hmac_sha256_tag256_key_template</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
-    <span class="ident">create_hmac_key_template</span>(<span class="number">32</span>, <span class="number">32</span>, <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha256</span>)
+    <span class="ident">create_hmac_key_template</span>(<span class="number">32</span>, <span class="number">32</span>, <span class="ident">tink_proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha256</span>)
 }
 
 <span class="doccomment">/// Return a [`KeyTemplate`] that generates a HMAC key with the following parameters:</span>
@@ -143,7 +143,7 @@
 <span class="doccomment">///  - Tag size: 32 bytes</span>
 <span class="doccomment">///  - Hash function: SHA512</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">hmac_sha512_tag256_key_template</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
-    <span class="ident">create_hmac_key_template</span>(<span class="number">64</span>, <span class="number">32</span>, <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha512</span>)
+    <span class="ident">create_hmac_key_template</span>(<span class="number">64</span>, <span class="number">32</span>, <span class="ident">tink_proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha512</span>)
 }
 
 <span class="doccomment">/// Return a [`KeyTemplate`] that generates a HMAC key with the following parameters:</span>
@@ -151,7 +151,7 @@
 <span class="doccomment">///  - Tag size: 64 bytes</span>
 <span class="doccomment">///  - Hash function: SHA512</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">hmac_sha512_tag512_key_template</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
-    <span class="ident">create_hmac_key_template</span>(<span class="number">64</span>, <span class="number">64</span>, <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha512</span>)
+    <span class="ident">create_hmac_key_template</span>(<span class="number">64</span>, <span class="number">64</span>, <span class="ident">tink_proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha512</span>)
 }
 
 <span class="doccomment">/// Return a [`KeyTemplate`] that generates a AES-CMAC key with the following parameters:</span>
@@ -165,13 +165,13 @@
 <span class="kw">fn</span> <span class="ident">create_hmac_key_template</span>(
     <span class="ident">key_size</span>: <span class="ident">u32</span>,
     <span class="ident">tag_size</span>: <span class="ident">u32</span>,
-    <span class="ident">hash_type</span>: <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HashType</span>,
+    <span class="ident">hash_type</span>: <span class="ident">tink_proto</span>::<span class="ident">HashType</span>,
 ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
-    <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HmacParams</span> {
+    <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">HmacParams</span> {
         <span class="ident">hash</span>: <span class="ident">hash_type</span> <span class="kw">as</span> <span class="ident">i32</span>,
         <span class="ident">tag_size</span>,
     };
-    <span class="kw">let</span> <span class="ident">format</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HmacKeyFormat</span> {
+    <span class="kw">let</span> <span class="ident">format</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">HmacKeyFormat</span> {
         <span class="ident">version</span>: <span class="kw">crate</span>::<span class="ident">HMAC_KEY_VERSION</span>,
         <span class="ident">params</span>: <span class="prelude-val">Some</span>(<span class="ident">params</span>),
         <span class="ident">key_size</span>,
@@ -181,14 +181,14 @@
     <span class="ident">KeyTemplate</span> {
         <span class="ident">type_url</span>: <span class="kw">crate</span>::<span class="ident">HMAC_TYPE_URL</span>.<span class="ident">to_string</span>(),
         <span class="ident">value</span>: <span class="ident">serialized_format</span>,
-        <span class="ident">output_prefix_type</span>: <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Tink</span> <span class="kw">as</span> <span class="ident">i32</span>,
+        <span class="ident">output_prefix_type</span>: <span class="ident">tink_proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Tink</span> <span class="kw">as</span> <span class="ident">i32</span>,
     }
 }
 
 <span class="doccomment">/// Create a new [`KeyTemplate`] for CMAC using the given parameters.</span>
 <span class="kw">fn</span> <span class="ident">create_cmac_key_template</span>(<span class="ident">key_size</span>: <span class="ident">u32</span>, <span class="ident">tag_size</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
-    <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCmacParams</span> { <span class="ident">tag_size</span> };
-    <span class="kw">let</span> <span class="ident">format</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCmacKeyFormat</span> {
+    <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">AesCmacParams</span> { <span class="ident">tag_size</span> };
+    <span class="kw">let</span> <span class="ident">format</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">AesCmacKeyFormat</span> {
         <span class="ident">params</span>: <span class="prelude-val">Some</span>(<span class="ident">params</span>),
         <span class="ident">key_size</span>,
     };
@@ -197,7 +197,7 @@
     <span class="ident">KeyTemplate</span> {
         <span class="ident">type_url</span>: <span class="kw">crate</span>::<span class="ident">CMAC_TYPE_URL</span>.<span class="ident">to_string</span>(),
         <span class="ident">value</span>: <span class="ident">serialized_format</span>,
-        <span class="ident">output_prefix_type</span>: <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Tink</span> <span class="kw">as</span> <span class="ident">i32</span>,
+        <span class="ident">output_prefix_type</span>: <span class="ident">tink_proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Tink</span> <span class="kw">as</span> <span class="ident">i32</span>,
     }
 }
 </pre></div>

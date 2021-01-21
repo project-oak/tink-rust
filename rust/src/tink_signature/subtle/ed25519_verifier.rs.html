@@ -76,9 +76,9 @@
 <span class="comment">////////////////////////////////////////////////////////////////////////////////</span>
 
 <span class="kw">use</span> <span class="ident">signature</span>::{<span class="ident">Signature</span>, <span class="ident">Verifier</span> <span class="kw">as</span> <span class="ident">RustCryptoVerifier</span>};
-<span class="kw">use</span> <span class="ident">tink</span>::{<span class="ident">utils</span>::<span class="ident">wrap_err</span>, <span class="ident">TinkError</span>};
+<span class="kw">use</span> <span class="ident">tink_core</span>::{<span class="ident">utils</span>::<span class="ident">wrap_err</span>, <span class="ident">TinkError</span>};
 
-<span class="doccomment">/// A [`tink::Verifier`] for ED25519.</span>
+<span class="doccomment">/// A [`tink_core::Verifier`] for ED25519.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Ed25519Verifier</span> {
     <span class="ident">public_key</span>: <span class="ident">ed25519_dalek</span>::<span class="ident">PublicKey</span>,
@@ -100,8 +100,8 @@
     }
 }
 
-<span class="kw">impl</span> <span class="ident">tink</span>::<span class="ident">Verifier</span> <span class="kw">for</span> <span class="ident">Ed25519Verifier</span> {
-    <span class="kw">fn</span> <span class="ident">verify</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">signature</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">data</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">tink</span>::<span class="ident">TinkError</span><span class="op">&gt;</span> {
+<span class="kw">impl</span> <span class="ident">tink_core</span>::<span class="ident">Verifier</span> <span class="kw">for</span> <span class="ident">Ed25519Verifier</span> {
+    <span class="kw">fn</span> <span class="ident">verify</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">signature</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">data</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">tink_core</span>::<span class="ident">TinkError</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="ident">signature</span>.<span class="ident">len</span>() <span class="op">!</span><span class="op">=</span> <span class="ident">ed25519_dalek</span>::<span class="ident">SIGNATURE_LENGTH</span> {
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format</span><span class="macro">!</span>(
                 <span class="string">&quot;the length of the signature is not {}&quot;</span>,

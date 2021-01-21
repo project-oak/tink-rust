@@ -52,7 +52,7 @@
 
     <span class="comment">// Other key templates can also be used, if the relevant primitive crate</span>
     <span class="comment">// is initialized.</span>
-    <span class="kw">let</span> <span class="ident">kh</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">keyset</span>::<span class="ident">Handle</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="ident">tink_daead</span>::<span class="ident">aes_siv_key_template</span>()).<span class="ident">unwrap</span>();
+    <span class="kw">let</span> <span class="ident">kh</span> <span class="op">=</span> <span class="ident">tink_core</span>::<span class="ident">keyset</span>::<span class="ident">Handle</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="ident">tink_daead</span>::<span class="ident">aes_siv_key_template</span>()).<span class="ident">unwrap</span>();
 
     <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">kh</span>);
 }

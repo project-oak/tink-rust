@@ -178,6 +178,7 @@
 <span id="175">175</span>
 <span id="176">176</span>
 <span id="177">177</span>
+<span id="178">178</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2020 The Tink-Rust Authors</span>
 <span class="comment">//</span>
@@ -200,14 +201,15 @@
 <span class="kw">use</span> <span class="ident">generic_array</span>::<span class="ident">typenum</span>::<span class="ident">Unsigned</span>;
 <span class="kw">use</span> <span class="ident">p256</span>::<span class="ident">elliptic_curve</span>;
 <span class="kw">use</span> <span class="ident">prost</span>::<span class="ident">Message</span>;
-<span class="kw">use</span> <span class="ident">tink</span>::{<span class="ident">proto</span>::<span class="ident">EllipticCurveType</span>, <span class="ident">utils</span>::<span class="ident">wrap_err</span>, <span class="ident">TinkError</span>};
+<span class="kw">use</span> <span class="ident">tink_core</span>::{<span class="ident">utils</span>::<span class="ident">wrap_err</span>, <span class="ident">TinkError</span>};
+<span class="kw">use</span> <span class="ident">tink_proto</span>::<span class="ident">EllipticCurveType</span>;
 
 <span class="doccomment">/// Maximal version of ECDSA keys.</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">ECDSA_SIGNER_KEY_VERSION</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0</span>;
 <span class="doccomment">/// Type URL of ECDSA keys that Tink supports.</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">ECDSA_SIGNER_TYPE_URL</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;type.googleapis.com/google.crypto.tink.EcdsaPrivateKey&quot;</span>;
 
-<span class="doccomment">/// An implementation of the [`tink::registry::KeyManager`] trait.</span>
+<span class="doccomment">/// An implementation of the [`tink_core::registry::KeyManager`] trait.</span>
 <span class="doccomment">/// It generates new ECDSA private keys and produces new instances of</span>
 <span class="doccomment">/// [`crate::subtle::EcdsaSigner`].</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Default</span>)]</span>
@@ -216,18 +218,18 @@
 <span class="doccomment">/// Prefix for uncompressed elliptic curve points.</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">ECDSA_UNCOMPRESSED_POINT_PREFIX</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="number">0x04</span>;
 
-<span class="kw">impl</span> <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">KeyManager</span> <span class="kw">for</span> <span class="ident">EcdsaSignerKeyManager</span> {
-    <span class="kw">fn</span> <span class="ident">primitive</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">serialized_key</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">tink</span>::<span class="ident">Primitive</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
+<span class="kw">impl</span> <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">KeyManager</span> <span class="kw">for</span> <span class="ident">EcdsaSignerKeyManager</span> {
+    <span class="kw">fn</span> <span class="ident">primitive</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">serialized_key</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">tink_core</span>::<span class="ident">Primitive</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="ident">serialized_key</span>.<span class="ident">is_empty</span>() {
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="string">&quot;EcdsaSignerKeyManager: invalid key&quot;</span>.<span class="ident">into</span>());
         }
-        <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EcdsaPrivateKey</span>::<span class="ident">decode</span>(<span class="ident">serialized_key</span>)
+        <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">EcdsaPrivateKey</span>::<span class="ident">decode</span>(<span class="ident">serialized_key</span>)
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;EcdsaSignerKeyManager: invalid key&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="ident">validate_key</span>(<span class="kw-2">&amp;</span><span class="ident">key</span>)<span class="question-mark">?</span>;
 
         <span class="kw">let</span> (<span class="ident">hash</span>, <span class="ident">curve</span>, <span class="ident">encoding</span>) <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">get_ecdsa_param_ids</span>(<span class="kw-2">&amp;</span><span class="ident">params</span>);
         <span class="kw">match</span> <span class="kw">crate</span>::<span class="ident">subtle</span>::<span class="ident">EcdsaSigner</span>::<span class="ident">new</span>(<span class="ident">hash</span>, <span class="ident">curve</span>, <span class="ident">encoding</span>, <span class="kw-2">&amp;</span><span class="ident">key</span>.<span class="ident">key_value</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">p</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">tink</span>::<span class="ident">Primitive</span>::<span class="ident">Signer</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">p</span>))),
+            <span class="prelude-val">Ok</span>(<span class="ident">p</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">tink_core</span>::<span class="ident">Primitive</span>::<span class="ident">Signer</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">p</span>))),
             <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">wrap_err</span>(<span class="string">&quot;EcdsaSignerKeyManager: invalid key&quot;</span>, <span class="ident">e</span>)),
         }
     }
@@ -236,7 +238,7 @@
         <span class="kw">if</span> <span class="ident">serialized_key_format</span>.<span class="ident">is_empty</span>() {
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="string">&quot;EcdsaSignerKeyManager: invalid key format&quot;</span>.<span class="ident">into</span>());
         }
-        <span class="kw">let</span> <span class="ident">key_format</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EcdsaKeyFormat</span>::<span class="ident">decode</span>(<span class="ident">serialized_key_format</span>)
+        <span class="kw">let</span> <span class="ident">key_format</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">EcdsaKeyFormat</span>::<span class="ident">decode</span>(<span class="ident">serialized_key_format</span>)
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;EcdsaSignerKeyManager: invalid key&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
         <span class="kw">let</span> (<span class="ident">params</span>, <span class="ident">curve</span>) <span class="op">=</span> <span class="ident">validate_key_format</span>(<span class="kw-2">&amp;</span><span class="ident">key_format</span>)<span class="question-mark">?</span>;
 
@@ -272,14 +274,14 @@
                 <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;EcdsaSignerKeyManager: unsupported curve {:?}&quot;</span>, <span class="ident">curve</span>).<span class="ident">into</span>())
             }
         };
-        <span class="kw">let</span> <span class="ident">pub_key</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EcdsaPublicKey</span> {
+        <span class="kw">let</span> <span class="ident">pub_key</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">EcdsaPublicKey</span> {
             <span class="ident">version</span>: <span class="ident">ECDSA_SIGNER_KEY_VERSION</span>,
             <span class="ident">params</span>: <span class="prelude-val">Some</span>(<span class="ident">params</span>),
             <span class="ident">x</span>: <span class="ident">pub_x_data</span>,
             <span class="ident">y</span>: <span class="ident">pub_y_data</span>,
         };
 
-        <span class="kw">let</span> <span class="ident">priv_key</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EcdsaPrivateKey</span> {
+        <span class="kw">let</span> <span class="ident">priv_key</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">EcdsaPrivateKey</span> {
             <span class="ident">version</span>: <span class="ident">ECDSA_SIGNER_KEY_VERSION</span>,
             <span class="ident">public_key</span>: <span class="prelude-val">Some</span>(<span class="ident">pub_key</span>),
             <span class="ident">key_value</span>: <span class="ident">secret_key_data</span>,
@@ -296,8 +298,8 @@
         <span class="ident">ECDSA_SIGNER_TYPE_URL</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">key_material_type</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">key_data</span>::<span class="ident">KeyMaterialType</span> {
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">key_data</span>::<span class="ident">KeyMaterialType</span>::<span class="ident">AsymmetricPrivate</span>
+    <span class="kw">fn</span> <span class="ident">key_material_type</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">tink_proto</span>::<span class="ident">key_data</span>::<span class="ident">KeyMaterialType</span> {
+        <span class="ident">tink_proto</span>::<span class="ident">key_data</span>::<span class="ident">KeyMaterialType</span>::<span class="ident">AsymmetricPrivate</span>
     }
 
     <span class="kw">fn</span> <span class="ident">supports_private_keys</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
@@ -307,8 +309,8 @@
     <span class="kw">fn</span> <span class="ident">public_key_data</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">serialized_priv_key</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">KeyData</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">priv_key</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EcdsaPrivateKey</span>::<span class="ident">decode</span>(<span class="ident">serialized_priv_key</span>)
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">tink_proto</span>::<span class="ident">KeyData</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">priv_key</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">EcdsaPrivateKey</span>::<span class="ident">decode</span>(<span class="ident">serialized_priv_key</span>)
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;EcdsaSignerKeyManager: invalid private key&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">serialized_pub_key</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
         <span class="ident">priv_key</span>
@@ -316,18 +318,18 @@
             .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;EcdsaSignerKeyManager: no public key&quot;</span>))<span class="question-mark">?</span>
             .<span class="ident">encode</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized_pub_key</span>)
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;EcdsaSignerKeyManager: invalid public key&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(<span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">KeyData</span> {
+        <span class="prelude-val">Ok</span>(<span class="ident">tink_proto</span>::<span class="ident">KeyData</span> {
             <span class="ident">type_url</span>: <span class="kw">crate</span>::<span class="ident">ECDSA_VERIFIER_TYPE_URL</span>.<span class="ident">to_string</span>(),
             <span class="ident">value</span>: <span class="ident">serialized_pub_key</span>,
-            <span class="ident">key_material_type</span>: <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">key_data</span>::<span class="ident">KeyMaterialType</span>::<span class="ident">AsymmetricPublic</span> <span class="kw">as</span> <span class="ident">i32</span>,
+            <span class="ident">key_material_type</span>: <span class="ident">tink_proto</span>::<span class="ident">key_data</span>::<span class="ident">KeyMaterialType</span>::<span class="ident">AsymmetricPublic</span> <span class="kw">as</span> <span class="ident">i32</span>,
         })
     }
 }
 
-<span class="doccomment">/// Validate the given [`EcdsaPrivateKey`](tink::proto::EcdsaPrivateKey) and return</span>
+<span class="doccomment">/// Validate the given [`EcdsaPrivateKey`](tink_proto::EcdsaPrivateKey) and return</span>
 <span class="doccomment">/// the parameters.</span>
-<span class="kw">fn</span> <span class="ident">validate_key</span>(<span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EcdsaPrivateKey</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EcdsaParams</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
-    <span class="ident">tink</span>::<span class="ident">keyset</span>::<span class="ident">validate_key_version</span>(<span class="ident">key</span>.<span class="ident">version</span>, <span class="ident">ECDSA_SIGNER_KEY_VERSION</span>)
+<span class="kw">fn</span> <span class="ident">validate_key</span>(<span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">tink_proto</span>::<span class="ident">EcdsaPrivateKey</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">tink_proto</span>::<span class="ident">EcdsaParams</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
+    <span class="ident">tink_core</span>::<span class="ident">keyset</span>::<span class="ident">validate_key_version</span>(<span class="ident">key</span>.<span class="ident">version</span>, <span class="ident">ECDSA_SIGNER_KEY_VERSION</span>)
         .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;EcdsaSignerKeyManager&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">pub_key</span> <span class="op">=</span> <span class="ident">key</span>
         .<span class="ident">public_key</span>
@@ -343,11 +345,11 @@
     <span class="prelude-val">Ok</span>(<span class="ident">params</span>)
 }
 
-<span class="doccomment">/// Validate the given [`EcdsaKeyFormat`](tink::proto::EcdsaKeyFormat) and return</span>
+<span class="doccomment">/// Validate the given [`EcdsaKeyFormat`](tink_proto::EcdsaKeyFormat) and return</span>
 <span class="doccomment">/// the parameters.</span>
 <span class="kw">fn</span> <span class="ident">validate_key_format</span>(
-    <span class="ident">key_format</span>: <span class="kw-2">&amp;</span><span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EcdsaKeyFormat</span>,
-) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EcdsaParams</span>, <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">EllipticCurveType</span>), <span class="ident">TinkError</span><span class="op">&gt;</span> {
+    <span class="ident">key_format</span>: <span class="kw-2">&amp;</span><span class="ident">tink_proto</span>::<span class="ident">EcdsaKeyFormat</span>,
+) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">tink_proto</span>::<span class="ident">EcdsaParams</span>, <span class="ident">tink_proto</span>::<span class="ident">EllipticCurveType</span>), <span class="ident">TinkError</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="ident">key_format</span>
         .<span class="ident">params</span>
         .<span class="ident">as_ref</span>()

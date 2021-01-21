@@ -72,6 +72,8 @@
 <span id="69">69</span>
 <span id="70">70</span>
 <span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2020 The Tink-Rust Authors</span>
 <span class="comment">//</span>
@@ -89,7 +91,7 @@
 <span class="comment">//</span>
 <span class="comment">////////////////////////////////////////////////////////////////////////////////</span>
 
-<span class="doccomment">//! This crate provides implementations of the [`tink::Mac`] primitive.</span>
+<span class="doccomment">//! This crate provides implementations of the [`tink_core::Mac`] primitive.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! MAC computes a tag for a given message that can be used to authenticate a</span>
 <span class="doccomment">//! message.  MAC protects data integrity as well as provides for authenticity</span>
@@ -120,28 +122,30 @@
 <span class="doccomment">/// Tink.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>() {
     <span class="ident">INIT</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> {
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_key_manager</span>(<span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">HmacKeyManager</span>::<span class="ident">default</span>()))
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_key_manager</span>(<span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">HmacKeyManager</span>::<span class="ident">default</span>()))
             .<span class="ident">expect</span>(<span class="string">&quot;tink_mac::init() failed&quot;</span>); <span class="comment">// safe: init</span>
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_key_manager</span>(<span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">AesCmacKeyManager</span>::<span class="ident">default</span>()))
-            .<span class="ident">expect</span>(<span class="string">&quot;tink_mac::init() failed&quot;</span>); <span class="comment">// safe: init</span>
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_key_manager</span>(
+            <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">AesCmacKeyManager</span>::<span class="ident">default</span>()),
+        )
+        .<span class="ident">expect</span>(<span class="string">&quot;tink_mac::init() failed&quot;</span>); <span class="comment">// safe: init</span>
 
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
             <span class="string">&quot;HMAC_SHA256_128BITTAG&quot;</span>,
             <span class="ident">hmac_sha256_tag128_key_template</span>,
         );
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
             <span class="string">&quot;HMAC_SHA256_256BITTAG&quot;</span>,
             <span class="ident">hmac_sha256_tag256_key_template</span>,
         );
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
             <span class="string">&quot;HMAC_SHA512_256BITTAG&quot;</span>,
             <span class="ident">hmac_sha512_tag256_key_template</span>,
         );
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
             <span class="string">&quot;HMAC_SHA512_512BITTAG&quot;</span>,
             <span class="ident">hmac_sha512_tag512_key_template</span>,
         );
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(<span class="string">&quot;AES_CMAC&quot;</span>, <span class="ident">aes_cmac_tag128_key_template</span>);
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(<span class="string">&quot;AES_CMAC&quot;</span>, <span class="ident">aes_cmac_tag128_key_template</span>);
     });
 }
 </pre></div>

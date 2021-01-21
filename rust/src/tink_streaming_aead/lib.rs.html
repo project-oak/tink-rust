@@ -113,7 +113,7 @@
 <span class="attribute">#![<span class="ident">deny</span>(<span class="ident">broken_intra_doc_links</span>)]</span>
 
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Once</span>;
-<span class="kw">use</span> <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_key_manager</span>;
+<span class="kw">use</span> <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_key_manager</span>;
 
 <span class="kw">mod</span> <span class="ident">aes_ctr_hmac_key_manager</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">aes_ctr_hmac_key_manager</span>::<span class="kw-2">*</span>;
@@ -141,36 +141,36 @@
         <span class="ident">register_key_manager</span>(<span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">AesGcmHkdfKeyManager</span>::<span class="ident">default</span>()))
             .<span class="ident">expect</span>(<span class="string">&quot;tink_streaming_aead::init() failed&quot;</span>); <span class="comment">// safe: init</span>
 
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
             <span class="string">&quot;AES128_CTR_HMAC_SHA256_4KB&quot;</span>,
             <span class="ident">aes128_gcm_hkdf_4kb_key_template</span>,
         );
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
             <span class="string">&quot;AES128_CTR_HMAC_SHA256_1MB&quot;</span>,
             <span class="ident">aes128_gcm_hkdf_1mb_key_template</span>,
         );
 
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
             <span class="string">&quot;AES256_CTR_HMAC_SHA256_4KB&quot;</span>,
             <span class="ident">aes256_gcm_hkdf_4kb_key_template</span>,
         );
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
             <span class="string">&quot;AES256_CTR_HMAC_SHA256_1MB&quot;</span>,
             <span class="ident">aes256_gcm_hkdf_1mb_key_template</span>,
         );
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
             <span class="string">&quot;AES128_GCM_HKDF_4KB&quot;</span>,
             <span class="ident">aes128_ctr_hmac_sha256_segment_4kb_key_template</span>,
         );
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
             <span class="string">&quot;AES128_GCM_HKDF_1MB&quot;</span>,
             <span class="ident">aes128_ctr_hmac_sha256_segment_1mb_key_template</span>,
         );
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
             <span class="string">&quot;AES256_GCM_HKDF_4KB&quot;</span>,
             <span class="ident">aes256_ctr_hmac_sha256_segment_4kb_key_template</span>,
         );
-        <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
+        <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">register_template_generator</span>(
             <span class="string">&quot;AES256_GCM_HKDF_1MB&quot;</span>,
             <span class="ident">aes256_ctr_hmac_sha256_segment_1mb_key_template</span>,
         );

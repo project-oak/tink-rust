@@ -155,7 +155,7 @@
 
 <span class="kw">use</span> <span class="ident">google_cloudkms1</span>::<span class="ident">CloudKMS</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::{<span class="ident">Arc</span>, <span class="ident">Mutex</span>};
-<span class="kw">use</span> <span class="ident">tink</span>::{<span class="ident">utils</span>::<span class="ident">wrap_err</span>, <span class="ident">TinkError</span>};
+<span class="kw">use</span> <span class="ident">tink_core</span>::{<span class="ident">utils</span>::<span class="ident">wrap_err</span>, <span class="ident">TinkError</span>};
 <span class="kw">use</span> <span class="ident">yup_oauth2</span>::{
     <span class="ident">ApplicationSecret</span>, <span class="ident">Authenticator</span>, <span class="ident">DefaultAuthenticatorDelegate</span>, <span class="ident">MemoryStorage</span>,
     <span class="ident">ServiceAccountAccess</span>,
@@ -206,7 +206,7 @@
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">kms_service</span> <span class="op">=</span> <span class="ident">google_cloudkms1</span>::<span class="ident">CloudKMS</span>::<span class="ident">new</span>(<span class="ident">client</span>, <span class="ident">auth</span>);
         <span class="ident">kms_service</span>.<span class="ident">user_agent</span>(<span class="macro">format</span><span class="macro">!</span>(
             <span class="string">&quot;Tink-Rust/{}  Rust/{}&quot;</span>,
-            <span class="ident">tink</span>::<span class="ident">UPSTREAM_VERSION</span>,
+            <span class="ident">tink_core</span>::<span class="ident">UPSTREAM_VERSION</span>,
             <span class="macro">env</span><span class="macro">!</span>(<span class="string">&quot;CARGO_PKG_VERSION&quot;</span>)
         ));
         <span class="prelude-val">Ok</span>(<span class="ident">GcpClient</span> {
@@ -242,7 +242,7 @@
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">kms_service</span> <span class="op">=</span> <span class="ident">google_cloudkms1</span>::<span class="ident">CloudKMS</span>::<span class="ident">new</span>(<span class="ident">client</span>, <span class="ident">sa_access</span>);
         <span class="ident">kms_service</span>.<span class="ident">user_agent</span>(<span class="macro">format</span><span class="macro">!</span>(
             <span class="string">&quot;Tink-Rust/{}  Rust/{}&quot;</span>,
-            <span class="ident">tink</span>::<span class="ident">UPSTREAM_VERSION</span>,
+            <span class="ident">tink_core</span>::<span class="ident">UPSTREAM_VERSION</span>,
             <span class="macro">env</span><span class="macro">!</span>(<span class="string">&quot;CARGO_PKG_VERSION&quot;</span>)
         ));
         <span class="prelude-val">Ok</span>(<span class="ident">GcpClient</span> {
@@ -252,11 +252,11 @@
     }
 }
 
-<span class="kw">impl</span> <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">KmsClient</span> <span class="kw">for</span> <span class="ident">GcpClient</span> {
+<span class="kw">impl</span> <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">KmsClient</span> <span class="kw">for</span> <span class="ident">GcpClient</span> {
     <span class="kw">fn</span> <span class="ident">supported</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">key_uri</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="ident">key_uri</span>.<span class="ident">starts_with</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">key_uri_prefix</span>)
     }
-    <span class="kw">fn</span> <span class="ident">get_aead</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">key_uri</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">tink</span>::<span class="ident">Aead</span><span class="op">&gt;</span>, <span class="ident">tink</span>::<span class="ident">TinkError</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">get_aead</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">key_uri</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">tink_core</span>::<span class="ident">Aead</span><span class="op">&gt;</span>, <span class="ident">tink_core</span>::<span class="ident">TinkError</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">supported</span>(<span class="ident">key_uri</span>) {
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="string">&quot;unsupported key_uri&quot;</span>.<span class="ident">into</span>());
         }

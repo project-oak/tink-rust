@@ -127,20 +127,20 @@
 <span class="doccomment">//! This module contains pre-generated [`KeyTemplate`] instances for PRF.</span>
 
 <span class="kw">use</span> <span class="ident">prost</span>::<span class="ident">Message</span>;
-<span class="kw">use</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">KeyTemplate</span>;
+<span class="kw">use</span> <span class="ident">tink_proto</span>::<span class="ident">KeyTemplate</span>;
 
 <span class="doccomment">/// Return a [`KeyTemplate`] that generates an HMAC key with the following parameters:</span>
 <span class="doccomment">///  - Key size: 32 bytes</span>
 <span class="doccomment">///  - Hash function: SHA256</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">hmac_sha256_prf_key_template</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
-    <span class="ident">create_hmac_prf_key_template</span>(<span class="number">32</span>, <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha256</span>)
+    <span class="ident">create_hmac_prf_key_template</span>(<span class="number">32</span>, <span class="ident">tink_proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha256</span>)
 }
 
 <span class="doccomment">/// Return a [`KeyTemplate`] that generates an HMAC key with the following parameters:</span>
 <span class="doccomment">///  - Key size: 64 bytes</span>
 <span class="doccomment">///  - Hash function: SHA512</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">hmac_sha512_prf_key_template</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
-    <span class="ident">create_hmac_prf_key_template</span>(<span class="number">64</span>, <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha512</span>)
+    <span class="ident">create_hmac_prf_key_template</span>(<span class="number">64</span>, <span class="ident">tink_proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha512</span>)
 }
 
 <span class="doccomment">/// Return a [`KeyTemplate`] that generates an HKDF key with the following parameters:</span>
@@ -148,7 +148,7 @@
 <span class="doccomment">///  - Salt: empty</span>
 <span class="doccomment">///  - Hash function: SHA256</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">hkdf_sha256_prf_key_template</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
-    <span class="ident">create_hkdf_prf_key_template</span>(<span class="number">32</span>, <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha256</span>, <span class="kw-2">&amp;</span>[])
+    <span class="ident">create_hkdf_prf_key_template</span>(<span class="number">32</span>, <span class="ident">tink_proto</span>::<span class="ident">HashType</span>::<span class="ident">Sha256</span>, <span class="kw-2">&amp;</span>[])
 }
 
 <span class="doccomment">/// Return a [`KeyTemplate`] that generates an AES-CMAC key with the following parameters:</span>
@@ -158,11 +158,11 @@
 }
 
 <span class="doccomment">/// Create a new [`KeyTemplate`] for HMAC using the given parameters.</span>
-<span class="kw">fn</span> <span class="ident">create_hmac_prf_key_template</span>(<span class="ident">key_size</span>: <span class="ident">u32</span>, <span class="ident">hash_type</span>: <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HashType</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
-    <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HmacPrfParams</span> {
+<span class="kw">fn</span> <span class="ident">create_hmac_prf_key_template</span>(<span class="ident">key_size</span>: <span class="ident">u32</span>, <span class="ident">hash_type</span>: <span class="ident">tink_proto</span>::<span class="ident">HashType</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
+    <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">HmacPrfParams</span> {
         <span class="ident">hash</span>: <span class="ident">hash_type</span> <span class="kw">as</span> <span class="ident">i32</span>,
     };
-    <span class="kw">let</span> <span class="ident">format</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HmacPrfKeyFormat</span> {
+    <span class="kw">let</span> <span class="ident">format</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">HmacPrfKeyFormat</span> {
         <span class="ident">params</span>: <span class="prelude-val">Some</span>(<span class="ident">params</span>),
         <span class="ident">key_size</span>,
         <span class="ident">version</span>: <span class="kw">super</span>::<span class="ident">HMAC_PRF_KEY_VERSION</span>,
@@ -171,7 +171,7 @@
     <span class="ident">format</span>.<span class="ident">encode</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized_format</span>).<span class="ident">unwrap</span>(); <span class="comment">// safe: proto-encode</span>
     <span class="ident">KeyTemplate</span> {
         <span class="ident">type_url</span>: <span class="kw">super</span>::<span class="ident">HMAC_PRF_TYPE_URL</span>.<span class="ident">to_string</span>(),
-        <span class="ident">output_prefix_type</span>: <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Raw</span> <span class="kw">as</span> <span class="ident">i32</span>,
+        <span class="ident">output_prefix_type</span>: <span class="ident">tink_proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Raw</span> <span class="kw">as</span> <span class="ident">i32</span>,
         <span class="ident">value</span>: <span class="ident">serialized_format</span>,
     }
 }
@@ -179,14 +179,14 @@
 <span class="doccomment">/// Creates a new [`KeyTemplate`] for HKDF using the given parameters.</span>
 <span class="kw">fn</span> <span class="ident">create_hkdf_prf_key_template</span>(
     <span class="ident">key_size</span>: <span class="ident">u32</span>,
-    <span class="ident">hash_type</span>: <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HashType</span>,
+    <span class="ident">hash_type</span>: <span class="ident">tink_proto</span>::<span class="ident">HashType</span>,
     <span class="ident">salt</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
 ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
-    <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HkdfPrfParams</span> {
+    <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">HkdfPrfParams</span> {
         <span class="ident">hash</span>: <span class="ident">hash_type</span> <span class="kw">as</span> <span class="ident">i32</span>,
         <span class="ident">salt</span>: <span class="ident">salt</span>.<span class="ident">to_vec</span>(),
     };
-    <span class="kw">let</span> <span class="ident">format</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HkdfPrfKeyFormat</span> {
+    <span class="kw">let</span> <span class="ident">format</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">HkdfPrfKeyFormat</span> {
         <span class="ident">params</span>: <span class="prelude-val">Some</span>(<span class="ident">params</span>),
         <span class="ident">key_size</span>,
         <span class="ident">version</span>: <span class="kw">super</span>::<span class="ident">HKDF_PRF_KEY_VERSION</span>,
@@ -195,14 +195,14 @@
     <span class="ident">format</span>.<span class="ident">encode</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized_format</span>).<span class="ident">unwrap</span>(); <span class="comment">// safe: proto-encode</span>
     <span class="ident">KeyTemplate</span> {
         <span class="ident">type_url</span>: <span class="kw">super</span>::<span class="ident">HKDF_PRF_TYPE_URL</span>.<span class="ident">to_string</span>(),
-        <span class="ident">output_prefix_type</span>: <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Raw</span> <span class="kw">as</span> <span class="ident">i32</span>,
+        <span class="ident">output_prefix_type</span>: <span class="ident">tink_proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Raw</span> <span class="kw">as</span> <span class="ident">i32</span>,
         <span class="ident">value</span>: <span class="ident">serialized_format</span>,
     }
 }
 
 <span class="comment">// Create a new [`KeyTemplate`] for AES-CMAC using the given parameters.</span>
 <span class="kw">fn</span> <span class="ident">create_aes_cmac_prf_key_template</span>(<span class="ident">key_size</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
-    <span class="kw">let</span> <span class="ident">format</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCmacPrfKeyFormat</span> {
+    <span class="kw">let</span> <span class="ident">format</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">AesCmacPrfKeyFormat</span> {
         <span class="ident">key_size</span>,
         <span class="ident">version</span>: <span class="kw">super</span>::<span class="ident">AES_CMAC_PRF_KEY_VERSION</span>,
     };
@@ -210,7 +210,7 @@
     <span class="ident">format</span>.<span class="ident">encode</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized_format</span>).<span class="ident">unwrap</span>(); <span class="comment">// safe: proto-encode</span>
     <span class="ident">KeyTemplate</span> {
         <span class="ident">type_url</span>: <span class="kw">super</span>::<span class="ident">AES_CMAC_PRF_TYPE_URL</span>.<span class="ident">to_string</span>(),
-        <span class="ident">output_prefix_type</span>: <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Raw</span> <span class="kw">as</span> <span class="ident">i32</span>,
+        <span class="ident">output_prefix_type</span>: <span class="ident">tink_proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Raw</span> <span class="kw">as</span> <span class="ident">i32</span>,
         <span class="ident">value</span>: <span class="ident">serialized_format</span>,
     }
 }

@@ -181,7 +181,7 @@
 <span class="doccomment">//! templates to generate new Keysets.</span>
 
 <span class="kw">use</span> <span class="ident">prost</span>::<span class="ident">Message</span>;
-<span class="kw">use</span> <span class="ident">tink</span>::<span class="ident">proto</span>::{<span class="ident">HashType</span>, <span class="ident">KeyTemplate</span>, <span class="ident">OutputPrefixType</span>};
+<span class="kw">use</span> <span class="ident">tink_proto</span>::{<span class="ident">HashType</span>, <span class="ident">KeyTemplate</span>, <span class="ident">OutputPrefixType</span>};
 
 <span class="doccomment">/// Return a [`KeyTemplate`] that generates an AES-GCM key with the following parameters:</span>
 <span class="doccomment">///   - Main key size: 16 bytes</span>
@@ -263,7 +263,7 @@
     <span class="ident">new_aes_ctr_hmac_key_template</span>(<span class="number">32</span>, <span class="ident">HashType</span>::<span class="ident">Sha256</span>, <span class="number">32</span>, <span class="ident">HashType</span>::<span class="ident">Sha256</span>, <span class="number">32</span>, <span class="number">1048576</span>)
 }
 
-<span class="doccomment">/// Create a [`KeyTemplate`] containing a [`tink::proto::AesGcmHkdfStreamingKeyFormat`] with</span>
+<span class="doccomment">/// Create a [`KeyTemplate`] containing a [`tink_proto::AesGcmHkdfStreamingKeyFormat`] with</span>
 <span class="doccomment">/// specified parameters.</span>
 <span class="kw">fn</span> <span class="ident">new_aes_gcm_hkdf_key_template</span>(
     <span class="ident">main_key_size</span>: <span class="ident">u32</span>,
@@ -271,10 +271,10 @@
     <span class="ident">derived_key_size</span>: <span class="ident">u32</span>,
     <span class="ident">ciphertext_segment_size</span>: <span class="ident">u32</span>,
 ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
-    <span class="kw">let</span> <span class="ident">format</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesGcmHkdfStreamingKeyFormat</span> {
+    <span class="kw">let</span> <span class="ident">format</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">AesGcmHkdfStreamingKeyFormat</span> {
         <span class="ident">version</span>: <span class="kw">crate</span>::<span class="ident">AES_GCM_HKDF_KEY_VERSION</span>,
         <span class="ident">key_size</span>: <span class="ident">main_key_size</span>,
-        <span class="ident">params</span>: <span class="prelude-val">Some</span>(<span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesGcmHkdfStreamingParams</span> {
+        <span class="ident">params</span>: <span class="prelude-val">Some</span>(<span class="ident">tink_proto</span>::<span class="ident">AesGcmHkdfStreamingParams</span> {
             <span class="ident">ciphertext_segment_size</span>,
             <span class="ident">derived_key_size</span>,
             <span class="ident">hkdf_hash_type</span>: <span class="ident">hkdf_hash_type</span> <span class="kw">as</span> <span class="ident">i32</span>,
@@ -289,7 +289,7 @@
     }
 }
 
-<span class="doccomment">/// Create a KeyTemplate containing a [`tink::proto::AesCtrHmacStreamingKeyFormat`] with the</span>
+<span class="doccomment">/// Create a KeyTemplate containing a [`tink_proto::AesCtrHmacStreamingKeyFormat`] with the</span>
 <span class="doccomment">/// specified parameters.</span>
 <span class="kw">fn</span> <span class="ident">new_aes_ctr_hmac_key_template</span>(
     <span class="ident">main_key_size</span>: <span class="ident">u32</span>,
@@ -299,14 +299,14 @@
     <span class="ident">tag_size</span>: <span class="ident">u32</span>,
     <span class="ident">ciphertext_segment_size</span>: <span class="ident">u32</span>,
 ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
-    <span class="kw">let</span> <span class="ident">format</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCtrHmacStreamingKeyFormat</span> {
+    <span class="kw">let</span> <span class="ident">format</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">AesCtrHmacStreamingKeyFormat</span> {
         <span class="ident">version</span>: <span class="kw">crate</span>::<span class="ident">AES_CTR_HMAC_KEY_VERSION</span>,
         <span class="ident">key_size</span>: <span class="ident">main_key_size</span>,
-        <span class="ident">params</span>: <span class="prelude-val">Some</span>(<span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCtrHmacStreamingParams</span> {
+        <span class="ident">params</span>: <span class="prelude-val">Some</span>(<span class="ident">tink_proto</span>::<span class="ident">AesCtrHmacStreamingParams</span> {
             <span class="ident">ciphertext_segment_size</span>,
             <span class="ident">derived_key_size</span>,
             <span class="ident">hkdf_hash_type</span>: <span class="ident">hkdf_hash_type</span> <span class="kw">as</span> <span class="ident">i32</span>,
-            <span class="ident">hmac_params</span>: <span class="prelude-val">Some</span>(<span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HmacParams</span> {
+            <span class="ident">hmac_params</span>: <span class="prelude-val">Some</span>(<span class="ident">tink_proto</span>::<span class="ident">HmacParams</span> {
                 <span class="ident">hash</span>: <span class="ident">tag_alg</span> <span class="kw">as</span> <span class="ident">i32</span>,
                 <span class="ident">tag_size</span>,
             }),

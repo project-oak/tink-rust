@@ -153,6 +153,7 @@
 <span id="150">150</span>
 <span id="151">151</span>
 <span id="152">152</span>
+<span id="153">153</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2020 The Tink-Rust Authors</span>
 <span class="comment">//</span>
@@ -173,25 +174,26 @@
 <span class="doccomment">//! Key manager for streaming AES-CTR-HMAC keys.</span>
 
 <span class="kw">use</span> <span class="ident">prost</span>::<span class="ident">Message</span>;
-<span class="kw">use</span> <span class="ident">tink</span>::{<span class="ident">proto</span>::<span class="ident">HashType</span>, <span class="ident">subtle</span>::<span class="ident">random</span>::<span class="ident">get_random_bytes</span>, <span class="ident">utils</span>::<span class="ident">wrap_err</span>, <span class="ident">TinkError</span>};
+<span class="kw">use</span> <span class="ident">tink_core</span>::{<span class="ident">subtle</span>::<span class="ident">random</span>::<span class="ident">get_random_bytes</span>, <span class="ident">utils</span>::<span class="ident">wrap_err</span>, <span class="ident">TinkError</span>};
+<span class="kw">use</span> <span class="ident">tink_proto</span>::<span class="ident">HashType</span>;
 
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">AES_CTR_HMAC_KEY_VERSION</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">AES_CTR_HMAC_TYPE_URL</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span>
     <span class="string">&quot;type.googleapis.com/google.crypto.tink.AesCtrHmacStreamingKey&quot;</span>;
 
-<span class="doccomment">/// `AesCtrHmacKeyManager` is an implementation of the [`tink::registry::KeyManager`] trait.</span>
-<span class="doccomment">/// It generates new [`AesCtrHmacStreamingKey`](tink::proto::AesCtrHmacStreamingKey) keys and</span>
+<span class="doccomment">/// `AesCtrHmacKeyManager` is an implementation of the [`tink_core::registry::KeyManager`] trait.</span>
+<span class="doccomment">/// It generates new [`AesCtrHmacStreamingKey`](tink_proto::AesCtrHmacStreamingKey) keys and</span>
 <span class="doccomment">/// produces new instances of  [`subtle::AesCtrHmac`](crate::subtle::AesCtrHmac).</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Default</span>)]</span>
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">AesCtrHmacKeyManager</span> {}
 
-<span class="kw">impl</span> <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">KeyManager</span> <span class="kw">for</span> <span class="ident">AesCtrHmacKeyManager</span> {
-    <span class="doccomment">/// Create an AEAD for the given serialized [`tink::proto::AesCtrHmacStreamingKey`].</span>
-    <span class="kw">fn</span> <span class="ident">primitive</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">serialized_key</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">tink</span>::<span class="ident">Primitive</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
+<span class="kw">impl</span> <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">KeyManager</span> <span class="kw">for</span> <span class="ident">AesCtrHmacKeyManager</span> {
+    <span class="doccomment">/// Create an AEAD for the given serialized [`tink_proto::AesCtrHmacStreamingKey`].</span>
+    <span class="kw">fn</span> <span class="ident">primitive</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">serialized_key</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">tink_core</span>::<span class="ident">Primitive</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="ident">serialized_key</span>.<span class="ident">is_empty</span>() {
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="string">&quot;AesCtrHmacKeyManager: invalid key&quot;</span>.<span class="ident">into</span>());
         }
-        <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCtrHmacStreamingKey</span>::<span class="ident">decode</span>(<span class="ident">serialized_key</span>)
+        <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">AesCtrHmacStreamingKey</span>::<span class="ident">decode</span>(<span class="ident">serialized_key</span>)
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;AesCtrHmacKeyManager: invalid key&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
 
         <span class="kw">let</span> <span class="ident">key_params</span> <span class="op">=</span> <span class="ident">validate_key</span>(<span class="kw-2">&amp;</span><span class="ident">key</span>)<span class="question-mark">?</span>;
@@ -206,7 +208,7 @@
             <span class="comment">// No first segment offset.</span>
             <span class="number">0</span>,
         ) {
-            <span class="prelude-val">Ok</span>(<span class="ident">p</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">tink</span>::<span class="ident">Primitive</span>::<span class="ident">StreamingAead</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">p</span>))),
+            <span class="prelude-val">Ok</span>(<span class="ident">p</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">tink_core</span>::<span class="ident">Primitive</span>::<span class="ident">StreamingAead</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">p</span>))),
             <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">wrap_err</span>(
                 <span class="string">&quot;AesCtrHmacKeyManager: cannot create new primitive&quot;</span>,
                 <span class="ident">e</span>,
@@ -215,15 +217,15 @@
     }
 
     <span class="doccomment">/// Create a new key according to the given serialized</span>
-    <span class="doccomment">/// [`tink::proto::AesCtrHmacStreamingKeyFormat`].</span>
+    <span class="doccomment">/// [`tink_proto::AesCtrHmacStreamingKeyFormat`].</span>
     <span class="kw">fn</span> <span class="ident">new_key</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">serialized_key_format</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="ident">serialized_key_format</span>.<span class="ident">is_empty</span>() {
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="string">&quot;AesCtrHmacKeyManager: invalid key format&quot;</span>.<span class="ident">into</span>());
         }
-        <span class="kw">let</span> <span class="ident">key_format</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCtrHmacStreamingKeyFormat</span>::<span class="ident">decode</span>(<span class="ident">serialized_key_format</span>)
+        <span class="kw">let</span> <span class="ident">key_format</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">AesCtrHmacStreamingKeyFormat</span>::<span class="ident">decode</span>(<span class="ident">serialized_key_format</span>)
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;AesCtrHmacKeyManager: invalid key format&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">key_params</span> <span class="op">=</span> <span class="ident">validate_key_format</span>(<span class="kw-2">&amp;</span><span class="ident">key_format</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCtrHmacStreamingKey</span> {
+        <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">AesCtrHmacStreamingKey</span> {
             <span class="ident">version</span>: <span class="ident">AES_CTR_HMAC_KEY_VERSION</span>,
             <span class="ident">key_value</span>: <span class="ident">get_random_bytes</span>(<span class="ident">key_format</span>.<span class="ident">key_size</span> <span class="kw">as</span> <span class="ident">usize</span>),
             <span class="ident">params</span>: <span class="prelude-val">Some</span>(<span class="ident">key_params</span>),
@@ -238,16 +240,16 @@
         <span class="ident">AES_CTR_HMAC_TYPE_URL</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">key_material_type</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">key_data</span>::<span class="ident">KeyMaterialType</span> {
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">key_data</span>::<span class="ident">KeyMaterialType</span>::<span class="ident">Symmetric</span>
+    <span class="kw">fn</span> <span class="ident">key_material_type</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">tink_proto</span>::<span class="ident">key_data</span>::<span class="ident">KeyMaterialType</span> {
+        <span class="ident">tink_proto</span>::<span class="ident">key_data</span>::<span class="ident">KeyMaterialType</span>::<span class="ident">Symmetric</span>
     }
 }
 
-<span class="doccomment">/// Validate the given [`tink::proto::AesCtrHmacStreamingKey`].</span>
+<span class="doccomment">/// Validate the given [`tink_proto::AesCtrHmacStreamingKey`].</span>
 <span class="kw">fn</span> <span class="ident">validate_key</span>(
-    <span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCtrHmacStreamingKey</span>,
-) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCtrHmacStreamingParams</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
-    <span class="ident">tink</span>::<span class="ident">keyset</span>::<span class="ident">validate_key_version</span>(<span class="ident">key</span>.<span class="ident">version</span>, <span class="ident">AES_CTR_HMAC_KEY_VERSION</span>)<span class="question-mark">?</span>;
+    <span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">tink_proto</span>::<span class="ident">AesCtrHmacStreamingKey</span>,
+) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">tink_proto</span>::<span class="ident">AesCtrHmacStreamingParams</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
+    <span class="ident">tink_core</span>::<span class="ident">keyset</span>::<span class="ident">validate_key_version</span>(<span class="ident">key</span>.<span class="ident">version</span>, <span class="ident">AES_CTR_HMAC_KEY_VERSION</span>)<span class="question-mark">?</span>;
     <span class="kw">crate</span>::<span class="ident">subtle</span>::<span class="ident">validate_aes_key_size</span>(<span class="ident">key</span>.<span class="ident">key_value</span>.<span class="ident">len</span>())<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">key_params</span> <span class="op">=</span> <span class="ident">key</span>
         .<span class="ident">params</span>
@@ -256,11 +258,11 @@
     <span class="prelude-val">Ok</span>(<span class="ident">key_params</span>.<span class="ident">clone</span>())
 }
 
-<span class="doccomment">/// Validate the given [`tink::proto::AesCtrHmacStreamingKeyFormat`].</span>
+<span class="doccomment">/// Validate the given [`tink_proto::AesCtrHmacStreamingKeyFormat`].</span>
 <span class="kw">fn</span> <span class="ident">validate_key_format</span>(
-    <span class="ident">format</span>: <span class="kw-2">&amp;</span><span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCtrHmacStreamingKeyFormat</span>,
-) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCtrHmacStreamingParams</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
-    <span class="ident">tink</span>::<span class="ident">keyset</span>::<span class="ident">validate_key_version</span>(<span class="ident">format</span>.<span class="ident">version</span>, <span class="ident">AES_CTR_HMAC_KEY_VERSION</span>)<span class="question-mark">?</span>;
+    <span class="ident">format</span>: <span class="kw-2">&amp;</span><span class="ident">tink_proto</span>::<span class="ident">AesCtrHmacStreamingKeyFormat</span>,
+) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">tink_proto</span>::<span class="ident">AesCtrHmacStreamingParams</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
+    <span class="ident">tink_core</span>::<span class="ident">keyset</span>::<span class="ident">validate_key_version</span>(<span class="ident">format</span>.<span class="ident">version</span>, <span class="ident">AES_CTR_HMAC_KEY_VERSION</span>)<span class="question-mark">?</span>;
     <span class="kw">crate</span>::<span class="ident">subtle</span>::<span class="ident">validate_aes_key_size</span>(<span class="ident">format</span>.<span class="ident">key_size</span> <span class="kw">as</span> <span class="ident">usize</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">key_params</span> <span class="op">=</span> <span class="ident">format</span>
         .<span class="ident">params</span>
@@ -270,10 +272,10 @@
     <span class="prelude-val">Ok</span>(<span class="ident">key_params</span>.<span class="ident">clone</span>())
 }
 
-<span class="doccomment">/// Validate the given [`tink::proto::AesCtrHmacStreamingParams`].</span>
+<span class="doccomment">/// Validate the given [`tink_proto::AesCtrHmacStreamingParams`].</span>
 <span class="kw">fn</span> <span class="ident">validate_params</span>(
-    <span class="ident">params</span>: <span class="kw-2">&amp;</span><span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">AesCtrHmacStreamingParams</span>,
-) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">HmacParams</span>, <span class="ident">HashType</span>, <span class="ident">HashType</span>), <span class="ident">TinkError</span><span class="op">&gt;</span> {
+    <span class="ident">params</span>: <span class="kw-2">&amp;</span><span class="ident">tink_proto</span>::<span class="ident">AesCtrHmacStreamingParams</span>,
+) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">tink_proto</span>::<span class="ident">HmacParams</span>, <span class="ident">HashType</span>, <span class="ident">HashType</span>), <span class="ident">TinkError</span><span class="op">&gt;</span> {
     <span class="kw">crate</span>::<span class="ident">subtle</span>::<span class="ident">validate_aes_key_size</span>(<span class="ident">params</span>.<span class="ident">derived_key_size</span> <span class="kw">as</span> <span class="ident">usize</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">hkdf_hash</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">HashType</span>::<span class="ident">from_i32</span>(<span class="ident">params</span>.<span class="ident">hkdf_hash_type</span>) {
         <span class="prelude-val">Some</span>(<span class="ident">HashType</span>::<span class="ident">UnknownHash</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="string">&quot;AesCtrHmacKeyManager: unknown HKDF hash&quot;</span>.<span class="ident">into</span>()),

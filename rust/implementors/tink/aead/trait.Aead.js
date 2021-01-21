@@ -1,5 +1,0 @@
-(function() {var implementors = {};
-implementors["tink_aead"] = [{"text":"impl Aead for KmsEnvelopeAead","synthetic":false,"types":[]},{"text":"impl Aead for AesGcm","synthetic":false,"types":[]},{"text":"impl Aead for AesGcmSiv","synthetic":false,"types":[]},{"text":"impl Aead for ChaCha20Poly1305","synthetic":false,"types":[]},{"text":"impl Aead for EncryptThenAuthenticate","synthetic":false,"types":[]},{"text":"impl Aead for XChaCha20Poly1305","synthetic":false,"types":[]}];
-implementors["tink_gcpkms"] = [{"text":"impl Aead for GcpAead","synthetic":false,"types":[]}];
-implementors["tink_testutil"] = [{"text":"impl Aead for DummyAead","synthetic":false,"types":[]}];
-if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

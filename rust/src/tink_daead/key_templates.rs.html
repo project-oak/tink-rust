@@ -49,15 +49,15 @@
 
 <span class="doccomment">//! This module contains pre-generated [`KeyTemplate`] instances for deterministic AEAD.</span>
 
-<span class="kw">use</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">KeyTemplate</span>;
+<span class="kw">use</span> <span class="ident">tink_proto</span>::<span class="ident">KeyTemplate</span>;
 
-<span class="doccomment">/// Return a [`KeyTemplate`](tink::proto::KeyTemplate) that generates a AES-SIV key.</span>
+<span class="doccomment">/// Return a [`KeyTemplate`](tink_proto::KeyTemplate) that generates a AES-SIV key.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">aes_siv_key_template</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KeyTemplate</span> {
     <span class="ident">KeyTemplate</span> {
         <span class="comment">// Don&#39;t set value because KeyFormat is not required.</span>
         <span class="ident">value</span>: <span class="ident">Vec</span>::<span class="ident">new</span>(),
         <span class="ident">type_url</span>: <span class="kw">crate</span>::<span class="ident">AES_SIV_TYPE_URL</span>.<span class="ident">to_string</span>(),
-        <span class="ident">output_prefix_type</span>: <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Tink</span> <span class="kw">as</span> <span class="ident">i32</span>,
+        <span class="ident">output_prefix_type</span>: <span class="ident">tink_proto</span>::<span class="ident">OutputPrefixType</span>::<span class="ident">Tink</span> <span class="kw">as</span> <span class="ident">i32</span>,
     }
 }
 </pre></div>

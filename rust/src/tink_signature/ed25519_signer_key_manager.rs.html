@@ -137,7 +137,7 @@
 <span class="doccomment">//! Key manager for ED25519 signing keys.</span>
 
 <span class="kw">use</span> <span class="ident">prost</span>::<span class="ident">Message</span>;
-<span class="kw">use</span> <span class="ident">tink</span>::{<span class="ident">utils</span>::<span class="ident">wrap_err</span>, <span class="ident">TinkError</span>};
+<span class="kw">use</span> <span class="ident">tink_core</span>::{<span class="ident">utils</span>::<span class="ident">wrap_err</span>, <span class="ident">TinkError</span>};
 
 <span class="doccomment">/// Maximal version of ED25519 keys.</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">ED25519_SIGNER_KEY_VERSION</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0</span>;
@@ -145,23 +145,23 @@
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">ED25519_SIGNER_TYPE_URL</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span>
     <span class="string">&quot;type.googleapis.com/google.crypto.tink.Ed25519PrivateKey&quot;</span>;
 
-<span class="doccomment">/// An implementation of the [`tink::registry::KeyManager`] trait.</span>
+<span class="doccomment">/// An implementation of the [`tink_core::registry::KeyManager`] trait.</span>
 <span class="doccomment">/// It generates new ED25519PrivateKeys and produces new instances of</span>
 <span class="doccomment">/// [`crate::subtle::Ed25519Signer`].</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Default</span>)]</span>
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">Ed25519SignerKeyManager</span> {}
 
-<span class="kw">impl</span> <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">KeyManager</span> <span class="kw">for</span> <span class="ident">Ed25519SignerKeyManager</span> {
-    <span class="kw">fn</span> <span class="ident">primitive</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">serialized_key</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">tink</span>::<span class="ident">Primitive</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
+<span class="kw">impl</span> <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">KeyManager</span> <span class="kw">for</span> <span class="ident">Ed25519SignerKeyManager</span> {
+    <span class="kw">fn</span> <span class="ident">primitive</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">serialized_key</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">tink_core</span>::<span class="ident">Primitive</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="ident">serialized_key</span>.<span class="ident">is_empty</span>() {
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="string">&quot;Ed25519SignerKeyManager: invalid key&quot;</span>.<span class="ident">into</span>());
         }
-        <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">Ed25519PrivateKey</span>::<span class="ident">decode</span>(<span class="ident">serialized_key</span>)
+        <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">Ed25519PrivateKey</span>::<span class="ident">decode</span>(<span class="ident">serialized_key</span>)
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;Ed25519SignerKeyManager: invalid key&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
         <span class="ident">validate_key</span>(<span class="kw-2">&amp;</span><span class="ident">key</span>)<span class="question-mark">?</span>;
 
         <span class="kw">match</span> <span class="kw">crate</span>::<span class="ident">subtle</span>::<span class="ident">Ed25519Signer</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="ident">key</span>.<span class="ident">key_value</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">p</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">tink</span>::<span class="ident">Primitive</span>::<span class="ident">Signer</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">p</span>))),
+            <span class="prelude-val">Ok</span>(<span class="ident">p</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">tink_core</span>::<span class="ident">Primitive</span>::<span class="ident">Signer</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">p</span>))),
             <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">wrap_err</span>(<span class="string">&quot;Ed25519SignerKeyManager: invalid key&quot;</span>, <span class="ident">e</span>)),
         }
     }
@@ -170,11 +170,11 @@
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">csprng</span> <span class="op">=</span> <span class="ident">rand</span>::<span class="ident">rngs</span>::<span class="ident">OsRng</span> {};
         <span class="kw">let</span> <span class="ident">keypair</span> <span class="op">=</span> <span class="ident">ed25519_dalek</span>::<span class="ident">Keypair</span>::<span class="ident">generate</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">csprng</span>);
 
-        <span class="kw">let</span> <span class="ident">public_proto</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">Ed25519PublicKey</span> {
+        <span class="kw">let</span> <span class="ident">public_proto</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">Ed25519PublicKey</span> {
             <span class="ident">version</span>: <span class="ident">ED25519_SIGNER_KEY_VERSION</span>,
             <span class="ident">key_value</span>: <span class="ident">keypair</span>.<span class="ident">public</span>.<span class="ident">as_bytes</span>().<span class="ident">to_vec</span>(),
         };
-        <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">Ed25519PrivateKey</span> {
+        <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">Ed25519PrivateKey</span> {
             <span class="ident">version</span>: <span class="ident">ED25519_SIGNER_KEY_VERSION</span>,
             <span class="ident">public_key</span>: <span class="prelude-val">Some</span>(<span class="ident">public_proto</span>),
             <span class="ident">key_value</span>: <span class="ident">keypair</span>.<span class="ident">secret</span>.<span class="ident">as_bytes</span>().<span class="ident">to_vec</span>(),
@@ -189,8 +189,8 @@
         <span class="ident">ED25519_SIGNER_TYPE_URL</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">key_material_type</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">key_data</span>::<span class="ident">KeyMaterialType</span> {
-        <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">key_data</span>::<span class="ident">KeyMaterialType</span>::<span class="ident">AsymmetricPrivate</span>
+    <span class="kw">fn</span> <span class="ident">key_material_type</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">tink_proto</span>::<span class="ident">key_data</span>::<span class="ident">KeyMaterialType</span> {
+        <span class="ident">tink_proto</span>::<span class="ident">key_data</span>::<span class="ident">KeyMaterialType</span>::<span class="ident">AsymmetricPrivate</span>
     }
 
     <span class="kw">fn</span> <span class="ident">supports_private_keys</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
@@ -200,25 +200,25 @@
     <span class="kw">fn</span> <span class="ident">public_key_data</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">serialized_priv_key</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">KeyData</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">Ed25519PrivateKey</span>::<span class="ident">decode</span>(<span class="ident">serialized_priv_key</span>)
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">tink_proto</span>::<span class="ident">KeyData</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident">tink_proto</span>::<span class="ident">Ed25519PrivateKey</span>::<span class="ident">decode</span>(<span class="ident">serialized_priv_key</span>)
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;Ed25519SignerKeyManager: invalid key&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">serialized_pub_key</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
         <span class="ident">key</span>.<span class="ident">public_key</span>
             .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">TinkError</span>::<span class="ident">new</span>(<span class="string">&quot;Ed25519SignerKeyManager: invalid key&quot;</span>))<span class="question-mark">?</span>
             .<span class="ident">encode</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized_pub_key</span>)
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;Ed25519SignerKeyManager: invalid key&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(<span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">KeyData</span> {
+        <span class="prelude-val">Ok</span>(<span class="ident">tink_proto</span>::<span class="ident">KeyData</span> {
             <span class="ident">type_url</span>: <span class="kw">crate</span>::<span class="ident">ED25519_VERIFIER_TYPE_URL</span>.<span class="ident">to_string</span>(),
             <span class="ident">value</span>: <span class="ident">serialized_pub_key</span>,
-            <span class="ident">key_material_type</span>: <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">key_data</span>::<span class="ident">KeyMaterialType</span>::<span class="ident">AsymmetricPublic</span> <span class="kw">as</span> <span class="ident">i32</span>,
+            <span class="ident">key_material_type</span>: <span class="ident">tink_proto</span>::<span class="ident">key_data</span>::<span class="ident">KeyMaterialType</span>::<span class="ident">AsymmetricPublic</span> <span class="kw">as</span> <span class="ident">i32</span>,
         })
     }
 }
 
-<span class="doccomment">/// Validate the given [`Ed25519PrivateKey`](tink::proto::Ed25519PrivateKey).</span>
-<span class="kw">fn</span> <span class="ident">validate_key</span>(<span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">Ed25519PrivateKey</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TinkError</span><span class="op">&gt;</span> {
-    <span class="ident">tink</span>::<span class="ident">keyset</span>::<span class="ident">validate_key_version</span>(<span class="ident">key</span>.<span class="ident">version</span>, <span class="ident">ED25519_SIGNER_KEY_VERSION</span>)
+<span class="doccomment">/// Validate the given [`Ed25519PrivateKey`](tink_proto::Ed25519PrivateKey).</span>
+<span class="kw">fn</span> <span class="ident">validate_key</span>(<span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">tink_proto</span>::<span class="ident">Ed25519PrivateKey</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TinkError</span><span class="op">&gt;</span> {
+    <span class="ident">tink_core</span>::<span class="ident">keyset</span>::<span class="ident">validate_key_version</span>(<span class="ident">key</span>.<span class="ident">version</span>, <span class="ident">ED25519_SIGNER_KEY_VERSION</span>)
         .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;Ed25519SignerKeyManager&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
 
     <span class="kw">if</span> <span class="ident">key</span>.<span class="ident">key_value</span>.<span class="ident">len</span>() <span class="op">!</span><span class="op">=</span> <span class="ident">ed25519_dalek</span>::<span class="ident">SECRET_KEY_LENGTH</span> {

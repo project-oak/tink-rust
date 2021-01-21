@@ -130,14 +130,14 @@
 <span class="doccomment">//! Provide an implementation of AEAD using a KMS.</span>
 
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">TryInto</span>;
-<span class="kw">use</span> <span class="ident">tink</span>::{<span class="ident">utils</span>::<span class="ident">wrap_err</span>, <span class="ident">TinkError</span>};
+<span class="kw">use</span> <span class="ident">tink_core</span>::{<span class="ident">utils</span>::<span class="ident">wrap_err</span>, <span class="ident">TinkError</span>};
 
 <span class="kw">const</span> <span class="ident">LEN_DEK</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">4</span>;
 
 <span class="doccomment">/// `KmsEnvelopeAead` represents an instance of Envelope AEAD.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">KmsEnvelopeAead</span> {
-    <span class="ident">dek_template</span>: <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">KeyTemplate</span>,
-    <span class="ident">remote</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">tink</span>::<span class="ident">Aead</span><span class="op">&gt;</span>,
+    <span class="ident">dek_template</span>: <span class="ident">tink_proto</span>::<span class="ident">KeyTemplate</span>,
+    <span class="ident">remote</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">tink_core</span>::<span class="ident">Aead</span><span class="op">&gt;</span>,
 }
 
 <span class="doccomment">/// Manual implementation of [`Clone`] relying on the trait bounds for</span>
@@ -152,7 +152,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">KmsEnvelopeAead</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">kt</span>: <span class="ident">tink</span>::<span class="ident">proto</span>::<span class="ident">KeyTemplate</span>, <span class="ident">remote</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">tink</span>::<span class="ident">Aead</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KmsEnvelopeAead</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">kt</span>: <span class="ident">tink_proto</span>::<span class="ident">KeyTemplate</span>, <span class="ident">remote</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">tink_core</span>::<span class="ident">Aead</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">KmsEnvelopeAead</span> {
         <span class="ident">KmsEnvelopeAead</span> {
             <span class="ident">dek_template</span>: <span class="ident">kt</span>,
             <span class="ident">remote</span>,
@@ -160,14 +160,14 @@
     }
 }
 
-<span class="kw">impl</span> <span class="ident">tink</span>::<span class="ident">Aead</span> <span class="kw">for</span> <span class="ident">KmsEnvelopeAead</span> {
+<span class="kw">impl</span> <span class="ident">tink_core</span>::<span class="ident">Aead</span> <span class="kw">for</span> <span class="ident">KmsEnvelopeAead</span> {
     <span class="kw">fn</span> <span class="ident">encrypt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">pt</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">aad</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
         <span class="comment">// Create a new key for each encryption operation.</span>
-        <span class="kw">let</span> <span class="ident">dek</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">new_key</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">dek_template</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">dek</span> <span class="op">=</span> <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">new_key</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">dek_template</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">encrypted_dek</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">remote</span>.<span class="ident">encrypt</span>(<span class="kw-2">&amp;</span><span class="ident">dek</span>, <span class="kw-2">&amp;</span>[])<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">primitive</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">primitive</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">dek_template</span>.<span class="ident">type_url</span>, <span class="kw-2">&amp;</span><span class="ident">dek</span>)<span class="question-mark">?</span> {
-            <span class="ident">tink</span>::<span class="ident">Primitive</span>::<span class="ident">Aead</span>(<span class="ident">p</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">p</span>,
+        <span class="kw">let</span> <span class="ident">primitive</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">primitive</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">dek_template</span>.<span class="ident">type_url</span>, <span class="kw-2">&amp;</span><span class="ident">dek</span>)<span class="question-mark">?</span> {
+            <span class="ident">tink_core</span>::<span class="ident">Primitive</span>::<span class="ident">Aead</span>(<span class="ident">p</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">p</span>,
             <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="string">&quot;KmsEnvelopeAead: failed to convert AEAD primitive&quot;</span>.<span class="ident">into</span>()),
         };
         <span class="kw">let</span> <span class="ident">payload</span> <span class="op">=</span> <span class="ident">primitive</span>.<span class="ident">encrypt</span>(<span class="ident">pt</span>, <span class="ident">aad</span>)<span class="question-mark">?</span>;
@@ -197,10 +197,10 @@
         <span class="kw">let</span> <span class="ident">dek</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">remote</span>.<span class="ident">decrypt</span>(<span class="ident">encrypted_dek</span>, <span class="kw-2">&amp;</span>[])<span class="question-mark">?</span>;
 
         <span class="comment">// Get an AEAD primitive corresponding to the DEK.</span>
-        <span class="kw">let</span> <span class="ident">p</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">registry</span>::<span class="ident">primitive</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">dek_template</span>.<span class="ident">type_url</span>, <span class="kw-2">&amp;</span><span class="ident">dek</span>)
+        <span class="kw">let</span> <span class="ident">p</span> <span class="op">=</span> <span class="ident">tink_core</span>::<span class="ident">registry</span>::<span class="ident">primitive</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">dek_template</span>.<span class="ident">type_url</span>, <span class="kw-2">&amp;</span><span class="ident">dek</span>)
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;KmsEnvelopeAead&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">primitive</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">p</span> {
-            <span class="ident">tink</span>::<span class="ident">Primitive</span>::<span class="ident">Aead</span>(<span class="ident">p</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">p</span>,
+            <span class="ident">tink_core</span>::<span class="ident">Primitive</span>::<span class="ident">Aead</span>(<span class="ident">p</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">p</span>,
             <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="string">&quot;KmsEnvelopeAead: failed to convert AEAD primitive&quot;</span>.<span class="ident">into</span>()),
         };
 

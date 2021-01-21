@@ -144,7 +144,7 @@
     <span class="ident">ops</span>::<span class="ident">DerefMut</span>,
     <span class="ident">sync</span>::{<span class="ident">Arc</span>, <span class="ident">Mutex</span>},
 };
-<span class="kw">use</span> <span class="ident">tink</span>::<span class="ident">TinkError</span>;
+<span class="kw">use</span> <span class="ident">tink_core</span>::<span class="ident">TinkError</span>;
 
 <span class="kw">const</span> <span class="ident">RECOMMENDED_KEY_SIZE</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">32</span>;
 <span class="kw">const</span> <span class="ident">AES_BLOCK_SIZE_IN_BYTES</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">16</span>;
@@ -198,7 +198,7 @@
     }
 }
 
-<span class="kw">impl</span> <span class="ident">tink</span>::<span class="ident">Prf</span> <span class="kw">for</span> <span class="ident">AesCmacPrf</span> {
+<span class="kw">impl</span> <span class="ident">tink_core</span>::<span class="ident">Prf</span> <span class="kw">for</span> <span class="ident">AesCmacPrf</span> {
     <span class="doccomment">/// Compute the AES-CMAC for the given key and data, returning `output_length` bytes.</span>
     <span class="doccomment">/// The timing of this function will only depend on `data.len()`, and not leak any additional</span>
     <span class="doccomment">/// information about the key or the data.</span>

@@ -151,10 +151,10 @@
 <span class="comment">//</span>
 <span class="comment">////////////////////////////////////////////////////////////////////////////////</span>
 
-<span class="doccomment">//! General AEAD implementation combining an `IndCpaCipher` with a `tink::Mac`</span>
+<span class="doccomment">//! General AEAD implementation combining an `IndCpaCipher` with a `tink_core::Mac`</span>
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">IndCpaCipher</span>;
-<span class="kw">use</span> <span class="ident">tink</span>::{<span class="ident">utils</span>::<span class="ident">wrap_err</span>, <span class="ident">TinkError</span>};
+<span class="kw">use</span> <span class="ident">tink_core</span>::{<span class="ident">utils</span>::<span class="ident">wrap_err</span>, <span class="ident">TinkError</span>};
 
 <span class="doccomment">/// `EncryptThenAuthenticate` performs an encrypt-then-MAC operation on plaintext</span>
 <span class="doccomment">/// and additional authenticated data (aad). The MAC is computed over (aad ||</span>
@@ -162,7 +162,7 @@
 <span class="doccomment">/// http://tools.ietf.org/html/draft-mcgrew-aead-aes-cbc-hmac-sha2-05.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">EncryptThenAuthenticate</span> {
     <span class="ident">ind_cpa_cipher</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">IndCpaCipher</span><span class="op">&gt;</span>,
-    <span class="ident">mac</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">tink</span>::<span class="ident">Mac</span><span class="op">&gt;</span>,
+    <span class="ident">mac</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">tink_core</span>::<span class="ident">Mac</span><span class="op">&gt;</span>,
     <span class="ident">tag_size</span>: <span class="ident">usize</span>,
 }
 
@@ -184,7 +184,7 @@
     <span class="doccomment">/// Return a new instance of EncryptThenAuthenticate.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(
         <span class="ident">ind_cpa_cipher</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">IndCpaCipher</span><span class="op">&gt;</span>,
-        <span class="ident">mac</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">tink</span>::<span class="ident">Mac</span><span class="op">&gt;</span>,
+        <span class="ident">mac</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">dyn</span> <span class="ident">tink_core</span>::<span class="ident">Mac</span><span class="op">&gt;</span>,
         <span class="ident">tag_size</span>: <span class="ident">usize</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">EncryptThenAuthenticate</span>, <span class="ident">TinkError</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="ident">tag_size</span> <span class="op">&lt;</span> <span class="ident">MIN_TAG_SIZE_IN_BYTES</span> {
@@ -198,7 +198,7 @@
     }
 }
 
-<span class="kw">impl</span> <span class="ident">tink</span>::<span class="ident">Aead</span> <span class="kw">for</span> <span class="ident">EncryptThenAuthenticate</span> {
+<span class="kw">impl</span> <span class="ident">tink_core</span>::<span class="ident">Aead</span> <span class="kw">for</span> <span class="ident">EncryptThenAuthenticate</span> {
     <span class="doccomment">/// Encrypt `plaintext` with `additional_data` as additional authenticated</span>
     <span class="doccomment">/// data. The resulting ciphertext allows for checking authenticity and</span>
     <span class="doccomment">/// integrity of additional data, but does not guarantee its secrecy.</span>

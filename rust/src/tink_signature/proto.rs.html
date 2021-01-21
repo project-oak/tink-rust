@@ -52,10 +52,10 @@
 
 <span class="doccomment">//! Utilities for dealing with protobuf types for signing.</span>
 
-<span class="kw">use</span> <span class="ident">tink</span>::<span class="ident">proto</span>::{<span class="ident">EcdsaParams</span>, <span class="ident">EcdsaSignatureEncoding</span>, <span class="ident">EllipticCurveType</span>, <span class="ident">HashType</span>};
+<span class="kw">use</span> <span class="ident">tink_proto</span>::{<span class="ident">EcdsaParams</span>, <span class="ident">EcdsaSignatureEncoding</span>, <span class="ident">EllipticCurveType</span>, <span class="ident">HashType</span>};
 
 <span class="doccomment">/// Return the enum values of each parameter in</span>
-<span class="doccomment">/// the given [`EcdsaParams`](tink::proto::EcdsaParams).</span>
+<span class="doccomment">/// the given [`EcdsaParams`](tink_proto::EcdsaParams).</span>
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">get_ecdsa_param_ids</span>(
     <span class="ident">params</span>: <span class="kw-2">&amp;</span><span class="ident">EcdsaParams</span>,
 ) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">HashType</span>, <span class="ident">EllipticCurveType</span>, <span class="ident">EcdsaSignatureEncoding</span>) {

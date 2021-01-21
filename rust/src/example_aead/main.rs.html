@@ -53,7 +53,7 @@
 
 <span class="kw">fn</span> <span class="ident">main</span>() {
     <span class="ident">tink_aead</span>::<span class="ident">init</span>();
-    <span class="kw">let</span> <span class="ident">kh</span> <span class="op">=</span> <span class="ident">tink</span>::<span class="ident">keyset</span>::<span class="ident">Handle</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="ident">tink_aead</span>::<span class="ident">aes256_gcm_key_template</span>()).<span class="ident">unwrap</span>();
+    <span class="kw">let</span> <span class="ident">kh</span> <span class="op">=</span> <span class="ident">tink_core</span>::<span class="ident">keyset</span>::<span class="ident">Handle</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="ident">tink_aead</span>::<span class="ident">aes256_gcm_key_template</span>()).<span class="ident">unwrap</span>();
     <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="ident">tink_aead</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="ident">kh</span>).<span class="ident">unwrap</span>();
 
     <span class="kw">let</span> <span class="ident">pt</span> <span class="op">=</span> <span class="string">b&quot;this data needs to be encrypted&quot;</span>;
