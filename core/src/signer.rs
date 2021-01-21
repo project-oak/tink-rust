@@ -22,7 +22,7 @@
 /// attacks.  Signing data ensures authenticity and integrity of that data, but
 /// not its secrecy.
 pub trait Signer: SignerBoxClone {
-    // Computes the digital signature for data.
+    /// Computes the digital signature for `data`.
     fn sign(&self, data: &[u8]) -> Result<Vec<u8>, crate::TinkError>;
 }
 

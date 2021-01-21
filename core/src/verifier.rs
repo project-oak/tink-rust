@@ -22,7 +22,7 @@
 /// attacks.  Signing data ensures authenticity and integrity of that data, but
 /// not its secrecy.
 pub trait Verifier: VerifierBoxClone {
-    // Returns `()` if `signature` is a valid signature for `data`; otherwise returns an error.
+    /// Returns `Ok(())` if `signature` is a valid signature for `data`; otherwise returns an error.
     fn verify(&self, signature: &[u8], data: &[u8]) -> Result<(), crate::TinkError>;
 }
 

@@ -22,19 +22,19 @@
 /// Encryption with additional data ensures authenticity and integrity of that data, but not
 /// its secrecy (see [RFC 5116](https://tools.ietf.org/html/rfc5116)).
 pub trait Aead: AeadBoxClone {
-    // Encrypt plaintext with `additional_data` as additional
-    // authenticated data. The resulting ciphertext allows for checking
-    // authenticity and integrity of additional data `additional_data`,
-    // but there are no guarantees wrt. secrecy of that data.
+    /// Encrypt plaintext with `additional_data` as additional
+    /// authenticated data. The resulting ciphertext allows for checking
+    /// authenticity and integrity of additional data `additional_data`,
+    /// but there are no guarantees wrt. secrecy of that data.
     fn encrypt(
         &self,
         plaintext: &[u8],
         additional_data: &[u8],
     ) -> Result<Vec<u8>, crate::TinkError>;
 
-    // Decrypt ciphertext with `additional_data` as additional
-    // authenticated data. The decryption verifies the authenticity and integrity
-    // of the additional data, but there are no guarantees wrt. secrecy of that data.
+    /// Decrypt ciphertext with `additional_data` as additional
+    /// authenticated data. The decryption verifies the authenticity and integrity
+    /// of the additional data, but there are no guarantees wrt. secrecy of that data.
     fn decrypt(
         &self,
         ciphertext: &[u8],
