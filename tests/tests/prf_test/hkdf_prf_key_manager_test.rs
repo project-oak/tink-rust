@@ -16,14 +16,14 @@
 
 use prost::Message;
 use std::collections::HashSet;
-use tink::{utils::wrap_err, Prf, TinkError};
+use tink_core::{utils::wrap_err, Prf, TinkError};
 use tink_proto::HashType;
 use tink_tests::proto_encode;
 
 #[test]
 fn test_get_primitive_hkdf_basic() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
         .expect("HKDF PRF key manager not found");
     let test_keys = gen_valid_hkdf_keys();
     for test_key in test_keys {
@@ -36,7 +36,7 @@ fn test_get_primitive_hkdf_basic() {
 #[test]
 fn test_get_primitive_hkdf_with_invalid_input() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
         .expect("HKDF PRF key manager not found");
     // invalid key
     let test_keys = gen_invalid_hkdf_keys();
@@ -57,7 +57,7 @@ fn test_get_primitive_hkdf_with_invalid_input() {
 #[test]
 fn test_new_key_hkdf_multiple_times() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
         .expect("HKDF PRF key manager not found");
 
     let serialized_format =
@@ -77,7 +77,7 @@ fn test_new_key_hkdf_multiple_times() {
 #[test]
 fn test_new_key_hkdf_basic() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
         .expect("HKDF PRF key manager not found");
     let test_formats = gen_valid_hkdf_key_formats();
     for (i, test_format) in test_formats.iter().enumerate() {
@@ -93,7 +93,7 @@ fn test_new_key_hkdf_basic() {
 #[test]
 fn test_new_key_hkdf_with_invalid_input() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
         .expect("HKDF PRF key manager not found");
 
     // invalid key formats
@@ -115,7 +115,7 @@ fn test_new_key_hkdf_with_invalid_input() {
 #[test]
 fn test_new_key_data_hkdf_basic() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
         .expect("HKDF PRF key manager not found");
 
     let test_formats = gen_valid_hkdf_key_formats();
@@ -145,7 +145,7 @@ fn test_new_key_data_hkdf_basic() {
 #[test]
 fn test_new_key_data_hkdf_with_invalid_input() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
         .expect("HKDF PRF key manager not found");
 
     // invalid key formats
@@ -167,7 +167,7 @@ fn test_new_key_data_hkdf_with_invalid_input() {
 #[test]
 fn test_hkdf_does_support() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
         .expect("HKDF PRF key manager not found");
 
     assert!(
@@ -185,7 +185,7 @@ fn test_hkdf_does_support() {
 #[test]
 fn test_hkdf_type_url() {
     tink_prf::init();
-    let km = tink::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::HKDF_PRF_TYPE_URL)
         .expect("HKDF PRF key manager not found");
 
     assert_eq!(
@@ -271,16 +271,16 @@ fn validate_hkdf_key(
         &key.params.as_ref().unwrap().salt,
     )
     .map_err(|e| wrap_err("cannot create primitive from key", e))?;
-    validate_hkdf_primitive(tink::Primitive::Prf(Box::new(p)), key)
+    validate_hkdf_primitive(tink_core::Primitive::Prf(Box::new(p)), key)
 }
 
 /// Check whether the given primitive matches the given [`HkdfPrfKey`](tink_proto::HkdfPrfKey).
 fn validate_hkdf_primitive(
-    p: tink::Primitive,
+    p: tink_core::Primitive,
     key: &tink_proto::HkdfPrfKey,
 ) -> Result<(), TinkError> {
     let hkdf_primitive = match p {
-        tink::Primitive::Prf(prf) => prf,
+        tink_core::Primitive::Prf(prf) => prf,
         _ => return Err("not a Prf primitive".into()),
     };
     let hash = HashType::from_i32(key.params.as_ref().unwrap().hash).unwrap();
@@ -295,7 +295,7 @@ fn validate_hkdf_primitive(
                     e,
                 )
             })?;
-    let data = tink::subtle::random::get_random_bytes(20);
+    let data = tink_core::subtle::random::get_random_bytes(20);
     let res = hkdf_primitive
         .compute_prf(&data, 16)
         .map_err(|e| wrap_err("prf computation failed", e))?;

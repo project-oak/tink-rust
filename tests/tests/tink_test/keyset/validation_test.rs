@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::{keyset, subtle::random::get_random_bytes};
+use tink_core::{keyset, subtle::random::get_random_bytes};
 
 #[test]
 fn test_validate_key_version() {

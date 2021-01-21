@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::TinkError;
+use tink_core::TinkError;
 use tink_proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType};
 
 /// Supported signature encodings.  This is a precise subset of the protobuf enum,

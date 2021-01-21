@@ -18,7 +18,7 @@
 
 fn main() {
     tink_mac::init();
-    let kh = tink::keyset::Handle::new(&tink_mac::hmac_sha256_tag256_key_template()).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_mac::hmac_sha256_tag256_key_template()).unwrap();
     let m = tink_mac::new(&kh).unwrap();
 
     let pt = b"this data needs to be MACed";

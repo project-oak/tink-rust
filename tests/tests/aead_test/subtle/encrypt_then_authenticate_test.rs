@@ -14,8 +14,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::{subtle::random::get_random_bytes, TinkError};
 use tink_aead::subtle;
+use tink_core::{subtle::random::get_random_bytes, TinkError};
 use tink_proto::HashType;
 
 fn create_aead_with_keys(
@@ -24,7 +24,7 @@ fn create_aead_with_keys(
     hash_algo: HashType,
     mac_key: &[u8],
     tag_size: usize,
-) -> Result<Box<dyn tink::Aead>, TinkError> {
+) -> Result<Box<dyn tink_core::Aead>, TinkError> {
     let ctr = subtle::AesCtr::new(encryption_key, iv_size)?;
     let mac = tink_mac::subtle::Hmac::new(hash_algo, mac_key, tag_size)?;
     let p = subtle::EncryptThenAuthenticate::new(Box::new(ctr), Box::new(mac), tag_size)?;
@@ -37,7 +37,7 @@ fn create_aead(
     hash_algo: HashType,
     mac_key_size: usize,
     tag_size: usize,
-) -> Result<Box<dyn tink::Aead>, TinkError> {
+) -> Result<Box<dyn tink_core::Aead>, TinkError> {
     let encryption_key = get_random_bytes(key_size);
     let mac_key = get_random_bytes(mac_key_size);
     create_aead_with_keys(&encryption_key, iv_size, hash_algo, &mac_key, tag_size)

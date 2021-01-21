@@ -21,7 +21,7 @@ use p256::{
     elliptic_curve::sec1::EncodedPoint,
 };
 use signature::Signature as _;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 use tink_proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType};
 
 /// An ECDSA public key.
@@ -30,7 +30,7 @@ pub enum EcdsaPublicKey {
     NistP256(p256::ecdsa::VerifyingKey),
 }
 
-// `EcdsaVerifier` is an implementation of [`tink::Verifier`] for ECDSA.
+// `EcdsaVerifier` is an implementation of [`tink_core::Verifier`] for ECDSA.
 // At the moment, the implementation only accepts signatures with strict DER encoding.
 #[derive(Clone)]
 pub struct EcdsaVerifier {
@@ -105,8 +105,8 @@ pub fn element_from_padded_slice<C: elliptic_curve::Curve>(
     }
 }
 
-impl tink::Verifier for EcdsaVerifier {
-    fn verify(&self, signature: &[u8], data: &[u8]) -> Result<(), tink::TinkError> {
+impl tink_core::Verifier for EcdsaVerifier {
+    fn verify(&self, signature: &[u8], data: &[u8]) -> Result<(), tink_core::TinkError> {
         let signature = match self.encoding {
             super::SignatureEncoding::Der => Signature::from_asn1(signature)
                 .map_err(|e| wrap_err("EcdsaVerifier: invalid ASN.1 signature", e))?,

@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use std::{env, path::PathBuf};
-use tink::{registry::KmsClient, subtle::random::get_random_bytes, TinkError};
+use tink_core::{registry::KmsClient, subtle::random::get_random_bytes, TinkError};
 
 use super::common::*;
 
@@ -44,10 +44,10 @@ fn setup_kms() {
         tink_gcpkms::GcpClient::new(&key_uri())
     }
     .expect("error setting up aws client");
-    tink::registry::register_kms_client(g);
+    tink_core::registry::register_kms_client(g);
 }
 
-fn basic_aead_test(a: Box<dyn tink::Aead>) -> Result<(), TinkError> {
+fn basic_aead_test(a: Box<dyn tink_core::Aead>) -> Result<(), TinkError> {
     for _ in 0..10 {
         let pt = get_random_bytes(20);
         let ad = get_random_bytes(20);
@@ -67,8 +67,9 @@ fn basic_aead_test(a: Box<dyn tink::Aead>) -> Result<(), TinkError> {
 fn test_gcpkms_basic_aead() {
     setup_kms();
     let dek = tink_aead::aes128_ctr_hmac_sha256_key_template();
-    let kh = tink::keyset::Handle::new(&tink_aead::kms_envelope_aead_key_template(&key_uri(), dek))
-        .expect("error getting a new keyset handle");
+    let kh =
+        tink_core::keyset::Handle::new(&tink_aead::kms_envelope_aead_key_template(&key_uri(), dek))
+            .expect("error getting a new keyset handle");
     let a = tink_aead::new(&kh).expect("error getting the primitive");
     let result = basic_aead_test(a);
     assert!(result.is_ok(), "error in basic aead tests: {:?}", result);

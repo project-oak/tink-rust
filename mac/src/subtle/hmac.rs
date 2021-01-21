@@ -16,7 +16,7 @@
 
 //! Provides an implementation of MAC using HMAC.
 
-use tink::{utils::wrap_err, Prf, TinkError};
+use tink_core::{utils::wrap_err, Prf, TinkError};
 use tink_proto::HashType;
 
 /// Minimum key size in bytes.
@@ -25,7 +25,7 @@ const MIN_KEY_SIZE_IN_BYTES: usize = 16;
 /// Minimum tag size in bytes. This provides minimum 80-bit security strength.
 const MIN_TAG_SIZE_IN_BYTES: usize = 10;
 
-/// Implementation of trait `tink::Mac`.
+/// Implementation of trait `tink_core::Mac`.
 #[derive(Clone)]
 pub struct Hmac {
     prf: tink_prf::subtle::HmacPrf,
@@ -51,7 +51,7 @@ pub fn validate_hmac_params(
     tag_size: usize,
 ) -> Result<(), TinkError> {
     // validate tag size
-    let digest_size = tink::subtle::get_hash_digest_size(hash)?;
+    let digest_size = tink_core::subtle::get_hash_digest_size(hash)?;
     if tag_size > digest_size {
         return Err("tag size too big".into());
     }
@@ -65,7 +65,7 @@ pub fn validate_hmac_params(
     Ok(())
 }
 
-impl tink::Mac for Hmac {
+impl tink_core::Mac for Hmac {
     fn compute_mac(&self, data: &[u8]) -> Result<Vec<u8>, TinkError> {
         self.prf.compute_prf(data, self.tag_size)
     }

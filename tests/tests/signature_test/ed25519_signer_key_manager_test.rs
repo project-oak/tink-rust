@@ -15,13 +15,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use prost::Message;
-use tink::{subtle::random::get_random_bytes, utils::wrap_err, Signer, TinkError, Verifier};
+use tink_core::{subtle::random::get_random_bytes, utils::wrap_err, Signer, TinkError, Verifier};
 use tink_proto::{Ed25519PrivateKey, Ed25519PublicKey};
 
 #[test]
 fn test_ed25519_signer_get_primitive_basic() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_tests::ED25519_SIGNER_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::ED25519_SIGNER_TYPE_URL)
         .expect("cannot obtain Ed25519Signer key manager");
     let pvt_key = tink_tests::new_ed25519_private_key();
     let serialized_key = tink_tests::proto_encode(&pvt_key);
@@ -29,11 +29,11 @@ fn test_ed25519_signer_get_primitive_basic() {
         .primitive(&serialized_key)
         .expect("unexpected error in test case");
     let s = match tmp {
-        tink::Primitive::Signer(s) => s,
+        tink_core::Primitive::Signer(s) => s,
         _ => panic!("unexpected primitive type"),
     };
 
-    let km_pub = tink::registry::get_key_manager(tink_tests::ED25519_VERIFIER_TYPE_URL)
+    let km_pub = tink_core::registry::get_key_manager(tink_tests::ED25519_VERIFIER_TYPE_URL)
         .expect("cannot obtain Ed25519Verifier key manager");
     let pub_key = pvt_key.public_key.unwrap();
     let serialized_key = tink_tests::proto_encode(&pub_key);
@@ -41,7 +41,7 @@ fn test_ed25519_signer_get_primitive_basic() {
         .primitive(&serialized_key)
         .expect("unexpected error in test case");
     let v = match tmp {
-        tink::Primitive::Verifier(v) => v,
+        tink_core::Primitive::Verifier(v) => v,
         _ => panic!("unexpected primitive type"),
     };
 
@@ -58,7 +58,7 @@ fn test_ed25519_signer_get_primitive_basic() {
 fn test_ed25519_sign_get_primitive_with_invalid_input() {
     tink_signature::init();
     // invalid params
-    let km = tink::registry::get_key_manager(tink_tests::ED25519_SIGNER_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::ED25519_SIGNER_TYPE_URL)
         .expect("cannot obtain Ed25519Signer key manager");
 
     // invalid version
@@ -79,7 +79,7 @@ fn test_ed25519_sign_get_primitive_with_invalid_input() {
 #[test]
 fn test_ed25519_sign_new_key_basic() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_tests::ED25519_SIGNER_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::ED25519_SIGNER_TYPE_URL)
         .expect("cannot obtain Ed25519Signer key manager");
     let serialized_format = tink_tests::proto_encode(&tink_tests::new_ed25519_private_key());
     let tmp = km.new_key(&serialized_format).unwrap();
@@ -93,7 +93,7 @@ fn test_ed25519_sign_new_key_basic() {
 #[test]
 fn test_ed25519_public_key_data_basic() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_tests::ED25519_SIGNER_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::ED25519_SIGNER_TYPE_URL)
         .expect("cannot obtain Ed25519Signer key manager");
     assert!(
         km.supports_private_keys(),
@@ -123,7 +123,7 @@ fn test_ed25519_public_key_data_basic() {
 #[test]
 fn test_ed25519_public_key_data_with_invalid_input() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_tests::ED25519_SIGNER_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::ED25519_SIGNER_TYPE_URL)
         .expect("cannot obtain Ed25519Signer key manager");
     assert!(
         km.supports_private_keys(),
@@ -183,7 +183,7 @@ fn validate_ed25519_private_key(key: &tink_proto::Ed25519PrivateKey) -> Result<(
 #[test]
 fn test_key_manager_params() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_tests::ED25519_SIGNER_TYPE_URL).unwrap();
+    let km = tink_core::registry::get_key_manager(tink_tests::ED25519_SIGNER_TYPE_URL).unwrap();
 
     assert_eq!(km.type_url(), tink_tests::ED25519_SIGNER_TYPE_URL);
     assert_eq!(
@@ -196,7 +196,7 @@ fn test_key_manager_params() {
 #[test]
 fn test_primitive_with_invalid_key() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_tests::ED25519_SIGNER_TYPE_URL).unwrap();
+    let km = tink_core::registry::get_key_manager(tink_tests::ED25519_SIGNER_TYPE_URL).unwrap();
 
     let invalid_keys = vec![
         Ed25519PrivateKey {

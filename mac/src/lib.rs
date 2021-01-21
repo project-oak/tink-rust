@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-//! This crate provides implementations of the [`tink::Mac`] primitive.
+//! This crate provides implementations of the [`tink_core::Mac`] primitive.
 //!
 //! MAC computes a tag for a given message that can be used to authenticate a
 //! message.  MAC protects data integrity as well as provides for authenticity
@@ -45,27 +45,29 @@ static INIT: Once = Once::new();
 /// Tink.
 pub fn init() {
     INIT.call_once(|| {
-        tink::registry::register_key_manager(std::sync::Arc::new(HmacKeyManager::default()))
+        tink_core::registry::register_key_manager(std::sync::Arc::new(HmacKeyManager::default()))
             .expect("tink_mac::init() failed"); // safe: init
-        tink::registry::register_key_manager(std::sync::Arc::new(AesCmacKeyManager::default()))
-            .expect("tink_mac::init() failed"); // safe: init
+        tink_core::registry::register_key_manager(
+            std::sync::Arc::new(AesCmacKeyManager::default()),
+        )
+        .expect("tink_mac::init() failed"); // safe: init
 
-        tink::registry::register_template_generator(
+        tink_core::registry::register_template_generator(
             "HMAC_SHA256_128BITTAG",
             hmac_sha256_tag128_key_template,
         );
-        tink::registry::register_template_generator(
+        tink_core::registry::register_template_generator(
             "HMAC_SHA256_256BITTAG",
             hmac_sha256_tag256_key_template,
         );
-        tink::registry::register_template_generator(
+        tink_core::registry::register_template_generator(
             "HMAC_SHA512_256BITTAG",
             hmac_sha512_tag256_key_template,
         );
-        tink::registry::register_template_generator(
+        tink_core::registry::register_template_generator(
             "HMAC_SHA512_512BITTAG",
             hmac_sha512_tag512_key_template,
         );
-        tink::registry::register_template_generator("AES_CMAC", aes_cmac_tag128_key_template);
+        tink_core::registry::register_template_generator("AES_CMAC", aes_cmac_tag128_key_template);
     });
 }

@@ -16,14 +16,14 @@
 
 use prost::Message;
 use std::collections::HashSet;
-use tink::{utils::wrap_err, Mac, TinkError};
+use tink_core::{utils::wrap_err, Mac, TinkError};
 use tink_proto::HashType;
 use tink_tests::proto_encode;
 
 #[test]
 fn test_get_primitive_basic() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_tests::HMAC_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::HMAC_TYPE_URL)
         .expect("HMAC key manager not found");
     let test_keys = gen_valid_hmac_keys();
     for test_key in test_keys {
@@ -36,7 +36,7 @@ fn test_get_primitive_basic() {
 #[test]
 fn test_get_primitive_with_invalid_input() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_tests::HMAC_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::HMAC_TYPE_URL)
         .expect("HMAC key manager not found");
     // invalid key
     let test_keys = gen_invalid_hmac_keys();
@@ -57,7 +57,7 @@ fn test_get_primitive_with_invalid_input() {
 #[test]
 fn test_new_key_multiple_times() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_tests::HMAC_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::HMAC_TYPE_URL)
         .expect("HMAC key manager not found");
     let serialized_format = proto_encode(&tink_tests::new_hmac_key_format(HashType::Sha256, 32));
     let mut keys = HashSet::new();
@@ -75,7 +75,7 @@ fn test_new_key_multiple_times() {
 #[test]
 fn test_new_key_basic() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_tests::HMAC_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::HMAC_TYPE_URL)
         .expect("HMAC key manager not found");
     let test_formats = gen_valid_hmac_key_formats();
     for (i, test_format) in test_formats.iter().enumerate() {
@@ -91,7 +91,7 @@ fn test_new_key_basic() {
 #[test]
 fn test_new_key_with_invalid_input() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_tests::HMAC_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::HMAC_TYPE_URL)
         .expect("HMAC key manager not found");
     // invalid key formats
     let test_formats = gen_invalid_hmac_key_formats();
@@ -112,7 +112,7 @@ fn test_new_key_with_invalid_input() {
 #[test]
 fn test_new_key_data_basic() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_tests::HMAC_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::HMAC_TYPE_URL)
         .expect("HMAC key manager not found");
 
     let test_formats = gen_valid_hmac_key_formats();
@@ -141,7 +141,7 @@ fn test_new_key_data_basic() {
 #[test]
 fn test_new_key_data_with_invalid_input() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_tests::HMAC_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::HMAC_TYPE_URL)
         .expect("HMAC key manager not found");
     // invalid key formats
     let test_formats = gen_invalid_hmac_key_formats();
@@ -162,7 +162,7 @@ fn test_new_key_data_with_invalid_input() {
 #[test]
 fn test_does_support() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_tests::HMAC_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::HMAC_TYPE_URL)
         .expect("HMAC key manager not found");
 
     assert!(
@@ -180,7 +180,7 @@ fn test_does_support() {
 #[test]
 fn test_type_url() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_tests::HMAC_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::HMAC_TYPE_URL)
         .expect("HMAC key manager not found");
     assert_eq!(
         km.type_url(),
@@ -270,13 +270,16 @@ fn validate_hmac_key(
         key.params.as_ref().unwrap().tag_size as usize,
     )
     .map_err(|e| wrap_err("cannot create primitive from key", e))?;
-    validate_hmac_primitive(tink::Primitive::Mac(Box::new(p)), key)
+    validate_hmac_primitive(tink_core::Primitive::Mac(Box::new(p)), key)
 }
 
 /// Check whether the given primitive matches the given `HmacKey`
-fn validate_hmac_primitive(p: tink::Primitive, key: &tink_proto::HmacKey) -> Result<(), TinkError> {
+fn validate_hmac_primitive(
+    p: tink_core::Primitive,
+    key: &tink_proto::HmacKey,
+) -> Result<(), TinkError> {
     let hmac_primitive = match p {
-        tink::Primitive::Mac(mac) => mac,
+        tink_core::Primitive::Mac(mac) => mac,
         _ => return Err("not a Mac primitive".into()),
     };
     let key_primitive = tink_mac::subtle::Hmac::new(
@@ -295,7 +298,7 @@ fn validate_hmac_primitive(p: tink::Primitive, key: &tink_proto::HmacKey) -> Res
         )
     })?;
 
-    let data = tink::subtle::random::get_random_bytes(20);
+    let data = tink_core::subtle::random::get_random_bytes(20);
     let mac = hmac_primitive
         .compute_mac(&data)
         .map_err(|e| wrap_err("mac computation failed", e))?;

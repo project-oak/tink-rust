@@ -16,5 +16,5 @@ p256 = { version = "^0.7", features = ["ecdsa"] }
 prost = "^0.6.1"
 rand = "^0.7"
 signature = "^1.2.2"
-tink = "^0.1"
+tink-core = "^0.1"
 tink-proto = "^0.1"

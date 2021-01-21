@@ -17,7 +17,7 @@ p256 = { version = "^0.7", features = ["ecdsa"] }
 prost = "^0.6.1"
 rand = "^0.7"
 serde = { version = "^1.0.118", features = ["derive"] }
-tink = { version = "^0.1", features = ["insecure", "json"] }
+tink-core = { version = "^0.1", features = ["insecure", "json"] }
 tink-daead = "^0.1"
 tink-mac = "^0.1"
 tink-proto = "^0.1"

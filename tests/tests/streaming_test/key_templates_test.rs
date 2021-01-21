@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use prost::Message;
-use tink::TinkError;
+use tink_core::TinkError;
 use tink_proto::HashType;
 
 #[test]

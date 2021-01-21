@@ -13,7 +13,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use std::path::PathBuf;
-use tink::{registry::KmsClient, subtle::random::get_random_bytes, TinkError};
+use tink_core::{registry::KmsClient, subtle::random::get_random_bytes, TinkError};
 
 const KEY_URI: &str =
     "aws-kms://arn:aws:kms:us-east-2:235739564943:key/3ee50705-5a82-4f5b-9753-05c4f473922f";
@@ -43,11 +43,11 @@ fn setup_kms(cf: &std::path::Path) {
     // The registry will return the first KMS client that claims support for
     // the keyURI.  The tests re-use the same keyURI, so clear any clients
     // registered by earlier tests before registering the new client.
-    tink::registry::clear_kms_clients();
-    tink::registry::register_kms_client(g);
+    tink_core::registry::clear_kms_clients();
+    tink_core::registry::register_kms_client(g);
 }
 
-fn basic_aead_test(a: Box<dyn tink::Aead>) -> Result<(), TinkError> {
+fn basic_aead_test(a: Box<dyn tink_core::Aead>) -> Result<(), TinkError> {
     for _ in 0..10 {
         let pt = get_random_bytes(20);
         let ad = get_random_bytes(20);
@@ -68,9 +68,10 @@ fn test_basic_aead() {
     for file in &[CRED_FILE, CRED_INI_FILE] {
         setup_kms(&std::path::PathBuf::from(file));
         let dek = tink_aead::aes128_ctr_hmac_sha256_key_template();
-        let kh =
-            tink::keyset::Handle::new(&tink_aead::kms_envelope_aead_key_template(KEY_URI, dek))
-                .expect("error getting a new keyset handle");
+        let kh = tink_core::keyset::Handle::new(&tink_aead::kms_envelope_aead_key_template(
+            KEY_URI, dek,
+        ))
+        .expect("error getting a new keyset handle");
         let a = tink_aead::new(&kh).expect("error getting the primitive");
         assert!(basic_aead_test(a).is_ok(), "error in basic aead tests");
     }
@@ -83,9 +84,10 @@ fn test_basic_aead_without_additional_data() {
     for file in &[CRED_FILE, CRED_INI_FILE] {
         setup_kms(&std::path::PathBuf::from(file));
         let dek = tink_aead::aes128_ctr_hmac_sha256_key_template();
-        let kh =
-            tink::keyset::Handle::new(&tink_aead::kms_envelope_aead_key_template(KEY_URI, dek))
-                .expect("error getting a new keyset handle");
+        let kh = tink_core::keyset::Handle::new(&tink_aead::kms_envelope_aead_key_template(
+            KEY_URI, dek,
+        ))
+        .expect("error getting a new keyset handle");
         let a = tink_aead::new(&kh).expect("error getting the primitive");
         // Only test 10 times (instead of 100) because each test makes HTTP requests to AWS.
         for _ in 0..10 {

@@ -58,7 +58,7 @@ primitive is CPA secure.
 ```Rust
 fn main() {
     tink_aead::init();
-    let kh = tink::keyset::Handle::new(&tink_aead::aes256_gcm_key_template()).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_aead::aes256_gcm_key_template()).unwrap();
     let a = tink_aead::new(&kh).unwrap();
 
     let pt = b"this data needs to be encrypted";
@@ -83,7 +83,7 @@ message.
 ```Rust
 fn main() {
     tink_mac::init();
-    let kh = tink::keyset::Handle::new(&tink_mac::hmac_sha256_tag256_key_template()).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_mac::hmac_sha256_tag256_key_template()).unwrap();
     let m = tink_mac::new(&kh).unwrap();
 
     let pt = b"this data needs to be MACed";
@@ -106,7 +106,7 @@ because encrypting the same plaintext always yields the same ciphertext.
 ```Rust
 fn main() {
     tink_daead::init();
-    let kh = tink::keyset::Handle::new(&tink_daead::aes_siv_key_template()).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_daead::aes_siv_key_template()).unwrap();
     let d = tink_daead::new(&kh).unwrap();
 
     let pt = b"this data needs to be encrypted";
@@ -134,7 +134,7 @@ To sign data using Tink you can use ECDSA (with P-256) or ED25519 key templates.
 fn main() {
     tink_signature::init();
     // Other key templates can also be used.
-    let kh = tink::keyset::Handle::new(&tink_signature::ecdsa_p256_key_template()).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_signature::ecdsa_p256_key_template()).unwrap();
     let s = tink_signature::new_signer(&kh).unwrap();
 
     let pt = b"this data needs to be signed";
@@ -162,8 +162,9 @@ or decrypt data streams:
     tink_streaming_aead::init();
 
     // Generate fresh key material.
-    let kh = tink::keyset::Handle::new(&tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template())
-        .unwrap();
+    let kh =
+        tink_core::keyset::Handle::new(&tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template())
+            .unwrap();
 
     // Get the primitive that uses the key material.
     let a = tink_streaming_aead::new(&kh).unwrap();
@@ -236,7 +237,7 @@ fn main() {
 
     // Other key templates can also be used, if the relevant primitive crate
     // is initialized.
-    let kh = tink::keyset::Handle::new(&tink_daead::aes_siv_key_template()).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_daead::aes_siv_key_template()).unwrap();
 
     println!("{:?}", kh);
 }
@@ -260,12 +261,12 @@ fn main() {
     tink_aead::init();
 
     // Create a keyset with a single key in it, and encrypt something.
-    let kh = tink::keyset::Handle::new(&tink_aead::aes128_gcm_key_template()).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_aead::aes128_gcm_key_template()).unwrap();
     let cipher = tink_aead::new(&kh).unwrap();
     let ct = cipher.encrypt(b"data", b"aad").unwrap();
 
     // Move ownership of the `Handle` into a `keyset::Manager`.
-    let mut km = tink::keyset::Manager::new_from_handle(kh);
+    let mut km = tink_core::keyset::Manager::new_from_handle(kh);
 
     // Rotate in a new primary key, and add an additional secondary key.
     let key_id_a = km.rotate(&tink_aead::aes256_gcm_key_template()).unwrap();
@@ -344,7 +345,7 @@ fn main() {
     tink_aead::init();
 
     // Generate a new key.
-    let kh1 = tink::keyset::Handle::new(&tink_aead::aes256_gcm_key_template()).unwrap();
+    let kh1 = tink_core::keyset::Handle::new(&tink_aead::aes256_gcm_key_template()).unwrap();
 
     // Set up the main key-encryption key at a KMS. This is an AEAD which will generate a new
     // data-encryption key (DEK) for each encryption operation; the DEK is included in the
@@ -361,7 +362,7 @@ fn main() {
 
     // The `keyset::Reader` and `keyset::Writer` traits allow for reading/writing a keyset to
     // some kind of store; this particular implementation just holds the keyset in memory.
-    let mut mem_keyset = tink::keyset::MemReaderWriter::default();
+    let mut mem_keyset = tink_core::keyset::MemReaderWriter::default();
 
     // The `Handle::write` method encrypts the keyset that is associated with the handle, using the
     // given AEAD (`main_key`), and then writes the encrypted keyset to the `keyset::Writer`
@@ -373,7 +374,7 @@ fn main() {
     // The `Handle::read` method reads the encrypted keyset back from the `keyset::Reader`
     // implementation and decrypts it using the AEAD used to encrypt it (`main_key`), giving a
     // handle to the recovered keyset.
-    let kh2 = tink::keyset::Handle::read(&mut mem_keyset, main_key).unwrap();
+    let kh2 = tink_core::keyset::Handle::read(&mut mem_keyset, main_key).unwrap();
 
     assert_eq!(
         insecure::keyset_material(&kh1),

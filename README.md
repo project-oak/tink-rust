@@ -28,18 +28,18 @@ An introduction to working with the Tink API is [provided here](docs/RUST-HOWTO.
 
 ## Crate Structure
 
-The core `tink` crate holds common functionality and includes the `trait` definitions for all
+The `tink-core` crate holds common functionality and includes the `trait` definitions for all
 [primitives](https://github.com/google/tink/blob/v1.5.0/docs/PRIMITIVES.md), but includes
 very little cryptographic functionality.
 
 Individual cryptographic primitives are implemented in `tink-<primitive>` crates, which depend on:
 
-- the `tink` crate for common types and helpers
+- the `tink-core` crate for common types and helpers
 - the `tink-proto` crate for protobuf-derived `struct`s
 - the RustCrypto crates to provide underlying cryptographic implementations.
 
 For example, the `tink-aead` crate provides code that performs authenticated encryption with additional data (AEAD),
-implementing the `tink::Aead` trait.
+implementing the `Aead` trait from `tink-core`.
 
 All of the tests for the Tink crates are integration tests (i.e. only use public APIs) and reside in a separate
 `tink-tests` crate.
@@ -108,7 +108,7 @@ Many Go functions return values of form `(ReturnType, error)`; the Rust equivale
 where `E` is some type that implements the [`Error` trait](https://doc.rust-lang.org/std/error/trait.Error.html).
 
 The Rust port uses the `TinkError` type for `E`.  This type includes an optional inner `Error`, and the
-`tink::utils` module also includes the `wrap_err()` helper, which is used as an equivalent for the common Go pattern
+`tink_core::utils` module also includes the `wrap_err()` helper, which is used as an equivalent for the common Go pattern
 of wrapping errors:
 
 ```Go
@@ -178,13 +178,13 @@ places (e.g. hash function names, curve names).  Wherever possible, the Rust por
 
 ### JSON Output
 
-Tink supports the encoding of `Keyset` and `EncryptedKeyset` types as JSON when the `json` feature of the `tink` crate
+Tink supports the encoding of `Keyset` and `EncryptedKeyset` types as JSON when the `json` feature of the `tink-core` crate
 is enabled, with the following conventions:
 
 - Values of type `bytes` are serialized to base64-encoded strings (standard encoding).
 - Enum values are serialized as capitalized strings (e.g. `"ASYMMETRIC_PRIVATE"`).
 
-The `tink::keyset::json_io` module includes `serde` serialization code which matches these conventions, and
+The `tink_core::keyset::json_io` module includes `serde` serialization code which matches these conventions, and
 the [prost-build](https://crates.io/crates/prost-build) invocation that creates the Rust protobuf message
 definitions includes a collection of extra options to force the generation of the appropriate `serde`
 attributes.
@@ -197,11 +197,11 @@ This section describes the mapping between the upstream Go packages and the equi
 
 |  Rust Crate/Module   | Go Package |
 |----------------------|------------|
-| `tink::cryptofmt`    | `core/cryptofmt` |
-| `tink::keyset`       | `keyset` |
-| `tink::primitiveset` | `core/primitiveset` |
-| `tink::registry`     | `core/registry` |
-| `tink`               | `tink` |
+| `tink_core::cryptofmt`    | `core/cryptofmt` |
+| `tink_core::keyset`       | `keyset` |
+| `tink_core::primitiveset` | `core/primitiveset` |
+| `tink_core::registry`     | `core/registry` |
+| `tink-core`               | `tink` |
 | `tink-proto`         | `*_go_proto` |
 
 #### Common Crypto
@@ -209,8 +209,8 @@ This section describes the mapping between the upstream Go packages and the equi
 |  Rust Crate/Module     | Go Package |
 |------------------------|------------|
 |                        | `kwp` |
-| `tink::subtle::random` | `subtle/random` |
-| `tink::subtle`         | `subtle` |
+| `tink_core::subtle::random` | `subtle/random` |
+| `tink_core::subtle`         | `subtle` |
 
 #### Primitives
 
@@ -228,10 +228,10 @@ This section describes the mapping between the upstream Go packages and the equi
 
 |  Rust Crate/Module       | Go Package |  Notes |
 |--------------------------|------------|--------|
-| `tink::keyset::insecure` | `insecurecleartextkeyset` | Gated on (non-default) `insecure` feature |
-| `tink::keyset::insecure` | `internal` | Gated on (non-default) `insecure` feature |
-| `tink::keyset::insecure` | `testkeyset` | Gated on (non-default) `insecure` feature |
-| `tink-tests`             | `testutil` | Depends on `insecure` feature of `tink` crate |
+| `tink_core::keyset::insecure` | `insecurecleartextkeyset` | Gated on (non-default) `insecure` feature |
+| `tink_core::keyset::insecure` | `internal` | Gated on (non-default) `insecure` feature |
+| `tink_core::keyset::insecure` | `testkeyset` | Gated on (non-default) `insecure` feature |
+| `tink-tests`             | `testutil` | Depends on `insecure` feature of `tink-core` crate |
 | `tink-testing`           | `services` (`/testing/go/`) |
 | `tink-testing::proto`    | `testing_api_go_grpc` (`/proto/testing/`) |
 |                          | `main` (`/tools/testing/go/`) |

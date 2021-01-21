@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use signature::{Signature, Signer as RustCryptoSigner};
-use tink::{utils::wrap_err, Signer, TinkError};
+use tink_core::{utils::wrap_err, Signer, TinkError};
 
 /// A [`Signer`] implementation for ED25519.
 pub struct Ed25519Signer {
@@ -50,7 +50,7 @@ impl Ed25519Signer {
 }
 
 impl Signer for Ed25519Signer {
-    fn sign(&self, data: &[u8]) -> Result<Vec<u8>, tink::TinkError> {
+    fn sign(&self, data: &[u8]) -> Result<Vec<u8>, tink_core::TinkError> {
         let r = self.keypair.sign(data);
         Ok(r.as_bytes().to_vec())
     }

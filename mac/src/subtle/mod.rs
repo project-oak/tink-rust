@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-//!  Provides subtle implementations of the `tink::Mac` primitive.
+//!  Provides subtle implementations of the `tink_core::Mac` primitive.
 
 mod cmac;
 pub use cmac::*;

@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use prost::Message;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
 #[test]
 fn test_aes_gcm_key_templates() {
@@ -210,13 +210,13 @@ fn test_encrypt_decrypt(
     type_url: &str,
 ) -> Result<(), TinkError> {
     tink_aead::init();
-    let sk = tink::registry::new_key(template)
+    let sk = tink_core::registry::new_key(template)
         .map_err(|e| wrap_err("failed to get serialized key from template, error", e))?;
 
-    let p = tink::registry::primitive(type_url, &sk)
+    let p = tink_core::registry::primitive(type_url, &sk)
         .map_err(|e| wrap_err("failed to get primitive from serialized key", e))?;
     let primitive = match p {
-        tink::Primitive::Aead(p) => p,
+        tink_core::Primitive::Aead(p) => p,
         _ => return Err("failed to convert AEAD primitive".into()),
     };
 

@@ -16,13 +16,13 @@
 
 use prost::Message;
 use std::collections::HashSet;
-use tink::{utils::wrap_err, Mac, TinkError};
+use tink_core::{utils::wrap_err, Mac, TinkError};
 use tink_tests::proto_encode;
 
 #[test]
 fn test_get_primitive_cmac_basic() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
         .expect("AES-CMAC key manager not found");
     let test_keys = gen_valid_cmac_keys();
     for test_key in test_keys {
@@ -35,7 +35,7 @@ fn test_get_primitive_cmac_basic() {
 #[test]
 fn test_get_primitive_cmac_with_invalid_input() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
         .expect("AES CMAC key manager not found");
     // invalid key
     let test_keys = gen_invalid_cmac_keys();
@@ -56,7 +56,7 @@ fn test_get_primitive_cmac_with_invalid_input() {
 #[test]
 fn test_new_key_cmac_multiple_times() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
         .expect("AES CMAC key manager not found");
     let serialized_format = proto_encode(&tink_tests::new_aes_cmac_key_format(16));
     let mut keys = HashSet::new();
@@ -74,7 +74,7 @@ fn test_new_key_cmac_multiple_times() {
 #[test]
 fn test_new_key_cmac_basic() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
         .expect("AES CMAC key manager not found");
     let test_formats = gen_valid_cmac_key_formats();
     for (i, test_format) in test_formats.iter().enumerate() {
@@ -90,7 +90,7 @@ fn test_new_key_cmac_basic() {
 #[test]
 fn test_new_key_cmac_with_invalid_input() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
         .expect("AES CMAC key manager not found");
     // invalid key formats
     let test_formats = gen_invalid_cmac_key_formats();
@@ -111,7 +111,7 @@ fn test_new_key_cmac_with_invalid_input() {
 #[test]
 fn test_new_key_data_cmac_basic() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
         .expect("AES CMAC key manager not found");
     let test_formats = gen_valid_cmac_key_formats();
     for (i, test_format) in test_formats.iter().enumerate() {
@@ -140,7 +140,7 @@ fn test_new_key_data_cmac_basic() {
 #[test]
 fn test_new_key_data_cmac_with_invalid_input() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
         .expect("AES CMAC key manager not found");
 
     // invalid key formats
@@ -162,7 +162,7 @@ fn test_new_key_data_cmac_with_invalid_input() {
 #[test]
 fn test_does_support_cmac() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
         .expect("AES CMAC key manager not found");
     assert!(
         km.does_support(tink_tests::AES_CMAC_TYPE_URL),
@@ -179,7 +179,7 @@ fn test_does_support_cmac() {
 #[test]
 fn test_cmac_type_url() {
     tink_mac::init();
-    let km = tink::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::AES_CMAC_TYPE_URL)
         .expect("AES CMAC key manager not found");
     assert_eq!(
         km.type_url(),
@@ -254,16 +254,16 @@ fn validate_cmac_key(
         key.params.as_ref().unwrap().tag_size as usize,
     )
     .map_err(|e| wrap_err("cannot create primitive from key", e))?;
-    validate_cmac_primitive(tink::Primitive::Mac(Box::new(p)), key)
+    validate_cmac_primitive(tink_core::Primitive::Mac(Box::new(p)), key)
 }
 
 /// Check whether the given primitive matches the given `AesCmacKey`.
 fn validate_cmac_primitive(
-    p: tink::Primitive,
+    p: tink_core::Primitive,
     key: &tink_proto::AesCmacKey,
 ) -> Result<(), TinkError> {
     let cmac_primitive = match p {
-        tink::Primitive::Mac(mac) => mac,
+        tink_core::Primitive::Mac(mac) => mac,
         _ => return Err("not a Mac primitive".into()),
     };
     let key_primitive = tink_mac::subtle::AesCmac::new(
@@ -281,7 +281,7 @@ fn validate_cmac_primitive(
         )
     })?;
 
-    let data = tink::subtle::random::get_random_bytes(20);
+    let data = tink_core::subtle::random::get_random_bytes(20);
     let mac = cmac_primitive
         .compute_mac(&data)
         .map_err(|e| wrap_err("mac computation failed", e))?;

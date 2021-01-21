@@ -7,6 +7,6 @@ license = "Apache-2.0"
 
 [dependencies]
 hex = "^0.4.2"
-tink = { version = "^0.1", features = ["insecure"] }
 tink-aead = "^0.1"
+tink-core = { version = "^0.1", features = ["insecure"] }
 tink-awskms = "^0.1"

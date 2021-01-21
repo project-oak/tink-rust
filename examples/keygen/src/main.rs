@@ -21,7 +21,7 @@ fn main() {
 
     // Other key templates can also be used, if the relevant primitive crate
     // is initialized.
-    let kh = tink::keyset::Handle::new(&tink_daead::aes_siv_key_template()).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_daead::aes_siv_key_template()).unwrap();
 
     println!("{:?}", kh);
 }

@@ -16,7 +16,7 @@
 
 use maplit::hashmap;
 use serde::Deserialize;
-use tink::Prf;
+use tink_core::Prf;
 use tink_prf::subtle::{validate_hkdf_prf_params, HkdfPrf};
 use tink_proto::HashType;
 

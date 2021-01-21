@@ -15,8 +15,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use std::collections::HashSet;
-use tink::subtle::random::get_random_bytes;
 use tink_aead::{subtle, subtle::IndCpaCipher};
+use tink_core::subtle::random::get_random_bytes;
 
 #[test]
 fn test_new_aes_ctr() {

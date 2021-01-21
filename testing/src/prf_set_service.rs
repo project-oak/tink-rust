@@ -28,10 +28,10 @@ impl proto::prf_set_server::PrfSet for PrfSetServerImpl {
         request: tonic::Request<proto::PrfSetKeyIdsRequest>,
     ) -> Result<tonic::Response<proto::PrfSetKeyIdsResponse>, tonic::Status> {
         let req = request.into_inner(); // discard metadata
-        let closure = move || -> Result<_, tink::TinkError> {
+        let closure = move || -> Result<_, tink_core::TinkError> {
             let cursor = std::io::Cursor::new(req.keyset);
-            let mut reader = tink::keyset::BinaryReader::new(cursor);
-            let handle = tink::keyset::insecure::read(&mut reader)?;
+            let mut reader = tink_core::keyset::BinaryReader::new(cursor);
+            let handle = tink_core::keyset::insecure::read(&mut reader)?;
             let primitive = tink_prf::Set::new(&handle)?;
             let mut output = proto::prf_set_key_ids_response::Output {
                 primary_key_id: primitive.primary_id,
@@ -56,8 +56,8 @@ impl proto::prf_set_server::PrfSet for PrfSetServerImpl {
         let req = request.into_inner(); // discard metadata
         let closure = move || {
             let cursor = std::io::Cursor::new(req.keyset.clone());
-            let mut reader = tink::keyset::BinaryReader::new(cursor);
-            let handle = tink::keyset::insecure::read(&mut reader)?;
+            let mut reader = tink_core::keyset::BinaryReader::new(cursor);
+            let handle = tink_core::keyset::insecure::read(&mut reader)?;
             let primitive = tink_prf::Set::new(&handle)?;
             primitive.prfs[&req.key_id].compute_prf(&req.input_data, req.output_length as usize)
         };

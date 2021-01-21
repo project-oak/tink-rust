@@ -15,8 +15,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use std::path::PathBuf;
-use tink::registry::KmsClient;
 use tink_awskms::AwsClient;
+use tink_core::registry::KmsClient;
 
 #[test]
 fn test_new_client_good_uri_prefix_with_aws_partition() {

@@ -48,8 +48,8 @@ jobs:
           override: true
       - run: rustc --version
       - run: cargo test --all -- --nocapture
-      - run: (cd tink && cargo test -- --nocapture)
-      - run: (cd tink && cargo test --features=json -- --nocapture)
+      - run: (cd core && cargo test -- --nocapture)
+      - run: (cd core && cargo test --features=json -- --nocapture)
 
   formatting:
     runs-on: ubuntu-latest

@@ -22,7 +22,7 @@
 #![deny(broken_intra_doc_links)]
 
 use std::sync::Once;
-use tink::registry::register_key_manager;
+use tink_core::registry::register_key_manager;
 
 mod aes_ctr_hmac_key_manager;
 pub use aes_ctr_hmac_key_manager::*;
@@ -50,36 +50,36 @@ pub fn init() {
         register_key_manager(std::sync::Arc::new(AesGcmHkdfKeyManager::default()))
             .expect("tink_streaming_aead::init() failed"); // safe: init
 
-        tink::registry::register_template_generator(
+        tink_core::registry::register_template_generator(
             "AES128_CTR_HMAC_SHA256_4KB",
             aes128_gcm_hkdf_4kb_key_template,
         );
-        tink::registry::register_template_generator(
+        tink_core::registry::register_template_generator(
             "AES128_CTR_HMAC_SHA256_1MB",
             aes128_gcm_hkdf_1mb_key_template,
         );
 
-        tink::registry::register_template_generator(
+        tink_core::registry::register_template_generator(
             "AES256_CTR_HMAC_SHA256_4KB",
             aes256_gcm_hkdf_4kb_key_template,
         );
-        tink::registry::register_template_generator(
+        tink_core::registry::register_template_generator(
             "AES256_CTR_HMAC_SHA256_1MB",
             aes256_gcm_hkdf_1mb_key_template,
         );
-        tink::registry::register_template_generator(
+        tink_core::registry::register_template_generator(
             "AES128_GCM_HKDF_4KB",
             aes128_ctr_hmac_sha256_segment_4kb_key_template,
         );
-        tink::registry::register_template_generator(
+        tink_core::registry::register_template_generator(
             "AES128_GCM_HKDF_1MB",
             aes128_ctr_hmac_sha256_segment_1mb_key_template,
         );
-        tink::registry::register_template_generator(
+        tink_core::registry::register_template_generator(
             "AES256_GCM_HKDF_4KB",
             aes256_ctr_hmac_sha256_segment_4kb_key_template,
         );
-        tink::registry::register_template_generator(
+        tink_core::registry::register_template_generator(
             "AES256_GCM_HKDF_1MB",
             aes256_ctr_hmac_sha256_segment_1mb_key_template,
         );

@@ -16,7 +16,7 @@
 
 //! Provides an implementation of PRF using HKDF.
 
-use tink::TinkError;
+use tink_core::TinkError;
 use tink_proto::HashType;
 
 // We use a somewhat larger minimum key size than usual, because PRFs might be
@@ -65,7 +65,7 @@ pub fn validate_hkdf_prf_params(
     // validate key size
     if key_size < MIN_HKDF_KEY_SIZE_IN_BYTES {
         Err("key too short".into())
-    } else if tink::subtle::get_hash_func(hash).is_none() {
+    } else if tink_core::subtle::get_hash_func(hash).is_none() {
         Err("invalid hash function".into())
     } else if hash != HashType::Sha256 && hash != HashType::Sha512 {
         Err("Only SHA-256 and SHA-512 currently allowed for HKDF".into())
@@ -74,7 +74,7 @@ pub fn validate_hkdf_prf_params(
     }
 }
 
-impl tink::Prf for HkdfPrf {
+impl tink_core::Prf for HkdfPrf {
     fn compute_prf(&self, data: &[u8], out_len: usize) -> Result<Vec<u8>, TinkError> {
         match &self.prk {
             HkdfPrfVariant::Sha1(prk) => compute_hkdf_with::<sha1::Sha1>(prk, data, out_len),

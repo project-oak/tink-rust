@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::{primitiveset::Entry, Primitive};
+use tink_core::{primitiveset::Entry, Primitive};
 use tink_proto::{keyset::Key, KeyStatusType, OutputPrefixType};
 use tink_tests::{new_dummy_key, DummyMac};
 
@@ -37,7 +37,7 @@ fn create_keyset() -> Vec<Key> {
 
 #[test]
 fn test_primitive_set_basic() {
-    let mut ps = tink::primitiveset::PrimitiveSet::new();
+    let mut ps = tink_core::primitiveset::PrimitiveSet::new();
     assert!(ps.primary.is_none());
     assert!(ps.entries.is_empty());
     // generate test keys
@@ -91,7 +91,7 @@ fn test_primitive_set_basic() {
         OutputPrefixType::from_i32(keys[0].output_prefix_type).unwrap(),
         OutputPrefixType::from_i32(keys[5].output_prefix_type).unwrap(),
     ];
-    let prefix = tink::cryptofmt::output_prefix(&keys[0]).unwrap();
+    let prefix = tink_core::cryptofmt::output_prefix(&keys[0]).unwrap();
     let tink_entries = ps.entries_for_prefix(&prefix);
     assert!(
         validate_entry_list(
@@ -109,7 +109,7 @@ fn test_primitive_set_basic() {
     let tink_macs = vec![macs[2].clone()];
     let tink_statuses = vec![KeyStatusType::from_i32(keys[2].status).unwrap()];
     let tink_prefix_types = vec![OutputPrefixType::from_i32(keys[2].output_prefix_type).unwrap()];
-    let prefix = tink::cryptofmt::output_prefix(&keys[2]).unwrap();
+    let prefix = tink_core::cryptofmt::output_prefix(&keys[2]).unwrap();
     let tink_entries = ps.entries_for_prefix(&prefix);
     assert!(
         validate_entry_list(
@@ -127,7 +127,7 @@ fn test_primitive_set_basic() {
     let legacy_macs = vec![macs[1].clone()];
     let legacy_statuses = vec![KeyStatusType::from_i32(keys[1].status).unwrap()];
     let legacy_prefix_types = vec![OutputPrefixType::from_i32(keys[1].output_prefix_type).unwrap()];
-    let legacy_prefix = tink::cryptofmt::output_prefix(&keys[1]).unwrap();
+    let legacy_prefix = tink_core::cryptofmt::output_prefix(&keys[1]).unwrap();
     let legacy_entries = ps.entries_for_prefix(&legacy_prefix);
     assert!(
         validate_entry_list(
@@ -143,7 +143,7 @@ fn test_primitive_set_basic() {
 
 #[test]
 fn test_add_with_invalid_input() {
-    let mut ps = tink::primitiveset::PrimitiveSet::new();
+    let mut ps = tink_core::primitiveset::PrimitiveSet::new();
     let dummy_mac = Box::new(DummyMac {
         name: "".to_string(),
     });
@@ -165,7 +165,7 @@ fn test_add_with_invalid_input() {
 
 fn validate_entry_list(
     entries: &[Entry],
-    key_ids: &[tink::KeyId],
+    key_ids: &[tink_core::KeyId],
     macs: &[Box<DummyMac>],
     statuses: &[KeyStatusType],
     prefix_types: &[OutputPrefixType],
@@ -184,7 +184,7 @@ fn validate_entry_list(
 // Compare an entry with the [`DummyMAC`] that was used to create the entry.
 fn validate_entry(
     entry: &Entry,
-    key_id: tink::KeyId,
+    key_id: tink_core::KeyId,
     test_mac: &DummyMac,
     status: &KeyStatusType,
     output_prefix_type: &OutputPrefixType,

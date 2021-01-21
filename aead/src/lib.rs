@@ -22,7 +22,7 @@
 #![deny(broken_intra_doc_links)]
 
 use std::sync::Once;
-use tink::registry::register_key_manager;
+use tink_core::registry::register_key_manager;
 
 mod aead_factory;
 pub use aead_factory::*;
@@ -52,7 +52,7 @@ pub const UPSTREAM_VERSION: &str = "1.5.0";
 static INIT: Once = Once::new();
 
 /// Initialize the `tink-aead` crate, registering its primitives so they are available via
-/// tink.
+/// tink-core.
 pub fn init() {
     INIT.call_once(|| {
         register_key_manager(std::sync::Arc::new(AesCtrHmacAeadKeyManager::default()))
@@ -68,23 +68,29 @@ pub fn init() {
         register_key_manager(std::sync::Arc::new(KmsEnvelopeAeadKeyManager::default()))
             .expect("tink_aead::init() failed"); // safe:init
 
-        tink::registry::register_template_generator("AES128_GCM", aes128_gcm_key_template);
-        tink::registry::register_template_generator("AES256_GCM", aes256_gcm_key_template);
-        tink::registry::register_template_generator("AES128_GCM_SIV", aes128_gcm_siv_key_template);
-        tink::registry::register_template_generator("AES256_GCM_SIV", aes256_gcm_siv_key_template);
-        tink::registry::register_template_generator(
+        tink_core::registry::register_template_generator("AES128_GCM", aes128_gcm_key_template);
+        tink_core::registry::register_template_generator("AES256_GCM", aes256_gcm_key_template);
+        tink_core::registry::register_template_generator(
+            "AES128_GCM_SIV",
+            aes128_gcm_siv_key_template,
+        );
+        tink_core::registry::register_template_generator(
+            "AES256_GCM_SIV",
+            aes256_gcm_siv_key_template,
+        );
+        tink_core::registry::register_template_generator(
             "AES128_CTR_HMAC_SHA256",
             aes128_ctr_hmac_sha256_key_template,
         );
-        tink::registry::register_template_generator(
+        tink_core::registry::register_template_generator(
             "AES256_CTR_HMAC_SHA256",
             aes256_ctr_hmac_sha256_key_template,
         );
-        tink::registry::register_template_generator(
+        tink_core::registry::register_template_generator(
             "CHACHA20_POLY1305",
             cha_cha20_poly1305_key_template,
         );
-        tink::registry::register_template_generator(
+        tink_core::registry::register_template_generator(
             "XCHACHA20_POLY1305",
             x_cha_cha20_poly1305_key_template,
         );

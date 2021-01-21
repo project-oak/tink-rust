@@ -17,20 +17,20 @@
 //! Key manager for ECDSA verification keys.
 
 use prost::Message;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
 /// Maximal version of ECDSA keys.
 pub const ECDSA_VERIFIER_KEY_VERSION: u32 = 0;
 /// Type URL of ECDSA keys that Tink supports.
 pub const ECDSA_VERIFIER_TYPE_URL: &str = "type.googleapis.com/google.crypto.tink.EcdsaPublicKey";
 
-/// An implementation of the [`tink::registry::KeyManager`] trait.
+/// An implementation of the [`tink_core::registry::KeyManager`] trait.
 /// It doesn't support key generation.
 #[derive(Default)]
 pub(crate) struct EcdsaVerifierKeyManager {}
 
-impl tink::registry::KeyManager for EcdsaVerifierKeyManager {
-    fn primitive(&self, serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
+impl tink_core::registry::KeyManager for EcdsaVerifierKeyManager {
+    fn primitive(&self, serialized_key: &[u8]) -> Result<tink_core::Primitive, TinkError> {
         if serialized_key.is_empty() {
             return Err("EcdsaVerifierKeyManager: invalid key".into());
         }
@@ -41,7 +41,7 @@ impl tink::registry::KeyManager for EcdsaVerifierKeyManager {
 
         let (hash, curve, encoding) = crate::get_ecdsa_param_ids(&params);
         match crate::subtle::EcdsaVerifier::new(hash, curve, encoding, &key.x, &key.y) {
-            Ok(p) => Ok(tink::Primitive::Verifier(Box::new(p))),
+            Ok(p) => Ok(tink_core::Primitive::Verifier(Box::new(p))),
             Err(e) => Err(wrap_err("EcdsaVerifierKeyManager: invalid key", e)),
         }
     }
@@ -64,7 +64,7 @@ impl tink::registry::KeyManager for EcdsaVerifierKeyManager {
 pub(crate) fn validate_ecdsa_public_key(
     key: &tink_proto::EcdsaPublicKey,
 ) -> Result<tink_proto::EcdsaParams, TinkError> {
-    tink::keyset::validate_key_version(key.version, ECDSA_VERIFIER_KEY_VERSION)?;
+    tink_core::keyset::validate_key_version(key.version, ECDSA_VERIFIER_KEY_VERSION)?;
     let params = key
         .params
         .as_ref()

@@ -627,8 +627,8 @@ name = "example-aead"
 version = "0.1.0"
 dependencies = [
  "hex",
- "tink",
  "tink-aead",
+ "tink-core",
 ]
 
 [[package]]
@@ -636,7 +636,7 @@ name = "example-daead"
 version = "0.1.0"
 dependencies = [
  "hex",
- "tink",
+ "tink-core",
  "tink-daead",
 ]
 
@@ -644,7 +644,7 @@ dependencies = [
 name = "example-keygen"
 version = "0.1.0"
 dependencies = [
- "tink",
+ "tink-core",
  "tink-daead",
 ]
 
@@ -652,8 +652,8 @@ dependencies = [
 name = "example-keymgr"
 version = "0.1.0"
 dependencies = [
- "tink",
  "tink-aead",
+ "tink-core",
 ]
 
 [[package]]
@@ -661,9 +661,9 @@ name = "example-kms"
 version = "0.1.0"
 dependencies = [
  "hex",
- "tink",
  "tink-aead",
  "tink-awskms",
+ "tink-core",
 ]
 
 [[package]]
@@ -671,7 +671,7 @@ name = "example-mac"
 version = "0.1.0"
 dependencies = [
  "hex",
- "tink",
+ "tink-core",
  "tink-mac",
 ]
 
@@ -680,7 +680,7 @@ name = "example-signature"
 version = "0.1.0"
 dependencies = [
  "hex",
- "tink",
+ "tink-core",
  "tink-signature",
 ]
 
@@ -689,7 +689,7 @@ name = "example-streaming"
 version = "0.1.0"
 dependencies = [
  "tempfile",
- "tink",
+ "tink-core",
  "tink-streaming-aead",
 ]
 
@@ -1765,9 +1765,9 @@ name = "rinkey"
 version = "0.1.0"
 dependencies = [
  "structopt",
- "tink",
  "tink-aead",
  "tink-awskms",
+ "tink-core",
  "tink-daead",
  "tink-gcpkms",
  "tink-mac",
@@ -2284,7 +2284,38 @@ dependencies = [
 ]
 
 [[package]]
-name = "tink"
+name = "tink-aead"
+version = "0.1.0"
+dependencies = [
+ "aead",
+ "aes-ctr",
+ "aes-gcm",
+ "aes-gcm-siv",
+ "chacha20poly1305",
+ "generic-array",
+ "prost",
+ "rand",
+ "tink-core",
+ "tink-mac",
+ "tink-proto",
+]
+
+[[package]]
+name = "tink-awskms"
+version = "0.1.0"
+dependencies = [
+ "csv",
+ "hex",
+ "regex",
+ "rusoto_core",
+ "rusoto_credential",
+ "rusoto_kms",
+ "tink-core",
+ "tokio",
+]
+
+[[package]]
+name = "tink-core"
 version = "0.1.0"
 dependencies = [
  "digest",
@@ -2302,44 +2333,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "tink-aead"
-version = "0.1.0"
-dependencies = [
- "aead",
- "aes-ctr",
- "aes-gcm",
- "aes-gcm-siv",
- "chacha20poly1305",
- "generic-array",
- "prost",
- "rand",
- "tink",
- "tink-mac",
- "tink-proto",
-]
-
-[[package]]
-name = "tink-awskms"
-version = "0.1.0"
-dependencies = [
- "csv",
- "hex",
- "regex",
- "rusoto_core",
- "rusoto_credential",
- "rusoto_kms",
- "tink",
- "tokio",
-]
-
-[[package]]
 name = "tink-daead"
 version = "0.1.0"
 dependencies = [
  "aead",
  "aes-siv",
  "prost",
- "tink",
+ "tink-core",
  "tink-proto",
 ]
 
@@ -2352,7 +2352,7 @@ dependencies = [
  "hyper 0.10.16",
  "hyper-rustls",
  "serde_json",
- "tink",
+ "tink-core",
  "yup-oauth2",
 ]
 
@@ -2361,7 +2361,7 @@ name = "tink-mac"
 version = "0.1.0"
 dependencies = [
  "prost",
- "tink",
+ "tink-core",
  "tink-prf",
  "tink-proto",
 ]
@@ -2378,7 +2378,7 @@ dependencies = [
  "prost",
  "sha-1",
  "sha2",
- "tink",
+ "tink-core",
  "tink-proto",
 ]
 
@@ -2402,7 +2402,7 @@ dependencies = [
  "prost",
  "rand",
  "signature",
- "tink",
+ "tink-core",
  "tink-proto",
 ]
 
@@ -2414,7 +2414,7 @@ dependencies = [
  "aes-gcm",
  "prost",
  "rand",
- "tink",
+ "tink-core",
  "tink-mac",
  "tink-proto",
 ]
@@ -2428,8 +2428,8 @@ dependencies = [
  "log 0.4.11",
  "prost",
  "structopt",
- "tink",
  "tink-aead",
+ "tink-core",
  "tink-daead",
  "tink-mac",
  "tink-prf",
@@ -2458,9 +2458,9 @@ dependencies = [
  "serde",
  "serde_json",
  "tempfile",
- "tink",
  "tink-aead",
  "tink-awskms",
+ "tink-core",
  "tink-daead",
  "tink-gcpkms",
  "tink-mac",

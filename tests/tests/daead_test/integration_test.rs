@@ -16,7 +16,7 @@
 #[test]
 fn example() {
     tink_daead::init();
-    let kh = tink::keyset::Handle::new(&tink_daead::aes_siv_key_template()).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_daead::aes_siv_key_template()).unwrap();
 
     // NOTE: save the keyset to a safe location. DO NOT hardcode it in source code.
     // Consider encrypting it with a remote key in Cloud KMS, AWS KMS or HashiCorp Vault.
@@ -41,5 +41,5 @@ fn example() {
 fn test_deterministic_aead_init() {
     // Check for AES-SIV key manager.
     tink_daead::init();
-    assert!(tink::registry::get_key_manager(tink_tests::AES_SIV_TYPE_URL).is_ok());
+    assert!(tink_core::registry::get_key_manager(tink_tests::AES_SIV_TYPE_URL).is_ok());
 }

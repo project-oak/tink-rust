@@ -18,7 +18,7 @@
 
 use aes_siv::{aead::generic_array::GenericArray, siv::Aes256Siv};
 use std::{cell::RefCell, rc::Rc};
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
 const AES_BLOCK_SIZE: usize = 16;
 
@@ -66,7 +66,7 @@ impl AesSiv {
     }
 }
 
-impl tink::DeterministicAead for AesSiv {
+impl tink_core::DeterministicAead for AesSiv {
     fn encrypt_deterministically(
         &self,
         plaintext: &[u8],

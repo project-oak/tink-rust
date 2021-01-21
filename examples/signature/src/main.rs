@@ -19,7 +19,7 @@
 fn main() {
     tink_signature::init();
     // Other key templates can also be used.
-    let kh = tink::keyset::Handle::new(&tink_signature::ecdsa_p256_key_template()).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_signature::ecdsa_p256_key_template()).unwrap();
     let s = tink_signature::new_signer(&kh).unwrap();
 
     let pt = b"this data needs to be signed";

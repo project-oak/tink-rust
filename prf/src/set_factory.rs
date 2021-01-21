@@ -17,7 +17,7 @@
 //! Provides an implementation of PRF using a set of underlying implementations.
 
 use std::{collections::HashMap, sync::Arc};
-use tink::{utils::wrap_err, Prf, TinkError};
+use tink_core::{utils::wrap_err, Prf, TinkError};
 
 /// `Set` is a set of PRFs. A [`Keyset`](tink_proto::Keyset) can be converted into a set of PRFs
 /// using this primitive. Every key in the keyset corresponds to a PRF in the prf.Set.
@@ -32,14 +32,14 @@ pub struct Set {
 
 impl Set {
     /// Create a [`Set`] from the given keyset handle.
-    pub fn new(h: &tink::keyset::Handle) -> Result<Set, TinkError> {
+    pub fn new(h: &tink_core::keyset::Handle) -> Result<Set, TinkError> {
         Set::new_with_key_manager(h, None)
     }
 
     /// Creates a [`Set`] primitive from the given keyset handle and a custom key manager.
     fn new_with_key_manager(
-        h: &tink::keyset::Handle,
-        km: Option<Arc<dyn tink::registry::KeyManager>>,
+        h: &tink_core::keyset::Handle,
+        km: Option<Arc<dyn tink_core::registry::KeyManager>>,
     ) -> Result<Set, TinkError> {
         let ps = h
             .primitives_with_key_manager(km)
@@ -63,13 +63,13 @@ impl Set {
     }
 }
 
-fn wrap_prf_set(ps: tink::primitiveset::PrimitiveSet) -> Result<Set, TinkError> {
+fn wrap_prf_set(ps: tink_core::primitiveset::PrimitiveSet) -> Result<Set, TinkError> {
     let entry = match &ps.primary {
         None => return Err("prf::Set: no primary available".into()),
         Some(e) => e,
     };
     match entry.primitive {
-        tink::Primitive::Prf(_) => {}
+        tink_core::Primitive::Prf(_) => {}
         _ => return Err("prf::Set: not a PRF primitive".into()),
     }
     let mut set = Set {
@@ -86,7 +86,7 @@ fn wrap_prf_set(ps: tink::primitiveset::PrimitiveSet) -> Result<Set, TinkError> 
     }
     for entry in entries {
         let prf = match entry.primitive {
-            tink::Primitive::Prf(prf) => prf,
+            tink_core::Primitive::Prf(prf) => prf,
             _ => return Err("prf::Set: not a PRF primitive".into()),
         };
         set.prfs.insert(entry.key_id, prf);

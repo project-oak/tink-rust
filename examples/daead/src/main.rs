@@ -18,7 +18,7 @@
 
 fn main() {
     tink_daead::init();
-    let kh = tink::keyset::Handle::new(&tink_daead::aes_siv_key_template()).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_daead::aes_siv_key_template()).unwrap();
     let d = tink_daead::new(&kh).unwrap();
 
     let pt = b"this data needs to be encrypted";

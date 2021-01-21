@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use serde::Deserialize;
-use tink::{subtle::random::get_random_bytes, DeterministicAead};
+use tink_core::{subtle::random::get_random_bytes, DeterministicAead};
 use tink_tests::WycheproofResult;
 
 #[test]

@@ -14,21 +14,22 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-//! Factory methods for [`tink::StreamingAead`] instances.
+//! Factory methods for [`tink_core::StreamingAead`] instances.
 
 use std::sync::Arc;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
-/// Return a [`tink::StreamingAead`] primitive from the given keyset handle.
-pub fn new(h: &tink::keyset::Handle) -> Result<Box<dyn tink::StreamingAead>, TinkError> {
+/// Return a [`tink_core::StreamingAead`] primitive from the given keyset handle.
+pub fn new(h: &tink_core::keyset::Handle) -> Result<Box<dyn tink_core::StreamingAead>, TinkError> {
     new_with_key_manager(h, None)
 }
 
-/// Return a [`tink::StreamingAead`] primitive from the given keyset handle and custom key manager.
+/// Return a [`tink_core::StreamingAead`] primitive from the given keyset handle and custom key
+/// manager.
 fn new_with_key_manager(
-    h: &tink::keyset::Handle,
-    km: Option<Arc<dyn tink::registry::KeyManager>>,
-) -> Result<Box<dyn tink::StreamingAead>, TinkError> {
+    h: &tink_core::keyset::Handle,
+    km: Option<Arc<dyn tink_core::registry::KeyManager>>,
+) -> Result<Box<dyn tink_core::StreamingAead>, TinkError> {
     let ps = h
         .primitives_with_key_manager(km)
         .map_err(|e| wrap_err("streaming_aead::factory: cannot obtain primitive set", e))?;
@@ -37,27 +38,27 @@ fn new_with_key_manager(
     Ok(Box::new(ret))
 }
 
-/// `WrappedStreamingAead` is a  [`tink::StreamingAead`] implementation that uses the underlying
-/// primitive set for deterministic encryption and decryption.
+/// `WrappedStreamingAead` is a  [`tink_core::StreamingAead`] implementation that uses the
+/// underlying primitive set for deterministic encryption and decryption.
 #[derive(Clone)]
 pub(crate) struct WrappedStreamingAead {
-    pub(crate) ps: tink::primitiveset::TypedPrimitiveSet<Box<dyn tink::StreamingAead>>,
+    pub(crate) ps: tink_core::primitiveset::TypedPrimitiveSet<Box<dyn tink_core::StreamingAead>>,
 }
 
 impl WrappedStreamingAead {
-    fn new(ps: tink::primitiveset::PrimitiveSet) -> Result<WrappedStreamingAead, TinkError> {
+    fn new(ps: tink_core::primitiveset::PrimitiveSet) -> Result<WrappedStreamingAead, TinkError> {
         let entry = match &ps.primary {
             None => return Err("streaming_aead::factory: no primary primitive".into()),
             Some(p) => p,
         };
         match entry.primitive {
-            tink::Primitive::StreamingAead(_) => {}
+            tink_core::Primitive::StreamingAead(_) => {}
             _ => return Err("streaming_aead::factory: not a StreamingAead primitive".into()),
         };
         for (_, primitives) in ps.entries.iter() {
             for p in primitives {
                 match p.primitive {
-                    tink::Primitive::StreamingAead(_) => {}
+                    tink_core::Primitive::StreamingAead(_) => {}
                     _ => return Err("aead::factory: not a StreamingAead primitive".into()),
                 };
             }
@@ -68,12 +69,12 @@ impl WrappedStreamingAead {
     }
 }
 
-impl tink::StreamingAead for WrappedStreamingAead {
+impl tink_core::StreamingAead for WrappedStreamingAead {
     fn new_encrypting_writer(
         &self,
         w: Box<dyn std::io::Write>,
         aad: &[u8],
-    ) -> Result<Box<dyn tink::EncryptingWrite>, TinkError> {
+    ) -> Result<Box<dyn tink_core::EncryptingWrite>, TinkError> {
         let entry = match &self.ps.primary {
             None => return Err("streaming_aead::factory: no primary primitive".into()),
             Some(p) => p,

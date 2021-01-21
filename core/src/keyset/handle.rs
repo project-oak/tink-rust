@@ -45,7 +45,8 @@ impl Handle {
             ks: validate_keyset(ks)?,
         };
         if h.has_secrets()? {
-            // If you need to do this, you have to use `tink::keyset::insecure::read()` instead.
+            // If you need to do this, you have to use `tink_core::keyset::insecure::read()`
+            // instead.
             return Err("importing unencrypted secret key material is forbidden".into());
         }
         Ok(h)

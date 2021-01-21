@@ -18,7 +18,7 @@
 
 use crate::subtle;
 use prost::Message;
-use tink::{
+use tink_core::{
     registry::KeyManager,
     subtle::random::get_random_bytes,
     utils::{wrap_err, TinkError},
@@ -36,7 +36,7 @@ pub(crate) struct AesSivKeyManager;
 
 impl KeyManager for AesSivKeyManager {
     /// Create a [`subtle::AesSiv`] instance for the given serialized `AesSivKey` proto.
-    fn primitive(&self, serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
+    fn primitive(&self, serialized_key: &[u8]) -> Result<tink_core::Primitive, TinkError> {
         if serialized_key.is_empty() {
             return Err("AesSivKeyManager: invalid key".into());
         }
@@ -45,7 +45,7 @@ impl KeyManager for AesSivKeyManager {
             .map_err(|e| wrap_err("AesSivKeyManager: decode failed", e))?;
         validate_key(&key)?;
         match subtle::AesSiv::new(&key.key_value) {
-            Ok(p) => Ok(tink::Primitive::DeterministicAead(Box::new(p))),
+            Ok(p) => Ok(tink_core::Primitive::DeterministicAead(Box::new(p))),
             Err(e) => Err(wrap_err("AesSivKeyManager: cannot create new primitive", e)),
         }
     }
@@ -86,7 +86,7 @@ impl KeyManager for AesSivKeyManager {
 
 /// Validate the given [`AesSivKey`](tink_proto::AesSivKey).
 fn validate_key(key: &tink_proto::AesSivKey) -> Result<(), TinkError> {
-    tink::keyset::validate_key_version(key.version, AES_SIV_KEY_VERSION)
+    tink_core::keyset::validate_key_version(key.version, AES_SIV_KEY_VERSION)
         .map_err(|e| wrap_err("AesSivKeyManager", e))?;
     let key_size = key.key_value.len();
     if key_size != subtle::AES_SIV_KEY_SIZE {

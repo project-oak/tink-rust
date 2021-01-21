@@ -18,7 +18,7 @@
 
 use crate::subtle;
 use prost::Message;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 use tink_proto::HashType;
 
 /// Maximal version of HKDF PRF keys.
@@ -30,9 +30,9 @@ pub const HKDF_PRF_TYPE_URL: &str = "type.googleapis.com/google.crypto.tink.Hkdf
 #[derive(Default)]
 pub(crate) struct HkdfPrfKeyManager;
 
-impl tink::registry::KeyManager for HkdfPrfKeyManager {
+impl tink_core::registry::KeyManager for HkdfPrfKeyManager {
     /// Construct an HKDF instance for the given serialized [`HkdfPrfKey`](tink_proto::HkdfPrfKey).
-    fn primitive(&self, serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
+    fn primitive(&self, serialized_key: &[u8]) -> Result<tink_core::Primitive, TinkError> {
         if serialized_key.is_empty() {
             return Err("HkdfPrfKeyManager: invalid key".into());
         }
@@ -41,7 +41,7 @@ impl tink::registry::KeyManager for HkdfPrfKeyManager {
         let (params, hash) = validate_key(&key).map_err(|e| wrap_err("HkdfPrfKeyManager", e))?;
 
         match subtle::HkdfPrf::new(hash, &key.key_value, &params.salt) {
-            Ok(p) => Ok(tink::Primitive::Prf(Box::new(p))),
+            Ok(p) => Ok(tink_core::Primitive::Prf(Box::new(p))),
             Err(e) => Err(wrap_err("HkdfPrfManager: cannot create new primitive", e)),
         }
     }
@@ -58,7 +58,7 @@ impl tink::registry::KeyManager for HkdfPrfKeyManager {
         validate_key_format(&key_format)
             .map_err(|e| wrap_err("HkdfPrfKeyManager: invalid key format", e))?;
 
-        let key_value = tink::subtle::random::get_random_bytes(key_format.key_size as usize);
+        let key_value = tink_core::subtle::random::get_random_bytes(key_format.key_size as usize);
         let mut sk = Vec::new();
 
         tink_proto::HkdfPrfKey {
@@ -85,7 +85,7 @@ impl tink::registry::KeyManager for HkdfPrfKeyManager {
 fn validate_key(
     key: &tink_proto::HkdfPrfKey,
 ) -> Result<(tink_proto::HkdfPrfParams, HashType), TinkError> {
-    tink::keyset::validate_key_version(key.version, HKDF_PRF_KEY_VERSION)
+    tink_core::keyset::validate_key_version(key.version, HKDF_PRF_KEY_VERSION)
         .map_err(|e| wrap_err("HkdfPrfKeyManager: invalid version", e))?;
     let key_size = key.key_value.len();
     let params = match key.params.as_ref() {

@@ -14,8 +14,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-fn create_kms_envelope_aead() -> Box<dyn tink::Aead> {
-    let kh = tink::keyset::Handle::new(&tink_aead::aes256_gcm_key_template())
+fn create_kms_envelope_aead() -> Box<dyn tink_core::Aead> {
+    let kh = tink_core::keyset::Handle::new(&tink_aead::aes256_gcm_key_template())
         .expect("failed to create new handle");
     let parent_aead = tink_aead::new(&kh).expect("failed to create parent AEAD");
     Box::new(tink_aead::KmsEnvelopeAead::new(

@@ -18,7 +18,7 @@
 
 use crate::subtle;
 use prost::Message;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 use tink_proto::HashType;
 
 /// Maximal version of HMAC PRF keys.
@@ -30,9 +30,9 @@ pub const HMAC_PRF_TYPE_URL: &str = "type.googleapis.com/google.crypto.tink.Hmac
 #[derive(Default)]
 pub(crate) struct HmacPrfKeyManager;
 
-impl tink::registry::KeyManager for HmacPrfKeyManager {
+impl tink_core::registry::KeyManager for HmacPrfKeyManager {
     /// Construct an HMAC instance for the given serialized [`HmacPrfKey`](tink_proto::HmacPrfKey).
-    fn primitive(&self, serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
+    fn primitive(&self, serialized_key: &[u8]) -> Result<tink_core::Primitive, TinkError> {
         if serialized_key.is_empty() {
             return Err("HmacPrfKeyManager: invalid key".into());
         }
@@ -41,7 +41,7 @@ impl tink::registry::KeyManager for HmacPrfKeyManager {
         let (_params, hash) = validate_key(&key).map_err(|e| wrap_err("HmacPrfKeyManager", e))?;
 
         match subtle::HmacPrf::new(hash, &key.key_value) {
-            Ok(p) => Ok(tink::Primitive::Prf(Box::new(p))),
+            Ok(p) => Ok(tink_core::Primitive::Prf(Box::new(p))),
             Err(e) => Err(wrap_err("HmacPrfManager: cannot create new primitive", e)),
         }
     }
@@ -57,7 +57,7 @@ impl tink::registry::KeyManager for HmacPrfKeyManager {
         validate_key_format(&key_format)
             .map_err(|e| wrap_err("HmacPrfKeyManager: invalid key format", e))?;
 
-        let key_value = tink::subtle::random::get_random_bytes(key_format.key_size as usize);
+        let key_value = tink_core::subtle::random::get_random_bytes(key_format.key_size as usize);
         let mut sk = Vec::new();
         tink_proto::HmacPrfKey {
             version: HMAC_PRF_KEY_VERSION,
@@ -83,7 +83,7 @@ impl tink::registry::KeyManager for HmacPrfKeyManager {
 fn validate_key(
     key: &tink_proto::HmacPrfKey,
 ) -> Result<(tink_proto::HmacPrfParams, HashType), TinkError> {
-    tink::keyset::validate_key_version(key.version, HMAC_PRF_KEY_VERSION)
+    tink_core::keyset::validate_key_version(key.version, HMAC_PRF_KEY_VERSION)
         .map_err(|e| wrap_err("invalid version", e))?;
     let key_size = key.key_value.len();
     let params = match key.params.as_ref() {

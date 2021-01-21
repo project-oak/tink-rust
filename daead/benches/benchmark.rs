@@ -20,9 +20,9 @@ use test::Bencher;
 const MSG: &[u8] = b"this data needs to be encrypted";
 const AAD: &[u8] = b"this data needs to be authenticated, but not encrypted";
 
-fn setup(kt: tink_proto::KeyTemplate) -> (Box<dyn tink::DeterministicAead>, Vec<u8>) {
+fn setup(kt: tink_proto::KeyTemplate) -> (Box<dyn tink_core::DeterministicAead>, Vec<u8>) {
     tink_daead::init();
-    let kh = tink::keyset::Handle::new(&kt).unwrap();
+    let kh = tink_core::keyset::Handle::new(&kt).unwrap();
     let a = tink_daead::new(&kh).unwrap();
     let ct = a.encrypt_deterministically(MSG, AAD).unwrap();
     (a, ct)

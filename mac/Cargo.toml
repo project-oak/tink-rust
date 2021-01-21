@@ -11,6 +11,6 @@ categories = ["cryptography"]
 
 [dependencies]
 prost = "^0.6.1"
-tink = "^0.1"
+tink-core = "^0.1"
 tink-prf = "^0.1"
 tink-proto = "^0.1"

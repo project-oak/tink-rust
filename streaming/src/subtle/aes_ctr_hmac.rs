@@ -14,12 +14,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-//! AES-CTR-HMAC based implementation of the [`tink::StreamingAead`] trait.
+//! AES-CTR-HMAC based implementation of the [`tink_core::StreamingAead`] trait.
 
 use super::{noncebased, AesVariant};
 use aes_ctr::cipher::stream::{Key, NewStreamCipher, SyncStreamCipher};
 use std::convert::TryInto;
-use tink::{subtle::random::get_random_bytes, utils::wrap_err, Mac, TinkError};
+use tink_core::{subtle::random::get_random_bytes, utils::wrap_err, Mac, TinkError};
 use tink_proto::HashType;
 
 /// The size of the nonces used as IVs for CTR.
@@ -90,7 +90,7 @@ impl AesCtrHmac {
         if tag_size_in_bytes < 10 {
             return Err("tag size too small".into());
         }
-        let digest_size = tink::subtle::get_hash_digest_size(tag_alg)?;
+        let digest_size = tink_core::subtle::get_hash_digest_size(tag_alg)?;
         if tag_size_in_bytes > digest_size {
             return Err("tag size too big".into());
         }
@@ -119,11 +119,11 @@ impl AesCtrHmac {
     /// Return a key derived from the main key using` salt` and `aad` as parameters.
     fn derive_key_material(&self, salt: &[u8], aad: &[u8]) -> Result<Vec<u8>, TinkError> {
         let key_material_size = self.aes_variant.key_size() + AES_CTR_HMAC_KEY_SIZE_IN_BYTES;
-        tink::subtle::compute_hkdf(self.hkdf_alg, &self.main_key, salt, aad, key_material_size)
+        tink_core::subtle::compute_hkdf(self.hkdf_alg, &self.main_key, salt, aad, key_material_size)
     }
 }
 
-impl tink::StreamingAead for AesCtrHmac {
+impl tink_core::StreamingAead for AesCtrHmac {
     /// Return a wrapper around an underlying [`std::io.Write`], such that
     /// any write-operation via the wrapper results in AEAD-encryption of the
     /// written data, using `aad` as associated authenticated data. The associated
@@ -133,7 +133,7 @@ impl tink::StreamingAead for AesCtrHmac {
         &self,
         mut w: Box<dyn std::io::Write>,
         aad: &[u8],
-    ) -> Result<Box<dyn tink::EncryptingWrite>, TinkError> {
+    ) -> Result<Box<dyn tink_core::EncryptingWrite>, TinkError> {
         let key_size = self.aes_variant.key_size();
         let salt = get_random_bytes(key_size);
         let nonce_prefix = get_random_bytes(AES_CTR_HMAC_NONCE_PREFIX_SIZE_IN_BYTES);

@@ -24,11 +24,12 @@ fn test_kms_envelope_get_primitive() {
     let key_uri = "aws-kms://arn:aws:kms:us-east-2:1234:key/abcd-1234";
     let ini_file = std::path::PathBuf::from("testdata/credentials_aws.ini");
     let g = tink_awskms::AwsClient::new_with_credentials(key_uri, &ini_file).unwrap();
-    tink::registry::register_kms_client(g);
+    tink_core::registry::register_kms_client(g);
 
     let dek = tink_aead::aes128_ctr_hmac_sha256_key_template();
-    let kh = tink::keyset::Handle::new(&tink_aead::kms_envelope_aead_key_template(key_uri, dek))
-        .expect("error getting a new keyset handle");
+    let kh =
+        tink_core::keyset::Handle::new(&tink_aead::kms_envelope_aead_key_template(key_uri, dek))
+            .expect("error getting a new keyset handle");
     let _a = tink_aead::new(&kh).expect("error getting the primitive");
 
     // No real KEK so can't exercise the AEAD.
@@ -37,7 +38,7 @@ fn test_kms_envelope_get_primitive() {
 #[test]
 fn test_kms_envelope_get_primitive_no_client() {
     tink_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_tests::KMS_ENVELOPE_AEAD_TYPE_URL)
+    let key_manager = tink_core::registry::get_key_manager(tink_tests::KMS_ENVELOPE_AEAD_TYPE_URL)
         .expect("cannot obtain KMS envelope key manager");
     assert_eq!(
         key_manager.type_url(),
@@ -67,9 +68,9 @@ fn test_kms_envelope_get_primitive_invalid() {
     let key_uri = "aws-kms://arn:aws:kms:us-east-2:1234:key/abcd-1234";
     let ini_file = std::path::PathBuf::from("testdata/credentials_aws.ini");
     let g = tink_awskms::AwsClient::new_with_credentials(key_uri, &ini_file).unwrap();
-    tink::registry::register_kms_client(g);
+    tink_core::registry::register_kms_client(g);
 
-    let km = tink::registry::get_key_manager(tink_tests::KMS_ENVELOPE_AEAD_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::KMS_ENVELOPE_AEAD_TYPE_URL)
         .expect("cannot obtain KMS envelope key manager");
 
     let result = km.primitive(&[]);
@@ -114,7 +115,7 @@ fn test_kms_envelope_get_primitive_invalid() {
 #[test]
 fn test_kms_envelope_new_key_basic() {
     tink_aead::init();
-    let key_manager = tink::registry::get_key_manager(tink_tests::KMS_ENVELOPE_AEAD_TYPE_URL)
+    let key_manager = tink_core::registry::get_key_manager(tink_tests::KMS_ENVELOPE_AEAD_TYPE_URL)
         .expect("cannot obtain KMS envelope key manager");
     let format = tink_proto::KmsEnvelopeAeadKeyFormat {
         kek_uri: "some uri".to_string(),
@@ -129,7 +130,7 @@ fn test_kms_envelope_new_key_basic() {
 #[test]
 fn test_kms_envelope_new_key_invalid() {
     tink_aead::init();
-    let km = tink::registry::get_key_manager(tink_tests::KMS_ENVELOPE_AEAD_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::KMS_ENVELOPE_AEAD_TYPE_URL)
         .expect("cannot obtain KMS envelope key manager");
     assert!(km.new_key(&[]).is_err());
     assert!(km.new_key(&[0; 5]).is_err());
@@ -150,7 +151,7 @@ fn test_kms_envelope_template() {
 fn test_kms_envelope_key_manager_params() {
     tink_aead::init();
     let key_manager =
-        tink::registry::get_key_manager(tink_tests::KMS_ENVELOPE_AEAD_TYPE_URL).unwrap();
+        tink_core::registry::get_key_manager(tink_tests::KMS_ENVELOPE_AEAD_TYPE_URL).unwrap();
 
     assert_eq!(
         key_manager.type_url(),

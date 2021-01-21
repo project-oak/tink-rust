@@ -17,19 +17,19 @@
 //! Provides an implementation of MAC using a set of underlying implementations.
 
 use std::sync::Arc;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 use tink_proto::OutputPrefixType;
 
-/// Create a [`tink::Mac`] primitive from the given keyset handle.
-pub fn new(h: &tink::keyset::Handle) -> Result<Box<dyn tink::Mac>, TinkError> {
+/// Create a [`tink_core::Mac`] primitive from the given keyset handle.
+pub fn new(h: &tink_core::keyset::Handle) -> Result<Box<dyn tink_core::Mac>, TinkError> {
     new_with_key_manager(h, None)
 }
 
-/// Create a [`tink::Mac`] primitive from the given keyset handle and a custom key manager.
+/// Create a [`tink_core::Mac`] primitive from the given keyset handle and a custom key manager.
 fn new_with_key_manager(
-    h: &tink::keyset::Handle,
-    km: Option<Arc<dyn tink::registry::KeyManager>>,
-) -> Result<Box<dyn tink::Mac>, TinkError> {
+    h: &tink_core::keyset::Handle,
+    km: Option<Arc<dyn tink_core::registry::KeyManager>>,
+) -> Result<Box<dyn tink_core::Mac>, TinkError> {
     let ps = h
         .primitives_with_key_manager(km)
         .map_err(|e| wrap_err("mac::factory: cannot obtain primitive set", e))?;
@@ -38,27 +38,27 @@ fn new_with_key_manager(
     Ok(Box::new(ret))
 }
 
-/// A [`tink::Mac`] implementation that uses the underlying primitive set to compute and
+/// A [`tink_core::Mac`] implementation that uses the underlying primitive set to compute and
 /// verify MACs.
 #[derive(Clone)]
 struct WrappedMac {
-    ps: tink::primitiveset::TypedPrimitiveSet<Box<dyn tink::Mac>>,
+    ps: tink_core::primitiveset::TypedPrimitiveSet<Box<dyn tink_core::Mac>>,
 }
 
 impl WrappedMac {
-    fn new(ps: tink::primitiveset::PrimitiveSet) -> Result<WrappedMac, TinkError> {
+    fn new(ps: tink_core::primitiveset::PrimitiveSet) -> Result<WrappedMac, TinkError> {
         let entry = match &ps.primary {
             None => return Err("mac::factory: no primary primitive".into()),
             Some(p) => p,
         };
         match entry.primitive {
-            tink::Primitive::Mac(_) => {}
+            tink_core::Primitive::Mac(_) => {}
             _ => return Err("mac::factory: not a Mac primitive".into()),
         };
         for (_, primitives) in ps.entries.iter() {
             for p in primitives {
                 match p.primitive {
-                    tink::Primitive::Mac(_) => {}
+                    tink_core::Primitive::Mac(_) => {}
                     _ => return Err("mac::factory: not a Mac primitive".into()),
                 };
             }
@@ -69,7 +69,7 @@ impl WrappedMac {
     }
 }
 
-impl tink::Mac for WrappedMac {
+impl tink_core::Mac for WrappedMac {
     fn compute_mac(&self, data: &[u8]) -> Result<Vec<u8>, TinkError> {
         let primary = match &self.ps.primary {
             Some(p) => p,
@@ -80,7 +80,7 @@ impl tink::Mac for WrappedMac {
             // behaviour of the upstream C++/Java/Python code.
             let mut local_data = Vec::with_capacity(data.len() + 1);
             local_data.extend_from_slice(data);
-            local_data.push(tink::cryptofmt::LEGACY_START_BYTE);
+            local_data.push(tink_core::cryptofmt::LEGACY_START_BYTE);
             primary.primitive.compute_mac(&local_data)?
         } else {
             primary.primitive.compute_mac(data)?
@@ -95,7 +95,7 @@ impl tink::Mac for WrappedMac {
     fn verify_mac(&self, mac: &[u8], data: &[u8]) -> Result<(), TinkError> {
         // This also rejects raw MAC with size of 4 bytes or fewer. Those MACs are
         // clearly insecure, thus should be discouraged.
-        let prefix_size = tink::cryptofmt::NON_RAW_PREFIX_SIZE;
+        let prefix_size = tink_core::cryptofmt::NON_RAW_PREFIX_SIZE;
         if mac.len() <= prefix_size {
             return Err("mac::factory: invalid mac".into());
         }
@@ -110,7 +110,7 @@ impl tink::Mac for WrappedMac {
                     // behaviour of the upstream C++/Java/Python code.
                     let mut local_data = Vec::with_capacity(data.len() + 1);
                     local_data.extend_from_slice(data);
-                    local_data.push(tink::cryptofmt::LEGACY_START_BYTE);
+                    local_data.push(tink_core::cryptofmt::LEGACY_START_BYTE);
                     entry.primitive.verify_mac(mac_no_prefix, &local_data)
                 } else {
                     entry.primitive.verify_mac(mac_no_prefix, data)
@@ -128,7 +128,7 @@ impl tink::Mac for WrappedMac {
                     // behaviour of the upstream C++/Java/Python code.
                     let mut local_data = Vec::with_capacity(data.len() + 1);
                     local_data.extend_from_slice(data);
-                    local_data.push(tink::cryptofmt::LEGACY_START_BYTE);
+                    local_data.push(tink_core::cryptofmt::LEGACY_START_BYTE);
                     entry.primitive.verify_mac(mac, &local_data)
                 } else {
                     entry.primitive.verify_mac(mac, data)

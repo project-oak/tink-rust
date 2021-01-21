@@ -14,21 +14,21 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-//! Factory methods for [`tink::Signer`] instances.
+//! Factory methods for [`tink_core::Signer`] instances.
 
 use std::sync::Arc;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
-/// Return a [`tink::Signer`] primitive from the given keyset handle.
-pub fn new_signer(h: &tink::keyset::Handle) -> Result<Box<dyn tink::Signer>, TinkError> {
+/// Return a [`tink_core::Signer`] primitive from the given keyset handle.
+pub fn new_signer(h: &tink_core::keyset::Handle) -> Result<Box<dyn tink_core::Signer>, TinkError> {
     new_signer_with_key_manager(h, None)
 }
 
-/// Return a [`tink::Signer`] primitive from the given keyset handle and custom key manager.
+/// Return a [`tink_core::Signer`] primitive from the given keyset handle and custom key manager.
 fn new_signer_with_key_manager(
-    h: &tink::keyset::Handle,
-    km: Option<Arc<dyn tink::registry::KeyManager>>,
-) -> Result<Box<dyn tink::Signer>, TinkError> {
+    h: &tink_core::keyset::Handle,
+    km: Option<Arc<dyn tink_core::registry::KeyManager>>,
+) -> Result<Box<dyn tink_core::Signer>, TinkError> {
     let ps = h
         .primitives_with_key_manager(km)
         .map_err(|e| wrap_err("signer::factory: cannot obtain primitive set", e))?;
@@ -37,26 +37,26 @@ fn new_signer_with_key_manager(
     Ok(Box::new(ret))
 }
 
-/// A [`tink::Signer`] implementation that uses the underlying primitive set for signing.
+/// A [`tink_core::Signer`] implementation that uses the underlying primitive set for signing.
 #[derive(Clone)]
 struct WrappedSigner {
-    ps: tink::primitiveset::TypedPrimitiveSet<Box<dyn tink::Signer>>,
+    ps: tink_core::primitiveset::TypedPrimitiveSet<Box<dyn tink_core::Signer>>,
 }
 
 impl WrappedSigner {
-    fn new(ps: tink::primitiveset::PrimitiveSet) -> Result<WrappedSigner, TinkError> {
+    fn new(ps: tink_core::primitiveset::PrimitiveSet) -> Result<WrappedSigner, TinkError> {
         let primary = match &ps.primary {
             None => return Err("signer::factory: no primary primitive".into()),
             Some(p) => p,
         };
         match primary.primitive {
-            tink::Primitive::Signer(_) => {}
+            tink_core::Primitive::Signer(_) => {}
             _ => return Err("signer::factory: not a Signer primitive".into()),
         };
         for (_, primitives) in ps.entries.iter() {
             for p in primitives {
                 match p.primitive {
-                    tink::Primitive::Signer(_) => {}
+                    tink_core::Primitive::Signer(_) => {}
                     _ => return Err("signer::factory: not a Signer primitive".into()),
                 };
             }
@@ -67,7 +67,7 @@ impl WrappedSigner {
     }
 }
 
-impl tink::Signer for WrappedSigner {
+impl tink_core::Signer for WrappedSigner {
     /// Sign the given data and returns the signature concatenated with the identifier of the
     /// primary primitive.
     fn sign(&self, data: &[u8]) -> Result<Vec<u8>, TinkError> {
@@ -79,7 +79,7 @@ impl tink::Signer for WrappedSigner {
         let signature = if primary.prefix_type == tink_proto::OutputPrefixType::Legacy {
             let mut signed_data_copy = Vec::with_capacity(data.len() + 1);
             signed_data_copy.extend_from_slice(data);
-            signed_data_copy.push(tink::cryptofmt::LEGACY_START_BYTE);
+            signed_data_copy.push(tink_core::cryptofmt::LEGACY_START_BYTE);
             primary.primitive.sign(&signed_data_copy)?
         } else {
             primary.primitive.sign(data)?

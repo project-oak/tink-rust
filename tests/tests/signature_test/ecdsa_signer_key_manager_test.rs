@@ -16,7 +16,7 @@
 
 use prost::Message;
 use std::collections::HashSet;
-use tink::{subtle::random::get_random_bytes, Signer, TinkError, Verifier};
+use tink_core::{subtle::random::get_random_bytes, Signer, TinkError, Verifier};
 use tink_proto::{
     EcdsaKeyFormat, EcdsaParams, EcdsaPrivateKey, EcdsaPublicKey, EcdsaSignatureEncoding,
     EllipticCurveType, HashType,
@@ -28,7 +28,7 @@ use super::common::*;
 fn test_ecdsa_signer_get_primitive_basic() {
     tink_signature::init();
     let test_params = gen_valid_ecdsa_params();
-    let km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
         .expect("cannot obtain EcdsaSigner key manager");
     for (i, test_param) in test_params.iter().enumerate() {
         let serialized_key = tink_tests::proto_encode(&tink_tests::new_random_ecdsa_private_key(
@@ -48,7 +48,7 @@ fn test_ecdsa_sign_get_primitive_with_invalid_input() {
     tink_signature::init();
     // invalid params
     let test_params = gen_invalid_ecdsa_params();
-    let km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
         .expect("cannot obtain EcdsaSigner key manager");
     for (i, test_param) in test_params.iter().enumerate() {
         let serialized_key = tink_tests::proto_encode(&tink_tests::new_random_ecdsa_private_key(
@@ -81,7 +81,7 @@ fn test_ecdsa_sign_get_primitive_with_invalid_input() {
 fn test_ecdsa_sign_new_key_basic() {
     tink_signature::init();
     let test_params = gen_valid_ecdsa_params();
-    let km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
         .expect("cannot obtain EcdsaSigner key manager");
     for (i, test_param) in test_params.iter().enumerate() {
         let params = tink_tests::new_ecdsa_params(
@@ -104,7 +104,7 @@ fn test_ecdsa_sign_new_key_basic() {
 #[test]
 fn test_ecdsa_sign_new_key_with_invalid_input() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
         .expect("cannot obtain EcdsaSigner key manager");
     // invalid hash and curve type
     let test_params = vec![
@@ -175,7 +175,7 @@ fn test_ecdsa_sign_new_key_with_invalid_input() {
 #[test]
 fn test_ecdsa_sign_new_key_multiple_times() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
         .expect("cannot obtain EcdsaSigner key manager");
     let test_params = gen_valid_ecdsa_params();
     let n_test = 27;
@@ -208,7 +208,7 @@ fn test_ecdsa_sign_new_key_multiple_times() {
 #[test]
 fn test_ecdsa_sign_new_key_data_basic() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
         .expect("cannot obtain EcdsaSigner key manager");
     let test_params = gen_valid_ecdsa_params();
     for (i, test_param) in test_params.iter().enumerate() {
@@ -248,7 +248,7 @@ fn test_ecdsa_sign_new_key_data_basic() {
 #[test]
 fn test_ecdsa_sign_new_key_data_with_invalid_input() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
         .expect("cannot obtain EcdsaSigner key manager");
     let test_params = gen_invalid_ecdsa_params();
     for (i, test_param) in test_params.iter().enumerate() {
@@ -277,7 +277,7 @@ fn test_ecdsa_sign_new_key_data_with_invalid_input() {
 fn test_public_key_data_basic() {
     tink_signature::init();
     let test_params = gen_valid_ecdsa_params();
-    let km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
         .expect("cannot obtain EcdsaSigner key manager");
     assert!(
         km.supports_private_keys(),
@@ -308,7 +308,7 @@ fn test_public_key_data_basic() {
 #[test]
 fn test_public_key_data_with_invalid_input() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
+    let km = tink_core::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
         .expect("cannot obtain EcdsaSigner key manager");
     assert!(
         km.supports_private_keys(),
@@ -421,7 +421,7 @@ fn validate_ecdsa_private_key(
 #[test]
 fn test_key_manager_params() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL).unwrap();
+    let km = tink_core::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL).unwrap();
 
     assert_eq!(km.type_url(), tink_tests::ECDSA_SIGNER_TYPE_URL);
     assert_eq!(
@@ -434,7 +434,7 @@ fn test_key_manager_params() {
 #[test]
 fn test_new_key_with_invalid_format() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL).unwrap();
+    let km = tink_core::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL).unwrap();
 
     let invalid_formats = vec![
         (
@@ -513,7 +513,7 @@ fn test_new_key_with_invalid_format() {
 #[test]
 fn test_primitive_with_invalid_key() {
     tink_signature::init();
-    let km = tink::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL).unwrap();
+    let km = tink_core::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL).unwrap();
     let pub_x_data =
         hex::decode("7ea7cc506e46cfb2bbdb1503b0fb5f4edbf6e9830459b64a4064455045a7a58c").unwrap();
     let pub_y_data =

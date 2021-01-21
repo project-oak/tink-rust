@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use std::io::{Read, Write};
-use tink::{subtle::random::get_random_bytes, utils::wrap_err, EncryptingWrite, TinkError};
+use tink_core::{subtle::random::get_random_bytes, utils::wrap_err, EncryptingWrite, TinkError};
 use tink_streaming_aead::subtle::noncebased;
 use tink_tests::SharedBuf;
 

@@ -18,7 +18,7 @@ use lazy_static::lazy_static;
 use maplit::hashmap;
 use serde::Deserialize;
 use std::collections::HashMap;
-use tink::{subtle::random::get_random_bytes, Mac};
+use tink_core::{subtle::random::get_random_bytes, Mac};
 
 // Test vectors from RFC 4493.
 const KEY_RFC4493: &[u8] = b"\x2b\x7e\x15\x16\x28\xae\xd2\xa6\xab\xf7\x15\x88\x09\xcf\x4f\x3c";

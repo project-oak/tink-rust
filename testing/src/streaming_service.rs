@@ -17,7 +17,7 @@
 //! Testing server for streaming AEAD.
 
 use crate::proto;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 use tink_tests::SharedBuf;
 
 #[derive(Debug, Default)]
@@ -32,8 +32,8 @@ impl proto::streaming_aead_server::StreamingAead for StreamingAeadServerImpl {
         let req = request.into_inner(); // discard metadata
         let closure = move || -> Result<_, TinkError> {
             let cursor = std::io::Cursor::new(req.keyset);
-            let mut reader = tink::keyset::BinaryReader::new(cursor);
-            let handle = tink::keyset::insecure::read(&mut reader)
+            let mut reader = tink_core::keyset::BinaryReader::new(cursor);
+            let handle = tink_core::keyset::insecure::read(&mut reader)
                 .map_err(|e| wrap_err("read failed", e))?;
             let primitive = tink_streaming_aead::new(&handle)?;
             let buf = SharedBuf::new();
@@ -62,8 +62,8 @@ impl proto::streaming_aead_server::StreamingAead for StreamingAeadServerImpl {
         let req = request.into_inner(); // discard metadata
         let closure = move || -> Result<_, TinkError> {
             let cursor = std::io::Cursor::new(req.keyset);
-            let mut reader = tink::keyset::BinaryReader::new(cursor);
-            let handle = tink::keyset::insecure::read(&mut reader)
+            let mut reader = tink_core::keyset::BinaryReader::new(cursor);
+            let handle = tink_core::keyset::insecure::read(&mut reader)
                 .map_err(|e| wrap_err("read failed", e))?;
             let primitive = tink_streaming_aead::new(&handle)?;
             let mut reader = primitive.new_decrypting_reader(

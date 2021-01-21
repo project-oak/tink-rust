@@ -18,7 +18,7 @@
 
 use crate::proto;
 use prost::Message;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
 #[derive(Debug, Default)]
 pub struct KeysetServerImpl;
@@ -33,11 +33,11 @@ impl proto::keyset_server::Keyset for KeysetServerImpl {
         let closure = move || -> Result<_, TinkError> {
             let template = tink_proto::KeyTemplate::decode(req.template.as_ref())
                 .map_err(|e| wrap_err("decode failed", e))?;
-            let handle = tink::keyset::Handle::new(&template)?;
+            let handle = tink_core::keyset::Handle::new(&template)?;
             let mut buf = Vec::new();
             {
-                let mut writer = tink::keyset::BinaryWriter::new(&mut buf);
-                tink::keyset::insecure::write(&handle, &mut writer)
+                let mut writer = tink_core::keyset::BinaryWriter::new(&mut buf);
+                tink_core::keyset::insecure::write(&handle, &mut writer)
                     .map_err(|e| wrap_err("write failed", e))?;
             }
             Ok(buf)
@@ -56,14 +56,14 @@ impl proto::keyset_server::Keyset for KeysetServerImpl {
         let req = request.into_inner(); // discard metadata
         let closure = move || -> Result<_, TinkError> {
             let cursor = std::io::Cursor::new(req.private_keyset);
-            let mut reader = tink::keyset::BinaryReader::new(cursor);
-            let private_handle = tink::keyset::insecure::read(&mut reader)
+            let mut reader = tink_core::keyset::BinaryReader::new(cursor);
+            let private_handle = tink_core::keyset::insecure::read(&mut reader)
                 .map_err(|e| wrap_err("read failed", e))?;
             let public_handle = private_handle.public()?;
             let mut buf = Vec::new();
             {
-                let mut writer = tink::keyset::BinaryWriter::new(&mut buf);
-                tink::keyset::insecure::write(&public_handle, &mut writer)
+                let mut writer = tink_core::keyset::BinaryWriter::new(&mut buf);
+                tink_core::keyset::insecure::write(&public_handle, &mut writer)
                     .map_err(|e| wrap_err("write failed", e))?;
             }
             Ok(buf)
@@ -82,13 +82,13 @@ impl proto::keyset_server::Keyset for KeysetServerImpl {
         let req = request.into_inner(); // discard metadata
         let closure = move || -> Result<_, TinkError> {
             let cursor = std::io::Cursor::new(req.keyset);
-            let mut reader = tink::keyset::BinaryReader::new(cursor);
-            let handle = tink::keyset::insecure::read(&mut reader)
+            let mut reader = tink_core::keyset::BinaryReader::new(cursor);
+            let handle = tink_core::keyset::insecure::read(&mut reader)
                 .map_err(|e| wrap_err("read failed", e))?;
             let mut buf = Vec::new();
             {
-                let mut writer = tink::keyset::JsonWriter::new(&mut buf);
-                tink::keyset::insecure::write(&handle, &mut writer)
+                let mut writer = tink_core::keyset::JsonWriter::new(&mut buf);
+                tink_core::keyset::insecure::write(&handle, &mut writer)
                     .map_err(|e| wrap_err("write failed", e))?;
             }
             let json = std::str::from_utf8(&buf).map_err(|e| wrap_err("utf8 failed", e))?;
@@ -108,13 +108,13 @@ impl proto::keyset_server::Keyset for KeysetServerImpl {
         let req = request.into_inner(); // discard metadata
         let closure = move || -> Result<_, TinkError> {
             let cursor = std::io::Cursor::new(req.json_keyset.as_bytes());
-            let mut reader = tink::keyset::JsonReader::new(cursor);
-            let handle = tink::keyset::insecure::read(&mut reader)
+            let mut reader = tink_core::keyset::JsonReader::new(cursor);
+            let handle = tink_core::keyset::insecure::read(&mut reader)
                 .map_err(|e| wrap_err("read failed", e))?;
             let mut buf = Vec::new();
             {
-                let mut writer = tink::keyset::BinaryWriter::new(&mut buf);
-                tink::keyset::insecure::write(&handle, &mut writer)
+                let mut writer = tink_core::keyset::BinaryWriter::new(&mut buf);
+                tink_core::keyset::insecure::write(&handle, &mut writer)
                     .map_err(|e| wrap_err("write failed", e))?;
             }
             Ok(buf)

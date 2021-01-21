@@ -23,7 +23,7 @@ use std::{
     ops::DerefMut,
     sync::{Arc, Mutex},
 };
-use tink::TinkError;
+use tink_core::TinkError;
 
 const RECOMMENDED_KEY_SIZE: usize = 32;
 const AES_BLOCK_SIZE_IN_BYTES: usize = 16;
@@ -77,7 +77,7 @@ pub fn validate_aes_cmac_prf_params(key_size: usize) -> Result<(), TinkError> {
     }
 }
 
-impl tink::Prf for AesCmacPrf {
+impl tink_core::Prf for AesCmacPrf {
     /// Compute the AES-CMAC for the given key and data, returning `output_length` bytes.
     /// The timing of this function will only depend on `data.len()`, and not leak any additional
     /// information about the key or the data.

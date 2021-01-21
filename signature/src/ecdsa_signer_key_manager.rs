@@ -19,7 +19,7 @@
 use generic_array::typenum::Unsigned;
 use p256::elliptic_curve;
 use prost::Message;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 use tink_proto::EllipticCurveType;
 
 /// Maximal version of ECDSA keys.
@@ -27,7 +27,7 @@ pub const ECDSA_SIGNER_KEY_VERSION: u32 = 0;
 /// Type URL of ECDSA keys that Tink supports.
 pub const ECDSA_SIGNER_TYPE_URL: &str = "type.googleapis.com/google.crypto.tink.EcdsaPrivateKey";
 
-/// An implementation of the [`tink::registry::KeyManager`] trait.
+/// An implementation of the [`tink_core::registry::KeyManager`] trait.
 /// It generates new ECDSA private keys and produces new instances of
 /// [`crate::subtle::EcdsaSigner`].
 #[derive(Default)]
@@ -36,8 +36,8 @@ pub(crate) struct EcdsaSignerKeyManager {}
 /// Prefix for uncompressed elliptic curve points.
 pub const ECDSA_UNCOMPRESSED_POINT_PREFIX: u8 = 0x04;
 
-impl tink::registry::KeyManager for EcdsaSignerKeyManager {
-    fn primitive(&self, serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
+impl tink_core::registry::KeyManager for EcdsaSignerKeyManager {
+    fn primitive(&self, serialized_key: &[u8]) -> Result<tink_core::Primitive, TinkError> {
         if serialized_key.is_empty() {
             return Err("EcdsaSignerKeyManager: invalid key".into());
         }
@@ -47,7 +47,7 @@ impl tink::registry::KeyManager for EcdsaSignerKeyManager {
 
         let (hash, curve, encoding) = crate::get_ecdsa_param_ids(&params);
         match crate::subtle::EcdsaSigner::new(hash, curve, encoding, &key.key_value) {
-            Ok(p) => Ok(tink::Primitive::Signer(Box::new(p))),
+            Ok(p) => Ok(tink_core::Primitive::Signer(Box::new(p))),
             Err(e) => Err(wrap_err("EcdsaSignerKeyManager: invalid key", e)),
         }
     }
@@ -147,7 +147,7 @@ impl tink::registry::KeyManager for EcdsaSignerKeyManager {
 /// Validate the given [`EcdsaPrivateKey`](tink_proto::EcdsaPrivateKey) and return
 /// the parameters.
 fn validate_key(key: &tink_proto::EcdsaPrivateKey) -> Result<tink_proto::EcdsaParams, TinkError> {
-    tink::keyset::validate_key_version(key.version, ECDSA_SIGNER_KEY_VERSION)
+    tink_core::keyset::validate_key_version(key.version, ECDSA_SIGNER_KEY_VERSION)
         .map_err(|e| wrap_err("EcdsaSignerKeyManager", e))?;
     let pub_key = key
         .public_key

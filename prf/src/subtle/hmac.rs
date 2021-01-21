@@ -22,7 +22,7 @@ use std::{
     ops::DerefMut,
     sync::{Arc, Mutex},
 };
-use tink::TinkError;
+use tink_core::TinkError;
 use tink_proto::HashType;
 
 const MIN_HMAC_KEY_SIZE_IN_BYTES: usize = 16;
@@ -82,14 +82,14 @@ pub fn validate_hmac_prf_params(hash: HashType, key_size: usize) -> Result<(), T
     // validate key size
     if key_size < MIN_HMAC_KEY_SIZE_IN_BYTES {
         Err("key too short".into())
-    } else if tink::subtle::get_hash_func(hash).is_none() {
+    } else if tink_core::subtle::get_hash_func(hash).is_none() {
         Err("invalid hash function".into())
     } else {
         Ok(())
     }
 }
 
-impl tink::Prf for HmacPrf {
+impl tink_core::Prf for HmacPrf {
     fn compute_prf(&self, data: &[u8], output_length: usize) -> Result<Vec<u8>, TinkError> {
         if output_length > self.mac_size {
             return Err(format!(

@@ -17,7 +17,7 @@
 //! Key manager for ED25519 signing keys.
 
 use prost::Message;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
 /// Maximal version of ED25519 keys.
 pub const ED25519_SIGNER_KEY_VERSION: u32 = 0;
@@ -25,14 +25,14 @@ pub const ED25519_SIGNER_KEY_VERSION: u32 = 0;
 pub const ED25519_SIGNER_TYPE_URL: &str =
     "type.googleapis.com/google.crypto.tink.Ed25519PrivateKey";
 
-/// An implementation of the [`tink::registry::KeyManager`] trait.
+/// An implementation of the [`tink_core::registry::KeyManager`] trait.
 /// It generates new ED25519PrivateKeys and produces new instances of
 /// [`crate::subtle::Ed25519Signer`].
 #[derive(Default)]
 pub(crate) struct Ed25519SignerKeyManager {}
 
-impl tink::registry::KeyManager for Ed25519SignerKeyManager {
-    fn primitive(&self, serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
+impl tink_core::registry::KeyManager for Ed25519SignerKeyManager {
+    fn primitive(&self, serialized_key: &[u8]) -> Result<tink_core::Primitive, TinkError> {
         if serialized_key.is_empty() {
             return Err("Ed25519SignerKeyManager: invalid key".into());
         }
@@ -41,7 +41,7 @@ impl tink::registry::KeyManager for Ed25519SignerKeyManager {
         validate_key(&key)?;
 
         match crate::subtle::Ed25519Signer::new(&key.key_value) {
-            Ok(p) => Ok(tink::Primitive::Signer(Box::new(p))),
+            Ok(p) => Ok(tink_core::Primitive::Signer(Box::new(p))),
             Err(e) => Err(wrap_err("Ed25519SignerKeyManager: invalid key", e)),
         }
     }
@@ -98,7 +98,7 @@ impl tink::registry::KeyManager for Ed25519SignerKeyManager {
 
 /// Validate the given [`Ed25519PrivateKey`](tink_proto::Ed25519PrivateKey).
 fn validate_key(key: &tink_proto::Ed25519PrivateKey) -> Result<(), TinkError> {
-    tink::keyset::validate_key_version(key.version, ED25519_SIGNER_KEY_VERSION)
+    tink_core::keyset::validate_key_version(key.version, ED25519_SIGNER_KEY_VERSION)
         .map_err(|e| wrap_err("Ed25519SignerKeyManager", e))?;
 
     if key.key_value.len() != ed25519_dalek::SECRET_KEY_LENGTH {

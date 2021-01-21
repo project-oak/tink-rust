@@ -20,7 +20,7 @@ use super::IndCpaCipher;
 use aes_ctr::cipher::stream::{
     consts::U16, generic_array::GenericArray, Key, NewStreamCipher, SyncStreamCipher,
 };
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
 /// The minimum IV size that this implementation supports.
 pub const AES_CTR_MIN_IV_SIZE: usize = 12;
@@ -68,7 +68,7 @@ impl AesCtr {
     /// Create a new IV for encryption.
     fn new_iv(&self) -> GenericArray<u8, U16> {
         let mut padded_iv = [0; AES_BLOCK_SIZE_IN_BYTES];
-        let iv = tink::subtle::random::get_random_bytes(self.iv_size);
+        let iv = tink_core::subtle::random::get_random_bytes(self.iv_size);
         padded_iv[..iv.len()].copy_from_slice(&iv);
         padded_iv.into()
     }

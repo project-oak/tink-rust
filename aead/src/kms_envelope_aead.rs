@@ -17,14 +17,14 @@
 //! Provide an implementation of AEAD using a KMS.
 
 use std::convert::TryInto;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
 const LEN_DEK: usize = 4;
 
 /// `KmsEnvelopeAead` represents an instance of Envelope AEAD.
 pub struct KmsEnvelopeAead {
     dek_template: tink_proto::KeyTemplate,
-    remote: Box<dyn tink::Aead>,
+    remote: Box<dyn tink_core::Aead>,
 }
 
 /// Manual implementation of [`Clone`] relying on the trait bounds for
@@ -39,7 +39,7 @@ impl Clone for KmsEnvelopeAead {
 }
 
 impl KmsEnvelopeAead {
-    pub fn new(kt: tink_proto::KeyTemplate, remote: Box<dyn tink::Aead>) -> KmsEnvelopeAead {
+    pub fn new(kt: tink_proto::KeyTemplate, remote: Box<dyn tink_core::Aead>) -> KmsEnvelopeAead {
         KmsEnvelopeAead {
             dek_template: kt,
             remote,
@@ -47,14 +47,14 @@ impl KmsEnvelopeAead {
     }
 }
 
-impl tink::Aead for KmsEnvelopeAead {
+impl tink_core::Aead for KmsEnvelopeAead {
     fn encrypt(&self, pt: &[u8], aad: &[u8]) -> Result<Vec<u8>, TinkError> {
         // Create a new key for each encryption operation.
-        let dek = tink::registry::new_key(&self.dek_template)?;
+        let dek = tink_core::registry::new_key(&self.dek_template)?;
         let encrypted_dek = self.remote.encrypt(&dek, &[])?;
 
-        let primitive = match tink::registry::primitive(&self.dek_template.type_url, &dek)? {
-            tink::Primitive::Aead(p) => p,
+        let primitive = match tink_core::registry::primitive(&self.dek_template.type_url, &dek)? {
+            tink_core::Primitive::Aead(p) => p,
             _ => return Err("KmsEnvelopeAead: failed to convert AEAD primitive".into()),
         };
         let payload = primitive.encrypt(pt, aad)?;
@@ -84,10 +84,10 @@ impl tink::Aead for KmsEnvelopeAead {
         let dek = self.remote.decrypt(encrypted_dek, &[])?;
 
         // Get an AEAD primitive corresponding to the DEK.
-        let p = tink::registry::primitive(&self.dek_template.type_url, &dek)
+        let p = tink_core::registry::primitive(&self.dek_template.type_url, &dek)
             .map_err(|e| wrap_err("KmsEnvelopeAead", e))?;
         let primitive = match p {
-            tink::Primitive::Aead(p) => p,
+            tink_core::Primitive::Aead(p) => p,
             _ => return Err("KmsEnvelopeAead: failed to convert AEAD primitive".into()),
         };
 

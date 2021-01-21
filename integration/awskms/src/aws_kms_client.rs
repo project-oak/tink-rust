@@ -20,7 +20,7 @@ use regex::Regex;
 use rusoto_core::region::Region;
 use rusoto_credential::AwsCredentials;
 use std::str::FromStr;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
 /// Prefix for any AWS-KMS key URIs.
 pub const AWS_PREFIX: &str = "aws-kms://";
@@ -108,7 +108,7 @@ impl AwsClient {
     }
 }
 
-impl tink::registry::KmsClient for AwsClient {
+impl tink_core::registry::KmsClient for AwsClient {
     fn supported(&self, key_uri: &str) -> bool {
         key_uri.starts_with(&self.key_uri_prefix)
     }
@@ -116,7 +116,7 @@ impl tink::registry::KmsClient for AwsClient {
     /// Get an AEAD backed by `key_uri`.
     /// `key_uri` must have the following format: `aws-kms://arn:<partition>:kms:<region>:[:path]`.
     /// See http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html.
-    fn get_aead(&self, key_uri: &str) -> Result<Box<dyn tink::Aead>, tink::TinkError> {
+    fn get_aead(&self, key_uri: &str) -> Result<Box<dyn tink_core::Aead>, tink_core::TinkError> {
         if !self.supported(key_uri) {
             return Err(format!(
                 "key_uri must start with prefix {}, but got {}",

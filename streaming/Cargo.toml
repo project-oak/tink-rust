@@ -15,6 +15,6 @@ aes-ctr = "^0.6"
 aes-gcm = { version = "^0.8", features = ["std"] }
 prost = "^0.6.1"
 rand = "^0.7"
-tink = "^0.1"
+tink-core = "^0.1"
 tink-mac = "^0.1"
 tink-proto = "^0.1"

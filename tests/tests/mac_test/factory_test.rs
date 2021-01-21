@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
 #[test]
 fn test_factory_multiple_keys() {
@@ -27,10 +27,10 @@ fn test_factory_multiple_keys() {
         tink_proto::OutputPrefixType::Tink as i32
     );
     let raw_key = keyset.key[1].clone();
-    let keyset_handle = tink::keyset::insecure::new_handle(keyset).unwrap();
+    let keyset_handle = tink_core::keyset::insecure::new_handle(keyset).unwrap();
 
     let p = tink_mac::new(&keyset_handle).unwrap();
-    let expected_prefix = tink::cryptofmt::output_prefix(&primary_key).unwrap();
+    let expected_prefix = tink_core::cryptofmt::output_prefix(&primary_key).unwrap();
 
     verify_mac_primitive(&p, &p, &expected_prefix, tag_size as usize).expect("invalid primitive");
 
@@ -40,17 +40,22 @@ fn test_factory_multiple_keys() {
         tink_proto::OutputPrefixType::Raw as i32
     );
     let keyset2 = tink_tests::new_keyset(raw_key.key_id, vec![raw_key]);
-    let keyset_handle2 = tink::keyset::insecure::new_handle(keyset2).unwrap();
+    let keyset_handle2 = tink_core::keyset::insecure::new_handle(keyset2).unwrap();
 
     let p2 = tink_mac::new(&keyset_handle2).unwrap();
-    verify_mac_primitive(&p2, &p, &tink::cryptofmt::RAW_PREFIX, tag_size as usize)
-        .expect("invalid primitive");
+    verify_mac_primitive(
+        &p2,
+        &p,
+        &tink_core::cryptofmt::RAW_PREFIX,
+        tag_size as usize,
+    )
+    .expect("invalid primitive");
 
     // mac with a random key not in the keyset, verify with the keyset should fail
     let keyset2 = tink_tests::new_test_hmac_keyset(tag_size, tink_proto::OutputPrefixType::Tink);
     let primary_key = keyset2.key[0].clone();
-    let expected_prefix = tink::cryptofmt::output_prefix(&primary_key).unwrap();
-    let keyset_handle2 = tink::keyset::insecure::new_handle(keyset2).unwrap();
+    let expected_prefix = tink_core::cryptofmt::output_prefix(&primary_key).unwrap();
+    let keyset_handle2 = tink_core::keyset::insecure::new_handle(keyset2).unwrap();
 
     let p2 = tink_mac::new(&keyset_handle2).unwrap();
     let result = verify_mac_primitive(&p2, &p.box_clone(), &expected_prefix, tag_size as usize);
@@ -72,16 +77,16 @@ fn test_factory_raw_key() {
         primary_key.output_prefix_type,
         tink_proto::OutputPrefixType::Raw as i32
     );
-    let keyset_handle = tink::keyset::insecure::new_handle(keyset).unwrap();
+    let keyset_handle = tink_core::keyset::insecure::new_handle(keyset).unwrap();
     let p = tink_mac::new(&keyset_handle).unwrap();
-    verify_mac_primitive(&p, &p, &tink::cryptofmt::RAW_PREFIX, tag_size as usize)
+    verify_mac_primitive(&p, &p, &tink_core::cryptofmt::RAW_PREFIX, tag_size as usize)
         .expect("invalid primitive");
 }
 
 #[allow(clippy::borrowed_box)]
 fn verify_mac_primitive(
-    compute_primitive: &Box<dyn tink::Mac>,
-    verify_primitive: &Box<dyn tink::Mac>,
+    compute_primitive: &Box<dyn tink_core::Mac>,
+    verify_primitive: &Box<dyn tink_core::Mac>,
     expected_prefix: &[u8],
     tag_size: usize,
 ) -> Result<(), TinkError> {
@@ -128,7 +133,8 @@ fn verify_mac_primitive(
 fn test_factory_with_invalid_primitive_set_type() {
     tink_mac::init();
     tink_prf::init();
-    let wrong_kh = tink::keyset::Handle::new(&tink_prf::hkdf_sha256_prf_key_template()).unwrap();
+    let wrong_kh =
+        tink_core::keyset::Handle::new(&tink_prf::hkdf_sha256_prf_key_template()).unwrap();
 
     assert!(
         tink_mac::new(&wrong_kh).is_err(),
@@ -139,7 +145,8 @@ fn test_factory_with_invalid_primitive_set_type() {
 #[test]
 fn test_factory_with_valid_primitive_set_type() {
     tink_mac::init();
-    let good_kh = tink::keyset::Handle::new(&tink_mac::hmac_sha256_tag256_key_template()).unwrap();
+    let good_kh =
+        tink_core::keyset::Handle::new(&tink_mac::hmac_sha256_tag256_key_template()).unwrap();
 
     tink_mac::new(&good_kh).expect("calling new() with good keyset::Handle failed");
 }

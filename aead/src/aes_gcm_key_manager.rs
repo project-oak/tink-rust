@@ -18,22 +18,22 @@
 
 use crate::subtle;
 use prost::Message;
-use tink::{utils::wrap_err, TinkError};
+use tink_core::{utils::wrap_err, TinkError};
 
 /// Maximal version of AES-GCM keys.
 pub const AES_GCM_KEY_VERSION: u32 = 0;
 /// Type URL of AES-GCM keys that Tink supports.
 pub const AES_GCM_TYPE_URL: &str = "type.googleapis.com/google.crypto.tink.AesGcmKey";
 
-/// `AesGcmKeyManager` is an implementation of the `tink::registry::KeyManager` trait.
+/// `AesGcmKeyManager` is an implementation of the `tink_core::registry::KeyManager` trait.
 /// It generates new [`AesGcmKey`](tink_proto::AesGcmKey) keys and produces new instances of
 /// [`subtle::AesGcm`].
 #[derive(Default)]
 pub(crate) struct AesGcmKeyManager {}
 
-impl tink::registry::KeyManager for AesGcmKeyManager {
+impl tink_core::registry::KeyManager for AesGcmKeyManager {
     /// Create a [`subtle::AesGcm`] for the given serialized [`tink_proto::AesGcmKey`].
-    fn primitive(&self, serialized_key: &[u8]) -> Result<tink::Primitive, TinkError> {
+    fn primitive(&self, serialized_key: &[u8]) -> Result<tink_core::Primitive, TinkError> {
         if serialized_key.is_empty() {
             return Err("AesGcmKeyManager: invalid key".into());
         }
@@ -41,7 +41,7 @@ impl tink::registry::KeyManager for AesGcmKeyManager {
             .map_err(|e| wrap_err("AesGcmKeyManager: invalid key", e))?;
         validate_key(&key)?;
         match subtle::AesGcm::new(&key.key_value) {
-            Ok(p) => Ok(tink::Primitive::Aead(Box::new(p))),
+            Ok(p) => Ok(tink_core::Primitive::Aead(Box::new(p))),
             Err(e) => Err(wrap_err("AesGcmKeyManager: cannot create new primitive", e)),
         }
     }
@@ -56,7 +56,7 @@ impl tink::registry::KeyManager for AesGcmKeyManager {
             .map_err(|e| wrap_err("AesGcmKeyManager: invalid key format", e))?;
         validate_key_format(&key_format)
             .map_err(|e| wrap_err("AesGcmKeyManager: invalid key format", e))?;
-        let key_value = tink::subtle::random::get_random_bytes(key_format.key_size as usize);
+        let key_value = tink_core::subtle::random::get_random_bytes(key_format.key_size as usize);
         let key = tink_proto::AesGcmKey {
             version: AES_GCM_KEY_VERSION,
             key_value,
@@ -77,7 +77,7 @@ impl tink::registry::KeyManager for AesGcmKeyManager {
 
 /// Validate the given [`tink_proto::AesGcmKey`].
 fn validate_key(key: &tink_proto::AesGcmKey) -> Result<(), TinkError> {
-    tink::keyset::validate_key_version(key.version, AES_GCM_KEY_VERSION)
+    tink_core::keyset::validate_key_version(key.version, AES_GCM_KEY_VERSION)
         .map_err(|e| wrap_err("AesGcmKeyManager", e))?;
     let key_size = key.key_value.len();
     crate::subtle::validate_aes_key_size(key_size).map_err(|e| wrap_err("AesGcmKeyManager", e))

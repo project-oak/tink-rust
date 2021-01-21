@@ -22,12 +22,12 @@ fn test_register_key_manager() {
     tink_mac::init();
     tink_aead::init();
     // get HMACKeyManager
-    let km = tink::registry::get_key_manager(tink_tests::HMAC_TYPE_URL).unwrap();
+    let km = tink_core::registry::get_key_manager(tink_tests::HMAC_TYPE_URL).unwrap();
     // get AESGCMKeyManager
-    tink::registry::get_key_manager(tink_tests::AES_GCM_TYPE_URL).unwrap();
+    tink_core::registry::get_key_manager(tink_tests::AES_GCM_TYPE_URL).unwrap();
     // some random typeurl
     assert!(
-        tink::registry::get_key_manager("some url").is_err(),
+        tink_core::registry::get_key_manager("some url").is_err(),
         "expect an error when a type url doesn't exist in the registry"
     );
 
@@ -43,7 +43,7 @@ fn test_register_key_manager_with_collision() {
     let dummy_key_manager = Arc::new(tink_tests::DummyAeadKeyManager::default());
     // This should fail because overwriting is disallowed.
     assert!(
-        tink::registry::register_key_manager(dummy_key_manager).is_err(),
+        tink_core::registry::register_key_manager(dummy_key_manager).is_err(),
         "AES_GCM_TYPE_URL shouldn't be registered again",
     );
 }
@@ -51,11 +51,11 @@ fn test_register_key_manager_with_collision() {
 #[test]
 fn test_register_key_manager_duplicate() {
     let dummy_key_manager = Arc::new(tink_tests::DummyAeadKeyManager { type_url: "blah" });
-    tink::registry::register_key_manager(dummy_key_manager.clone()).unwrap();
+    tink_core::registry::register_key_manager(dummy_key_manager.clone()).unwrap();
 
     // This should fail because overwriting is disallowed.
     assert!(
-        tink::registry::register_key_manager(dummy_key_manager).is_err(),
+        tink_core::registry::register_key_manager(dummy_key_manager).is_err(),
         "Shouldn't allow double registration",
     );
 }
@@ -65,7 +65,7 @@ fn test_new_key_data() {
     tink_mac::init();
     // new KeyData from a Hmac KeyTemplate
     let key_data =
-        tink::registry::new_key_data(&tink_mac::hmac_sha256_tag128_key_template()).unwrap();
+        tink_core::registry::new_key_data(&tink_mac::hmac_sha256_tag128_key_template()).unwrap();
     assert_eq!(
         tink_tests::HMAC_TYPE_URL,
         key_data.type_url,
@@ -81,7 +81,7 @@ fn test_new_key_data() {
         value: vec![0],
     };
     assert!(
-        tink::registry::new_key_data(&template).is_err(),
+        tink_core::registry::new_key_data(&template).is_err(),
         "expect an error when key template contains unregistered type_url"
     );
 }
@@ -91,7 +91,7 @@ fn test_new_key() {
     tink_aead::init();
     // aead template
     let aes_gcm_template = tink_aead::aes128_gcm_key_template();
-    let key = tink::registry::new_key(&aes_gcm_template).unwrap();
+    let key = tink_core::registry::new_key(&aes_gcm_template).unwrap();
 
     let aes_gcm_key = tink_proto::AesGcmKey::decode(key.as_ref()).unwrap();
 
@@ -109,7 +109,7 @@ fn test_new_key() {
         value: vec![0],
     };
     assert!(
-        tink::registry::new_key(&template).is_err(),
+        tink_core::registry::new_key(&template).is_err(),
         "expect an error when key template is not registered"
     );
 }
@@ -119,8 +119,8 @@ fn test_primitive_from_key_data() {
     tink_mac::init();
     // hmac keydata
     let mut key_data = tink_tests::new_hmac_key_data(tink_proto::HashType::Sha256, 16);
-    let p = tink::registry::primitive_from_key_data(&key_data).unwrap();
-    if let tink::Primitive::Mac(_) = p {
+    let p = tink_core::registry::primitive_from_key_data(&key_data).unwrap();
+    if let tink_core::Primitive::Mac(_) = p {
     } else {
         panic!("Primitive not a Mac");
     }
@@ -128,13 +128,13 @@ fn test_primitive_from_key_data() {
     // unregistered url
     key_data.type_url = "some url".to_string();
     assert!(
-        tink::registry::primitive_from_key_data(&key_data).is_err(),
+        tink_core::registry::primitive_from_key_data(&key_data).is_err(),
         "expect an error when type_url has not been registered"
     );
     // unmatched url
     key_data.type_url = tink_tests::AES_GCM_TYPE_URL.to_string();
     assert!(
-        tink::registry::primitive_from_key_data(&key_data).is_err(),
+        tink_core::registry::primitive_from_key_data(&key_data).is_err(),
         "expect an error when type_url doesn't match key"
     );
 }
@@ -146,29 +146,29 @@ fn test_primitive() {
     let key = tink_tests::new_hmac_key(tink_proto::HashType::Sha256, 16);
     let mut serialized_key = vec![];
     key.encode(&mut serialized_key).unwrap();
-    let p = tink::registry::primitive(tink_tests::HMAC_TYPE_URL, &serialized_key).unwrap();
-    if let tink::Primitive::Mac(_) = p {
+    let p = tink_core::registry::primitive(tink_tests::HMAC_TYPE_URL, &serialized_key).unwrap();
+    if let tink_core::Primitive::Mac(_) = p {
     } else {
         panic!("Primitive not a Mac");
     }
 
     // unregistered url
     assert!(
-        tink::registry::primitive("some url", &serialized_key).is_err(),
+        tink_core::registry::primitive("some url", &serialized_key).is_err(),
         "expect an error when type_url has not been registered"
     );
     // unmatched url
     assert!(
-        tink::registry::primitive(tink_tests::AES_GCM_TYPE_URL, &serialized_key).is_err(),
+        tink_core::registry::primitive(tink_tests::AES_GCM_TYPE_URL, &serialized_key).is_err(),
         "expect an error when type_url doesn't match key"
     );
     // empty key
     assert!(
-        tink::registry::primitive(tink_tests::AES_GCM_TYPE_URL, &[]).is_err(),
+        tink_core::registry::primitive(tink_tests::AES_GCM_TYPE_URL, &[]).is_err(),
         "expect an error when key is empty"
     );
     assert!(
-        tink::registry::primitive(tink_tests::AES_GCM_TYPE_URL, &[0]).is_err(),
+        tink_core::registry::primitive(tink_tests::AES_GCM_TYPE_URL, &[0]).is_err(),
         "expect an error when key is short"
     );
 }
@@ -176,9 +176,9 @@ fn test_primitive() {
 #[test]
 fn test_register_kms_client() {
     let kms = tink_tests::DummyKmsClient {};
-    tink::registry::register_kms_client(kms);
+    tink_core::registry::register_kms_client(kms);
 
-    tink::registry::get_kms_client("dummy").expect("error fetching dummy kms client");
+    tink_core::registry::get_kms_client("dummy").expect("error fetching dummy kms client");
 }
 
 fn dummy_key_generator() -> tink_proto::KeyTemplate {
@@ -192,9 +192,9 @@ fn dummy_key_generator() -> tink_proto::KeyTemplate {
 #[test]
 fn test_get_template_generator() {
     let dummy_name = "TEST".to_string();
-    tink::registry::register_template_generator(&dummy_name, dummy_key_generator);
-    let generator = tink::registry::get_template_generator(&dummy_name).unwrap();
+    tink_core::registry::register_template_generator(&dummy_name, dummy_key_generator);
+    let generator = tink_core::registry::get_template_generator(&dummy_name).unwrap();
     assert_eq!(generator().type_url, "TEST");
-    let names = tink::registry::template_names();
+    let names = tink_core::registry::template_names();
     assert!(names.contains(&dummy_name));
 }
