@@ -28,6 +28,21 @@ fn setup(kt: tink_proto::KeyTemplate) -> (Box<dyn tink_core::Mac>, Vec<u8>) {
     (m, tag)
 }
 
+/// Size of the prefix information in the tag. If this is corrupted, the tag will be
+/// rejected immediately without performing any cryptographic operations.
+const PREFIX_SIZE: usize = tink_core::cryptofmt::NON_RAW_PREFIX_SIZE;
+
+fn setup_failure(kt: tink_proto::KeyTemplate) -> (Box<dyn tink_core::Mac>, Vec<u8>) {
+    let (m, tag) = setup(kt);
+    (
+        m,
+        tag.iter()
+            .enumerate()
+            .map(|(i, b)| if i < PREFIX_SIZE { *b } else { b ^ 0b10101010 })
+            .collect(),
+    )
+}
+
 #[bench]
 fn bench_hmac_sha256_tag128_mac_compute(b: &mut Bencher) {
     let (m, _tag) = setup(tink_mac::hmac_sha256_tag128_key_template());
@@ -38,6 +53,12 @@ fn bench_hmac_sha256_tag128_mac_compute(b: &mut Bencher) {
 fn bench_hmac_sha256_tag128_mac_verify(b: &mut Bencher) {
     let (m, tag) = setup(tink_mac::hmac_sha256_tag128_key_template());
     b.iter(|| m.verify_mac(&tag, MSG).unwrap());
+}
+
+#[bench]
+fn bench_hmac_sha256_tag128_mac_verify_fail(b: &mut Bencher) {
+    let (m, tag) = setup_failure(tink_mac::hmac_sha256_tag128_key_template());
+    b.iter(|| m.verify_mac(&tag, MSG).unwrap_err());
 }
 
 #[bench]
@@ -53,6 +74,12 @@ fn bench_hmac_sha256_tag256_mac_verify(b: &mut Bencher) {
 }
 
 #[bench]
+fn bench_hmac_sha256_tag256_mac_verify_fail(b: &mut Bencher) {
+    let (m, tag) = setup_failure(tink_mac::hmac_sha256_tag256_key_template());
+    b.iter(|| m.verify_mac(&tag, MSG).unwrap_err());
+}
+
+#[bench]
 fn bench_hmac_sha512_tag256_mac_compute(b: &mut Bencher) {
     let (m, _tag) = setup(tink_mac::hmac_sha512_tag256_key_template());
     b.iter(|| m.compute_mac(MSG).unwrap());
@@ -62,6 +89,12 @@ fn bench_hmac_sha512_tag256_mac_compute(b: &mut Bencher) {
 fn bench_hmac_sha512_tag256_mac_verify(b: &mut Bencher) {
     let (m, tag) = setup(tink_mac::hmac_sha512_tag256_key_template());
     b.iter(|| m.verify_mac(&tag, MSG).unwrap());
+}
+
+#[bench]
+fn bench_hmac_sha512_tag256_mac_verify_fail(b: &mut Bencher) {
+    let (m, tag) = setup_failure(tink_mac::hmac_sha512_tag256_key_template());
+    b.iter(|| m.verify_mac(&tag, MSG).unwrap_err());
 }
 
 #[bench]
@@ -77,6 +110,12 @@ fn bench_hmac_sha512_tag512_mac_verify(b: &mut Bencher) {
 }
 
 #[bench]
+fn bench_hmac_sha512_tag512_mac_verify_fail(b: &mut Bencher) {
+    let (m, tag) = setup_failure(tink_mac::hmac_sha512_tag512_key_template());
+    b.iter(|| m.verify_mac(&tag, MSG).unwrap_err());
+}
+
+#[bench]
 fn bench_aes_cmac_tag128_mac_compute(b: &mut Bencher) {
     let (m, _tag) = setup(tink_mac::aes_cmac_tag128_key_template());
     b.iter(|| m.compute_mac(MSG).unwrap());
@@ -86,4 +125,10 @@ fn bench_aes_cmac_tag128_mac_compute(b: &mut Bencher) {
 fn bench_aes_cmac_tag128_mac_verify(b: &mut Bencher) {
     let (m, tag) = setup(tink_mac::aes_cmac_tag128_key_template());
     b.iter(|| m.verify_mac(&tag, MSG).unwrap());
+}
+
+#[bench]
+fn bench_aes_cmac_tag128_mac_verify_fail(b: &mut Bencher) {
+    let (m, tag) = setup_failure(tink_mac::aes_cmac_tag128_key_template());
+    b.iter(|| m.verify_mac(&tag, MSG).unwrap_err());
 }
