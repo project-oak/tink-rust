@@ -35,6 +35,21 @@ fn setup(
     (s, v, sig)
 }
 
+/// Size of the prefix information in the signature. If this is corrupted, the tag will be
+/// rejected immediately without performing any cryptographic operations.
+const PREFIX_SIZE: usize = tink_core::cryptofmt::NON_RAW_PREFIX_SIZE;
+
+fn setup_failure(kt: tink_proto::KeyTemplate) -> (Box<dyn tink_core::Verifier>, Vec<u8>) {
+    let (_s, v, sig) = setup(kt);
+    (
+        v,
+        sig.iter()
+            .enumerate()
+            .map(|(i, b)| if i < PREFIX_SIZE { *b } else { b ^ 0b10101010 })
+            .collect(),
+    )
+}
+
 #[bench]
 fn bench_ecdsa_p256_sign(b: &mut Bencher) {
     let (s, _v, _sig) = setup(tink_signature::ecdsa_p256_key_template());
@@ -48,6 +63,12 @@ fn bench_ecdsa_p256_verify(b: &mut Bencher) {
 }
 
 #[bench]
+fn bench_ecdsa_p256_verify_fail(b: &mut Bencher) {
+    let (v, sig) = setup_failure(tink_signature::ecdsa_p256_key_template());
+    b.iter(|| v.verify(&sig, MSG).unwrap_err());
+}
+
+#[bench]
 fn bench_ed25519_sign(b: &mut Bencher) {
     let (s, _v, _sig) = setup(tink_signature::ed25519_key_template());
     b.iter(|| s.sign(MSG).unwrap());
@@ -57,4 +78,10 @@ fn bench_ed25519_sign(b: &mut Bencher) {
 fn bench_ed25519_verify(b: &mut Bencher) {
     let (_s, v, sig) = setup(tink_signature::ed25519_key_template());
     b.iter(|| v.verify(&sig, MSG).unwrap());
+}
+
+#[bench]
+fn bench_ed25519_verify_fail(b: &mut Bencher) {
+    let (v, sig) = setup_failure(tink_signature::ed25519_key_template());
+    b.iter(|| v.verify(&sig, MSG).unwrap_err());
 }
