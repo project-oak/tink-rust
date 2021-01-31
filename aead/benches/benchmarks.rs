@@ -28,6 +28,21 @@ fn setup(kt: tink_proto::KeyTemplate) -> (Box<dyn tink_core::Aead>, Vec<u8>) {
     (a, ct)
 }
 
+/// Size of the prefix information in the ciphertext. If this is corrupted, the tag will be
+/// rejected immediately without performing any cryptographic operations.
+const PREFIX_SIZE: usize = tink_core::cryptofmt::NON_RAW_PREFIX_SIZE;
+
+fn setup_failure(kt: tink_proto::KeyTemplate) -> (Box<dyn tink_core::Aead>, Vec<u8>) {
+    let (a, ct) = setup(kt);
+    (
+        a,
+        ct.iter()
+            .enumerate()
+            .map(|(i, b)| if i < PREFIX_SIZE { *b } else { b ^ 0b10101010 })
+            .collect(),
+    )
+}
+
 #[bench]
 fn bench_aes128_gcm_encrypt(b: &mut Bencher) {
     let (a, _ct) = setup(tink_aead::aes128_gcm_key_template());
@@ -38,6 +53,12 @@ fn bench_aes128_gcm_encrypt(b: &mut Bencher) {
 fn bench_aes128_gcm_decrypt(b: &mut Bencher) {
     let (a, ct) = setup(tink_aead::aes128_gcm_key_template());
     b.iter(|| a.decrypt(&ct, AAD).unwrap());
+}
+
+#[bench]
+fn bench_aes128_gcm_decrypt_fail(b: &mut Bencher) {
+    let (a, ct) = setup_failure(tink_aead::aes128_gcm_key_template());
+    b.iter(|| a.decrypt(&ct, AAD).unwrap_err());
 }
 
 #[bench]
@@ -53,6 +74,12 @@ fn bench_aes256_gcm_decrypt(b: &mut Bencher) {
 }
 
 #[bench]
+fn bench_aes256_gcm_decrypt_fail(b: &mut Bencher) {
+    let (a, ct) = setup_failure(tink_aead::aes256_gcm_key_template());
+    b.iter(|| a.decrypt(&ct, AAD).unwrap_err());
+}
+
+#[bench]
 fn bench_aes128_gcm_siv_encrypt(b: &mut Bencher) {
     let (a, _ct) = setup(tink_aead::aes128_gcm_siv_key_template());
     b.iter(|| a.encrypt(MSG, AAD).unwrap());
@@ -62,6 +89,12 @@ fn bench_aes128_gcm_siv_encrypt(b: &mut Bencher) {
 fn bench_aes128_gcm_siv_decrypt(b: &mut Bencher) {
     let (a, ct) = setup(tink_aead::aes128_gcm_siv_key_template());
     b.iter(|| a.decrypt(&ct, AAD).unwrap());
+}
+
+#[bench]
+fn bench_aes128_gcm_siv_decrypt_fail(b: &mut Bencher) {
+    let (a, ct) = setup_failure(tink_aead::aes128_gcm_siv_key_template());
+    b.iter(|| a.decrypt(&ct, AAD).unwrap_err());
 }
 
 #[bench]
@@ -77,6 +110,12 @@ fn bench_aes256_gcm_siv_decrypt(b: &mut Bencher) {
 }
 
 #[bench]
+fn bench_aes256_gcm_siv_decrypt_fail(b: &mut Bencher) {
+    let (a, ct) = setup_failure(tink_aead::aes256_gcm_siv_key_template());
+    b.iter(|| a.decrypt(&ct, AAD).unwrap_err());
+}
+
+#[bench]
 fn bench_aes128_ctr_hmac_sha256_encrypt(b: &mut Bencher) {
     let (a, _ct) = setup(tink_aead::aes128_ctr_hmac_sha256_key_template());
     b.iter(|| a.encrypt(MSG, AAD).unwrap());
@@ -86,6 +125,12 @@ fn bench_aes128_ctr_hmac_sha256_encrypt(b: &mut Bencher) {
 fn bench_aes128_ctr_hmac_sha256_decrypt(b: &mut Bencher) {
     let (a, ct) = setup(tink_aead::aes128_ctr_hmac_sha256_key_template());
     b.iter(|| a.decrypt(&ct, AAD).unwrap());
+}
+
+#[bench]
+fn bench_aes128_ctr_hmac_sha256_decrypt_fail(b: &mut Bencher) {
+    let (a, ct) = setup_failure(tink_aead::aes128_ctr_hmac_sha256_key_template());
+    b.iter(|| a.decrypt(&ct, AAD).unwrap_err());
 }
 
 #[bench]
@@ -101,6 +146,12 @@ fn bench_aes256_ctr_hmac_sha256_decrypt(b: &mut Bencher) {
 }
 
 #[bench]
+fn bench_aes256_ctr_hmac_sha256_decrypt_fail(b: &mut Bencher) {
+    let (a, ct) = setup_failure(tink_aead::aes256_ctr_hmac_sha256_key_template());
+    b.iter(|| a.decrypt(&ct, AAD).unwrap_err());
+}
+
+#[bench]
 fn bench_cha_cha20_poly1305_encrypt(b: &mut Bencher) {
     let (a, _ct) = setup(tink_aead::cha_cha20_poly1305_key_template());
     b.iter(|| a.encrypt(MSG, AAD).unwrap());
@@ -113,6 +164,12 @@ fn bench_cha_cha20_poly1305_decrypt(b: &mut Bencher) {
 }
 
 #[bench]
+fn bench_cha_cha20_poly1305_decrypt_fail(b: &mut Bencher) {
+    let (a, ct) = setup_failure(tink_aead::cha_cha20_poly1305_key_template());
+    b.iter(|| a.decrypt(&ct, AAD).unwrap_err());
+}
+
+#[bench]
 fn bench_x_cha_cha20_poly1305_encrypt(b: &mut Bencher) {
     let (a, _ct) = setup(tink_aead::x_cha_cha20_poly1305_key_template());
     b.iter(|| a.encrypt(MSG, AAD).unwrap());
@@ -122,4 +179,10 @@ fn bench_x_cha_cha20_poly1305_encrypt(b: &mut Bencher) {
 fn bench_x_cha_cha20_poly1305_decrypt(b: &mut Bencher) {
     let (a, ct) = setup(tink_aead::x_cha_cha20_poly1305_key_template());
     b.iter(|| a.decrypt(&ct, AAD).unwrap());
+}
+
+#[bench]
+fn bench_x_cha_cha20_poly1305_decrypt_fail(b: &mut Bencher) {
+    let (a, ct) = setup_failure(tink_aead::x_cha_cha20_poly1305_key_template());
+    b.iter(|| a.decrypt(&ct, AAD).unwrap_err());
 }
