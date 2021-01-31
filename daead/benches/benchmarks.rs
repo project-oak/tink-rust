@@ -28,6 +28,21 @@ fn setup(kt: tink_proto::KeyTemplate) -> (Box<dyn tink_core::DeterministicAead>,
     (a, ct)
 }
 
+/// Size of the prefix information in the ciphertext. If this is corrupted, the tag will be
+/// rejected immediately without performing any cryptographic operations.
+const PREFIX_SIZE: usize = tink_core::cryptofmt::NON_RAW_PREFIX_SIZE;
+
+fn setup_failure(kt: tink_proto::KeyTemplate) -> (Box<dyn tink_core::DeterministicAead>, Vec<u8>) {
+    let (a, ct) = setup(kt);
+    (
+        a,
+        ct.iter()
+            .enumerate()
+            .map(|(i, b)| if i < PREFIX_SIZE { *b } else { b ^ 0b10101010 })
+            .collect(),
+    )
+}
+
 #[bench]
 fn bench_aes_siv_encrypt(b: &mut Bencher) {
     let (d, _ct) = setup(tink_daead::aes_siv_key_template());
@@ -38,4 +53,10 @@ fn bench_aes_siv_encrypt(b: &mut Bencher) {
 fn bench_aes_siv_decrypt(b: &mut Bencher) {
     let (d, ct) = setup(tink_daead::aes_siv_key_template());
     b.iter(|| d.decrypt_deterministically(&ct, AAD).unwrap());
+}
+
+#[bench]
+fn bench_aes_siv_decrypt_fail(b: &mut Bencher) {
+    let (d, ct) = setup_failure(tink_daead::aes_siv_key_template());
+    b.iter(|| d.decrypt_deterministically(&ct, AAD).unwrap_err());
 }
