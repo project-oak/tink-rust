@@ -185,6 +185,27 @@ fn test_new_cmac_with_invalid_input() {
 }
 
 #[test]
+fn test_cmac_compute_verify_with_empty_input() {
+    let cipher = tink_mac::subtle::AesCmac::new(&get_random_bytes(16), 16).unwrap();
+    let tag = cipher.compute_mac(&[]).unwrap();
+    assert!(cipher.verify_mac(&tag, &[]).is_ok());
+}
+
+#[test]
+fn test_cmac_verify_mac_with_invalid_input() {
+    let cipher = tink_mac::subtle::AesCmac::new(&get_random_bytes(16), 16).unwrap();
+    assert!(
+        cipher.verify_mac(&[], &[0x01]).is_err(),
+        "expect an error when mac is empty"
+    );
+    assert!(
+        cipher.verify_mac(&[0x01], &[]).is_err(),
+        "expect an error when data is empty"
+    );
+    assert!(cipher.verify_mac(&[], &[]).is_err());
+}
+
+#[test]
 fn test_cmac_modification() {
     let a = tink_mac::subtle::AesCmac::new(KEY_RFC4493, 16).unwrap();
     for (l, e) in EXPECTED.iter() {
