@@ -109,6 +109,27 @@ fn test_new_hmac_with_invalid_input() {
 }
 
 #[test]
+fn test_hmac_compute_verify_with_empty_input() {
+    let cipher = tink_mac::subtle::Hmac::new(HashType::Sha256, &get_random_bytes(16), 32).unwrap();
+    let tag = cipher.compute_mac(&[]).unwrap();
+    assert!(cipher.verify_mac(&tag, &[]).is_ok());
+}
+
+#[test]
+fn test_verify_mac_with_invalid_input() {
+    let cipher = tink_mac::subtle::Hmac::new(HashType::Sha256, &get_random_bytes(16), 32).unwrap();
+    assert!(
+        cipher.verify_mac(&[], &[0x01]).is_err(),
+        "expect an error when mac is nil"
+    );
+    assert!(
+        cipher.verify_mac(&[0x01], &[]).is_err(),
+        "expect an error when data is nil"
+    );
+    assert!(cipher.verify_mac(&[], &[]).is_err());
+}
+
+#[test]
 fn test_hmac_modification() {
     tink_mac::init();
     for test in HMAC_TESTS {
