@@ -16,11 +16,7 @@ unmaintained = "deny"
 yanked = "deny"
 notice = "deny"
 ignore = [
-  # TODO: Remove when mio no longer depends on net2.
-  "RUSTSEC-2020-0016",
-  # TODO: Remove when rusoto-* no longer depends on dirs.
-  "RUSTSEC-2020-0053",
-  # TODO: remove when fixed version available.
+  # TODO: remove when fixed version of rust-traitobject is available.
   "RUSTSEC-2020-0027",
 ]
 
@@ -29,72 +25,64 @@ ignore = [
 multiple-versions = "deny"
 wildcards = "allow"
 
-# rusoto_*(v0.45.0) => hmac(v0.8.x) => crypto-mac(v0.8.x)
-[[bans.skip]]
-name = "crypto-mac"
-version = "=0.8.0"
-[[bans.skip]]
-name = "hmac"
-version = "0.8.1"
+######################################
 
-# tokio(v0.2.22) => mio-named-pipes(v0.1.7) => {miow (v0.3.5), mio (v0.6.22) => miow (v0.2.2)}
+# Old versions of crates pulled in (transitively) by rusoto_*(v0.46.0)
 [[bans.skip]]
-name = "miow"
-version = "=0.2.2"
-
-# rusoto_*(v0.45.0) => pin-project-*(v0.4.x)
+name = "cfg-if"
+version = "0.1.10"
 [[bans.skip]]
 name = "pin-project"
 version = "=0.4.26"
 [[bans.skip]]
 name = "pin-project-internal"
 version = "=0.4.26"
-
-# rusoto_*(v0.45.0) => chrono(v0.4.x) => time(>=v0.1.43,<0.2.0)
+[[bans.skip]]
+name = "pin-project-lite"
+version = "=0.1.10"
 [[bans.skip]]
 name = "time"
 version = "=0.1.44"
 
-# mio (v0.6.22) => kernel32-sys (v0.2.2) => winapi (v0.2.8)
-# (many crates) => winapi (v0.3.9)
-[[bans.skip]]
-name = "winapi"
-version = "=0.2.8"
-
-# google-cloudkms1 (v1.0.14) => url (v1.7.2) => percent-encoding (v1.0.1)
-# rusoto_core (v0.45.0) => percent-encoding (v2.1.0)
-[[bans.skip]]
-name = "percent-encoding"
-version = "=1.0.1"
-
-# google-cloudkms1 (v1.0.14) => hyper (v0.10.16) =B=> unicase (v1.4.2) => version_check (v0.1.5)
-# aead (v0.3.2) =B=> generic-array (v0.14.4) => version_check (v0.9.2)
-[[bans.skip]]
-name = "version_check"
-version = "=0.1.5"
-
-# google-cloudkms1 (v1.0.14) => hyper (v0.10.16) => log (v0.3.9)
-# env_logger (v0.8.2) => log (v0.4.11)
-[[bans.skip]]
-name = "log"
-version = "=0.3.9"
-
-# google-cloudkms1 (v1.0.14) => hyper (v0.10.16)
-# rusoto_core (v0.45.0) => hyper-tls (v0.4.3) => hyper (0.13.9)
-[[bans.skip]]
-name = "hyper"
-version = "=0.10.16"
-
-# google-cloudkms1 (v1.0.14) => hyper (v0.10.16) => base64 (v0.9.3)
-# google-cloudkms1 (v1.0.14) =>yup-oauth2 (v1.0.12) => base64 (v0.10.1)
-# rusoto_core (v0.45.0) => base64 (v0.12.3)
+# Old versions of crates pulled in (transitively) by google-cloudkms1(v1.0.14)
 [[bans.skip]]
 name = "base64"
 version = "=0.9.3"
 [[bans.skip]]
 name = "base64"
 version = "=0.10.1"
+[[bans.skip]]
+name = "hyper"
+version = "=0.10.16"
+[[bans.skip]]
+name = "itertools"
+version = "=0.8.2"
+[[bans.skip]]
+name = "log"
+version = "=0.3.9"
+[[bans.skip]]
+name = "percent-encoding"
+version = "=1.0.1"
+[[bans.skip]]
+name = "version_check"
+version = "=0.1.5"
 
+# ed25519-dalek(v1.0.1) => rand_core(v0.5.x), {rand(v0.7.3) => getrandom(v0.1.*)}
+# tonic(v0.4.0) ..=> rand(v0.8.3) ..=> {rand_core(v0.6.x), getrandom(v0.2.x)}
+[[bans.skip]]
+name = "getrandom"
+version = "0.1.15"
+[[bans.skip]]
+name = "rand"
+version = "0.7.3"
+[[bans.skip]]
+name = "rand_core"
+version = "0.5.1"
+[[bans.skip]]
+name = "rand_chacha"
+version = "0.2.2"
+
+######################################
 
 # List of allowed licenses.
 # For more detailed information see http://go/thirdpartylicenses.
