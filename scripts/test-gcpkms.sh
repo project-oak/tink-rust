@@ -46,7 +46,7 @@ trap cleanup EXIT
 # Set environment variables that the test script picks up.
 export TINK_GCP_TEST_KEY_URI="${GCP_KEY_URI}"
 export TINK_GCP_TEST_CREDENTIALS="${GCP_CREDS}"
-cargo test --manifest-path=integration/gcpkms/Cargo.toml -- --nocapture --ignored gcpkms
+cargo test --manifest-path=tests/Cargo.toml -- --nocapture --ignored gcpkms
 
 # If enabled via https://console.cloud.google.com/iam-admin/audit ("Cloud Key Management Service (KMS) API"),
 # KMS logs should be visible at: https://console.cloud.google.com/logs
