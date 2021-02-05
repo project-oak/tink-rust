@@ -44,8 +44,7 @@ impl AwsAead {
             key_uri: key_uri.to_string(),
             kms,
             runtime: Rc::new(RefCell::new(
-                tokio::runtime::Builder::new()
-                    .basic_scheduler()
+                tokio::runtime::Builder::new_current_thread()
                     .enable_all()
                     .build()
                     .map_err(|e| wrap_err("failed to build tokio runtime", e))?,
