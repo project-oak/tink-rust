@@ -227,6 +227,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3441f0f7b02788e948e47f457ca01f1d7e6d92c693bc132c22b087d3141c03ff"
 
 [[package]]
+name = "base64"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "904dfeac50f3cdaba28fc6f57fdcddb75f49ed61346676a78c4ffe55877802fd"
+
+[[package]]
 name = "bitflags"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2347,7 +2353,7 @@ dependencies = [
 name = "tink-gcpkms"
 version = "0.1.0"
 dependencies = [
- "base64 0.12.3",
+ "base64 0.13.0",
  "google-cloudkms1",
  "hyper 0.10.16",
  "hyper-rustls",
@@ -2386,7 +2392,7 @@ dependencies = [
 name = "tink-proto"
 version = "0.1.0"
 dependencies = [
- "base64 0.12.3",
+ "base64 0.13.0",
  "prost",
  "prost-build",
  "serde",
@@ -2446,7 +2452,7 @@ dependencies = [
 name = "tink-tests"
 version = "0.1.0"
 dependencies = [
- "base64 0.12.3",
+ "base64 0.13.0",
  "ed25519-dalek",
  "generic-array",
  "hex",
