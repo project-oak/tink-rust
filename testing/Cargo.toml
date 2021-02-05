@@ -27,9 +27,8 @@ tink-proto = "^0.1"
 tink-signature = "^0.1"
 tink-streaming-aead = "^0.1"
 tink-tests = "^0.1"
-tokio = { version = "^0.2.22", features = [
+tokio = { version = "^1.1", features = [
   "macros",
-  "rt-threaded",
   "signal",
 ] }
 tonic = "^0.4"
