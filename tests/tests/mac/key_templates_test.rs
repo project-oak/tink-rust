@@ -46,9 +46,13 @@ fn test_key_templates() {
         let handle = tink_core::keyset::Handle::new(&template).unwrap();
         let primitive = tink_mac::new(&handle).unwrap();
 
-        let msg = b"this data needs to be authenticated";
-        let tag = primitive.compute_mac(msg).unwrap();
-        assert!(primitive.verify_mac(&tag, msg).is_ok());
+        let nonempty_msg = b"this data needs to be authenticated";
+        let empty_msg = b"";
+        let test_inputs = vec![&nonempty_msg[..], &empty_msg[..]];
+        for ti in test_inputs {
+            let tag = primitive.compute_mac(ti).unwrap();
+            assert!(primitive.verify_mac(&tag, ti).is_ok());
+        }
     }
 }
 

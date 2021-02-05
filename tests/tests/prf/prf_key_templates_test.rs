@@ -33,9 +33,15 @@ fn test_key_templates() {
         let handle = tink_core::keyset::Handle::new(&template).unwrap();
         let primitive = tink_prf::Set::new(&handle).unwrap();
 
-        let msg = b"This is an IF that needs to be redacted";
-        let output = primitive.compute_primary_prf(msg, 16).unwrap();
-        assert_eq!(output.len(), 16);
+        let nonempty_input = b"This is an ID that needs to be redacted";
+        let empty_input = b"";
+        let test_inputs = vec![&nonempty_input[..], &empty_input[..]];
+        for ti in test_inputs {
+            let output = primitive.compute_primary_prf(ti, 16).unwrap();
+            assert_eq!(output.len(), 16);
+            let output2 = primitive.compute_primary_prf(ti, 16).unwrap();
+            assert_eq!(output2, output);
+        }
     }
 }
 
