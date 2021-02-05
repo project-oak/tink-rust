@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink_core::{subtle::random::get_random_bytes, Mac, TinkError};
+use tink_core::{subtle::random::get_random_bytes, Mac};
 use tink_proto::HashType;
 
 struct TestCase {
@@ -74,53 +74,37 @@ fn test_hmac_basic() {
     }
 }
 
-fn assert_err_with<T>(result: Result<T, TinkError>, needle: &str, msg: &'static str) {
-    match result {
-        Ok(_) => panic!(msg),
-        Err(e) => {
-            let detail = format!("{:?}", e);
-            assert!(detail.contains(needle), msg);
-        }
-    }
-}
-
 #[test]
 fn test_new_hmac_with_invalid_input() {
     tink_mac::init();
     // invalid hash algorithm
-    assert_err_with(
+    tink_tests::expect_err(
         tink_mac::subtle::Hmac::new(HashType::UnknownHash, &get_random_bytes(16), 32),
         "invalid hash algorithm",
-        "expect an error when hash algorithm is invalid",
     );
 
     // key too short
-    assert_err_with(
+    tink_tests::expect_err(
         tink_mac::subtle::Hmac::new(HashType::Sha256, &get_random_bytes(1), 32),
         "key too short",
-        "expect an error when key is too short",
     );
     // tag too short
-    assert_err_with(
+    tink_tests::expect_err(
         tink_mac::subtle::Hmac::new(HashType::Sha256, &get_random_bytes(16), 9),
         "tag size too small",
-        "expect an error when tag size is too small",
     );
     // tag too big
-    assert_err_with(
+    tink_tests::expect_err(
         tink_mac::subtle::Hmac::new(HashType::Sha1, &get_random_bytes(16), 21),
         "tag size too big",
-        "expect an error when tag size is too big",
     );
-    assert_err_with(
+    tink_tests::expect_err(
         tink_mac::subtle::Hmac::new(HashType::Sha256, &get_random_bytes(16), 33),
         "tag size too big",
-        "expect an error when tag size is too big",
     );
-    assert_err_with(
+    tink_tests::expect_err(
         tink_mac::subtle::Hmac::new(HashType::Sha512, &get_random_bytes(16), 65),
         "tag size too big",
-        "expect an error when tag size is too big",
     );
 }
 
