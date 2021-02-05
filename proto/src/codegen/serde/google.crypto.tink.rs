@@ -636,8 +636,8 @@ pub struct EciesHkdfKemParams {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct EciesAeadDemParams {
     /// Required.
-    ///
-    /// Contains e.g. AesCtrHmacAeadKeyFormat or AesGcmKeyFormat.
+    /// Contains an Aead or DeterministicAead key format (e.g:
+    /// AesCtrHmacAeadKeyFormat, AesGcmKeyFormat or AesSivKeyFormat).
     #[prost(message, optional, tag="2")]
     pub aead_dem: ::core::option::Option<KeyTemplate>,
 }
