@@ -979,9 +979,9 @@ dependencies = [
 
 [[package]]
 name = "hyper"
-version = "0.14.2"
+version = "0.14.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "12219dc884514cb4a6a03737f4413c0e01c23a1b059b0156004b23f1e19dccbe"
+checksum = "e8e946c2b1349055e0b72ae281b238baf1a3ea7307c7e9f9d64673bdd9c26ac7"
 dependencies = [
  "bytes",
  "futures-channel",
@@ -1031,7 +1031,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d6183ddfa99b85da61a140bea0efc93fdf56ceaa041b37d553518030827f9905"
 dependencies = [
  "bytes",
- "hyper 0.14.2",
+ "hyper 0.14.4",
  "native-tls",
  "tokio",
  "tokio-native-tls",
@@ -1716,7 +1716,7 @@ dependencies = [
  "crc32fast",
  "futures",
  "http",
- "hyper 0.14.2",
+ "hyper 0.14.4",
  "hyper-tls",
  "lazy_static",
  "log 0.4.11",
@@ -1739,7 +1739,7 @@ dependencies = [
  "chrono",
  "dirs-next",
  "futures",
- "hyper 0.14.2",
+ "hyper 0.14.4",
  "serde",
  "serde_json",
  "shlex",
@@ -1773,7 +1773,7 @@ dependencies = [
  "hex",
  "hmac",
  "http",
- "hyper 0.14.2",
+ "hyper 0.14.4",
  "log 0.4.11",
  "md5",
  "percent-encoding 2.1.0",
@@ -2495,7 +2495,7 @@ dependencies = [
  "h2",
  "http",
  "http-body",
- "hyper 0.14.2",
+ "hyper 0.14.4",
  "percent-encoding 2.1.0",
  "pin-project 1.0.2",
  "prost",
