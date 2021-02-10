@@ -15,10 +15,7 @@ vulnerability = "deny"
 unmaintained = "deny"
 yanked = "deny"
 notice = "deny"
-ignore = [
-  # TODO: remove when fixed version of rust-traitobject is available.
-  "RUSTSEC-2020-0027",
-]
+ignore = []
 
 # Deny multiple versions unless explicitly skipped.
 [bans]
@@ -32,6 +29,12 @@ wildcards = "allow"
 name = "cfg-if"
 version = "0.1.10"
 [[bans.skip]]
+name = "core-foundation"
+version = "=0.7.0"
+[[bans.skip]]
+name = "core-foundation-sys"
+version = "=0.7.0"
+[[bans.skip]]
 name = "pin-project"
 version = "=0.4.26"
 [[bans.skip]]
@@ -41,31 +44,14 @@ version = "=0.4.26"
 name = "pin-project-lite"
 version = "=0.1.10"
 [[bans.skip]]
+name = "security-framework"
+version = "=0.4.4"
+[[bans.skip]]
+name = "security-framework-sys"
+version = "=0.4.3"
+[[bans.skip]]
 name = "time"
 version = "=0.1.44"
-
-# Old versions of crates pulled in (transitively) by google-cloudkms1(v1.0.14)
-[[bans.skip]]
-name = "base64"
-version = "=0.9.3"
-[[bans.skip]]
-name = "base64"
-version = "=0.10.1"
-[[bans.skip]]
-name = "hyper"
-version = "=0.10.16"
-[[bans.skip]]
-name = "itertools"
-version = "=0.8.2"
-[[bans.skip]]
-name = "log"
-version = "=0.3.9"
-[[bans.skip]]
-name = "percent-encoding"
-version = "=1.0.1"
-[[bans.skip]]
-name = "version_check"
-version = "=0.1.5"
 
 # ed25519-dalek(v1.0.1) => rand_core(v0.5.x), {rand(v0.7.3) => getrandom(v0.1.*)}
 # tonic(v0.4.0) ..=> rand(v0.8.3) ..=> {rand_core(v0.6.x), getrandom(v0.2.x)}
@@ -89,7 +75,6 @@ version = "0.2.2"
 [licenses]
 allow = [
   "Apache-2.0",
-  "MPL-2.0",
   "ISC",
   "MIT",
   "OpenSSL",

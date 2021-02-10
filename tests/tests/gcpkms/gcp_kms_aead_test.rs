@@ -84,11 +84,11 @@ fn test_aead_with_invalid_key_fail() {
 
     // Not a valid key URI so everything will fail.
     let result = aead.encrypt(b"data", b"aad");
-    tink_tests::expect_err(result, "request failed");
+    tink_tests::expect_err(result, "API failure");
     let result = aead.encrypt(b"data", b"");
-    tink_tests::expect_err(result, "request failed");
+    tink_tests::expect_err(result, "API failure");
     let result = aead.decrypt(b"data", b"aad");
-    tink_tests::expect_err(result, "request failed");
+    tink_tests::expect_err(result, "API failure");
     let result = aead.decrypt(b"data", b"");
-    tink_tests::expect_err(result, "request failed");
+    tink_tests::expect_err(result, "API failure");
 }
