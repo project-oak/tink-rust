@@ -16,32 +16,16 @@
 
 //! GCP Cloud KMS client code.
 
-use google_cloudkms1::CloudKMS;
-use std::sync::{Arc, Mutex};
 use tink_core::{utils::wrap_err, TinkError};
-use yup_oauth2::{
-    ApplicationSecret, Authenticator, DefaultAuthenticatorDelegate, MemoryStorage,
-    ServiceAccountAccess,
-};
 
 /// Prefix for any GCP-KMS key URIs.
 pub const GCP_PREFIX: &str = "gcp-kms://";
 
-type DefaultCloudKMS = CloudKMS<
-    hyper::Client,
-    Authenticator<DefaultAuthenticatorDelegate, MemoryStorage, hyper::Client>,
->;
-
-#[derive(Clone)]
-pub enum CloudKmsClient {
-    WithDefaultCreds(Arc<Mutex<DefaultCloudKMS>>),
-    WithServiceAccount(Arc<Mutex<CloudKMS<hyper::Client, ServiceAccountAccess<hyper::Client>>>>),
-}
-
-/// `GcpClient` represents a client that connects to the GCP KMS backend.
+/// `GcpClient` represents a client that connects to the GCP KMS backend, providing appropriate
+/// authorization credentials.
 pub struct GcpClient {
     key_uri_prefix: String,
-    kms: CloudKmsClient,
+    sa_key: Option<yup_oauth2::ServiceAccountKey>,
 }
 
 impl GcpClient {
@@ -51,6 +35,8 @@ impl GcpClient {
         if !uri_prefix.to_lowercase().starts_with(GCP_PREFIX) {
             return Err(format!("uri_prefix must start with {}", GCP_PREFIX).into());
         }
+
+        /*
         let secret = ApplicationSecret::default();
         let client = hyper::Client::with_connector(hyper::net::HttpsConnector::new(
             hyper_rustls::TlsClient::new(),
@@ -62,19 +48,11 @@ impl GcpClient {
             MemoryStorage::default(),
             None,
         );
+        */
 
-        let client = hyper::Client::with_connector(hyper::net::HttpsConnector::new(
-            hyper_rustls::TlsClient::new(),
-        ));
-        let mut kms_service = google_cloudkms1::CloudKMS::new(client, auth);
-        kms_service.user_agent(format!(
-            "Tink-Rust/{}  Rust/{}",
-            tink_core::UPSTREAM_VERSION,
-            env!("CARGO_PKG_VERSION")
-        ));
         Ok(GcpClient {
             key_uri_prefix: uri_prefix.to_string(),
-            kms: CloudKmsClient::WithDefaultCreds(Arc::new(Mutex::new(kms_service))),
+            sa_key: None,
         })
     }
 
@@ -88,29 +66,18 @@ impl GcpClient {
             return Err(format!("uri_prefix must start with {}", GCP_PREFIX).into());
         }
         let credential_path = credential_path.to_string_lossy();
-
         if credential_path.is_empty() {
             return Err("invalid credential path".into());
         }
-        let sa_key = yup_oauth2::service_account_key_from_file(&credential_path.to_string())
-            .map_err(|e| wrap_err("failed to decode credentials", e))?;
-        let client = hyper::Client::with_connector(hyper::net::HttpsConnector::new(
-            hyper_rustls::TlsClient::new(),
-        ));
-        let sa_access = yup_oauth2::ServiceAccountAccess::new(sa_key, client);
 
-        let client = hyper::Client::with_connector(hyper::net::HttpsConnector::new(
-            hyper_rustls::TlsClient::new(),
-        ));
-        let mut kms_service = google_cloudkms1::CloudKMS::new(client, sa_access);
-        kms_service.user_agent(format!(
-            "Tink-Rust/{}  Rust/{}",
-            tink_core::UPSTREAM_VERSION,
-            env!("CARGO_PKG_VERSION")
-        ));
+        let data = std::fs::read(credential_path.as_ref())
+            .map_err(|e| wrap_err("failed to read credentials", e))?;
+        let sa_key: yup_oauth2::ServiceAccountKey = serde_json::from_slice(&data)
+            .map_err(|e| wrap_err("failed to decode credentials", e))?;
+
         Ok(GcpClient {
             key_uri_prefix: uri_prefix.to_string(),
-            kms: CloudKmsClient::WithServiceAccount(Arc::new(Mutex::new(kms_service))),
+            sa_key: Some(sa_key),
         })
     }
 }
@@ -128,6 +95,6 @@ impl tink_core::registry::KmsClient for GcpClient {
         } else {
             key_uri
         };
-        Ok(Box::new(crate::GcpAead::new(uri, self.kms.clone())))
+        Ok(Box::new(crate::GcpAead::new(uri, &self.sa_key)?))
     }
 }
