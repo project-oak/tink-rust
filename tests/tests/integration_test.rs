@@ -16,18 +16,6 @@
 
 use tink_core::{subtle::random::get_random_bytes, Mac};
 
-mod aead_test;
-mod awskms_test;
-mod daead_test;
-mod gcpkms_test;
-mod mac_test;
-mod prf_test;
-mod signature_test;
-mod streaming_test;
-mod tink_test;
-
-mod wycheproofutil_test;
-
 #[test]
 fn test_dummy_mac() {
     // Check that DummyMAC verifies.
