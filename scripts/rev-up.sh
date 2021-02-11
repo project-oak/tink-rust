@@ -8,6 +8,12 @@ if [ "$VERSION" == "" ] || [ "$DEP_VERSION" == "" ]; then
     exit 1
 fi
 
+# Retrieve the crate name from a directory.
+function crate_name() {
+    local dir="$1"
+    grep name "$dir/Cargo.toml" | sed 's/name = "\(.*\)"/\1/'
+}
+
 # All available crates.
 CRATE_DIRS=(proto core prf mac aead daead streaming signature integration/awskms integration/gcpkms rinkey tests testing examples/aead examples/daead examples/keygen examples/keymgr examples/kms examples/mac examples/signature examples/streaming)
 
@@ -27,3 +33,12 @@ git add Cargo.lock
 
 git commit -m "Update crate versions to $VERSION"
 git tag "v$VERSION"
+
+# Also add tags for all released crates (in case they move independently)
+RELEASED_CRATE_DIRS=(proto core prf mac aead daead streaming signature integration/awskms integration/gcpkms rinkey)
+for dir in "${RELEASED_CRATE_DIRS[@]}"; do
+    crate_name=$(crate_name "$dir")
+    crate_tag="${crate_name}-${VERSION}"
+    echo "Add tag $crate_tag"
+    git tag "$crate_tag"
+done
