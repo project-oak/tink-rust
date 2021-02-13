@@ -36,20 +36,6 @@ impl GcpClient {
             return Err(format!("uri_prefix must start with {}", GCP_PREFIX).into());
         }
 
-        /*
-        let secret = ApplicationSecret::default();
-        let client = hyper::Client::with_connector(hyper::net::HttpsConnector::new(
-            hyper_rustls::TlsClient::new(),
-        ));
-        let auth = Authenticator::new(
-            &secret,
-            DefaultAuthenticatorDelegate,
-            client,
-            MemoryStorage::default(),
-            None,
-        );
-        */
-
         Ok(GcpClient {
             key_uri_prefix: uri_prefix.to_string(),
             sa_key: None,

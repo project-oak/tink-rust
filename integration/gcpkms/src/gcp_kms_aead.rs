@@ -23,26 +23,35 @@ use serde::{Deserialize, Serialize};
 use std::{cell::RefCell, rc::Rc};
 use tink_core::{utils::wrap_err, TinkError};
 
-const PLATFORM_SCOPE: &str = "https://www.googleapis.com/auth/cloud-platform";
-const DEFAULT_ENCODE_SET: &percent_encoding::AsciiSet = &percent_encoding::CONTROLS
-    .add(b' ')
-    .add(b'"')
-    .add(b'#')
-    .add(b'<')
-    .add(b'>')
-    .add(b'`')
-    .add(b'?')
-    .add(b'{')
-    .add(b'}');
+use crate::default_sa::DefaultServiceAccountAuthenticator;
 
-type Authenticator =
-    Option<yup_oauth2::authenticator::Authenticator<HttpsConnector<HttpConnector>>>;
+const PLATFORM_SCOPE: &str = "https://www.googleapis.com/auth/cloud-platform";
+
+pub(crate) trait Authenticator {
+    fn get_token(
+        &self,
+        runtime: &mut tokio::runtime::Runtime,
+        scopes: &[&str],
+    ) -> Result<yup_oauth2::AccessToken, TinkError>;
+}
+
+impl Authenticator for yup_oauth2::authenticator::Authenticator<HttpsConnector<HttpConnector>> {
+    fn get_token(
+        &self,
+        runtime: &mut tokio::runtime::Runtime,
+        scopes: &[&str],
+    ) -> Result<yup_oauth2::AccessToken, TinkError> {
+        runtime
+            .block_on(self.token(scopes))
+            .map_err(|e| wrap_err("failed to get token", e))
+    }
+}
 
 /// `GcpAead` represents a GCP KMS service to a particular URI.
 #[derive(Clone)]
 pub struct GcpAead {
     key_uri: String,
-    auth: Rc<Authenticator>,
+    auth: Rc<dyn Authenticator>,
     client: hyper::Client<HttpsConnector<HttpConnector>>,
     // The Tokio runtime to execute KMS requests on, wrapped in:
     //  - a `RefCell` for interior mutability (the [`tink_core::Aead`] trait's methods take
@@ -64,20 +73,17 @@ impl GcpAead {
             .enable_all()
             .build()
             .map_err(|e| wrap_err("failed to build tokio runtime", e))?;
-        let auth = match sa_key {
-            None => None,
-            Some(k) => {
-                match runtime
+        let auth: Rc<dyn Authenticator> = match sa_key {
+            None => Rc::new(runtime.block_on(DefaultServiceAccountAuthenticator::new())?),
+            Some(k) => Rc::new(
+                runtime
                     .block_on(yup_oauth2::ServiceAccountAuthenticator::builder(k.clone()).build())
-                {
-                    Ok(auth) => Some(auth),
-                    Err(e) => return Err(wrap_err("failed to build authenticator", e)),
-                }
-            }
+                    .map_err(|e| wrap_err("failed to build authenticator", e))?,
+            ),
         };
         Ok(GcpAead {
             key_uri: key_uri.to_string(),
-            auth: Rc::new(auth),
+            auth,
             client,
             user_agent: format!(
                 "Tink-Rust/{}  Rust/{}",
@@ -88,19 +94,9 @@ impl GcpAead {
         })
     }
 
-    fn token(&self) -> Result<Option<yup_oauth2::AccessToken>, TinkError> {
-        if let Some(auth) = &*self.auth {
-            match self
-                .runtime
-                .borrow_mut()
-                .block_on(auth.token(&[PLATFORM_SCOPE]))
-            {
-                Ok(token) => Ok(Some(token)),
-                Err(e) => Err(wrap_err("failed to get token", e)),
-            }
-        } else {
-            Ok(None)
-        }
+    fn token(&self) -> Result<yup_oauth2::AccessToken, TinkError> {
+        self.auth
+            .get_token(&mut self.runtime.borrow_mut(), &[PLATFORM_SCOPE])
     }
 
     fn build_http_req<T: serde::Serialize>(
@@ -110,7 +106,7 @@ impl GcpAead {
     ) -> Result<http::Request<hyper::Body>, TinkError> {
         let pq: http::uri::PathAndQuery = format!(
             "/v1/{}:{}/?alt=json",
-            percent_encode(self.key_uri.as_bytes(), DEFAULT_ENCODE_SET),
+            percent_encode(self.key_uri.as_bytes(), crate::DEFAULT_URL_ENCODE_SET),
             op
         )
         .parse()
@@ -124,19 +120,16 @@ impl GcpAead {
         let req_body =
             serde_json::to_vec(&req).map_err(|e| wrap_err("failed to JSON encode request", e))?;
 
-        let mut http_req = hyper::Request::builder()
+        hyper::Request::builder()
             .method(http::method::Method::POST)
             .uri(uri)
             .header(http::header::USER_AGENT, &self.user_agent)
             .header(http::header::CONTENT_TYPE, "application/json")
-            .header(http::header::CONTENT_LENGTH, req_body.len() as u64);
-        if let Some(token) = self.token()? {
-            http_req = http_req.header(
+            .header(http::header::CONTENT_LENGTH, req_body.len() as u64)
+            .header(
                 hyper::header::AUTHORIZATION,
-                format!("Bearer {}", token.as_str()),
-            );
-        }
-        http_req
+                format!("Bearer {}", self.token()?.as_str()),
+            )
             .body(req_body.into())
             .map_err(|e| wrap_err("failed to build request", e))
     }

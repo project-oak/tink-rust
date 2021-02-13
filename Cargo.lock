@@ -2260,10 +2260,12 @@ name = "tink-gcpkms"
 version = "0.1.1"
 dependencies = [
  "base64",
+ "chrono",
  "futures",
  "http",
  "hyper",
  "hyper-rustls",
+ "lazy_static",
  "percent-encoding",
  "serde",
  "serde_json",
