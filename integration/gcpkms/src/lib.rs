@@ -16,7 +16,20 @@
 
 //! Provide integration with the GCP Cloud KMS.
 
+mod default_sa;
 mod gcp_kms_client;
 pub use gcp_kms_client::*;
 mod gcp_kms_aead;
 pub use gcp_kms_aead::*;
+
+/// Default set of characters that need to be URL-encoded.
+pub(crate) const DEFAULT_URL_ENCODE_SET: &percent_encoding::AsciiSet = &percent_encoding::CONTROLS
+    .add(b' ')
+    .add(b'"')
+    .add(b'#')
+    .add(b'<')
+    .add(b'>')
+    .add(b'`')
+    .add(b'?')
+    .add(b'{')
+    .add(b'}');

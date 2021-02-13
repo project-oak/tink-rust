@@ -79,16 +79,19 @@ fn test_gcpkms_basic_aead() {
 fn test_aead_with_invalid_key_fail() {
     init();
     let key_uri = "gcp-kms://projects/absent/locations/global/keyRings/nope/cryptoKeys/bogus";
-    let client = tink_gcpkms::GcpClient::new(key_uri).unwrap();
+    let cred_ini_file: PathBuf = [env!("CARGO_MANIFEST_DIR"), "testdata", "credential.json"]
+        .iter()
+        .collect();
+    let client = tink_gcpkms::GcpClient::new_with_credentials(key_uri, &cred_ini_file).unwrap();
     let aead = client.get_aead(key_uri).unwrap();
 
     // Not a valid key URI so everything will fail.
     let result = aead.encrypt(b"data", b"aad");
-    tink_tests::expect_err(result, "API failure");
+    tink_tests::expect_err(result, "failed to get token");
     let result = aead.encrypt(b"data", b"");
-    tink_tests::expect_err(result, "API failure");
+    tink_tests::expect_err(result, "failed to get token");
     let result = aead.decrypt(b"data", b"aad");
-    tink_tests::expect_err(result, "API failure");
+    tink_tests::expect_err(result, "failed to get token");
     let result = aead.decrypt(b"data", b"");
-    tink_tests::expect_err(result, "API failure");
+    tink_tests::expect_err(result, "failed to get token");
 }
