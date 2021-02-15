@@ -121,7 +121,7 @@ struct WrappingOptions {
     master_key_uri: String,
 
     #[structopt(
-        long,
+        long = "credential",
         help = "If --master-key-uri is specified, this option specifies the credentials file path. Must exist if specified. If missing, use default credentials. Google Cloud credentials are service account JSON files. AWS credentials are properties files with the AWS access key ID is expected to be in the accessKey property and the AWS secret key is expected to be in the secretKey property.",
         default_value = ""
     )]
