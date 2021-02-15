@@ -699,6 +699,8 @@ pub struct EciesAeadHkdfKeyFormat {
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Ed25519KeyFormat {
+    #[prost(uint32, tag="1")]
+    pub version: u32,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.Ed25519PublicKey
 #[derive(Clone, PartialEq, ::prost::Message)]
