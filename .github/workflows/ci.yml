@@ -132,10 +132,7 @@ jobs:
           toolchain: nightly-2020-10-19
           override: true
           components: rustfmt
-      - uses: actions-rs/install@v0.1.2
-        with:
-          crate: cargo-deny
-          use-tool-cache: true
+      - run: cargo install --locked --version 0.8.5 cargo-deny
       - run: cargo deny check
 
   coverage:
