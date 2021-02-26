@@ -25,6 +25,6 @@ rand = "^0.7"
 serde = { version = "^1.0.118", features = ["derive"], optional = true }
 serde_json = { version = "^1.0.63", optional = true }
 sha-1 = "^0.9.1"
-sha2 = "^0.9.1"
+sha2 = "^0.9.3"
 subtle = "^2.4"
 tink-proto = "^0.1"
