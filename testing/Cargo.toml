@@ -12,7 +12,7 @@ categories = ["cryptography"]
 [dependencies]
 env_logger = "^0.8.3"
 futures = "^0.3.13"
-log = "^0.4.11"
+log = "^0.4.14"
 prost = "^0.7"
 structopt = "^0.3.21"
 tink-aead = "^0.1"
