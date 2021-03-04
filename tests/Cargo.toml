@@ -29,7 +29,7 @@ lazy_static = "^1.4"
 maplit = "^1.0.2"
 serde = { version = "^1.0.123", features = ["derive"] }
 serde_json = "^1.0.64"
-tempfile = "^3.1"
+tempfile = "^3.2"
 tink-aead = "^0.1"
 tink-awskms = "^0.1"
 tink-daead = "^0.1"
