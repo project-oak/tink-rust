@@ -12,7 +12,7 @@ categories = ["cryptography"]
 [dependencies]
 ed25519-dalek = "^1.0.1"
 generic-array = "^0.14.4"
-hex = "^0.4.2"
+hex = "^0.4.3"
 p256 = { version = "^0.7", features = ["ecdsa"] }
 prost = "^0.7"
 rand = "^0.7"
@@ -24,7 +24,7 @@ tink-proto = "^0.1"
 
 [dev-dependencies]
 base64 = "^0.13"
-hex = "^0.4.2"
+hex = "^0.4.3"
 lazy_static = "^1.4"
 maplit = "^1.0.2"
 serde = { version = "^1.0.123", features = ["derive"] }

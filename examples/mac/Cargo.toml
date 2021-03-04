@@ -6,6 +6,6 @@ edition = "2018"
 license = "Apache-2.0"
 
 [dependencies]
-hex = "^0.4.2"
+hex = "^0.4.3"
 tink-core = "^0.1"
 tink-mac = "^0.1"
