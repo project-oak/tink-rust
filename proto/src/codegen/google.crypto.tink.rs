@@ -86,6 +86,7 @@ pub enum HashType {
     Sha384 = 2,
     Sha256 = 3,
     Sha512 = 4,
+    Sha224 = 5,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HmacParams {
