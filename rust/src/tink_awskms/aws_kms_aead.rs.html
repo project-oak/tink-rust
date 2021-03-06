@@ -127,7 +127,6 @@
 <span id="124">124</span>
 <span id="125">125</span>
 <span id="126">126</span>
-<span id="127">127</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2020 The Tink-Rust Authors</span>
 <span class="comment">//</span>
@@ -175,8 +174,7 @@
             <span class="ident">key_uri</span>: <span class="ident">key_uri</span>.<span class="ident">to_string</span>(),
             <span class="ident">kms</span>,
             <span class="ident">runtime</span>: <span class="ident">Rc</span>::<span class="ident">new</span>(<span class="ident">RefCell</span>::<span class="ident">new</span>(
-                <span class="ident">tokio</span>::<span class="ident">runtime</span>::<span class="ident">Builder</span>::<span class="ident">new</span>()
-                    .<span class="ident">basic_scheduler</span>()
+                <span class="ident">tokio</span>::<span class="ident">runtime</span>::<span class="ident">Builder</span>::<span class="ident">new_current_thread</span>()
                     .<span class="ident">enable_all</span>()
                     .<span class="ident">build</span>()
                     .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">wrap_err</span>(<span class="string">&quot;failed to build tokio runtime&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>,

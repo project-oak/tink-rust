@@ -665,7 +665,7 @@
     <span class="ident">master_key_uri</span>: <span class="ident">String</span>,
 
     <span class="attribute">#[<span class="ident">structopt</span>(
-        <span class="ident">long</span>,
+        <span class="ident">long</span> <span class="op">=</span> <span class="string">&quot;credential&quot;</span>,
         <span class="ident">help</span> <span class="op">=</span> <span class="string">&quot;If --master-key-uri is specified, this option specifies the credentials file path. Must exist if specified. If missing, use default credentials. Google Cloud credentials are service account JSON files. AWS credentials are properties files with the AWS access key ID is expected to be in the accessKey property and the AWS secret key is expected to be in the secretKey property.&quot;</span>,
         <span class="ident">default_value</span> <span class="op">=</span> <span class="string">&quot;&quot;</span>
     )]</span>

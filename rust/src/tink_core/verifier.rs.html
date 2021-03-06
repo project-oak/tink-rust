@@ -70,7 +70,7 @@
 <span class="doccomment">/// attacks.  Signing data ensures authenticity and integrity of that data, but</span>
 <span class="doccomment">/// not its secrecy.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Verifier</span>: <span class="ident">VerifierBoxClone</span> {
-    <span class="comment">// Returns `()` if `signature` is a valid signature for `data`; otherwise returns an error.</span>
+    <span class="doccomment">/// Returns `Ok(())` if `signature` is a valid signature for `data`; otherwise returns an error.</span>
     <span class="kw">fn</span> <span class="ident">verify</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">signature</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">data</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="kw">crate</span>::<span class="ident">TinkError</span><span class="op">&gt;</span>;
 }
 

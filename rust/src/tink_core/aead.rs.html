@@ -86,19 +86,19 @@
 <span class="doccomment">/// Encryption with additional data ensures authenticity and integrity of that data, but not</span>
 <span class="doccomment">/// its secrecy (see [RFC 5116](https://tools.ietf.org/html/rfc5116)).</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Aead</span>: <span class="ident">AeadBoxClone</span> {
-    <span class="comment">// Encrypt plaintext with `additional_data` as additional</span>
-    <span class="comment">// authenticated data. The resulting ciphertext allows for checking</span>
-    <span class="comment">// authenticity and integrity of additional data `additional_data`,</span>
-    <span class="comment">// but there are no guarantees wrt. secrecy of that data.</span>
+    <span class="doccomment">/// Encrypt plaintext with `additional_data` as additional</span>
+    <span class="doccomment">/// authenticated data. The resulting ciphertext allows for checking</span>
+    <span class="doccomment">/// authenticity and integrity of additional data `additional_data`,</span>
+    <span class="doccomment">/// but there are no guarantees wrt. secrecy of that data.</span>
     <span class="kw">fn</span> <span class="ident">encrypt</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">plaintext</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
         <span class="ident">additional_data</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="kw">crate</span>::<span class="ident">TinkError</span><span class="op">&gt;</span>;
 
-    <span class="comment">// Decrypt ciphertext with `additional_data` as additional</span>
-    <span class="comment">// authenticated data. The decryption verifies the authenticity and integrity</span>
-    <span class="comment">// of the additional data, but there are no guarantees wrt. secrecy of that data.</span>
+    <span class="doccomment">/// Decrypt ciphertext with `additional_data` as additional</span>
+    <span class="doccomment">/// authenticated data. The decryption verifies the authenticity and integrity</span>
+    <span class="doccomment">/// of the additional data, but there are no guarantees wrt. secrecy of that data.</span>
     <span class="kw">fn</span> <span class="ident">decrypt</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">ciphertext</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
