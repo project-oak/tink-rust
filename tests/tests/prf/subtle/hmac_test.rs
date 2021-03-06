@@ -99,7 +99,12 @@ fn test_vectors_rfc4868() {
 
 #[test]
 fn test_hmac_prf_wycheproof_cases() {
-    for hash in &[HashType::Sha1, HashType::Sha256, HashType::Sha512] {
+    for hash in &[
+        HashType::Sha1,
+        HashType::Sha224,
+        HashType::Sha256,
+        HashType::Sha512,
+    ] {
         let hash_name = format!("{:?}", hash);
         let filename = format!("testvectors/hmac_{}_test.json", hash_name.to_lowercase());
         println!("wycheproof file '{}' hash {}", filename, hash_name);
@@ -214,6 +219,7 @@ fn test_hmacprf_hash() {
 fn test_hmac_prf_output_length() {
     let testdata = hashmap! {
         HashType::Sha1 => 20,
+        HashType::Sha224 => 28,
         HashType::Sha256 => 32,
         HashType::Sha512 => 64,
     };

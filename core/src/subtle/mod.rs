@@ -29,6 +29,7 @@ pub mod random;
 pub fn get_hash_digest_size(hash: HashType) -> Result<usize, TinkError> {
     match hash {
         HashType::Sha1 => Ok(20),
+        HashType::Sha224 => Ok(28),
         HashType::Sha256 => Ok(32),
         HashType::Sha384 => Ok(48),
         HashType::Sha512 => Ok(64),
@@ -39,6 +40,7 @@ pub fn get_hash_digest_size(hash: HashType) -> Result<usize, TinkError> {
 /// Hash function object.
 pub enum HashFunc {
     Sha1(sha1::Sha1),
+    Sha224(sha2::Sha224),
     Sha256(sha2::Sha256),
     Sha384(sha2::Sha384),
     Sha512(sha2::Sha512),
@@ -48,6 +50,7 @@ pub enum HashFunc {
 pub fn get_hash_func(hash: HashType) -> Option<HashFunc> {
     match hash {
         HashType::Sha1 => Some(HashFunc::Sha1(sha1::Sha1::new())),
+        HashType::Sha224 => Some(HashFunc::Sha224(sha2::Sha224::new())),
         HashType::Sha256 => Some(HashFunc::Sha256(sha2::Sha256::new())),
         HashType::Sha384 => Some(HashFunc::Sha384(sha2::Sha384::new())),
         HashType::Sha512 => Some(HashFunc::Sha512(sha2::Sha512::new())),
@@ -59,6 +62,7 @@ pub fn get_hash_func(hash: HashType) -> Option<HashFunc> {
 pub fn compute_hash(hash_fn: &mut HashFunc, data: &[u8]) -> Result<Vec<u8>, TinkError> {
     Ok(match hash_fn {
         HashFunc::Sha1(h) => compute_hash_with(h, data),
+        HashFunc::Sha224(h) => compute_hash_with(h, data),
         HashFunc::Sha256(h) => compute_hash_with(h, data),
         HashFunc::Sha384(h) => compute_hash_with(h, data),
         HashFunc::Sha512(h) => compute_hash_with(h, data),
