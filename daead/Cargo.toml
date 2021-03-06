@@ -9,9 +9,14 @@ repository = "https://github.com/project-oak/tink-rust"
 keywords = ["cryptography", "tink", "daead"]
 categories = ["cryptography"]
 
+[features]
+boringssl = ["boring"]
+
 [dependencies]
 aead = { version = "^0.4.2", features = ["std"] }
 aes-siv = "^0.6"
+boring = { version = "^1.1", optional = true }
+cipher = "^0.3"
 prost = "^0.8"
 tink-core = "^0.2"
 tink-proto = "^0.2"

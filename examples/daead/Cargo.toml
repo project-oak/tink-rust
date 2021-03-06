@@ -6,6 +6,9 @@ edition = "2018"
 license = "Apache-2.0"
 publish = false
 
+[features]
+boringssl = ["tink-daead/boringssl"]
+
 [dependencies]
 hex = "^0.4.3"
 tink-core = "^0.2"

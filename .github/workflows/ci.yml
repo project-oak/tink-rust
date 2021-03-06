@@ -28,6 +28,8 @@ jobs:
       - run: rustc --version
       - run: cargo build --release --workspace
       - run: (cd core && cargo build --features=json --release --all-targets)
+      - run: (cd daead && cargo build --features=boringssl --release)
+      - run: (cd examples/daead && cargo build --features=boringssl --release)
 
   test:
     runs-on: ubuntu-latest
@@ -48,7 +50,7 @@ jobs:
           components: rustfmt
           override: true
       - run: rustc --version
-      - run: cargo test --all -- --nocapture
+      - run: cargo test --workspace -- --nocapture
 
   msrv:
     name: Rust ${{matrix.rust}}
@@ -68,7 +70,7 @@ jobs:
           components: rustfmt
           override: true
       - run: rustc --version
-      - run: cargo build --release --workspace --all-features
+      - run: cargo test --release --workspace -- --nocapture
 
   formatting:
     runs-on: ubuntu-latest
@@ -111,7 +113,9 @@ jobs:
           override: true
           components: rustfmt, clippy
       - run: rustc --version
-      - run: cargo clippy --all-features --all-targets -- -Dwarnings
+      - run: cargo clippy --all-targets -- -Dwarnings
+      - run: (cd core && cargo clippy --features=json -- -Dwarnings)
+      - run: (cd daead && cargo clippy --features=boringssl -- -Dwarnings)
 
   doc:
     runs-on: ubuntu-latest
