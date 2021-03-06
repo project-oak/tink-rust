@@ -426,6 +426,156 @@ pub mod prf_set_compute_response {
         Err(::prost::alloc::string::String),
     }
 }
+// TODO(b/179867503): Remove these copies of Timestamp, Duration and StringValue
+
+/// Copied from timestamp.proto
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Timestamp {
+    /// Represents seconds of UTC time since Unix epoch
+    /// 1970-01-01T00:00:00Z. Must be from 0001-01-01T00:00:00Z to
+    /// 9999-12-31T23:59:59Z inclusive.
+    #[prost(int64, tag = "1")]
+    pub seconds: i64,
+    /// Non-negative fractions of a second at nanosecond resolution. Negative
+    /// second values with fractions must still have non-negative nanos values
+    /// that count forward in time. Must be from 0 to 999,999,999
+    /// inclusive.
+    #[prost(int32, tag = "2")]
+    pub nanos: i32,
+}
+/// Copied from duration.proto
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Duration {
+    /// Signed seconds of the span of time. Must be from -315,576,000,000
+    /// to +315,576,000,000 inclusive. Note: these bounds are computed from:
+    /// 60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years
+    #[prost(int64, tag = "1")]
+    pub seconds: i64,
+    /// Signed fractions of a second at nanosecond resolution of the span
+    /// of time. Durations less than one second are represented with a 0
+    /// `seconds` field and a positive or negative `nanos` field. For durations
+    /// of one second or more, a non-zero value for the `nanos` field must be
+    /// of the same sign as the `seconds` field. Must be from -999,999,999
+    /// to +999,999,999 inclusive.
+    #[prost(int32, tag = "2")]
+    pub nanos: i32,
+}
+/// Copied from wrappers.proto
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct StringValue {
+    /// The string value.
+    #[prost(string, tag = "1")]
+    pub value: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct JwtClaimValue {
+    #[prost(oneof = "jwt_claim_value::Kind", tags = "2, 3, 4, 5, 6, 7")]
+    pub kind: ::core::option::Option<jwt_claim_value::Kind>,
+}
+/// Nested message and enum types in `JwtClaimValue`.
+pub mod jwt_claim_value {
+    #[derive(Clone, PartialEq, ::prost::Oneof)]
+    pub enum Kind {
+        #[prost(enumeration = "super::NullValue", tag = "2")]
+        NullValue(i32),
+        #[prost(double, tag = "3")]
+        NumberValue(f64),
+        #[prost(string, tag = "4")]
+        StringValue(::prost::alloc::string::String),
+        #[prost(bool, tag = "5")]
+        BoolValue(bool),
+        #[prost(string, tag = "6")]
+        JsonObjectValue(::prost::alloc::string::String),
+        #[prost(string, tag = "7")]
+        JsonArrayValue(::prost::alloc::string::String),
+    }
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct JwtToken {
+    #[prost(message, optional, tag = "1")]
+    pub issuer: ::core::option::Option<StringValue>,
+    #[prost(message, optional, tag = "2")]
+    pub subject: ::core::option::Option<StringValue>,
+    #[prost(string, repeated, tag = "3")]
+    pub audiences: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    #[prost(message, optional, tag = "4")]
+    pub jwt_id: ::core::option::Option<StringValue>,
+    #[prost(message, optional, tag = "5")]
+    pub expiration: ::core::option::Option<Timestamp>,
+    #[prost(message, optional, tag = "6")]
+    pub not_before: ::core::option::Option<Timestamp>,
+    #[prost(message, optional, tag = "7")]
+    pub issued_at: ::core::option::Option<Timestamp>,
+    #[prost(map = "string, message", tag = "8")]
+    pub custom_claims: ::std::collections::HashMap<::prost::alloc::string::String, JwtClaimValue>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct JwtValidator {
+    #[prost(message, optional, tag = "1")]
+    pub issuer: ::core::option::Option<StringValue>,
+    #[prost(message, optional, tag = "2")]
+    pub subject: ::core::option::Option<StringValue>,
+    #[prost(message, optional, tag = "3")]
+    pub audience: ::core::option::Option<StringValue>,
+    #[prost(message, optional, tag = "5")]
+    pub now: ::core::option::Option<Timestamp>,
+    #[prost(message, optional, tag = "6")]
+    pub clock_skew: ::core::option::Option<Duration>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct JwtSignRequest {
+    /// serialized google.crypto.tink.Keyset
+    #[prost(bytes = "vec", tag = "1")]
+    pub keyset: ::prost::alloc::vec::Vec<u8>,
+    #[prost(message, optional, tag = "2")]
+    pub raw_jwt: ::core::option::Option<JwtToken>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct JwtSignResponse {
+    #[prost(oneof = "jwt_sign_response::Result", tags = "1, 2")]
+    pub result: ::core::option::Option<jwt_sign_response::Result>,
+}
+/// Nested message and enum types in `JwtSignResponse`.
+pub mod jwt_sign_response {
+    #[derive(Clone, PartialEq, ::prost::Oneof)]
+    pub enum Result {
+        #[prost(string, tag = "1")]
+        SignedCompactJwt(::prost::alloc::string::String),
+        #[prost(string, tag = "2")]
+        Err(::prost::alloc::string::String),
+    }
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct JwtVerifyRequest {
+    /// serialized google.crypto.tink.Keyset
+    #[prost(bytes = "vec", tag = "1")]
+    pub keyset: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag = "2")]
+    pub signed_compact_jwt: ::prost::alloc::string::String,
+    #[prost(message, optional, tag = "3")]
+    pub validator: ::core::option::Option<JwtValidator>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct JwtVerifyResponse {
+    #[prost(oneof = "jwt_verify_response::Result", tags = "1, 2")]
+    pub result: ::core::option::Option<jwt_verify_response::Result>,
+}
+/// Nested message and enum types in `JwtVerifyResponse`.
+pub mod jwt_verify_response {
+    #[derive(Clone, PartialEq, ::prost::Oneof)]
+    pub enum Result {
+        #[prost(message, tag = "1")]
+        VerifiedJwt(super::JwtToken),
+        #[prost(string, tag = "2")]
+        Err(::prost::alloc::string::String),
+    }
+}
+///  Used to represent the JSON null value.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum NullValue {
+    NullValue = 0,
+}
 /// Generated client implementations.
 pub mod metadata_client {
     #![allow(unused_variables, dead_code, missing_docs)]
@@ -1150,6 +1300,115 @@ pub mod prf_set_client {
     impl<T> std::fmt::Debug for PrfSetClient<T> {
         fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
             write!(f, "PrfSetClient {{ ... }}")
+        }
+    }
+}
+/// Generated client implementations.
+pub mod jwt_client {
+    #![allow(unused_variables, dead_code, missing_docs)]
+    use tonic::codegen::*;
+    /// Service for JSON Web Tokens (JWT)
+    pub struct JwtClient<T> {
+        inner: tonic::client::Grpc<T>,
+    }
+    impl JwtClient<tonic::transport::Channel> {
+        /// Attempt to create a new client by connecting to a given endpoint.
+        pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
+        where
+            D: std::convert::TryInto<tonic::transport::Endpoint>,
+            D::Error: Into<StdError>,
+        {
+            let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
+            Ok(Self::new(conn))
+        }
+    }
+    impl<T> JwtClient<T>
+    where
+        T: tonic::client::GrpcService<tonic::body::BoxBody>,
+        T::ResponseBody: Body + HttpBody + Send + 'static,
+        T::Error: Into<StdError>,
+        <T::ResponseBody as HttpBody>::Error: Into<StdError> + Send,
+    {
+        pub fn new(inner: T) -> Self {
+            let inner = tonic::client::Grpc::new(inner);
+            Self { inner }
+        }
+        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
+            let inner = tonic::client::Grpc::with_interceptor(inner, interceptor);
+            Self { inner }
+        }
+        /// Computes a signed compact JWT token.
+        pub async fn mac_sign(
+            &mut self,
+            request: impl tonic::IntoRequest<super::JwtSignRequest>,
+        ) -> Result<tonic::Response<super::JwtSignResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static("/tink_testing_api.Jwt/MacSign");
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        /// Verifies the validity of the signed compact JWT token
+        pub async fn mac_verify(
+            &mut self,
+            request: impl tonic::IntoRequest<super::JwtVerifyRequest>,
+        ) -> Result<tonic::Response<super::JwtVerifyResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static("/tink_testing_api.Jwt/MacVerify");
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        /// Computes a signed compact JWT token.
+        pub async fn public_key_sign(
+            &mut self,
+            request: impl tonic::IntoRequest<super::JwtSignRequest>,
+        ) -> Result<tonic::Response<super::JwtSignResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static("/tink_testing_api.Jwt/PublicKeySign");
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        /// Verifies the validity of the signed compact JWT token
+        pub async fn public_key_verify(
+            &mut self,
+            request: impl tonic::IntoRequest<super::JwtVerifyRequest>,
+        ) -> Result<tonic::Response<super::JwtVerifyResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path =
+                http::uri::PathAndQuery::from_static("/tink_testing_api.Jwt/PublicKeyVerify");
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+    }
+    impl<T: Clone> Clone for JwtClient<T> {
+        fn clone(&self) -> Self {
+            Self {
+                inner: self.inner.clone(),
+            }
+        }
+    }
+    impl<T> std::fmt::Debug for JwtClient<T> {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "JwtClient {{ ... }}")
         }
     }
 }
@@ -2505,5 +2764,221 @@ pub mod prf_set_server {
     }
     impl<T: PrfSet> tonic::transport::NamedService for PrfSetServer<T> {
         const NAME: &'static str = "tink_testing_api.PrfSet";
+    }
+}
+/// Generated server implementations.
+pub mod jwt_server {
+    #![allow(unused_variables, dead_code, missing_docs)]
+    use tonic::codegen::*;
+    ///Generated trait containing gRPC methods that should be implemented for use with JwtServer.
+    #[async_trait]
+    pub trait Jwt: Send + Sync + 'static {
+        /// Computes a signed compact JWT token.
+        async fn mac_sign(
+            &self,
+            request: tonic::Request<super::JwtSignRequest>,
+        ) -> Result<tonic::Response<super::JwtSignResponse>, tonic::Status>;
+        /// Verifies the validity of the signed compact JWT token
+        async fn mac_verify(
+            &self,
+            request: tonic::Request<super::JwtVerifyRequest>,
+        ) -> Result<tonic::Response<super::JwtVerifyResponse>, tonic::Status>;
+        /// Computes a signed compact JWT token.
+        async fn public_key_sign(
+            &self,
+            request: tonic::Request<super::JwtSignRequest>,
+        ) -> Result<tonic::Response<super::JwtSignResponse>, tonic::Status>;
+        /// Verifies the validity of the signed compact JWT token
+        async fn public_key_verify(
+            &self,
+            request: tonic::Request<super::JwtVerifyRequest>,
+        ) -> Result<tonic::Response<super::JwtVerifyResponse>, tonic::Status>;
+    }
+    /// Service for JSON Web Tokens (JWT)
+    #[derive(Debug)]
+    pub struct JwtServer<T: Jwt> {
+        inner: _Inner<T>,
+    }
+    struct _Inner<T>(Arc<T>, Option<tonic::Interceptor>);
+    impl<T: Jwt> JwtServer<T> {
+        pub fn new(inner: T) -> Self {
+            let inner = Arc::new(inner);
+            let inner = _Inner(inner, None);
+            Self { inner }
+        }
+        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
+            let inner = Arc::new(inner);
+            let inner = _Inner(inner, Some(interceptor.into()));
+            Self { inner }
+        }
+    }
+    impl<T, B> Service<http::Request<B>> for JwtServer<T>
+    where
+        T: Jwt,
+        B: HttpBody + Send + Sync + 'static,
+        B::Error: Into<StdError> + Send + 'static,
+    {
+        type Response = http::Response<tonic::body::BoxBody>;
+        type Error = Never;
+        type Future = BoxFuture<Self::Response, Self::Error>;
+        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+            Poll::Ready(Ok(()))
+        }
+        fn call(&mut self, req: http::Request<B>) -> Self::Future {
+            let inner = self.inner.clone();
+            match req.uri().path() {
+                "/tink_testing_api.Jwt/MacSign" => {
+                    #[allow(non_camel_case_types)]
+                    struct MacSignSvc<T: Jwt>(pub Arc<T>);
+                    impl<T: Jwt> tonic::server::UnaryService<super::JwtSignRequest> for MacSignSvc<T> {
+                        type Response = super::JwtSignResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::JwtSignRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).mac_sign(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = MacSignSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/tink_testing_api.Jwt/MacVerify" => {
+                    #[allow(non_camel_case_types)]
+                    struct MacVerifySvc<T: Jwt>(pub Arc<T>);
+                    impl<T: Jwt> tonic::server::UnaryService<super::JwtVerifyRequest> for MacVerifySvc<T> {
+                        type Response = super::JwtVerifyResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::JwtVerifyRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).mac_verify(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = MacVerifySvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/tink_testing_api.Jwt/PublicKeySign" => {
+                    #[allow(non_camel_case_types)]
+                    struct PublicKeySignSvc<T: Jwt>(pub Arc<T>);
+                    impl<T: Jwt> tonic::server::UnaryService<super::JwtSignRequest> for PublicKeySignSvc<T> {
+                        type Response = super::JwtSignResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::JwtSignRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).public_key_sign(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = PublicKeySignSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/tink_testing_api.Jwt/PublicKeyVerify" => {
+                    #[allow(non_camel_case_types)]
+                    struct PublicKeyVerifySvc<T: Jwt>(pub Arc<T>);
+                    impl<T: Jwt> tonic::server::UnaryService<super::JwtVerifyRequest> for PublicKeyVerifySvc<T> {
+                        type Response = super::JwtVerifyResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::JwtVerifyRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).public_key_verify(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let interceptor = inner.1.clone();
+                        let inner = inner.0;
+                        let method = PublicKeyVerifySvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = if let Some(interceptor) = interceptor {
+                            tonic::server::Grpc::with_interceptor(codec, interceptor)
+                        } else {
+                            tonic::server::Grpc::new(codec)
+                        };
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                _ => Box::pin(async move {
+                    Ok(http::Response::builder()
+                        .status(200)
+                        .header("grpc-status", "12")
+                        .header("content-type", "application/grpc")
+                        .body(tonic::body::BoxBody::empty())
+                        .unwrap())
+                }),
+            }
+        }
+    }
+    impl<T: Jwt> Clone for JwtServer<T> {
+        fn clone(&self) -> Self {
+            let inner = self.inner.clone();
+            Self { inner }
+        }
+    }
+    impl<T: Jwt> Clone for _Inner<T> {
+        fn clone(&self) -> Self {
+            Self(self.0.clone(), self.1.clone())
+        }
+    }
+    impl<T: std::fmt::Debug> std::fmt::Debug for _Inner<T> {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "{:?}", self.0)
+        }
+    }
+    impl<T: Jwt> tonic::transport::NamedService for JwtServer<T> {
+        const NAME: &'static str = "tink_testing_api.Jwt";
     }
 }
