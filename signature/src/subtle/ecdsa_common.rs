@@ -27,7 +27,7 @@ pub enum SignatureEncoding {
 
 /// Validate ECDSA parameters.
 /// The hash's strength must not be weaker than the curve's strength.
-/// Only DER encoding is supported now.
+/// DER and IEEE_P1363 encodings are supported.
 pub fn validate_ecdsa_params(
     hash_alg: tink_proto::HashType,
     curve: tink_proto::EllipticCurveType,
