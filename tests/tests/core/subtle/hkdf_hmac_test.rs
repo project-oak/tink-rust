@@ -17,9 +17,7 @@
 use tink_core::subtle::{compute_hkdf, random::get_random_bytes};
 use tink_proto::HashType;
 
-// Tests sourced from
-// java/src/test/java/com/google/crypto/tink/subtle/HkdfTest.java
-
+// Tests the implementation against the test vectors from RFC 5869.
 #[test]
 fn test_hkdf_basic() {
     struct Case {
