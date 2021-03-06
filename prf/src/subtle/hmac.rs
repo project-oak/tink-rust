@@ -36,6 +36,7 @@ pub struct HmacPrf {
 
 enum HmacPrfVariant {
     Sha1(Hmac<sha1::Sha1>),
+    Sha224(Hmac<sha2::Sha224>),
     Sha256(Hmac<sha2::Sha256>),
     Sha384(Hmac<sha2::Sha384>),
     Sha512(Hmac<sha2::Sha512>),
@@ -47,6 +48,10 @@ impl HmacPrf {
         let mac = match hash_alg {
             HashType::Sha1 => HmacPrfVariant::Sha1(
                 Hmac::<sha1::Sha1>::new_from_slice(key)
+                    .map_err(|_| TinkError::new("HmacPrf: invalid key size"))?,
+            ),
+            HashType::Sha224 => HmacPrfVariant::Sha224(
+                Hmac::<sha2::Sha224>::new_from_slice(key)
                     .map_err(|_| TinkError::new("HmacPrf: invalid key size"))?,
             ),
             HashType::Sha256 => HmacPrfVariant::Sha256(
@@ -65,6 +70,7 @@ impl HmacPrf {
         };
         let mac_size = match &mac {
             HmacPrfVariant::Sha1(_) => 20,
+            HmacPrfVariant::Sha224(_) => 28,
             HmacPrfVariant::Sha256(_) => 32,
             HmacPrfVariant::Sha384(_) => 48,
             HmacPrfVariant::Sha512(_) => 64,
@@ -106,6 +112,11 @@ impl tink_core::Prf for HmacPrf {
                 .deref_mut()
             {
                 HmacPrfVariant::Sha1(mac) => {
+                    mac.update(data);
+                    let result = mac.finalize_reset().into_bytes();
+                    result[..min(result.len(), output_length)].to_vec()
+                }
+                HmacPrfVariant::Sha224(mac) => {
                     mac.update(data);
                     let result = mac.finalize_reset().into_bytes();
                     result[..min(result.len(), output_length)].to_vec()
