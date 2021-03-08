@@ -10,7 +10,7 @@ keywords = ["cryptography", "tink", "kms", "aws"]
 categories = ["cryptography"]
 
 [dependencies]
-csv = "^1.1.5"
+csv = "^1.1.6"
 hex = "^0.4.3"
 regex = "^1.4.3"
 rusoto_core = "^0.46"
