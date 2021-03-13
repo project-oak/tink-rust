@@ -2837,9 +2837,9 @@ checksum = "b07db065a5cf61a7e4ba64f29e67db906fb1787316516c4e6e5ff0fea1efcd8a"
 
 [[package]]
 name = "yup-oauth2"
-version = "5.0.3"
+version = "5.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "72c6dfbc7a0d18f43774daf38bd5c895f1cf3f39105770acfa1ae4ccbf3b0113"
+checksum = "2573621fa28865489bdf556cdb8703604f4e8498612e3041a212ac20e59c4aeb"
 dependencies = [
  "base64",
  "chrono",
