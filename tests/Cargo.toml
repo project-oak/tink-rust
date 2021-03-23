@@ -16,7 +16,7 @@ hex = "^0.4.3"
 p256 = { version = "^0.7", features = ["ecdsa"] }
 prost = "^0.7"
 rand = "^0.7"
-serde = { version = "^1.0.124", features = ["derive"] }
+serde = { version = "^1.0.125", features = ["derive"] }
 tink-core = { version = "^0.1", features = ["insecure", "json"] }
 tink-daead = "^0.1"
 tink-mac = "^0.1"
@@ -27,7 +27,7 @@ base64 = "^0.13"
 hex = "^0.4.3"
 lazy_static = "^1.4"
 maplit = "^1.0.2"
-serde = { version = "^1.0.124", features = ["derive"] }
+serde = { version = "^1.0.125", features = ["derive"] }
 serde_json = "^1.0.64"
 tempfile = "^3.2"
 tink-aead = "^0.1"
