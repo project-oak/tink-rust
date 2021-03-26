@@ -76,11 +76,9 @@ impl tink_core::Mac for WrappedMac {
             None => return Err("mac::factory: no primary primitive".into()),
         };
         let mac = if primary.prefix_type == OutputPrefixType::Legacy {
-            // This diverges from the upstream Go code (as of v1.5.0), but matches the
-            // behaviour of the upstream C++/Java/Python code.
             let mut local_data = Vec::with_capacity(data.len() + 1);
             local_data.extend_from_slice(data);
-            local_data.push(tink_core::cryptofmt::LEGACY_START_BYTE);
+            local_data.push(0u8);
             primary.primitive.compute_mac(&local_data)?
         } else {
             primary.primitive.compute_mac(data)?
@@ -106,11 +104,9 @@ impl tink_core::Mac for WrappedMac {
         if let Some(entries) = self.ps.entries_for_prefix(&prefix) {
             for entry in entries {
                 let result = if entry.prefix_type == OutputPrefixType::Legacy {
-                    // This diverges from the upstream Go code (as of v1.5.0), but matches the
-                    // behaviour of the upstream C++/Java/Python code.
                     let mut local_data = Vec::with_capacity(data.len() + 1);
                     local_data.extend_from_slice(data);
-                    local_data.push(tink_core::cryptofmt::LEGACY_START_BYTE);
+                    local_data.push(0u8);
                     entry.primitive.verify_mac(mac_no_prefix, &local_data)
                 } else {
                     entry.primitive.verify_mac(mac_no_prefix, data)
