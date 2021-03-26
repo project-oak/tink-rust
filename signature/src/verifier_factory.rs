@@ -84,7 +84,7 @@ impl tink_core::Verifier for WrappedVerifier {
                 let result = if entry.prefix_type == tink_proto::OutputPrefixType::Legacy {
                     let mut signed_data_copy = Vec::with_capacity(data.len() + 1);
                     signed_data_copy.extend_from_slice(data);
-                    signed_data_copy.push(tink_core::cryptofmt::LEGACY_START_BYTE);
+                    signed_data_copy.push(0u8);
                     entry
                         .primitive
                         .verify(signature_no_prefix, &signed_data_copy)
