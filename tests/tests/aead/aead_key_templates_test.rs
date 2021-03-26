@@ -67,7 +67,7 @@ fn test_no_prefix_key_templates() {
 }
 
 #[test]
-fn test_kms_envelope_aead_key_templates() {
+fn test_kms_envelope_aead_key_template() {
     tink_aead::init();
     let fake_kms_client = tink_tests::fakekms::FakeClient::new("fake-kms://").unwrap();
     tink_core::registry::register_kms_client(fake_kms_client);
@@ -92,12 +92,55 @@ fn test_kms_envelope_aead_key_templates() {
         ),
     ];
     for (name, template) in test_cases {
+        assert_eq!(
+            template.output_prefix_type,
+            tink_proto::OutputPrefixType::Raw as i32,
+            "KMS envelope template {} does not use RAW prefix, found '{:?}'",
+            name,
+            template.output_prefix_type
+        );
         assert!(
             test_encrypt_decrypt(&template).is_ok(),
             "failed for {}",
             name
         );
     }
+}
+
+// Tests that two `KmsEnvelopeAead` keys that use the same KEK and DEK template should be able to
+// decrypt each  other's ciphertexts.
+#[test]
+fn test_kms_envelope_aead_key_template_multiple_keys_same_kek() {
+    tink_aead::init();
+    let fake_kms_client = tink_tests::fakekms::FakeClient::new("fake-kms://").unwrap();
+    tink_core::registry::register_kms_client(fake_kms_client);
+
+    let fixed_key_uri = "fake-kms://CM2b3_MDElQKSAowdHlwZS5nb29nbGVhcGlzLmNvbS9nb29nbGUuY3J5cHRvLnRpbmsuQWVzR2NtS2V5EhIaEIK75t5L-adlUwVhWvRuWUwYARABGM2b3_MDIAE";
+    let template1 = tink_aead::kms_envelope_aead_key_template(
+        fixed_key_uri,
+        tink_aead::aes128_gcm_key_template(),
+    );
+    let template2 = tink_aead::kms_envelope_aead_key_template(
+        fixed_key_uri,
+        tink_aead::aes128_gcm_key_template(),
+    );
+
+    let handle1 = tink_core::keyset::Handle::new(&template1).unwrap();
+    let aead1 = tink_aead::new(&handle1).unwrap();
+    let handle2 = tink_core::keyset::Handle::new(&template2).unwrap();
+    let aead2 = tink_aead::new(&handle2).unwrap();
+
+    let plaintext = b"some data to encrypt";
+    let aad = b"extra data to authenticate";
+
+    let ciphertext = aead1
+        .encrypt(&plaintext[..], &aad[..])
+        .expect("encryption failed");
+
+    let decrypted = aead2
+        .decrypt(&ciphertext, &aad[..])
+        .expect("decryption failed");
+    assert_eq!(&plaintext[..], decrypted);
 }
 
 fn test_encrypt_decrypt(template: &tink_proto::KeyTemplate) -> Result<(), TinkError> {
