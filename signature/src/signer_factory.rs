@@ -79,7 +79,7 @@ impl tink_core::Signer for WrappedSigner {
         let signature = if primary.prefix_type == tink_proto::OutputPrefixType::Legacy {
             let mut signed_data_copy = Vec::with_capacity(data.len() + 1);
             signed_data_copy.extend_from_slice(data);
-            signed_data_copy.push(tink_core::cryptofmt::LEGACY_START_BYTE);
+            signed_data_copy.push(0u8);
             primary.primitive.sign(&signed_data_copy)?
         } else {
             primary.primitive.sign(data)?
