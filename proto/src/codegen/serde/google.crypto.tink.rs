@@ -260,6 +260,8 @@ pub struct AesSivKeyFormat {
     /// Only valid value is: 64.
     #[prost(uint32, tag="1")]
     pub key_size: u32,
+    #[prost(uint32, tag="2")]
+    pub version: u32,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.AesSivKey
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1039,6 +1041,8 @@ pub struct RsaSsaPssKeyFormat {
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct XChaCha20Poly1305KeyFormat {
+    #[prost(uint32, tag="1")]
+    pub version: u32,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key
 #[derive(Clone, PartialEq, ::prost::Message)]
