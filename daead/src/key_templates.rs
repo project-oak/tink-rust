@@ -21,7 +21,10 @@ use tink_proto::KeyTemplate;
 
 /// Return a [`KeyTemplate`](tink_proto::KeyTemplate) that generates a AES-SIV key.
 pub fn aes_siv_key_template() -> KeyTemplate {
-    let format = tink_proto::AesSivKeyFormat { key_size: 64 };
+    let format = tink_proto::AesSivKeyFormat {
+        key_size: 64,
+        version: crate::AES_SIV_KEY_VERSION,
+    };
     let mut serialized_format = Vec::new();
     format.encode(&mut serialized_format).unwrap(); // safe: proto-encode
     KeyTemplate {

@@ -113,6 +113,7 @@ fn test_aes_siv_new_key_invalid() {
         .expect("cannot obtain AESSIV key manager");
     let key_format = tink_proto::AesSivKeyFormat {
         key_size: (tink_daead::subtle::AES_SIV_KEY_SIZE - 1) as u32,
+        version: tink_daead::AES_SIV_KEY_VERSION,
     };
     let mut serialized_key_format = Vec::new();
     key_format.encode(&mut serialized_key_format).unwrap();
