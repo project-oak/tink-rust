@@ -86,6 +86,14 @@ impl tink_core::Aead for AwsAead {
         }
     }
 
+    /// Returns an error if the `key_id` field in the response does not match the `key_uri`
+    /// provided when creating the client. If we don't do this, the possibility exists
+    /// for the ciphertext to be replaced by one under a key we don't control/expect,
+    /// but do have decrypt permissions on.
+    ///
+    /// This check is disabled if `AwsAead.key_uri` is not in key ARN format.
+    ///
+    /// See https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#key-id.
     fn decrypt(
         &self,
         ciphertext: &[u8],
@@ -112,7 +120,7 @@ impl tink_core::Aead for AwsAead {
             .block_on(self.kms.decrypt(req))
             .map_err(|e| wrap_err("request failed", e))?;
         if let Some(key_id) = rsp.key_id {
-            if key_id != self.key_uri {
+            if is_key_arn_format(&self.key_uri) && key_id != self.key_uri {
                 return Err("decryption failed: wrong key id".into());
             }
         } else {
@@ -123,4 +131,10 @@ impl tink_core::Aead for AwsAead {
             Some(b) => Ok(b.to_vec()),
         }
     }
+}
+
+/// Return whether `key_arn` is in key ARN format.
+fn is_key_arn_format(key_arn: &str) -> bool {
+    let tokens: Vec<&str> = key_arn.split(':').collect();
+    tokens.len() == 6 && tokens[5].starts_with("key/")
 }

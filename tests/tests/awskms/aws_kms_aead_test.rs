@@ -15,6 +15,8 @@
 use std::path::PathBuf;
 use tink_core::{registry::KmsClient, subtle::random::get_random_bytes, TinkError};
 
+const KEY_ALIAS_URI: &str =
+    "aws-kms://arn:aws:kms:us-east-2:235739564943:alias/unit-and-integration-testing";
 const KEY_URI: &str =
     "aws-kms://arn:aws:kms:us-east-2:235739564943:key/3ee50705-5a82-4f5b-9753-05c4f473922f";
 
@@ -37,8 +39,12 @@ fn init() {
 }
 
 fn setup_kms(cf: &std::path::Path) {
-    let g = tink_awskms::AwsClient::new_with_credentials(KEY_URI, cf)
-        .expect("error setting up aws client");
+    setup_kms_with_uri(cf, KEY_URI);
+}
+
+fn setup_kms_with_uri(cf: &std::path::Path, uri: &str) {
+    let g =
+        tink_awskms::AwsClient::new_with_credentials(uri, cf).expect("error setting up aws client");
 
     // The registry will return the first KMS client that claims support for
     // the keyURI.  The tests re-use the same keyURI, so clear any clients
@@ -48,9 +54,22 @@ fn setup_kms(cf: &std::path::Path) {
 }
 
 fn basic_aead_test(a: Box<dyn tink_core::Aead>) -> Result<(), TinkError> {
-    for _ in 0..10 {
+    basic_aead_test_with_options(
+        a, /* loop_count= */ 10, /* with_additional_data = */ true,
+    )
+}
+fn basic_aead_test_with_options(
+    a: Box<dyn tink_core::Aead>,
+    loop_count: usize,
+    with_additional_data: bool,
+) -> Result<(), TinkError> {
+    for _ in 0..loop_count {
         let pt = get_random_bytes(20);
-        let ad = get_random_bytes(20);
+        let ad = if with_additional_data {
+            get_random_bytes(20)
+        } else {
+            vec![]
+        };
         let ct = a.encrypt(&pt, &ad)?;
         let dt = a.decrypt(&ct, &ad)?;
         if dt != pt {
@@ -81,20 +100,20 @@ fn test_basic_aead() {
 #[ignore]
 fn test_basic_aead_without_additional_data() {
     init();
-    for file in &[CRED_FILE, CRED_INI_FILE] {
-        setup_kms(&std::path::PathBuf::from(file));
-        let dek = tink_aead::aes128_ctr_hmac_sha256_key_template();
-        let kh = tink_core::keyset::Handle::new(&tink_aead::kms_envelope_aead_key_template(
-            KEY_URI, dek,
-        ))
-        .expect("error getting a new keyset handle");
-        let a = tink_aead::new(&kh).expect("error getting the primitive");
-        // Only test 10 times (instead of 100) because each test makes HTTP requests to AWS.
-        for _ in 0..10 {
-            let pt = get_random_bytes(20);
-            let ct = a.encrypt(&pt, &[]).expect("error encrypting data");
-            let dt = a.decrypt(&ct, &[]).expect("error decrypting data");
-            assert_eq!(dt, pt, "decrypt not inverse of encrypt");
+    for uri in &[KEY_URI, KEY_ALIAS_URI] {
+        for file in &[CRED_FILE, CRED_INI_FILE] {
+            setup_kms_with_uri(&std::path::PathBuf::from(file), uri);
+            let dek = tink_aead::aes128_ctr_hmac_sha256_key_template();
+            let kh = tink_core::keyset::Handle::new(&tink_aead::kms_envelope_aead_key_template(
+                uri, dek,
+            ))
+            .expect("error getting a new keyset handle");
+            let a = tink_aead::new(&kh).expect("error getting the primitive");
+            // Only test 10 times (instead of 100) because each test makes HTTP requests to AWS.
+            assert!(basic_aead_test_with_options(
+                a, /* loop_count= */ 19, /* with_additional_data= */ false
+            )
+            .is_ok())
         }
     }
 }
