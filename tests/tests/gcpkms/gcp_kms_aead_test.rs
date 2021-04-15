@@ -76,6 +76,7 @@ fn test_gcpkms_basic_aead() {
 }
 
 #[test]
+#[ignore]
 fn test_aead_with_invalid_key_fail() {
     init();
     let key_uri = "gcp-kms://projects/absent/locations/global/keyRings/nope/cryptoKeys/bogus";
