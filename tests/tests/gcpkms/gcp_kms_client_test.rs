@@ -117,6 +117,7 @@ fn test_supported() {
 }
 
 #[test]
+#[ignore]
 fn test_get_aead_supported_uri() {
     let uri_prefix =
     "gcp-kms://projects/tink-rust-project/locations/global/keyRings/tink-rust-keyring/cryptoKeys";
