@@ -37,6 +37,10 @@ check_license() {
 # Check that any TODO markers in files have associated issue numbers
 check_todo() {
   local path="$1"
+
+  if echo "$path" | grep -iq 'codegen'; then
+      return 0
+  fi
   local result
   result=$(grep --with-filename --line-number TODO "$path" | grep --invert-match --regexp='TODO(#[0-9][0-9]*)')
   if [[ -n $result ]]; then
