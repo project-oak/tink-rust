@@ -13,7 +13,7 @@ categories = ["cryptography"]
 ed25519-dalek = "^1.0.1"
 generic-array = "^0.14.4"
 hex = "^0.4.3"
-p256 = { version = "^0.7", features = ["ecdsa"] }
+p256 = "^0.7.3"
 prost = "^0.7"
 rand = "^0.7"
 serde = { version = "^1.0.125", features = ["derive"] }
