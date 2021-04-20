@@ -14,7 +14,42 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use tink_core::{subtle::random::get_random_bytes, Mac};
+use tink_core::{subtle::random::get_random_bytes, Aead, Mac, Signer, Verifier};
+
+#[test]
+fn test_dummy_aead() {
+    // try to encrypt/decrypt some data
+    let data = vec![0, 1, 1, 2, 3, 5];
+    let additional_data = vec![3, 1, 4, 1, 5];
+
+    let dummy = tink_tests::DummyAead {
+        name: "name".to_owned(),
+    };
+    let cipher = dummy.encrypt(&data, &additional_data).unwrap();
+    let decrypt = dummy.decrypt(&cipher, &additional_data).unwrap();
+    assert_eq!(data, decrypt);
+}
+
+#[test]
+fn test_dummy_signer_verifier() {
+    let signer = tink_tests::DummySigner::new("");
+    let verifier = tink_tests::DummyVerifier::new("");
+
+    let data = vec![2, 7, 1, 8, 2, 8];
+    let result = verifier.verify(&[], &data);
+    assert!(
+        result.is_err(),
+        "DummyVerifier::verify(invalid signature) succeeded; want error"
+    );
+
+    let sig = signer.sign(&data).unwrap();
+    let result = verifier.verify(&sig, &data);
+    assert!(
+        result.is_ok(),
+        "DummyVerifier::vVerify(valid signature) gave error: {:?}",
+        result
+    );
+}
 
 #[test]
 fn test_dummy_mac() {
