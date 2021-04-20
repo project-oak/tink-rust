@@ -20,8 +20,9 @@
 
 use generic_array::typenum::Unsigned;
 use p256::elliptic_curve;
+use serde::{Deserialize, Serialize};
 use std::convert::TryInto;
-use tink_core::{subtle::random::get_random_bytes, TinkError};
+use tink_core::{subtle::random::get_random_bytes, utils::wrap_err, Aead, TinkError};
 use tink_proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType, KeyData, Keyset};
 
 mod constant;
@@ -55,7 +56,7 @@ impl Default for DummyAeadKeyManager {
 
 impl tink_core::registry::KeyManager for DummyAeadKeyManager {
     fn primitive(&self, _serialized_key: &[u8]) -> Result<tink_core::Primitive, TinkError> {
-        Ok(tink_core::Primitive::Aead(Box::new(DummyAead)))
+        Ok(tink_core::Primitive::Aead(Box::new(DummyAead::default())))
     }
 
     fn new_key(&self, _serialized_key_format: &[u8]) -> Result<Vec<u8>, TinkError> {
@@ -75,17 +76,87 @@ impl tink_core::registry::KeyManager for DummyAeadKeyManager {
     }
 }
 
-/// Dummy implementation of [`tink_core::Aead`] trait.
-#[derive(Clone, Debug)]
-pub struct DummyAead;
+/// Dummy implementation of [`tink_core::Aead`] trait. It "encrypts" data with a simple
+/// serialization capturing the dummy name, plaintext, and additional data, and "decrypts" it by
+/// reversing this and checking that the name and additional data match.
+#[derive(Clone, Debug, Default)]
+pub struct DummyAead {
+    pub name: String,
+}
+
+#[derive(Deserialize, Serialize)]
+struct DummyAeadData {
+    name: String,
+    plaintext: Vec<u8>,
+    additional_data: Vec<u8>,
+}
 
 impl tink_core::Aead for DummyAead {
-    fn encrypt(&self, _plaintext: &[u8], _additional_data: &[u8]) -> Result<Vec<u8>, TinkError> {
-        Err("dummy aead encrypt".into())
+    fn encrypt(&self, plaintext: &[u8], additional_data: &[u8]) -> Result<Vec<u8>, TinkError> {
+        serde_json::to_vec(&DummyAeadData {
+            name: self.name.clone(),
+            plaintext: plaintext.to_vec(),
+            additional_data: additional_data.to_vec(),
+        })
+        .map_err(|e| wrap_err("dummy aead encrypt", e))
     }
 
-    fn decrypt(&self, _ciphertext: &[u8], _additional_data: &[u8]) -> Result<Vec<u8>, TinkError> {
-        Err("dummy aead decrypt".into())
+    fn decrypt(&self, ciphertext: &[u8], additional_data: &[u8]) -> Result<Vec<u8>, TinkError> {
+        let data: DummyAeadData = serde_json::from_slice(ciphertext)
+            .map_err(|e| wrap_err("dummy aeaed decrypt: invalid data", e))?;
+        if data.name != self.name || data.additional_data != additional_data {
+            Err("dummy aead encrypt: name/additional data mismatch".into())
+        } else {
+            Ok(data.plaintext)
+        }
+    }
+}
+
+/// Dummy implementation of the [`tink_core::Signer`] trait.
+#[derive(Clone)]
+pub struct DummySigner {
+    aead: DummyAead,
+}
+
+impl DummySigner {
+    /// Create a new dummy signer with the specified name. The name is used to pair with
+    /// [`DummyVerifier`].
+    pub fn new(name: &str) -> DummySigner {
+        DummySigner {
+            aead: DummyAead {
+                name: format!("dummy public key: {}", name),
+            },
+        }
+    }
+}
+
+impl tink_core::Signer for DummySigner {
+    fn sign(&self, data: &[u8]) -> Result<Vec<u8>, TinkError> {
+        self.aead.encrypt(&[], data)
+    }
+}
+
+/// Dummy implementation of the [`tink_core::Signer`] interface.
+#[derive(Clone)]
+pub struct DummyVerifier {
+    aead: DummyAead,
+}
+
+impl DummyVerifier {
+    /// Create a new dummy verifier with the specified name. The
+    /// name is used to pair with the [`DummySigner`].
+    pub fn new(name: &str) -> DummyVerifier {
+        DummyVerifier {
+            aead: DummyAead {
+                name: format!("dummy public key: {}", name),
+            },
+        }
+    }
+}
+
+impl tink_core::Verifier for DummyVerifier {
+    fn verify(&self, signature: &[u8], data: &[u8]) -> Result<(), TinkError> {
+        self.aead.decrypt(signature, data).map(|_| ())
     }
 }
 
@@ -119,7 +190,7 @@ impl tink_core::registry::KmsClient for DummyKmsClient {
     }
 
     fn get_aead(&self, _key_uri: &str) -> Result<Box<dyn tink_core::Aead>, TinkError> {
-        Ok(Box::new(DummyAead))
+        Ok(Box::new(DummyAead::default()))
     }
 }
 
