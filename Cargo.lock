@@ -2185,7 +2185,7 @@ dependencies = [
 
 [[package]]
 name = "tink-aead"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "aead",
  "aes-ctr",
@@ -2216,7 +2216,7 @@ dependencies = [
 
 [[package]]
 name = "tink-core"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "digest",
  "hkdf",
@@ -2233,7 +2233,7 @@ dependencies = [
 
 [[package]]
 name = "tink-daead"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "aead",
  "aes-siv",
@@ -2244,7 +2244,7 @@ dependencies = [
 
 [[package]]
 name = "tink-gcpkms"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "base64",
  "chrono",
@@ -2263,7 +2263,7 @@ dependencies = [
 
 [[package]]
 name = "tink-mac"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "prost",
  "tink-core",
@@ -2273,7 +2273,7 @@ dependencies = [
 
 [[package]]
 name = "tink-prf"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "aes",
  "cmac",
@@ -2289,7 +2289,7 @@ dependencies = [
 
 [[package]]
 name = "tink-proto"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "base64",
  "prost",
@@ -2299,7 +2299,7 @@ dependencies = [
 
 [[package]]
 name = "tink-signature"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "ed25519-dalek",
  "generic-array",
@@ -2313,7 +2313,7 @@ dependencies = [
 
 [[package]]
 name = "tink-streaming-aead"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "aes-ctr",
  "aes-gcm",
@@ -2326,7 +2326,7 @@ dependencies = [
 
 [[package]]
 name = "tink-testing-server"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "env_logger",
  "futures",
@@ -2349,7 +2349,7 @@ dependencies = [
 
 [[package]]
 name = "tink-tests"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "base64",
  "ed25519-dalek",
