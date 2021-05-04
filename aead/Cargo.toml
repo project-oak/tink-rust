@@ -11,7 +11,7 @@ categories = ["cryptography"]
 
 [dependencies]
 # Need the `std` feature for Error type conversion
-aead = { version = "^0.3.2", features = ["std"] }
+aead = { version = "^0.4.1", features = ["std"] }
 aes-ctr = "^0.6"
 aes-gcm = "^0.8"
 aes-gcm-siv = "^0.9"

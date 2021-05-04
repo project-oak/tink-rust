@@ -10,6 +10,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "aead"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "922b33332f54fc0ad13fa3e514601e8d30fb54e1f3eadc36643f6526db645621"
+dependencies = [
+ "generic-array",
+]
+
+[[package]]
 name = "aes"
 version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -38,7 +47,7 @@ version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5278b5fabbb9bd46e24aa69b2fdea62c99088e0a950a9be40e3e0101298f88da"
 dependencies = [
- "aead",
+ "aead 0.3.2",
  "aes",
  "cipher",
  "ctr",
@@ -52,7 +61,7 @@ version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "202a43562bc3e159554b7590f5fd1f432d9e8de0cc2c2ce4bb8d194a34b3b0f3"
 dependencies = [
- "aead",
+ "aead 0.3.2",
  "aes",
  "cipher",
  "ctr",
@@ -67,7 +76,7 @@ version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d0efed46e44a34d455eff2465e57627853b0e33c44658284f383691c7a634c8b"
 dependencies = [
- "aead",
+ "aead 0.3.2",
  "aes",
  "cipher",
  "cmac",
@@ -279,7 +288,7 @@ version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "af1fc18e6d90c40164bf6c317476f2a98f04661e310e79830366b7e914c58a8e"
 dependencies = [
- "aead",
+ "aead 0.3.2",
  "chacha20",
  "cipher",
  "poly1305",
@@ -2187,7 +2196,7 @@ dependencies = [
 name = "tink-aead"
 version = "0.1.1"
 dependencies = [
- "aead",
+ "aead 0.4.1",
  "aes-ctr",
  "aes-gcm",
  "aes-gcm-siv",
@@ -2235,7 +2244,7 @@ dependencies = [
 name = "tink-daead"
 version = "0.1.1"
 dependencies = [
- "aead",
+ "aead 0.4.1",
  "aes-siv",
  "prost",
  "tink-core",
