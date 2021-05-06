@@ -774,8 +774,8 @@ pub struct HmacPrfKeyFormat {
 pub struct JwtHmacKey {
     #[prost(uint32, tag="1")]
     pub version: u32,
-    #[prost(enumeration="HashType", tag="2")]
-    pub hash_type: i32,
+    #[prost(enumeration="JwtHmacAlgorithm", tag="2")]
+    pub algorithm: i32,
     #[prost(bytes="vec", tag="3")]
     pub key_value: ::prost::alloc::vec::Vec<u8>,
 }
@@ -783,10 +783,18 @@ pub struct JwtHmacKey {
 pub struct JwtHmacKeyFormat {
     #[prost(uint32, tag="1")]
     pub version: u32,
-    #[prost(enumeration="HashType", tag="2")]
-    pub hash_type: i32,
+    #[prost(enumeration="JwtHmacAlgorithm", tag="2")]
+    pub algorithm: i32,
     #[prost(uint32, tag="3")]
     pub key_size: u32,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum JwtHmacAlgorithm {
+    HsUnknown = 0,
+    Hs256 = 1,
+    Hs384 = 2,
+    Hs512 = 3,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KmsAeadKeyFormat {
