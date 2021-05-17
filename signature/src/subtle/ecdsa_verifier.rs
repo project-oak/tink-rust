@@ -108,7 +108,7 @@ pub fn element_from_padded_slice<C: elliptic_curve::Curve>(
 impl tink_core::Verifier for EcdsaVerifier {
     fn verify(&self, signature: &[u8], data: &[u8]) -> Result<(), tink_core::TinkError> {
         let signature = match self.encoding {
-            super::SignatureEncoding::Der => Signature::from_asn1(signature)
+            super::SignatureEncoding::Der => Signature::from_der(signature)
                 .map_err(|e| wrap_err("EcdsaVerifier: invalid ASN.1 signature", e))?,
             super::SignatureEncoding::IeeeP1363 => Signature::from_bytes(signature)
                 .map_err(|e| wrap_err("EcdsaVerifier: invalid IEEE-P1363 signature", e))?,

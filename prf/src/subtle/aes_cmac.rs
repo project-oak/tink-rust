@@ -45,15 +45,15 @@ impl AesCmacPrf {
     pub fn new(key: &[u8]) -> Result<AesCmacPrf, TinkError> {
         let aes_cmac = match key.len() {
             16 => AesCmacVariant::Aes128(Box::new(
-                Cmac::<Aes128>::new_varkey(key)
+                Cmac::<Aes128>::new_from_slice(key)
                     .map_err(|_| TinkError::new("failed to create key"))?,
             )),
             24 => AesCmacVariant::Aes192(Box::new(
-                Cmac::<Aes192>::new_varkey(key)
+                Cmac::<Aes192>::new_from_slice(key)
                     .map_err(|_| TinkError::new("failed to create key"))?,
             )),
             32 => AesCmacVariant::Aes256(Box::new(
-                Cmac::<Aes256>::new_varkey(key)
+                Cmac::<Aes256>::new_from_slice(key)
                     .map_err(|_| TinkError::new("failed to create key"))?,
             )),
             _ => return Err("AesCmacPrf: invalid key length for AES".into()),
