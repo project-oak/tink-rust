@@ -61,7 +61,7 @@ impl tink_core::registry::KeyManager for EcdsaSignerKeyManager {
         let (params, curve) = validate_key_format(&key_format)?;
 
         // generate key
-        let mut csprng = rand::rngs::OsRng {};
+        let mut csprng = signature::rand_core::OsRng {};
 
         let (secret_key_data, pub_x_data, pub_y_data) = match curve {
             EllipticCurveType::NistP256 => {

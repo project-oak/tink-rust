@@ -46,19 +46,19 @@ impl HmacPrf {
     pub fn new(hash_alg: HashType, key: &[u8]) -> Result<HmacPrf, TinkError> {
         let mac = match hash_alg {
             HashType::Sha1 => HmacPrfVariant::Sha1(
-                Hmac::<sha1::Sha1>::new_varkey(key)
+                Hmac::<sha1::Sha1>::new_from_slice(key)
                     .map_err(|_| TinkError::new("HmacPrf: invalid key size"))?,
             ),
             HashType::Sha256 => HmacPrfVariant::Sha256(
-                Hmac::<sha2::Sha256>::new_varkey(key)
+                Hmac::<sha2::Sha256>::new_from_slice(key)
                     .map_err(|_| TinkError::new("HmacPrf: invalid key size"))?,
             ),
             HashType::Sha384 => HmacPrfVariant::Sha384(
-                Hmac::<sha2::Sha384>::new_varkey(key)
+                Hmac::<sha2::Sha384>::new_from_slice(key)
                     .map_err(|_| TinkError::new("HmacPrf: invalid key size"))?,
             ),
             HashType::Sha512 => HmacPrfVariant::Sha512(
-                Hmac::<sha2::Sha512>::new_varkey(key)
+                Hmac::<sha2::Sha512>::new_from_slice(key)
                     .map_err(|_| TinkError::new("HmacPrf: invalid key size"))?,
             ),
             h => return Err(format!("HmacPrf: unsupported hash {:?}", h).into()),

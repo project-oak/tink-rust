@@ -243,7 +243,7 @@ pub fn new_random_ecdsa_private_key(
     hash_type: HashType,
     curve: EllipticCurveType,
 ) -> tink_proto::EcdsaPrivateKey {
-    let mut csprng = rand::thread_rng();
+    let mut csprng = p256::elliptic_curve::rand_core::OsRng {};
     let (secret_key_data, pub_x, pub_y) = match curve {
         EllipticCurveType::NistP256 => {
             let sk = p256::ecdsa::SigningKey::random(&mut csprng);

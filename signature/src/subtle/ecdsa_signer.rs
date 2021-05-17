@@ -91,11 +91,11 @@ impl EcdsaSigner {
 
 impl tink_core::Signer for EcdsaSigner {
     fn sign(&self, data: &[u8]) -> Result<Vec<u8>, tink_core::TinkError> {
-        let mut csprng = rand::rngs::OsRng {};
+        let mut csprng = signature::rand_core::OsRng {};
         match &self.private_key {
             EcdsaPrivateKey::NistP256(secret_key) => match self.encoding {
                 super::SignatureEncoding::Der => {
-                    let signature = secret_key.sign_with_rng(&mut csprng, data).to_asn1();
+                    let signature = secret_key.sign_with_rng(&mut csprng, data).to_der();
                     Ok(signature.as_bytes().to_vec())
                 }
                 super::SignatureEncoding::IeeeP1363 => {
