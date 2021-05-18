@@ -43,6 +43,8 @@ pub const UPSTREAM_VERSION: &str = "1.5.0";
 
 static INIT: Once = Once::new();
 
+/// Initialize the `tink-streaming-aead` crate, registering its primitives so they are available via
+/// tink-core.
 pub fn init() {
     INIT.call_once(|| {
         register_key_manager(std::sync::Arc::new(AesCtrHmacKeyManager::default()))
