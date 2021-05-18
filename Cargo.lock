@@ -2211,7 +2211,7 @@ dependencies = [
 
 [[package]]
 name = "tink-aead"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "aead",
  "aes",
@@ -2228,7 +2228,7 @@ dependencies = [
 
 [[package]]
 name = "tink-awskms"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "csv",
  "hex",
@@ -2242,7 +2242,7 @@ dependencies = [
 
 [[package]]
 name = "tink-core"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "digest",
  "hkdf",
@@ -2259,7 +2259,7 @@ dependencies = [
 
 [[package]]
 name = "tink-daead"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "aead",
  "aes-siv",
@@ -2299,7 +2299,7 @@ dependencies = [
 
 [[package]]
 name = "tink-prf"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "aes",
  "cmac",
@@ -2325,7 +2325,7 @@ dependencies = [
 
 [[package]]
 name = "tink-signature"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "ecdsa",
  "ed25519-dalek",
@@ -2340,7 +2340,7 @@ dependencies = [
 
 [[package]]
 name = "tink-streaming-aead"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "aes",
  "aes-gcm",
