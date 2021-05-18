@@ -28,7 +28,7 @@ pub use utils::TinkError;
 
 /// The [upstream Tink](https://github.com/google/tink) version that this Rust
 /// port is based on.
-pub const UPSTREAM_VERSION: &str = "1.5.0";
+pub const UPSTREAM_VERSION: &str = "1.6.0";
 
 /// Type alias for `u32` values being used as key identifiers.
 pub type KeyId = u32;
