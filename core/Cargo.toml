@@ -1,6 +1,6 @@
 [package]
 name = "tink-core"
-version = "0.1.2"
+version = "0.2.0"
 authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -27,4 +27,4 @@ serde_json = { version = "^1.0.64", optional = true }
 sha-1 = "^0.9.6"
 sha2 = "^0.9.5"
 subtle = "^2.4"
-tink-proto = "^0.1"
+tink-proto = "^0.2"
