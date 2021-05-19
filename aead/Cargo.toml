@@ -1,6 +1,6 @@
 [package]
 name = "tink-aead"
-version = "0.1.2"
+version = "0.2.0"
 authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -19,6 +19,6 @@ chacha20poly1305 = "^0.8"
 generic-array = "^0.14.4"
 prost = "^0.7"
 rand = "^0.7"
-tink-core = "^0.1"
-tink-mac = "^0.1"
-tink-proto = "^0.1"
+tink-core = "^0.2"
+tink-mac = "^0.2"
+tink-proto = "^0.2"

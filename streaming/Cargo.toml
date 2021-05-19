@@ -1,6 +1,6 @@
 [package]
 name = "tink-streaming-aead"
-version = "0.1.2"
+version = "0.2.0"
 authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -15,6 +15,6 @@ aes = { version = "^0.7.2", features = ["ctr"] }
 aes-gcm = { version = "^0.9.1", features = ["std"] }
 prost = "^0.7"
 rand = "^0.7"
-tink-core = "^0.1"
-tink-mac = "^0.1"
-tink-proto = "^0.1"
+tink-core = "^0.2"
+tink-mac = "^0.2"
+tink-proto = "^0.2"
