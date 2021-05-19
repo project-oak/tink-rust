@@ -1,6 +1,6 @@
 [package]
 name = "tink-mac"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -11,6 +11,6 @@ categories = ["cryptography"]
 
 [dependencies]
 prost = "^0.7"
-tink-core = "^0.1"
-tink-prf = "^0.1"
-tink-proto = "^0.1"
+tink-core = "^0.2"
+tink-prf = "^0.2"
+tink-proto = "^0.2"

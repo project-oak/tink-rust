@@ -1,6 +1,6 @@
 [package]
 name = "tink-gcpkms"
-version = "0.1.3"
+version = "0.2.0"
 authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -20,6 +20,6 @@ lazy_static = "^1.4"
 percent-encoding = "^2.1"
 serde = { version = "^1.0", features = ["derive"] }
 serde_json = "^1.0.64"
-tink-core = "^0.1"
+tink-core = "^0.2"
 tokio = "^1.6"
 yup-oauth2 = "^5.1"
