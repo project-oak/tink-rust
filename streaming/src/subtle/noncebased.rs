@@ -55,10 +55,10 @@ pub trait SegmentEncrypter {
     fn encrypt_segment(&self, segment: &[u8], nonce: &[u8]) -> Result<Vec<u8>, TinkError>;
 }
 
-// `Writer` provides a framework for ingesting plaintext data and
-// writing encrypted data to the wrapped [`io::Write`]. The scheme used for
-// encrypting segments is specified by providing a `SegmentEncrypter`
-// implementation.
+/// `Writer` provides a framework for ingesting plaintext data and
+/// writing encrypted data to the wrapped [`io::Write`]. The scheme used for
+/// encrypting segments is specified by providing a `SegmentEncrypter`
+/// implementation.
 pub struct Writer {
     w: Box<dyn io::Write>,
     segment_encrypter: Box<dyn SegmentEncrypter>,
@@ -66,39 +66,39 @@ pub struct Writer {
     first_ciphertext_segment_offset: usize,
     nonce_size: usize,
     nonce_prefix: Vec<u8>,
-    // Buffer to hold incomplete segments of plaintext, until they are complete and
-    // ready for encryption.
+    /// Buffer to hold incomplete segments of plaintext, until they are complete and
+    /// ready for encryption.
     plaintext: Vec<u8>,
-    // Next free position in `plaintext`.
+    /// Next free position in `plaintext`.
     plaintext_pos: usize,
-    // A final smaller segment can be written by calling `close()`, but after that
-    // no more data can be written.
+    /// A final smaller segment can be written by calling `close()`, but after that
+    /// no more data can be written.
     closed: bool,
 }
 
 /// `WriterParams` contains the options for instantiating a `Writer` via `Writer::new()`.
 pub struct WriterParams {
-    // `w` is the underlying writer being wrapped.
+    /// `w` is the underlying writer being wrapped.
     pub w: Box<dyn io::Write>,
 
-    // `segment_encrypter` provides a method for encrypting segments.
+    /// `segment_encrypter` provides a method for encrypting segments.
     pub segment_encrypter: Box<dyn SegmentEncrypter>,
 
-    // `nonce_size` is the length of generated nonces. It must be at least 5 +
-    // `nonce_prefix.len()`. It can be longer, but longer nonces introduce more
-    // overhead in the resultant ciphertext.
+    /// `nonce_size` is the length of generated nonces. It must be at least 5 +
+    /// `nonce_prefix.len()`. It can be longer, but longer nonces introduce more
+    /// overhead in the resultant ciphertext.
     pub nonce_size: usize,
 
-    // `nonce_prefix` is a constant that all nonces throughout the ciphertext will
-    // start with. Its length must be at least 5 bytes shorter than `nonce_size`.
+    /// `nonce_prefix` is a constant that all nonces throughout the ciphertext will
+    /// start with. Its length must be at least 5 bytes shorter than `nonce_size`.
     pub nonce_prefix: Vec<u8>,
 
-    // The size of the segments which the plaintext will be split into.
+    /// The size of the segments which the plaintext will be split into.
     pub plaintext_segment_size: usize,
 
-    // `first_ciphertex_segment_offset` indicates where the ciphertext should begin in
-    // `w`. This allows for the existence of overhead in the stream unrelated to
-    // this encryption scheme.
+    /// `first_ciphertex_segment_offset` indicates where the ciphertext should begin in
+    /// `w`. This allows for the existence of overhead in the stream unrelated to
+    /// this encryption scheme.
     pub first_ciphertext_segment_offset: usize,
 }
 
@@ -254,12 +254,12 @@ pub struct Reader {
     first_ciphertext_segment_offset: usize,
     nonce_size: usize,
     nonce_prefix: Vec<u8>,
-    // `plaintext` holds data that has already been decrypted, and `plaintext_pos`
-    // indicates the part of it that has not yet been returns from a `read` operation.
+    /// `plaintext` holds data that has already been decrypted, and `plaintext_pos`
+    /// indicates the part of it that has not yet been returns from a `read` operation.
     plaintext: Vec<u8>,
     plaintext_pos: usize,
-    // `ciphertext` is a fixed-size buffer that holds encrypted data that has already been read
-    // from `r`.
+    /// `ciphertext` is a fixed-size buffer that holds encrypted data that has already been read
+    /// from `r`.
     ciphertext: Vec<u8>,
 
     ciphertext_pos: usize,
@@ -267,28 +267,28 @@ pub struct Reader {
 
 /// `ReaderParams` contains the options for instantiating a [`Reader`] via `Reader::new()`.
 pub struct ReaderParams {
-    // `r` is the underlying reader being wrapped.
+    /// `r` is the underlying reader being wrapped.
     pub r: Box<dyn io::Read>,
 
-    // `segment_decrypter` provides a method for decrypting segments.
+    /// `segment_decrypter` provides a method for decrypting segments.
     pub segment_decrypter: Box<dyn SegmentDecrypter>,
 
-    // `nonce_size` is the length of generated nonces. It must match the `nonce_size`
-    // of the [`Writer`] used to create the ciphertext, and must be somewhat larger
-    // than the size of the common `nonce_prefix`
+    /// `nonce_size` is the length of generated nonces. It must match the `nonce_size`
+    /// of the [`Writer`] used to create the ciphertext, and must be somewhat larger
+    /// than the size of the common `nonce_prefix`
     pub nonce_size: usize,
 
-    // `nonce_prefix` is a constant that all nonces throughout the ciphertext start
-    // with. It's extracted from the header of the ciphertext.
+    /// `nonce_prefix` is a constant that all nonces throughout the ciphertext start
+    /// with. It's extracted from the header of the ciphertext.
     pub nonce_prefix: Vec<u8>,
 
-    // The size of the ciphertext segments, equal to `nonce_size` plus the
-    // size of the plaintext segment.
+    /// The size of the ciphertext segments, equal to `nonce_size` plus the
+    /// size of the plaintext segment.
     pub ciphertext_segment_size: usize,
 
-    // `first_ciphertext_segment_offset` indicates where the ciphertext actually begins
-    // in `r`. This allows for the existence of overhead in the stream unrelated to
-    // this encryption scheme.
+    /// `first_ciphertext_segment_offset` indicates where the ciphertext actually begins
+    /// in `r`. This allows for the existence of overhead in the stream unrelated to
+    /// this encryption scheme.
     pub first_ciphertext_segment_offset: usize,
 }
 
@@ -374,7 +374,7 @@ impl ReadFullExt for dyn std::io::Read {
 }
 
 impl io::Read for Reader {
-    // Read decrypts data from underlying reader and passes it to `buf`.
+    /// Read decrypts data from underlying reader and passes it to `buf`.
     fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
         if self.plaintext_pos < self.plaintext.len() {
             // There is already-decrypted plaintext available -- return it first before attempting
