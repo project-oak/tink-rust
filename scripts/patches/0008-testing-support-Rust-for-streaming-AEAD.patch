@@ -1,4 +1,4 @@
-From 1a16fea135a092618612d92a649a8056069b9224 Mon Sep 17 00:00:00 2001
+From 68ab878e8e9eb4f9e21fb0f3420fd327d63aa959 Mon Sep 17 00:00:00 2001
 From: David Drysdale <drysdale@google.com>
 Date: Wed, 18 Nov 2020 18:16:27 +0000
 Subject: [PATCH] testing: support Rust for streaming AEAD
@@ -9,12 +9,12 @@ Subject: [PATCH] testing: support Rust for streaming AEAD
  2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/testing/cross_language/util/supported_key_types.py b/testing/cross_language/util/supported_key_types.py
-index 0063382461b5..b650f45c7d4d 100644
+index 7d0d58d55e85..dfb5140ca55c 100644
 --- a/testing/cross_language/util/supported_key_types.py
 +++ b/testing/cross_language/util/supported_key_types.py
-@@ -70,8 +70,8 @@ SUPPORTED_LANGUAGES = {
-     'ChaCha20Poly1305Key': ['java', 'go', 'rust'],
-     'XChaCha20Poly1305Key': ['cc', 'java', 'go', 'python', 'rust'],
+@@ -97,8 +97,8 @@ SUPPORTED_LANGUAGES = {
+     'KmsAeadKey': ['cc', 'java', 'python'],
+     'KmsEnvelopeAeadKey': ['cc', 'java', 'go', 'python'],
      'AesSivKey': ['cc', 'java', 'go', 'python', 'rust'],
 -    'AesCtrHmacStreamingKey': ['cc', 'java', 'go', 'python'],
 -    'AesGcmHkdfStreamingKey': ['cc', 'java', 'go', 'python'],
@@ -24,10 +24,10 @@ index 0063382461b5..b650f45c7d4d 100644
      'AesCmacKey': ['cc', 'java', 'go', 'python', 'rust'],
      'HmacKey': ['cc', 'java', 'go', 'python', 'rust'],
 diff --git a/testing/cross_language/util/testing_servers.py b/testing/cross_language/util/testing_servers.py
-index b2d01e81ac9e..73f25454392f 100644
+index 1139e034a2b0..51c3e8e376bd 100644
 --- a/testing/cross_language/util/testing_servers.py
 +++ b/testing/cross_language/util/testing_servers.py
-@@ -77,7 +77,7 @@ _PRIMITIVES = list(_PRIMITIVE_STUBS.keys())
+@@ -81,7 +81,7 @@ _PRIMITIVES = list(_PRIMITIVE_STUBS.keys())
  SUPPORTED_LANGUAGES_BY_PRIMITIVE = {
      'aead': ['cc', 'go', 'java', 'python', 'rust'],
      'daead': ['cc', 'go', 'java', 'python', 'rust'],
@@ -36,6 +36,5 @@ index b2d01e81ac9e..73f25454392f 100644
      'hybrid': ['cc', 'go', 'java', 'python'],
      'mac': ['cc', 'go', 'java', 'python', 'rust'],
      'signature': ['cc', 'go', 'java', 'python', 'rust'],
--- 
-2.26.2
-
+--
+2.31.1

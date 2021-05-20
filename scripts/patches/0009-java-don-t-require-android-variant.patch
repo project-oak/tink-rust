@@ -1,0 +1,25 @@
+From cd63099ee329404f27e6fb1acddbe13b863f131d Mon Sep 17 00:00:00 2001
+From: David Drysdale <drysdale@google.com>
+Date: Thu, 20 May 2021 17:23:09 +0100
+Subject: [PATCH] java: don't require android variant
+
+---
+ .../src/main/java/com/google/crypto/tink/subtle/BUILD.bazel     | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/java_src/src/main/java/com/google/crypto/tink/subtle/BUILD.bazel b/java_src/src/main/java/com/google/crypto/tink/subtle/BUILD.bazel
+index a9fde1379cea..59d97ef1225c 100644
+--- a/java_src/src/main/java/com/google/crypto/tink/subtle/BUILD.bazel
++++ b/java_src/src/main/java/com/google/crypto/tink/subtle/BUILD.bazel
+@@ -193,7 +193,7 @@ java_library(
+     srcs = ["Validators.java"],
+     deps = [
+         ":enums",
+-        "//src/main/java/com/google/crypto/tink/config:tink_fips-android",
++        "//src/main/java/com/google/crypto/tink/config:tink_fips",
+     ],
+ )
+ 
+-- 
+2.31.1
+

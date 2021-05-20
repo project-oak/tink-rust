@@ -1,0 +1,29 @@
+From 837d5a948b2487f3f89c51dcd0610613c32c0efa Mon Sep 17 00:00:00 2001
+From: David Drysdale <drysdale@google.com>
+Date: Thu, 20 May 2021 18:54:37 +0100
+Subject: [PATCH] Revert to rules_proto_grpc-1.0.2
+
+---
+ testing/cross_language/WORKSPACE | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/testing/cross_language/WORKSPACE b/testing/cross_language/WORKSPACE
+index f5927f3a9b36..5162961ae7fe 100644
+--- a/testing/cross_language/WORKSPACE
++++ b/testing/cross_language/WORKSPACE
+@@ -49,9 +49,9 @@ http_archive(
+ 
+ http_archive(
+     name = "rules_proto_grpc",
+-    urls = ["https://github.com/rules-proto-grpc/rules_proto_grpc/archive/2.0.0.zip"],
+-    sha256 = "ccd12e138f7b4464a85a98978352cbd7427a914bdf3830982826857e36e7b011",
+-    strip_prefix = "rules_proto_grpc-2.0.0",
++    sha256 = "5f0f2fc0199810c65a2de148a52ba0aff14d631d4e8202f41aff6a9d590a471b",
++    strip_prefix = "rules_proto_grpc-1.0.2",
++    urls = ["https://github.com/rules-proto-grpc/rules_proto_grpc/archive/1.0.2.tar.gz"],
+ )
+ 
+ 
+-- 
+2.31.1
+

@@ -55,4 +55,5 @@ bazel test --cache_test_results=no --test_output=errors \
       :streaming_aead_test \
       --test_env testing_dir="${TINK_TESTING_DIR}" \
       --test_env TINK_RUST_DIR="${TINK_RUST_DIR}" \
+      --test_env TINK_SRC_PATH="${TINK_TESTING_DIR}/.." \
       "$@"

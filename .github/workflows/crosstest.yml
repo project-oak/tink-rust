@@ -17,7 +17,7 @@ jobs:
           profile: minimal
           toolchain: stable
           components: rustfmt
-      - run: git clone --depth 1 --branch v1.5.0 https://github.com/google/tink upstream
+      - run: git clone --depth 1 --branch v1.6.0 https://github.com/google/tink upstream
       - run: (cd upstream && git apply ../scripts/patches/*)
       - uses: actions/setup-python@v2
         with:
@@ -25,6 +25,7 @@ jobs:
       - run: python --version
       - uses: abhinavsingh/setup-bazel@v3
         with:
-          version: 3.1.0
+          version: 3.7.2
       - run: bazel --version
+      - run: echo "y" | sudo /usr/local/lib/android/sdk/tools/bin/sdkmanager "platforms;android-26" --sdk_root=${ANDROID_SDK_ROOT}
       - run: TINK_TESTING_DIR=$PWD/upstream/testing scripts/run-tests.sh
