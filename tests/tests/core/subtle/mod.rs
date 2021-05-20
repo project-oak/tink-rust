@@ -34,6 +34,10 @@ fn test_compute_hash() {
             want: "f7ff9e8b7bb2e09b70935a5d785e0cc5d9d0abf0",
         },
         Case {
+            hf: HashType::Sha224,
+            want: "4149da18aa8bfc2b1e382c6c26556d01a92c261b6436dad5e3be3fcc",
+        },
+        Case {
             hf: HashType::Sha256,
             want: "185f8db32271fe25f561a6fc938b2e264306ec304eda518007d1764826381969",
         },
