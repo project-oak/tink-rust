@@ -64,6 +64,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tink_signature::init();
     tink_streaming_aead::init();
 
+    let client = tink_tests::fakekms::FakeClient::new("fake-kms://")
+        .expect("Failed to generate new fakekms::FakeClient");
+    tink_core::registry::register_kms_client(client);
+
     info!("Running testing server");
 
     let metadata_handler = MetadataServerImpl {};
