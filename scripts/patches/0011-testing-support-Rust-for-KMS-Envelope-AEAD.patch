@@ -1,0 +1,25 @@
+From a44ee0c45719cf49787f29601e7bf670e0adbea9 Mon Sep 17 00:00:00 2001
+From: David Drysdale <drysdale@google.com>
+Date: Fri, 21 May 2021 09:25:18 +0100
+Subject: [PATCH] testing: support Rust for KMS-Envelope AEAD
+
+---
+ testing/cross_language/util/supported_key_types.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/testing/cross_language/util/supported_key_types.py b/testing/cross_language/util/supported_key_types.py
+index dfb5140ca55c..e1c58f05fdbb 100644
+--- a/testing/cross_language/util/supported_key_types.py
++++ b/testing/cross_language/util/supported_key_types.py
+@@ -95,7 +95,7 @@ SUPPORTED_LANGUAGES = {
+     'ChaCha20Poly1305Key': ['java', 'go', 'rust'],
+     'XChaCha20Poly1305Key': ['cc', 'java', 'go', 'python', 'rust'],
+     'KmsAeadKey': ['cc', 'java', 'python'],
+-    'KmsEnvelopeAeadKey': ['cc', 'java', 'go', 'python'],
++    'KmsEnvelopeAeadKey': ['cc', 'java', 'go', 'python', 'rust'],
+     'AesSivKey': ['cc', 'java', 'go', 'python', 'rust'],
+     'AesCtrHmacStreamingKey': ['cc', 'java', 'go', 'python', 'rust'],
+     'AesGcmHkdfStreamingKey': ['cc', 'java', 'go', 'python', 'rust'],
+-- 
+2.31.1
+
