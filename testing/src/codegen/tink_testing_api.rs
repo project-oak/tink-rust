@@ -508,6 +508,8 @@ pub struct JwtToken {
     pub issued_at: ::core::option::Option<Timestamp>,
     #[prost(map = "string, message", tag = "8")]
     pub custom_claims: ::std::collections::HashMap<::prost::alloc::string::String, JwtClaimValue>,
+    #[prost(message, optional, tag = "9")]
+    pub type_header: ::core::option::Option<StringValue>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtValidator {
