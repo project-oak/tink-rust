@@ -20,6 +20,8 @@ use std::sync::Arc;
 use tink_core::{utils::wrap_err, TinkError};
 use tink_proto::OutputPrefixType;
 
+const MAX_INT: usize = usize::MAX >> 1;
+
 /// Create a [`tink_core::Mac`] primitive from the given keyset handle.
 pub fn new(h: &tink_core::keyset::Handle) -> Result<Box<dyn tink_core::Mac>, TinkError> {
     new_with_key_manager(h, None)
@@ -76,6 +78,9 @@ impl tink_core::Mac for WrappedMac {
             None => return Err("mac::factory: no primary primitive".into()),
         };
         let mac = if primary.prefix_type == OutputPrefixType::Legacy {
+            if data.len() >= MAX_INT {
+                return Err("mac::factory: data too long".into());
+            }
             let mut local_data = Vec::with_capacity(data.len() + 1);
             local_data.extend_from_slice(data);
             local_data.push(0u8);
@@ -104,6 +109,9 @@ impl tink_core::Mac for WrappedMac {
         if let Some(entries) = self.ps.entries_for_prefix(&prefix) {
             for entry in entries {
                 let result = if entry.prefix_type == OutputPrefixType::Legacy {
+                    if data.len() >= MAX_INT {
+                        return Err("mac::factory: data too long".into());
+                    }
                     let mut local_data = Vec::with_capacity(data.len() + 1);
                     local_data.extend_from_slice(data);
                     local_data.push(0u8);
