@@ -10,7 +10,7 @@ keywords = ["cryptography", "tink", "streaming-aead"]
 categories = ["cryptography"]
 
 [dependencies]
-aes = { version = "^0.7.3", features = ["ctr"] }
+aes = { version = "^0.7.4", features = ["ctr"] }
 # Need the `std` feature for Error type conversion
 aes-gcm = { version = "^0.9.1", features = ["std"] }
 prost = "^0.7"
