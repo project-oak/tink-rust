@@ -22,7 +22,7 @@ use p256::{
 use tink_core::{utils::wrap_err, TinkError};
 use tink_proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType};
 
-// An ECDSA private key.
+/// An ECDSA private key.
 pub enum EcdsaPrivateKey {
     NistP256(p256::ecdsa::SigningKey),
 }
