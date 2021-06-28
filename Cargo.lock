@@ -53,9 +53,9 @@ dependencies = [
 
 [[package]]
 name = "aes-siv"
-version = "0.6.0"
+version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "618b1695f395ac861bf2e2ed2120b6d51d7b13c7affd286f7c38f0bb4abd423c"
+checksum = "63b1439568d47108b9707c3f00d50601c14e5ba6092262a64df2c9715bbb16bb"
 dependencies = [
  "aead",
  "aes",
@@ -64,7 +64,6 @@ dependencies = [
  "crypto-mac 0.11.0",
  "ctr",
  "dbl",
- "pmac",
  "zeroize",
 ]
 
@@ -1331,16 +1330,6 @@ name = "pkg-config"
 version = "0.3.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d36492546b6af1463394d46f0c834346f31548646f6ba10849802c9c9a27ac33"
-
-[[package]]
-name = "pmac"
-version = "0.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "42d8c6aafab3b7131a8be27ae259e545c20c067163c39897419686684de0e013"
-dependencies = [
- "crypto-mac 0.11.0",
- "dbl",
-]
 
 [[package]]
 name = "poly1305"
