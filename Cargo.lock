@@ -1654,7 +1654,7 @@ dependencies = [
  "hyper-tls",
  "lazy_static",
  "log",
- "rusoto_credential",
+ "rusoto_credential 0.46.0",
  "rusoto_signature",
  "rustc_version",
  "serde",
@@ -1676,7 +1676,25 @@ dependencies = [
  "hyper",
  "serde",
  "serde_json",
- "shlex",
+ "shlex 0.1.1",
+ "tokio",
+ "zeroize",
+]
+
+[[package]]
+name = "rusoto_credential"
+version = "0.47.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6a46b67db7bb66f5541e44db22b0a02fed59c9603e146db3a9e633272d3bac2f"
+dependencies = [
+ "async-trait",
+ "chrono",
+ "dirs-next",
+ "futures",
+ "hyper",
+ "serde",
+ "serde_json",
+ "shlex 1.0.0",
  "tokio",
  "zeroize",
 ]
@@ -1712,7 +1730,7 @@ dependencies = [
  "md5",
  "percent-encoding",
  "pin-project-lite 0.2.4",
- "rusoto_credential",
+ "rusoto_credential 0.46.0",
  "rustc_version",
  "serde",
  "sha2",
@@ -1915,6 +1933,12 @@ name = "shlex"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7fdf1b9db47230893d76faad238fd6097fd6d6a9245cd7a4d90dbd639536bbd2"
+
+[[package]]
+name = "shlex"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "42a568c8f2cd051a4d283bd6eb0343ac214c1b0f1ac19f93e1175b2dee38c73d"
 
 [[package]]
 name = "signal-hook-registry"
@@ -2216,7 +2240,7 @@ dependencies = [
  "hex",
  "regex",
  "rusoto_core",
- "rusoto_credential",
+ "rusoto_credential 0.47.0",
  "rusoto_kms",
  "tink-core",
  "tokio",
