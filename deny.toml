@@ -24,7 +24,7 @@ wildcards = "allow"
 
 ######################################
 
-# Old versions of crates pulled in (transitively) by rusoto_*(v0.46.0)
+# Old versions of crates pulled in (transitively) by rusoto_*(v0.47.0)
 [[bans.skip]]
 name = "cfg-if"
 version = "0.1.10"
@@ -34,12 +34,6 @@ version = "=0.7.0"
 [[bans.skip]]
 name = "core-foundation-sys"
 version = "=0.7.0"
-[[bans.skip]]
-name = "crypto-mac"
-version = "=0.10.0"
-[[bans.skip]]
-name = "hmac"
-version = "=0.10.1"
 [[bans.skip]]
 name = "pin-project"
 version = "=0.4.26"
@@ -55,9 +49,6 @@ version = "=0.4.4"
 [[bans.skip]]
 name = "security-framework-sys"
 version = "=0.4.3"
-[[bans.skip]]
-name = "time"
-version = "=0.1.44"
 
 # ed25519-dalek(v1.0.1) => rand_core(v0.5.x), {rand(v0.7.3) => getrandom(v0.1.*)}
 # tonic(v0.4.0) ..=> rand(v0.8.3) ..=> {rand_core(v0.6.x), getrandom(v0.2.x)}
