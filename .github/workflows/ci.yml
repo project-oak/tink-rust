@@ -16,7 +16,7 @@ jobs:
         rust:
           - stable
           - beta
-          - nightly-2020-10-19
+          - nightly-2021-07-01
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
@@ -35,7 +35,7 @@ jobs:
         rust:
           - stable
           - beta
-          - nightly-2020-10-19
+          - nightly-2021-07-01
     steps:
       - uses: actions/checkout@v2
         with:
@@ -62,7 +62,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: nightly-2020-10-19
+          toolchain: nightly-2021-07-01
           override: true
           components: rustfmt
       - run: rustc --version
@@ -76,7 +76,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: nightly-2020-10-19
+          toolchain: nightly-2021-07-01
           override: true
           components: rustfmt
       - run: cargo bench --all-targets
@@ -88,7 +88,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: nightly-2020-10-19
+          toolchain: nightly-2021-07-01
           override: true
           components: rustfmt, clippy
       - run: rustc --version
@@ -112,7 +112,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: nightly-2020-10-19
+          toolchain: nightly-2021-07-01
           override: true
           components: rustfmt
       - uses: actions-rs/install@v0.1.2
@@ -129,7 +129,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: nightly-2020-10-19
+          toolchain: nightly-2021-07-01
           override: true
           components: rustfmt
       - run: cargo install --locked --version 0.8.5 cargo-deny
@@ -145,7 +145,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: nightly-2020-10-19
+          toolchain: nightly-2021-07-01
           override: true
           components: rustfmt
       - uses: actions-rs/install@v0.1.2
