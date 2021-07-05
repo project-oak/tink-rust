@@ -14,7 +14,7 @@ env_logger = "^0.8.4"
 futures = "^0.3.15"
 log = "^0.4.14"
 prost = "^0.7"
-structopt = "^0.3.21"
+structopt = "^0.3.22"
 tink-aead = "^0.2"
 tink-core = { version = "^0.2", features = [
   "insecure",
