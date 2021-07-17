@@ -27,7 +27,7 @@ fn test_hkdf_basic() {
         info: &'static str,
         tag_size: usize,
         expected_kdf: &'static str,
-    };
+    }
     let hkdf_tests = vec![
         Case {
             hash_alg:     HashType::Sha256,

@@ -375,17 +375,17 @@ fn validate_ecdsa_private_key(
     let key_size = key.key_value.len();
     match EllipticCurveType::from_i32(params.curve) {
         Some(EllipticCurveType::NistP256) => {
-            if key_size < 256 / 8 - 8 || key_size > 256 / 8 + 1 {
+            if !(256 / 8 - 8..=256 / 8 + 1).contains(&key_size) {
                 return Err("private key doesn't have adequate size".into());
             }
         }
         Some(EllipticCurveType::NistP384) => {
-            if key_size < 384 / 8 - 8 || key_size > 384 / 8 + 1 {
+            if !(384 / 8 - 8..=384 / 8 + 1).contains(&key_size) {
                 return Err("private key doesn't have adequate size".into());
             }
         }
         Some(EllipticCurveType::NistP521) => {
-            if key_size < 521 / 8 - 8 || key_size > 521 / 8 + 1 {
+            if !(521 / 8 - 8..=521 / 8 + 1).contains(&key_size) {
                 return Err("private key doesn't have adequate size".into());
             }
         }

@@ -42,26 +42,24 @@ pub fn key_template_proto(dir: &str, name: &str) -> Result<KeyTemplate, TinkErro
     let value_re = Regex::new(r#"^\s*value\s*:\s*"(.+)"\s*$"#).unwrap();
     let prefix_re = Regex::new(r#"^\s*output_prefix_type\s*:\s*(\S+)\s*$"#).unwrap();
     let file = std::fs::File::open(&path).map_err(|e| wrap_err("Failed to open", e))?;
-    for line in std::io::BufReader::new(file).lines() {
-        if let Ok(line) = line {
-            if comment_re.is_match(&line) {
-                continue;
-            }
-            if let Some(captures) = type_re.captures(&line) {
-                template.type_url = captures[1].to_string();
-            } else if let Some(captures) = value_re.captures(&line) {
-                template.value = escaped_string_to_bytes(&captures[1])?;
-            } else if let Some(captures) = prefix_re.captures(&line) {
-                template.output_prefix_type = match &captures[1] {
-                    "TINK" => tink_proto::OutputPrefixType::Tink,
-                    "LEGACY" => tink_proto::OutputPrefixType::Legacy,
-                    "RAW" => tink_proto::OutputPrefixType::Raw,
-                    "CRUNCHY" => tink_proto::OutputPrefixType::Crunchy,
-                    _ => tink_proto::OutputPrefixType::UnknownPrefix,
-                } as i32;
-            } else {
-                return Err(format!("Failed to parse text protobuf line: '{}'", line).into());
-            }
+    for line in std::io::BufReader::new(file).lines().flatten() {
+        if comment_re.is_match(&line) {
+            continue;
+        }
+        if let Some(captures) = type_re.captures(&line) {
+            template.type_url = captures[1].to_string();
+        } else if let Some(captures) = value_re.captures(&line) {
+            template.value = escaped_string_to_bytes(&captures[1])?;
+        } else if let Some(captures) = prefix_re.captures(&line) {
+            template.output_prefix_type = match &captures[1] {
+                "TINK" => tink_proto::OutputPrefixType::Tink,
+                "LEGACY" => tink_proto::OutputPrefixType::Legacy,
+                "RAW" => tink_proto::OutputPrefixType::Raw,
+                "CRUNCHY" => tink_proto::OutputPrefixType::Crunchy,
+                _ => tink_proto::OutputPrefixType::UnknownPrefix,
+            } as i32;
+        } else {
+            return Err(format!("Failed to parse text protobuf line: '{}'", line).into());
         }
     }
 

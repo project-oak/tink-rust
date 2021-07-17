@@ -21,7 +21,7 @@ fn test_cryptofmt_output_prefix() {
     struct Case {
         key_id: tink_core::KeyId,
         result: Vec<u8>,
-    };
+    }
     let tests = vec![
         Case {
             key_id: 1000000,

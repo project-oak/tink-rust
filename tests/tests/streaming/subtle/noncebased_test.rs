@@ -29,7 +29,7 @@ fn test_nonce_based() {
         plaintext_segment_size: usize,
         first_ciphertext_segment_offset: usize,
         chunk_size: usize,
-    };
+    }
     let test_cases = vec![
         TestCase {
             name: "plaintext_sizeAlignedWithSegment_size",
@@ -129,7 +129,7 @@ fn test_nonce_based_invalid_parameters() {
         first_ciphertext_segment_offset: usize,
         chunk_size: usize,
         expected_error: &'static str,
-    };
+    }
     let test_cases = vec![
         TestCase {
             name: "nonceTooSmall",
