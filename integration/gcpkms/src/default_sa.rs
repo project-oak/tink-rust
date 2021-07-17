@@ -105,7 +105,7 @@ async fn on_gce_test() -> bool {
 
     // Run both methods in parallel and combine.
     let results = join!(timed_http_result, dns_result);
-    return results.0 || results.1;
+    results.0 || results.1
 }
 
 /// Retrieve a specified piece of metadata from the metadata server.
