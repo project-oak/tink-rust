@@ -67,22 +67,28 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         // Set up serde-json options for Keyset-related messages
         .type_attribute(
             "EncryptedKeyset",
-            "#[derive(serde::Deserialize, serde::Serialize)]",
+            "#[derive(serde::Deserialize, serde::Serialize)] #[serde(rename_all = \"camelCase\")]",
         )
-        .type_attribute("EncryptedKeyset", "#[serde(rename_all = \"camelCase\")]")
-        .type_attribute("Keyset", "#[derive(serde::Deserialize, serde::Serialize)]")
-        .type_attribute("Keyset", "#[serde(rename_all = \"camelCase\")]")
+        .type_attribute(
+            "Keyset",
+            "#[derive(serde::Deserialize, serde::Serialize)] #[serde(rename_all = \"camelCase\")]",
+        )
         .type_attribute(
             "KeysetInfo",
-            "#[derive(serde::Deserialize, serde::Serialize)]",
+            "#[derive(serde::Deserialize, serde::Serialize)] #[serde(rename_all = \"camelCase\")]",
         )
-        .type_attribute("KeysetInfo", "#[serde(rename_all = \"camelCase\")]")
-        .type_attribute("Key", "#[derive(serde::Serialize, serde::Deserialize)]")
-        .type_attribute("Key", "#[serde(rename_all = \"camelCase\")]")
-        .type_attribute("KeyInfo", "#[derive(serde::Serialize, serde::Deserialize)]")
-        .type_attribute("KeyInfo", "#[serde(rename_all = \"camelCase\")]")
-        .type_attribute("KeyData", "#[derive(serde::Deserialize, serde::Serialize)]")
-        .type_attribute("KeyData", "#[serde(rename_all = \"camelCase\")]")
+        .type_attribute(
+            "Key",
+            "#[derive(serde::Serialize, serde::Deserialize)] #[serde(rename_all = \"camelCase\")]",
+        )
+        .type_attribute(
+            "KeyInfo",
+            "#[derive(serde::Serialize, serde::Deserialize)] #[serde(rename_all = \"camelCase\")]",
+        )
+        .type_attribute(
+            "KeyData",
+            "#[derive(serde::Deserialize, serde::Serialize)] #[serde(rename_all = \"camelCase\")]",
+        )
         // Set up serde-json options for fields that need special parsing
         .field_attribute(
             "Key.status",

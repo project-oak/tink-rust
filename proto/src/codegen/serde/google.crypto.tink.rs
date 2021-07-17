@@ -445,8 +445,7 @@ pub struct KeyTemplate {
 /// to this serialized proto contains also type_url identifying the
 /// definition of *Key-proto (as in KeyFormat-message), and some extra metadata
 /// about the type key material.
-#[derive(serde::Deserialize, serde::Serialize)]
-#[serde(rename_all = "camelCase")]
+#[derive(serde::Deserialize, serde::Serialize)] #[serde(rename_all = "camelCase")]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeyData {
     /// Required.
@@ -483,8 +482,7 @@ pub mod key_data {
 /// to enable key rotation.  The keys in a keyset can belong to different
 /// implementations/key types, but must all implement the same primitive.
 /// Any given keyset (and any given key) can be used for one primitive only.
-#[derive(serde::Deserialize, serde::Serialize)]
-#[serde(rename_all = "camelCase")]
+#[derive(serde::Deserialize, serde::Serialize)] #[serde(rename_all = "camelCase")]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Keyset {
     /// Identifies key used to generate new crypto data (encrypt, sign).
@@ -498,8 +496,7 @@ pub struct Keyset {
 }
 /// Nested message and enum types in `Keyset`.
 pub mod keyset {
-    #[derive(serde::Serialize, serde::Deserialize)]
-    #[serde(rename_all = "camelCase")]
+    #[derive(serde::Serialize, serde::Deserialize)] #[serde(rename_all = "camelCase")]
     #[derive(Clone, PartialEq, ::prost::Message)]
     pub struct Key {
         /// Contains the actual, instantiation specific key proto.
@@ -523,8 +520,7 @@ pub mod keyset {
 /// Represents a "safe" Keyset that doesn't contain any actual key material,
 /// thus can be used for logging or monitoring. Most fields are copied from
 /// Keyset.
-#[derive(serde::Deserialize, serde::Serialize)]
-#[serde(rename_all = "camelCase")]
+#[derive(serde::Deserialize, serde::Serialize)] #[serde(rename_all = "camelCase")]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetInfo {
     /// See Keyset.primary_key_id.
@@ -537,8 +533,7 @@ pub struct KeysetInfo {
 }
 /// Nested message and enum types in `KeysetInfo`.
 pub mod keyset_info {
-    #[derive(serde::Serialize, serde::Deserialize)]
-    #[serde(rename_all = "camelCase")]
+    #[derive(serde::Serialize, serde::Deserialize)] #[serde(rename_all = "camelCase")]
     #[derive(Clone, PartialEq, ::prost::Message)]
     pub struct KeyInfo {
         /// the type url of this key,
@@ -559,8 +554,7 @@ pub mod keyset_info {
     }
 }
 /// Represents a keyset that is encrypted with a master key.
-#[derive(serde::Deserialize, serde::Serialize)]
-#[serde(rename_all = "camelCase")]
+#[derive(serde::Deserialize, serde::Serialize)] #[serde(rename_all = "camelCase")]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct EncryptedKeyset {
     /// Required.

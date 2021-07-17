@@ -592,9 +592,10 @@ pub enum NullValue {
 }
 /// Generated client implementations.
 pub mod metadata_client {
-    #![allow(unused_variables, dead_code, missing_docs)]
+    #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     /// Service providing metadata about the server.
+    #[derive(Debug, Clone)]
     pub struct MetadataClient<T> {
         inner: tonic::client::Grpc<T>,
     }
@@ -612,17 +613,43 @@ pub mod metadata_client {
     impl<T> MetadataClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + HttpBody + Send + 'static,
+        T::ResponseBody: Body + Send + Sync + 'static,
         T::Error: Into<StdError>,
-        <T::ResponseBody as HttpBody>::Error: Into<StdError> + Send,
+        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
             Self { inner }
         }
-        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
-            let inner = tonic::client::Grpc::with_interceptor(inner, interceptor);
-            Self { inner }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> MetadataClient<InterceptedService<T, F>>
+        where
+            F: FnMut(tonic::Request<()>) -> Result<tonic::Request<()>, tonic::Status>,
+            T: tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+                Response = http::Response<
+                    <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
+                >,
+            >,
+            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
+                Into<StdError> + Send + Sync,
+        {
+            MetadataClient::new(InterceptedService::new(inner, interceptor))
+        }
+        /// Compress requests with `gzip`.
+        ///
+        /// This requires the server to support it otherwise it might respond with an
+        /// error.
+        pub fn send_gzip(mut self) -> Self {
+            self.inner = self.inner.send_gzip();
+            self
+        }
+        /// Enable decompressing responses with `gzip`.
+        pub fn accept_gzip(mut self) -> Self {
+            self.inner = self.inner.accept_gzip();
+            self
         }
         /// Returns some server information. A test may use this information to verify
         /// that it is talking to the right server.
@@ -642,24 +669,13 @@ pub mod metadata_client {
             self.inner.unary(request.into_request(), path, codec).await
         }
     }
-    impl<T: Clone> Clone for MetadataClient<T> {
-        fn clone(&self) -> Self {
-            Self {
-                inner: self.inner.clone(),
-            }
-        }
-    }
-    impl<T> std::fmt::Debug for MetadataClient<T> {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            write!(f, "MetadataClient {{ ... }}")
-        }
-    }
 }
 /// Generated client implementations.
 pub mod keyset_client {
-    #![allow(unused_variables, dead_code, missing_docs)]
+    #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     /// Service for Keyset operations.
+    #[derive(Debug, Clone)]
     pub struct KeysetClient<T> {
         inner: tonic::client::Grpc<T>,
     }
@@ -677,17 +693,43 @@ pub mod keyset_client {
     impl<T> KeysetClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + HttpBody + Send + 'static,
+        T::ResponseBody: Body + Send + Sync + 'static,
         T::Error: Into<StdError>,
-        <T::ResponseBody as HttpBody>::Error: Into<StdError> + Send,
+        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
             Self { inner }
         }
-        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
-            let inner = tonic::client::Grpc::with_interceptor(inner, interceptor);
-            Self { inner }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> KeysetClient<InterceptedService<T, F>>
+        where
+            F: FnMut(tonic::Request<()>) -> Result<tonic::Request<()>, tonic::Status>,
+            T: tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+                Response = http::Response<
+                    <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
+                >,
+            >,
+            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
+                Into<StdError> + Send + Sync,
+        {
+            KeysetClient::new(InterceptedService::new(inner, interceptor))
+        }
+        /// Compress requests with `gzip`.
+        ///
+        /// This requires the server to support it otherwise it might respond with an
+        /// error.
+        pub fn send_gzip(mut self) -> Self {
+            self.inner = self.inner.send_gzip();
+            self
+        }
+        /// Enable decompressing responses with `gzip`.
+        pub fn accept_gzip(mut self) -> Self {
+            self.inner = self.inner.accept_gzip();
+            self
         }
         /// Generates a new keyset from a template.
         pub async fn generate(
@@ -750,24 +792,13 @@ pub mod keyset_client {
             self.inner.unary(request.into_request(), path, codec).await
         }
     }
-    impl<T: Clone> Clone for KeysetClient<T> {
-        fn clone(&self) -> Self {
-            Self {
-                inner: self.inner.clone(),
-            }
-        }
-    }
-    impl<T> std::fmt::Debug for KeysetClient<T> {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            write!(f, "KeysetClient {{ ... }}")
-        }
-    }
 }
 /// Generated client implementations.
 pub mod aead_client {
-    #![allow(unused_variables, dead_code, missing_docs)]
+    #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     /// Service for AEAD encryption and decryption
+    #[derive(Debug, Clone)]
     pub struct AeadClient<T> {
         inner: tonic::client::Grpc<T>,
     }
@@ -785,17 +816,40 @@ pub mod aead_client {
     impl<T> AeadClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + HttpBody + Send + 'static,
+        T::ResponseBody: Body + Send + Sync + 'static,
         T::Error: Into<StdError>,
-        <T::ResponseBody as HttpBody>::Error: Into<StdError> + Send,
+        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
             Self { inner }
         }
-        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
-            let inner = tonic::client::Grpc::with_interceptor(inner, interceptor);
-            Self { inner }
+        pub fn with_interceptor<F>(inner: T, interceptor: F) -> AeadClient<InterceptedService<T, F>>
+        where
+            F: FnMut(tonic::Request<()>) -> Result<tonic::Request<()>, tonic::Status>,
+            T: tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+                Response = http::Response<
+                    <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
+                >,
+            >,
+            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
+                Into<StdError> + Send + Sync,
+        {
+            AeadClient::new(InterceptedService::new(inner, interceptor))
+        }
+        /// Compress requests with `gzip`.
+        ///
+        /// This requires the server to support it otherwise it might respond with an
+        /// error.
+        pub fn send_gzip(mut self) -> Self {
+            self.inner = self.inner.send_gzip();
+            self
+        }
+        /// Enable decompressing responses with `gzip`.
+        pub fn accept_gzip(mut self) -> Self {
+            self.inner = self.inner.accept_gzip();
+            self
         }
         /// Encrypts a plaintext with the provided keyset
         pub async fn encrypt(
@@ -828,24 +882,13 @@ pub mod aead_client {
             self.inner.unary(request.into_request(), path, codec).await
         }
     }
-    impl<T: Clone> Clone for AeadClient<T> {
-        fn clone(&self) -> Self {
-            Self {
-                inner: self.inner.clone(),
-            }
-        }
-    }
-    impl<T> std::fmt::Debug for AeadClient<T> {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            write!(f, "AeadClient {{ ... }}")
-        }
-    }
 }
 /// Generated client implementations.
 pub mod deterministic_aead_client {
-    #![allow(unused_variables, dead_code, missing_docs)]
+    #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     /// Service for Deterministic AEAD encryption and decryption
+    #[derive(Debug, Clone)]
     pub struct DeterministicAeadClient<T> {
         inner: tonic::client::Grpc<T>,
     }
@@ -863,17 +906,43 @@ pub mod deterministic_aead_client {
     impl<T> DeterministicAeadClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + HttpBody + Send + 'static,
+        T::ResponseBody: Body + Send + Sync + 'static,
         T::Error: Into<StdError>,
-        <T::ResponseBody as HttpBody>::Error: Into<StdError> + Send,
+        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
             Self { inner }
         }
-        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
-            let inner = tonic::client::Grpc::with_interceptor(inner, interceptor);
-            Self { inner }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> DeterministicAeadClient<InterceptedService<T, F>>
+        where
+            F: FnMut(tonic::Request<()>) -> Result<tonic::Request<()>, tonic::Status>,
+            T: tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+                Response = http::Response<
+                    <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
+                >,
+            >,
+            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
+                Into<StdError> + Send + Sync,
+        {
+            DeterministicAeadClient::new(InterceptedService::new(inner, interceptor))
+        }
+        /// Compress requests with `gzip`.
+        ///
+        /// This requires the server to support it otherwise it might respond with an
+        /// error.
+        pub fn send_gzip(mut self) -> Self {
+            self.inner = self.inner.send_gzip();
+            self
+        }
+        /// Enable decompressing responses with `gzip`.
+        pub fn accept_gzip(mut self) -> Self {
+            self.inner = self.inner.accept_gzip();
+            self
         }
         /// Encrypts a plaintext with the provided keyset
         pub async fn encrypt_deterministically(
@@ -912,24 +981,13 @@ pub mod deterministic_aead_client {
             self.inner.unary(request.into_request(), path, codec).await
         }
     }
-    impl<T: Clone> Clone for DeterministicAeadClient<T> {
-        fn clone(&self) -> Self {
-            Self {
-                inner: self.inner.clone(),
-            }
-        }
-    }
-    impl<T> std::fmt::Debug for DeterministicAeadClient<T> {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            write!(f, "DeterministicAeadClient {{ ... }}")
-        }
-    }
 }
 /// Generated client implementations.
 pub mod streaming_aead_client {
-    #![allow(unused_variables, dead_code, missing_docs)]
+    #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     /// Service for Streaming AEAD encryption and decryption
+    #[derive(Debug, Clone)]
     pub struct StreamingAeadClient<T> {
         inner: tonic::client::Grpc<T>,
     }
@@ -947,17 +1005,43 @@ pub mod streaming_aead_client {
     impl<T> StreamingAeadClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + HttpBody + Send + 'static,
+        T::ResponseBody: Body + Send + Sync + 'static,
         T::Error: Into<StdError>,
-        <T::ResponseBody as HttpBody>::Error: Into<StdError> + Send,
+        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
             Self { inner }
         }
-        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
-            let inner = tonic::client::Grpc::with_interceptor(inner, interceptor);
-            Self { inner }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> StreamingAeadClient<InterceptedService<T, F>>
+        where
+            F: FnMut(tonic::Request<()>) -> Result<tonic::Request<()>, tonic::Status>,
+            T: tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+                Response = http::Response<
+                    <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
+                >,
+            >,
+            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
+                Into<StdError> + Send + Sync,
+        {
+            StreamingAeadClient::new(InterceptedService::new(inner, interceptor))
+        }
+        /// Compress requests with `gzip`.
+        ///
+        /// This requires the server to support it otherwise it might respond with an
+        /// error.
+        pub fn send_gzip(mut self) -> Self {
+            self.inner = self.inner.send_gzip();
+            self
+        }
+        /// Enable decompressing responses with `gzip`.
+        pub fn accept_gzip(mut self) -> Self {
+            self.inner = self.inner.accept_gzip();
+            self
         }
         /// Encrypts a plaintext with the provided keyset
         pub async fn encrypt(
@@ -992,24 +1076,13 @@ pub mod streaming_aead_client {
             self.inner.unary(request.into_request(), path, codec).await
         }
     }
-    impl<T: Clone> Clone for StreamingAeadClient<T> {
-        fn clone(&self) -> Self {
-            Self {
-                inner: self.inner.clone(),
-            }
-        }
-    }
-    impl<T> std::fmt::Debug for StreamingAeadClient<T> {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            write!(f, "StreamingAeadClient {{ ... }}")
-        }
-    }
 }
 /// Generated client implementations.
 pub mod mac_client {
-    #![allow(unused_variables, dead_code, missing_docs)]
+    #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     /// Service to compute and verify MACs
+    #[derive(Debug, Clone)]
     pub struct MacClient<T> {
         inner: tonic::client::Grpc<T>,
     }
@@ -1027,17 +1100,40 @@ pub mod mac_client {
     impl<T> MacClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + HttpBody + Send + 'static,
+        T::ResponseBody: Body + Send + Sync + 'static,
         T::Error: Into<StdError>,
-        <T::ResponseBody as HttpBody>::Error: Into<StdError> + Send,
+        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
             Self { inner }
         }
-        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
-            let inner = tonic::client::Grpc::with_interceptor(inner, interceptor);
-            Self { inner }
+        pub fn with_interceptor<F>(inner: T, interceptor: F) -> MacClient<InterceptedService<T, F>>
+        where
+            F: FnMut(tonic::Request<()>) -> Result<tonic::Request<()>, tonic::Status>,
+            T: tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+                Response = http::Response<
+                    <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
+                >,
+            >,
+            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
+                Into<StdError> + Send + Sync,
+        {
+            MacClient::new(InterceptedService::new(inner, interceptor))
+        }
+        /// Compress requests with `gzip`.
+        ///
+        /// This requires the server to support it otherwise it might respond with an
+        /// error.
+        pub fn send_gzip(mut self) -> Self {
+            self.inner = self.inner.send_gzip();
+            self
+        }
+        /// Enable decompressing responses with `gzip`.
+        pub fn accept_gzip(mut self) -> Self {
+            self.inner = self.inner.accept_gzip();
+            self
         }
         /// Computes a MAC for given data
         pub async fn compute_mac(
@@ -1070,24 +1166,13 @@ pub mod mac_client {
             self.inner.unary(request.into_request(), path, codec).await
         }
     }
-    impl<T: Clone> Clone for MacClient<T> {
-        fn clone(&self) -> Self {
-            Self {
-                inner: self.inner.clone(),
-            }
-        }
-    }
-    impl<T> std::fmt::Debug for MacClient<T> {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            write!(f, "MacClient {{ ... }}")
-        }
-    }
 }
 /// Generated client implementations.
 pub mod hybrid_client {
-    #![allow(unused_variables, dead_code, missing_docs)]
+    #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     /// Service to hybrid encrypt and decrypt
+    #[derive(Debug, Clone)]
     pub struct HybridClient<T> {
         inner: tonic::client::Grpc<T>,
     }
@@ -1105,17 +1190,43 @@ pub mod hybrid_client {
     impl<T> HybridClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + HttpBody + Send + 'static,
+        T::ResponseBody: Body + Send + Sync + 'static,
         T::Error: Into<StdError>,
-        <T::ResponseBody as HttpBody>::Error: Into<StdError> + Send,
+        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
             Self { inner }
         }
-        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
-            let inner = tonic::client::Grpc::with_interceptor(inner, interceptor);
-            Self { inner }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> HybridClient<InterceptedService<T, F>>
+        where
+            F: FnMut(tonic::Request<()>) -> Result<tonic::Request<()>, tonic::Status>,
+            T: tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+                Response = http::Response<
+                    <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
+                >,
+            >,
+            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
+                Into<StdError> + Send + Sync,
+        {
+            HybridClient::new(InterceptedService::new(inner, interceptor))
+        }
+        /// Compress requests with `gzip`.
+        ///
+        /// This requires the server to support it otherwise it might respond with an
+        /// error.
+        pub fn send_gzip(mut self) -> Self {
+            self.inner = self.inner.send_gzip();
+            self
+        }
+        /// Enable decompressing responses with `gzip`.
+        pub fn accept_gzip(mut self) -> Self {
+            self.inner = self.inner.accept_gzip();
+            self
         }
         /// Encrypts plaintext binding context_info to the resulting ciphertext
         pub async fn encrypt(
@@ -1148,24 +1259,13 @@ pub mod hybrid_client {
             self.inner.unary(request.into_request(), path, codec).await
         }
     }
-    impl<T: Clone> Clone for HybridClient<T> {
-        fn clone(&self) -> Self {
-            Self {
-                inner: self.inner.clone(),
-            }
-        }
-    }
-    impl<T> std::fmt::Debug for HybridClient<T> {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            write!(f, "HybridClient {{ ... }}")
-        }
-    }
 }
 /// Generated client implementations.
 pub mod signature_client {
-    #![allow(unused_variables, dead_code, missing_docs)]
+    #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     /// Service to sign and verify signatures.
+    #[derive(Debug, Clone)]
     pub struct SignatureClient<T> {
         inner: tonic::client::Grpc<T>,
     }
@@ -1183,17 +1283,43 @@ pub mod signature_client {
     impl<T> SignatureClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + HttpBody + Send + 'static,
+        T::ResponseBody: Body + Send + Sync + 'static,
         T::Error: Into<StdError>,
-        <T::ResponseBody as HttpBody>::Error: Into<StdError> + Send,
+        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
             Self { inner }
         }
-        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
-            let inner = tonic::client::Grpc::with_interceptor(inner, interceptor);
-            Self { inner }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> SignatureClient<InterceptedService<T, F>>
+        where
+            F: FnMut(tonic::Request<()>) -> Result<tonic::Request<()>, tonic::Status>,
+            T: tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+                Response = http::Response<
+                    <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
+                >,
+            >,
+            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
+                Into<StdError> + Send + Sync,
+        {
+            SignatureClient::new(InterceptedService::new(inner, interceptor))
+        }
+        /// Compress requests with `gzip`.
+        ///
+        /// This requires the server to support it otherwise it might respond with an
+        /// error.
+        pub fn send_gzip(mut self) -> Self {
+            self.inner = self.inner.send_gzip();
+            self
+        }
+        /// Enable decompressing responses with `gzip`.
+        pub fn accept_gzip(mut self) -> Self {
+            self.inner = self.inner.accept_gzip();
+            self
         }
         /// Computes the signature for data
         pub async fn sign(
@@ -1226,24 +1352,13 @@ pub mod signature_client {
             self.inner.unary(request.into_request(), path, codec).await
         }
     }
-    impl<T: Clone> Clone for SignatureClient<T> {
-        fn clone(&self) -> Self {
-            Self {
-                inner: self.inner.clone(),
-            }
-        }
-    }
-    impl<T> std::fmt::Debug for SignatureClient<T> {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            write!(f, "SignatureClient {{ ... }}")
-        }
-    }
 }
 /// Generated client implementations.
 pub mod prf_set_client {
-    #![allow(unused_variables, dead_code, missing_docs)]
+    #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     /// Service for PrfSet computation
+    #[derive(Debug, Clone)]
     pub struct PrfSetClient<T> {
         inner: tonic::client::Grpc<T>,
     }
@@ -1261,17 +1376,43 @@ pub mod prf_set_client {
     impl<T> PrfSetClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + HttpBody + Send + 'static,
+        T::ResponseBody: Body + Send + Sync + 'static,
         T::Error: Into<StdError>,
-        <T::ResponseBody as HttpBody>::Error: Into<StdError> + Send,
+        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
             Self { inner }
         }
-        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
-            let inner = tonic::client::Grpc::with_interceptor(inner, interceptor);
-            Self { inner }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> PrfSetClient<InterceptedService<T, F>>
+        where
+            F: FnMut(tonic::Request<()>) -> Result<tonic::Request<()>, tonic::Status>,
+            T: tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+                Response = http::Response<
+                    <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
+                >,
+            >,
+            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
+                Into<StdError> + Send + Sync,
+        {
+            PrfSetClient::new(InterceptedService::new(inner, interceptor))
+        }
+        /// Compress requests with `gzip`.
+        ///
+        /// This requires the server to support it otherwise it might respond with an
+        /// error.
+        pub fn send_gzip(mut self) -> Self {
+            self.inner = self.inner.send_gzip();
+            self
+        }
+        /// Enable decompressing responses with `gzip`.
+        pub fn accept_gzip(mut self) -> Self {
+            self.inner = self.inner.accept_gzip();
+            self
         }
         /// Returns the key ids and the primary key id in the keyset.
         pub async fn key_ids(
@@ -1304,24 +1445,13 @@ pub mod prf_set_client {
             self.inner.unary(request.into_request(), path, codec).await
         }
     }
-    impl<T: Clone> Clone for PrfSetClient<T> {
-        fn clone(&self) -> Self {
-            Self {
-                inner: self.inner.clone(),
-            }
-        }
-    }
-    impl<T> std::fmt::Debug for PrfSetClient<T> {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            write!(f, "PrfSetClient {{ ... }}")
-        }
-    }
 }
 /// Generated client implementations.
 pub mod jwt_client {
-    #![allow(unused_variables, dead_code, missing_docs)]
+    #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     /// Service for JSON Web Tokens (JWT)
+    #[derive(Debug, Clone)]
     pub struct JwtClient<T> {
         inner: tonic::client::Grpc<T>,
     }
@@ -1339,17 +1469,40 @@ pub mod jwt_client {
     impl<T> JwtClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + HttpBody + Send + 'static,
+        T::ResponseBody: Body + Send + Sync + 'static,
         T::Error: Into<StdError>,
-        <T::ResponseBody as HttpBody>::Error: Into<StdError> + Send,
+        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
             Self { inner }
         }
-        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
-            let inner = tonic::client::Grpc::with_interceptor(inner, interceptor);
-            Self { inner }
+        pub fn with_interceptor<F>(inner: T, interceptor: F) -> JwtClient<InterceptedService<T, F>>
+        where
+            F: FnMut(tonic::Request<()>) -> Result<tonic::Request<()>, tonic::Status>,
+            T: tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+                Response = http::Response<
+                    <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
+                >,
+            >,
+            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
+                Into<StdError> + Send + Sync,
+        {
+            JwtClient::new(InterceptedService::new(inner, interceptor))
+        }
+        /// Compress requests with `gzip`.
+        ///
+        /// This requires the server to support it otherwise it might respond with an
+        /// error.
+        pub fn send_gzip(mut self) -> Self {
+            self.inner = self.inner.send_gzip();
+            self
+        }
+        /// Enable decompressing responses with `gzip`.
+        pub fn accept_gzip(mut self) -> Self {
+            self.inner = self.inner.accept_gzip();
+            self
         }
         /// Computes a signed compact JWT token.
         pub async fn compute_mac_and_encode(
@@ -1418,22 +1571,10 @@ pub mod jwt_client {
             self.inner.unary(request.into_request(), path, codec).await
         }
     }
-    impl<T: Clone> Clone for JwtClient<T> {
-        fn clone(&self) -> Self {
-            Self {
-                inner: self.inner.clone(),
-            }
-        }
-    }
-    impl<T> std::fmt::Debug for JwtClient<T> {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            write!(f, "JwtClient {{ ... }}")
-        }
-    }
 }
 /// Generated server implementations.
 pub mod metadata_server {
-    #![allow(unused_variables, dead_code, missing_docs)]
+    #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     ///Generated trait containing gRPC methods that should be implemented for use with
     /// MetadataServer.
@@ -1450,24 +1591,31 @@ pub mod metadata_server {
     #[derive(Debug)]
     pub struct MetadataServer<T: Metadata> {
         inner: _Inner<T>,
+        accept_compression_encodings: (),
+        send_compression_encodings: (),
     }
-    struct _Inner<T>(Arc<T>, Option<tonic::Interceptor>);
+    struct _Inner<T>(Arc<T>);
     impl<T: Metadata> MetadataServer<T> {
         pub fn new(inner: T) -> Self {
             let inner = Arc::new(inner);
-            let inner = _Inner(inner, None);
-            Self { inner }
+            let inner = _Inner(inner);
+            Self {
+                inner,
+                accept_compression_encodings: Default::default(),
+                send_compression_encodings: Default::default(),
+            }
         }
-        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
-            let inner = Arc::new(inner);
-            let inner = _Inner(inner, Some(interceptor.into()));
-            Self { inner }
+        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        where
+            F: FnMut(tonic::Request<()>) -> Result<tonic::Request<()>, tonic::Status>,
+        {
+            InterceptedService::new(Self::new(inner), interceptor)
         }
     }
-    impl<T, B> Service<http::Request<B>> for MetadataServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for MetadataServer<T>
     where
         T: Metadata,
-        B: HttpBody + Send + Sync + 'static,
+        B: Body + Send + Sync + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
@@ -1494,17 +1642,17 @@ pub mod metadata_server {
                             Box::pin(fut)
                         }
                     }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let interceptor = inner.1.clone();
                         let inner = inner.0;
                         let method = GetServerInfoSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = if let Some(interceptor) = interceptor {
-                            tonic::server::Grpc::with_interceptor(codec, interceptor)
-                        } else {
-                            tonic::server::Grpc::new(codec)
-                        };
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -1515,7 +1663,7 @@ pub mod metadata_server {
                         .status(200)
                         .header("grpc-status", "12")
                         .header("content-type", "application/grpc")
-                        .body(tonic::body::BoxBody::empty())
+                        .body(empty_body())
                         .unwrap())
                 }),
             }
@@ -1524,12 +1672,16 @@ pub mod metadata_server {
     impl<T: Metadata> Clone for MetadataServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
-            Self { inner }
+            Self {
+                inner,
+                accept_compression_encodings: self.accept_compression_encodings,
+                send_compression_encodings: self.send_compression_encodings,
+            }
         }
     }
     impl<T: Metadata> Clone for _Inner<T> {
         fn clone(&self) -> Self {
-            Self(self.0.clone(), self.1.clone())
+            Self(self.0.clone())
         }
     }
     impl<T: std::fmt::Debug> std::fmt::Debug for _Inner<T> {
@@ -1543,7 +1695,7 @@ pub mod metadata_server {
 }
 /// Generated server implementations.
 pub mod keyset_server {
-    #![allow(unused_variables, dead_code, missing_docs)]
+    #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     ///Generated trait containing gRPC methods that should be implemented for use with
     /// KeysetServer.
@@ -1574,24 +1726,31 @@ pub mod keyset_server {
     #[derive(Debug)]
     pub struct KeysetServer<T: Keyset> {
         inner: _Inner<T>,
+        accept_compression_encodings: (),
+        send_compression_encodings: (),
     }
-    struct _Inner<T>(Arc<T>, Option<tonic::Interceptor>);
+    struct _Inner<T>(Arc<T>);
     impl<T: Keyset> KeysetServer<T> {
         pub fn new(inner: T) -> Self {
             let inner = Arc::new(inner);
-            let inner = _Inner(inner, None);
-            Self { inner }
+            let inner = _Inner(inner);
+            Self {
+                inner,
+                accept_compression_encodings: Default::default(),
+                send_compression_encodings: Default::default(),
+            }
         }
-        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
-            let inner = Arc::new(inner);
-            let inner = _Inner(inner, Some(interceptor.into()));
-            Self { inner }
+        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        where
+            F: FnMut(tonic::Request<()>) -> Result<tonic::Request<()>, tonic::Status>,
+        {
+            InterceptedService::new(Self::new(inner), interceptor)
         }
     }
-    impl<T, B> Service<http::Request<B>> for KeysetServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for KeysetServer<T>
     where
         T: Keyset,
-        B: HttpBody + Send + Sync + 'static,
+        B: Body + Send + Sync + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
@@ -1618,17 +1777,17 @@ pub mod keyset_server {
                             Box::pin(fut)
                         }
                     }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let interceptor = inner.1.clone();
                         let inner = inner.0;
                         let method = GenerateSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = if let Some(interceptor) = interceptor {
-                            tonic::server::Grpc::with_interceptor(codec, interceptor)
-                        } else {
-                            tonic::server::Grpc::new(codec)
-                        };
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -1649,17 +1808,17 @@ pub mod keyset_server {
                             Box::pin(fut)
                         }
                     }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let interceptor = inner.1.clone();
                         let inner = inner.0;
                         let method = PublicSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = if let Some(interceptor) = interceptor {
-                            tonic::server::Grpc::with_interceptor(codec, interceptor)
-                        } else {
-                            tonic::server::Grpc::new(codec)
-                        };
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -1680,17 +1839,17 @@ pub mod keyset_server {
                             Box::pin(fut)
                         }
                     }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let interceptor = inner.1.clone();
                         let inner = inner.0;
                         let method = ToJsonSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = if let Some(interceptor) = interceptor {
-                            tonic::server::Grpc::with_interceptor(codec, interceptor)
-                        } else {
-                            tonic::server::Grpc::new(codec)
-                        };
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -1711,17 +1870,17 @@ pub mod keyset_server {
                             Box::pin(fut)
                         }
                     }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let interceptor = inner.1.clone();
                         let inner = inner.0;
                         let method = FromJsonSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = if let Some(interceptor) = interceptor {
-                            tonic::server::Grpc::with_interceptor(codec, interceptor)
-                        } else {
-                            tonic::server::Grpc::new(codec)
-                        };
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -1732,7 +1891,7 @@ pub mod keyset_server {
                         .status(200)
                         .header("grpc-status", "12")
                         .header("content-type", "application/grpc")
-                        .body(tonic::body::BoxBody::empty())
+                        .body(empty_body())
                         .unwrap())
                 }),
             }
@@ -1741,12 +1900,16 @@ pub mod keyset_server {
     impl<T: Keyset> Clone for KeysetServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
-            Self { inner }
+            Self {
+                inner,
+                accept_compression_encodings: self.accept_compression_encodings,
+                send_compression_encodings: self.send_compression_encodings,
+            }
         }
     }
     impl<T: Keyset> Clone for _Inner<T> {
         fn clone(&self) -> Self {
-            Self(self.0.clone(), self.1.clone())
+            Self(self.0.clone())
         }
     }
     impl<T: std::fmt::Debug> std::fmt::Debug for _Inner<T> {
@@ -1760,7 +1923,7 @@ pub mod keyset_server {
 }
 /// Generated server implementations.
 pub mod aead_server {
-    #![allow(unused_variables, dead_code, missing_docs)]
+    #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     ///Generated trait containing gRPC methods that should be implemented for use with AeadServer.
     #[async_trait]
@@ -1780,24 +1943,31 @@ pub mod aead_server {
     #[derive(Debug)]
     pub struct AeadServer<T: Aead> {
         inner: _Inner<T>,
+        accept_compression_encodings: (),
+        send_compression_encodings: (),
     }
-    struct _Inner<T>(Arc<T>, Option<tonic::Interceptor>);
+    struct _Inner<T>(Arc<T>);
     impl<T: Aead> AeadServer<T> {
         pub fn new(inner: T) -> Self {
             let inner = Arc::new(inner);
-            let inner = _Inner(inner, None);
-            Self { inner }
+            let inner = _Inner(inner);
+            Self {
+                inner,
+                accept_compression_encodings: Default::default(),
+                send_compression_encodings: Default::default(),
+            }
         }
-        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
-            let inner = Arc::new(inner);
-            let inner = _Inner(inner, Some(interceptor.into()));
-            Self { inner }
+        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        where
+            F: FnMut(tonic::Request<()>) -> Result<tonic::Request<()>, tonic::Status>,
+        {
+            InterceptedService::new(Self::new(inner), interceptor)
         }
     }
-    impl<T, B> Service<http::Request<B>> for AeadServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for AeadServer<T>
     where
         T: Aead,
-        B: HttpBody + Send + Sync + 'static,
+        B: Body + Send + Sync + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
@@ -1824,17 +1994,17 @@ pub mod aead_server {
                             Box::pin(fut)
                         }
                     }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let interceptor = inner.1.clone();
                         let inner = inner.0;
                         let method = EncryptSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = if let Some(interceptor) = interceptor {
-                            tonic::server::Grpc::with_interceptor(codec, interceptor)
-                        } else {
-                            tonic::server::Grpc::new(codec)
-                        };
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -1855,17 +2025,17 @@ pub mod aead_server {
                             Box::pin(fut)
                         }
                     }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let interceptor = inner.1.clone();
                         let inner = inner.0;
                         let method = DecryptSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = if let Some(interceptor) = interceptor {
-                            tonic::server::Grpc::with_interceptor(codec, interceptor)
-                        } else {
-                            tonic::server::Grpc::new(codec)
-                        };
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -1876,7 +2046,7 @@ pub mod aead_server {
                         .status(200)
                         .header("grpc-status", "12")
                         .header("content-type", "application/grpc")
-                        .body(tonic::body::BoxBody::empty())
+                        .body(empty_body())
                         .unwrap())
                 }),
             }
@@ -1885,12 +2055,16 @@ pub mod aead_server {
     impl<T: Aead> Clone for AeadServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
-            Self { inner }
+            Self {
+                inner,
+                accept_compression_encodings: self.accept_compression_encodings,
+                send_compression_encodings: self.send_compression_encodings,
+            }
         }
     }
     impl<T: Aead> Clone for _Inner<T> {
         fn clone(&self) -> Self {
-            Self(self.0.clone(), self.1.clone())
+            Self(self.0.clone())
         }
     }
     impl<T: std::fmt::Debug> std::fmt::Debug for _Inner<T> {
@@ -1904,7 +2078,7 @@ pub mod aead_server {
 }
 /// Generated server implementations.
 pub mod deterministic_aead_server {
-    #![allow(unused_variables, dead_code, missing_docs)]
+    #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     ///Generated trait containing gRPC methods that should be implemented for use with
     /// DeterministicAeadServer.
@@ -1925,24 +2099,31 @@ pub mod deterministic_aead_server {
     #[derive(Debug)]
     pub struct DeterministicAeadServer<T: DeterministicAead> {
         inner: _Inner<T>,
+        accept_compression_encodings: (),
+        send_compression_encodings: (),
     }
-    struct _Inner<T>(Arc<T>, Option<tonic::Interceptor>);
+    struct _Inner<T>(Arc<T>);
     impl<T: DeterministicAead> DeterministicAeadServer<T> {
         pub fn new(inner: T) -> Self {
             let inner = Arc::new(inner);
-            let inner = _Inner(inner, None);
-            Self { inner }
+            let inner = _Inner(inner);
+            Self {
+                inner,
+                accept_compression_encodings: Default::default(),
+                send_compression_encodings: Default::default(),
+            }
         }
-        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
-            let inner = Arc::new(inner);
-            let inner = _Inner(inner, Some(interceptor.into()));
-            Self { inner }
+        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        where
+            F: FnMut(tonic::Request<()>) -> Result<tonic::Request<()>, tonic::Status>,
+        {
+            InterceptedService::new(Self::new(inner), interceptor)
         }
     }
-    impl<T, B> Service<http::Request<B>> for DeterministicAeadServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for DeterministicAeadServer<T>
     where
         T: DeterministicAead,
-        B: HttpBody + Send + Sync + 'static,
+        B: Body + Send + Sync + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
@@ -1973,17 +2154,17 @@ pub mod deterministic_aead_server {
                             Box::pin(fut)
                         }
                     }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let interceptor = inner.1.clone();
                         let inner = inner.0;
                         let method = EncryptDeterministicallySvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = if let Some(interceptor) = interceptor {
-                            tonic::server::Grpc::with_interceptor(codec, interceptor)
-                        } else {
-                            tonic::server::Grpc::new(codec)
-                        };
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2008,17 +2189,17 @@ pub mod deterministic_aead_server {
                             Box::pin(fut)
                         }
                     }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let interceptor = inner.1.clone();
                         let inner = inner.0;
                         let method = DecryptDeterministicallySvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = if let Some(interceptor) = interceptor {
-                            tonic::server::Grpc::with_interceptor(codec, interceptor)
-                        } else {
-                            tonic::server::Grpc::new(codec)
-                        };
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2029,7 +2210,7 @@ pub mod deterministic_aead_server {
                         .status(200)
                         .header("grpc-status", "12")
                         .header("content-type", "application/grpc")
-                        .body(tonic::body::BoxBody::empty())
+                        .body(empty_body())
                         .unwrap())
                 }),
             }
@@ -2038,12 +2219,16 @@ pub mod deterministic_aead_server {
     impl<T: DeterministicAead> Clone for DeterministicAeadServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
-            Self { inner }
+            Self {
+                inner,
+                accept_compression_encodings: self.accept_compression_encodings,
+                send_compression_encodings: self.send_compression_encodings,
+            }
         }
     }
     impl<T: DeterministicAead> Clone for _Inner<T> {
         fn clone(&self) -> Self {
-            Self(self.0.clone(), self.1.clone())
+            Self(self.0.clone())
         }
     }
     impl<T: std::fmt::Debug> std::fmt::Debug for _Inner<T> {
@@ -2057,7 +2242,7 @@ pub mod deterministic_aead_server {
 }
 /// Generated server implementations.
 pub mod streaming_aead_server {
-    #![allow(unused_variables, dead_code, missing_docs)]
+    #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     ///Generated trait containing gRPC methods that should be implemented for use with
     /// StreamingAeadServer.
@@ -2078,24 +2263,31 @@ pub mod streaming_aead_server {
     #[derive(Debug)]
     pub struct StreamingAeadServer<T: StreamingAead> {
         inner: _Inner<T>,
+        accept_compression_encodings: (),
+        send_compression_encodings: (),
     }
-    struct _Inner<T>(Arc<T>, Option<tonic::Interceptor>);
+    struct _Inner<T>(Arc<T>);
     impl<T: StreamingAead> StreamingAeadServer<T> {
         pub fn new(inner: T) -> Self {
             let inner = Arc::new(inner);
-            let inner = _Inner(inner, None);
-            Self { inner }
+            let inner = _Inner(inner);
+            Self {
+                inner,
+                accept_compression_encodings: Default::default(),
+                send_compression_encodings: Default::default(),
+            }
         }
-        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
-            let inner = Arc::new(inner);
-            let inner = _Inner(inner, Some(interceptor.into()));
-            Self { inner }
+        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        where
+            F: FnMut(tonic::Request<()>) -> Result<tonic::Request<()>, tonic::Status>,
+        {
+            InterceptedService::new(Self::new(inner), interceptor)
         }
     }
-    impl<T, B> Service<http::Request<B>> for StreamingAeadServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for StreamingAeadServer<T>
     where
         T: StreamingAead,
-        B: HttpBody + Send + Sync + 'static,
+        B: Body + Send + Sync + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
@@ -2125,17 +2317,17 @@ pub mod streaming_aead_server {
                             Box::pin(fut)
                         }
                     }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let interceptor = inner.1.clone();
                         let inner = inner.0;
                         let method = EncryptSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = if let Some(interceptor) = interceptor {
-                            tonic::server::Grpc::with_interceptor(codec, interceptor)
-                        } else {
-                            tonic::server::Grpc::new(codec)
-                        };
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2159,17 +2351,17 @@ pub mod streaming_aead_server {
                             Box::pin(fut)
                         }
                     }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let interceptor = inner.1.clone();
                         let inner = inner.0;
                         let method = DecryptSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = if let Some(interceptor) = interceptor {
-                            tonic::server::Grpc::with_interceptor(codec, interceptor)
-                        } else {
-                            tonic::server::Grpc::new(codec)
-                        };
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2180,7 +2372,7 @@ pub mod streaming_aead_server {
                         .status(200)
                         .header("grpc-status", "12")
                         .header("content-type", "application/grpc")
-                        .body(tonic::body::BoxBody::empty())
+                        .body(empty_body())
                         .unwrap())
                 }),
             }
@@ -2189,12 +2381,16 @@ pub mod streaming_aead_server {
     impl<T: StreamingAead> Clone for StreamingAeadServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
-            Self { inner }
+            Self {
+                inner,
+                accept_compression_encodings: self.accept_compression_encodings,
+                send_compression_encodings: self.send_compression_encodings,
+            }
         }
     }
     impl<T: StreamingAead> Clone for _Inner<T> {
         fn clone(&self) -> Self {
-            Self(self.0.clone(), self.1.clone())
+            Self(self.0.clone())
         }
     }
     impl<T: std::fmt::Debug> std::fmt::Debug for _Inner<T> {
@@ -2208,7 +2404,7 @@ pub mod streaming_aead_server {
 }
 /// Generated server implementations.
 pub mod mac_server {
-    #![allow(unused_variables, dead_code, missing_docs)]
+    #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     ///Generated trait containing gRPC methods that should be implemented for use with MacServer.
     #[async_trait]
@@ -2228,24 +2424,31 @@ pub mod mac_server {
     #[derive(Debug)]
     pub struct MacServer<T: Mac> {
         inner: _Inner<T>,
+        accept_compression_encodings: (),
+        send_compression_encodings: (),
     }
-    struct _Inner<T>(Arc<T>, Option<tonic::Interceptor>);
+    struct _Inner<T>(Arc<T>);
     impl<T: Mac> MacServer<T> {
         pub fn new(inner: T) -> Self {
             let inner = Arc::new(inner);
-            let inner = _Inner(inner, None);
-            Self { inner }
+            let inner = _Inner(inner);
+            Self {
+                inner,
+                accept_compression_encodings: Default::default(),
+                send_compression_encodings: Default::default(),
+            }
         }
-        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
-            let inner = Arc::new(inner);
-            let inner = _Inner(inner, Some(interceptor.into()));
-            Self { inner }
+        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        where
+            F: FnMut(tonic::Request<()>) -> Result<tonic::Request<()>, tonic::Status>,
+        {
+            InterceptedService::new(Self::new(inner), interceptor)
         }
     }
-    impl<T, B> Service<http::Request<B>> for MacServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for MacServer<T>
     where
         T: Mac,
-        B: HttpBody + Send + Sync + 'static,
+        B: Body + Send + Sync + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
@@ -2272,17 +2475,17 @@ pub mod mac_server {
                             Box::pin(fut)
                         }
                     }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let interceptor = inner.1.clone();
                         let inner = inner.0;
                         let method = ComputeMacSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = if let Some(interceptor) = interceptor {
-                            tonic::server::Grpc::with_interceptor(codec, interceptor)
-                        } else {
-                            tonic::server::Grpc::new(codec)
-                        };
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2303,17 +2506,17 @@ pub mod mac_server {
                             Box::pin(fut)
                         }
                     }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let interceptor = inner.1.clone();
                         let inner = inner.0;
                         let method = VerifyMacSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = if let Some(interceptor) = interceptor {
-                            tonic::server::Grpc::with_interceptor(codec, interceptor)
-                        } else {
-                            tonic::server::Grpc::new(codec)
-                        };
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2324,7 +2527,7 @@ pub mod mac_server {
                         .status(200)
                         .header("grpc-status", "12")
                         .header("content-type", "application/grpc")
-                        .body(tonic::body::BoxBody::empty())
+                        .body(empty_body())
                         .unwrap())
                 }),
             }
@@ -2333,12 +2536,16 @@ pub mod mac_server {
     impl<T: Mac> Clone for MacServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
-            Self { inner }
+            Self {
+                inner,
+                accept_compression_encodings: self.accept_compression_encodings,
+                send_compression_encodings: self.send_compression_encodings,
+            }
         }
     }
     impl<T: Mac> Clone for _Inner<T> {
         fn clone(&self) -> Self {
-            Self(self.0.clone(), self.1.clone())
+            Self(self.0.clone())
         }
     }
     impl<T: std::fmt::Debug> std::fmt::Debug for _Inner<T> {
@@ -2352,7 +2559,7 @@ pub mod mac_server {
 }
 /// Generated server implementations.
 pub mod hybrid_server {
-    #![allow(unused_variables, dead_code, missing_docs)]
+    #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     ///Generated trait containing gRPC methods that should be implemented for use with
     /// HybridServer.
@@ -2373,24 +2580,31 @@ pub mod hybrid_server {
     #[derive(Debug)]
     pub struct HybridServer<T: Hybrid> {
         inner: _Inner<T>,
+        accept_compression_encodings: (),
+        send_compression_encodings: (),
     }
-    struct _Inner<T>(Arc<T>, Option<tonic::Interceptor>);
+    struct _Inner<T>(Arc<T>);
     impl<T: Hybrid> HybridServer<T> {
         pub fn new(inner: T) -> Self {
             let inner = Arc::new(inner);
-            let inner = _Inner(inner, None);
-            Self { inner }
+            let inner = _Inner(inner);
+            Self {
+                inner,
+                accept_compression_encodings: Default::default(),
+                send_compression_encodings: Default::default(),
+            }
         }
-        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
-            let inner = Arc::new(inner);
-            let inner = _Inner(inner, Some(interceptor.into()));
-            Self { inner }
+        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        where
+            F: FnMut(tonic::Request<()>) -> Result<tonic::Request<()>, tonic::Status>,
+        {
+            InterceptedService::new(Self::new(inner), interceptor)
         }
     }
-    impl<T, B> Service<http::Request<B>> for HybridServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for HybridServer<T>
     where
         T: Hybrid,
-        B: HttpBody + Send + Sync + 'static,
+        B: Body + Send + Sync + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
@@ -2417,17 +2631,17 @@ pub mod hybrid_server {
                             Box::pin(fut)
                         }
                     }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let interceptor = inner.1.clone();
                         let inner = inner.0;
                         let method = EncryptSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = if let Some(interceptor) = interceptor {
-                            tonic::server::Grpc::with_interceptor(codec, interceptor)
-                        } else {
-                            tonic::server::Grpc::new(codec)
-                        };
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2448,17 +2662,17 @@ pub mod hybrid_server {
                             Box::pin(fut)
                         }
                     }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let interceptor = inner.1.clone();
                         let inner = inner.0;
                         let method = DecryptSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = if let Some(interceptor) = interceptor {
-                            tonic::server::Grpc::with_interceptor(codec, interceptor)
-                        } else {
-                            tonic::server::Grpc::new(codec)
-                        };
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2469,7 +2683,7 @@ pub mod hybrid_server {
                         .status(200)
                         .header("grpc-status", "12")
                         .header("content-type", "application/grpc")
-                        .body(tonic::body::BoxBody::empty())
+                        .body(empty_body())
                         .unwrap())
                 }),
             }
@@ -2478,12 +2692,16 @@ pub mod hybrid_server {
     impl<T: Hybrid> Clone for HybridServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
-            Self { inner }
+            Self {
+                inner,
+                accept_compression_encodings: self.accept_compression_encodings,
+                send_compression_encodings: self.send_compression_encodings,
+            }
         }
     }
     impl<T: Hybrid> Clone for _Inner<T> {
         fn clone(&self) -> Self {
-            Self(self.0.clone(), self.1.clone())
+            Self(self.0.clone())
         }
     }
     impl<T: std::fmt::Debug> std::fmt::Debug for _Inner<T> {
@@ -2497,7 +2715,7 @@ pub mod hybrid_server {
 }
 /// Generated server implementations.
 pub mod signature_server {
-    #![allow(unused_variables, dead_code, missing_docs)]
+    #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     ///Generated trait containing gRPC methods that should be implemented for use with
     /// SignatureServer.
@@ -2518,24 +2736,31 @@ pub mod signature_server {
     #[derive(Debug)]
     pub struct SignatureServer<T: Signature> {
         inner: _Inner<T>,
+        accept_compression_encodings: (),
+        send_compression_encodings: (),
     }
-    struct _Inner<T>(Arc<T>, Option<tonic::Interceptor>);
+    struct _Inner<T>(Arc<T>);
     impl<T: Signature> SignatureServer<T> {
         pub fn new(inner: T) -> Self {
             let inner = Arc::new(inner);
-            let inner = _Inner(inner, None);
-            Self { inner }
+            let inner = _Inner(inner);
+            Self {
+                inner,
+                accept_compression_encodings: Default::default(),
+                send_compression_encodings: Default::default(),
+            }
         }
-        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
-            let inner = Arc::new(inner);
-            let inner = _Inner(inner, Some(interceptor.into()));
-            Self { inner }
+        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        where
+            F: FnMut(tonic::Request<()>) -> Result<tonic::Request<()>, tonic::Status>,
+        {
+            InterceptedService::new(Self::new(inner), interceptor)
         }
     }
-    impl<T, B> Service<http::Request<B>> for SignatureServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for SignatureServer<T>
     where
         T: Signature,
-        B: HttpBody + Send + Sync + 'static,
+        B: Body + Send + Sync + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
@@ -2562,17 +2787,17 @@ pub mod signature_server {
                             Box::pin(fut)
                         }
                     }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let interceptor = inner.1.clone();
                         let inner = inner.0;
                         let method = SignSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = if let Some(interceptor) = interceptor {
-                            tonic::server::Grpc::with_interceptor(codec, interceptor)
-                        } else {
-                            tonic::server::Grpc::new(codec)
-                        };
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2593,17 +2818,17 @@ pub mod signature_server {
                             Box::pin(fut)
                         }
                     }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let interceptor = inner.1.clone();
                         let inner = inner.0;
                         let method = VerifySvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = if let Some(interceptor) = interceptor {
-                            tonic::server::Grpc::with_interceptor(codec, interceptor)
-                        } else {
-                            tonic::server::Grpc::new(codec)
-                        };
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2614,7 +2839,7 @@ pub mod signature_server {
                         .status(200)
                         .header("grpc-status", "12")
                         .header("content-type", "application/grpc")
-                        .body(tonic::body::BoxBody::empty())
+                        .body(empty_body())
                         .unwrap())
                 }),
             }
@@ -2623,12 +2848,16 @@ pub mod signature_server {
     impl<T: Signature> Clone for SignatureServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
-            Self { inner }
+            Self {
+                inner,
+                accept_compression_encodings: self.accept_compression_encodings,
+                send_compression_encodings: self.send_compression_encodings,
+            }
         }
     }
     impl<T: Signature> Clone for _Inner<T> {
         fn clone(&self) -> Self {
-            Self(self.0.clone(), self.1.clone())
+            Self(self.0.clone())
         }
     }
     impl<T: std::fmt::Debug> std::fmt::Debug for _Inner<T> {
@@ -2642,7 +2871,7 @@ pub mod signature_server {
 }
 /// Generated server implementations.
 pub mod prf_set_server {
-    #![allow(unused_variables, dead_code, missing_docs)]
+    #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     ///Generated trait containing gRPC methods that should be implemented for use with
     /// PrfSetServer.
@@ -2663,24 +2892,31 @@ pub mod prf_set_server {
     #[derive(Debug)]
     pub struct PrfSetServer<T: PrfSet> {
         inner: _Inner<T>,
+        accept_compression_encodings: (),
+        send_compression_encodings: (),
     }
-    struct _Inner<T>(Arc<T>, Option<tonic::Interceptor>);
+    struct _Inner<T>(Arc<T>);
     impl<T: PrfSet> PrfSetServer<T> {
         pub fn new(inner: T) -> Self {
             let inner = Arc::new(inner);
-            let inner = _Inner(inner, None);
-            Self { inner }
+            let inner = _Inner(inner);
+            Self {
+                inner,
+                accept_compression_encodings: Default::default(),
+                send_compression_encodings: Default::default(),
+            }
         }
-        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
-            let inner = Arc::new(inner);
-            let inner = _Inner(inner, Some(interceptor.into()));
-            Self { inner }
+        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        where
+            F: FnMut(tonic::Request<()>) -> Result<tonic::Request<()>, tonic::Status>,
+        {
+            InterceptedService::new(Self::new(inner), interceptor)
         }
     }
-    impl<T, B> Service<http::Request<B>> for PrfSetServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for PrfSetServer<T>
     where
         T: PrfSet,
-        B: HttpBody + Send + Sync + 'static,
+        B: Body + Send + Sync + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
@@ -2707,17 +2943,17 @@ pub mod prf_set_server {
                             Box::pin(fut)
                         }
                     }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let interceptor = inner.1.clone();
                         let inner = inner.0;
                         let method = KeyIdsSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = if let Some(interceptor) = interceptor {
-                            tonic::server::Grpc::with_interceptor(codec, interceptor)
-                        } else {
-                            tonic::server::Grpc::new(codec)
-                        };
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2738,17 +2974,17 @@ pub mod prf_set_server {
                             Box::pin(fut)
                         }
                     }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let interceptor = inner.1.clone();
                         let inner = inner.0;
                         let method = ComputeSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = if let Some(interceptor) = interceptor {
-                            tonic::server::Grpc::with_interceptor(codec, interceptor)
-                        } else {
-                            tonic::server::Grpc::new(codec)
-                        };
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2759,7 +2995,7 @@ pub mod prf_set_server {
                         .status(200)
                         .header("grpc-status", "12")
                         .header("content-type", "application/grpc")
-                        .body(tonic::body::BoxBody::empty())
+                        .body(empty_body())
                         .unwrap())
                 }),
             }
@@ -2768,12 +3004,16 @@ pub mod prf_set_server {
     impl<T: PrfSet> Clone for PrfSetServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
-            Self { inner }
+            Self {
+                inner,
+                accept_compression_encodings: self.accept_compression_encodings,
+                send_compression_encodings: self.send_compression_encodings,
+            }
         }
     }
     impl<T: PrfSet> Clone for _Inner<T> {
         fn clone(&self) -> Self {
-            Self(self.0.clone(), self.1.clone())
+            Self(self.0.clone())
         }
     }
     impl<T: std::fmt::Debug> std::fmt::Debug for _Inner<T> {
@@ -2787,7 +3027,7 @@ pub mod prf_set_server {
 }
 /// Generated server implementations.
 pub mod jwt_server {
-    #![allow(unused_variables, dead_code, missing_docs)]
+    #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     ///Generated trait containing gRPC methods that should be implemented for use with JwtServer.
     #[async_trait]
@@ -2817,24 +3057,31 @@ pub mod jwt_server {
     #[derive(Debug)]
     pub struct JwtServer<T: Jwt> {
         inner: _Inner<T>,
+        accept_compression_encodings: (),
+        send_compression_encodings: (),
     }
-    struct _Inner<T>(Arc<T>, Option<tonic::Interceptor>);
+    struct _Inner<T>(Arc<T>);
     impl<T: Jwt> JwtServer<T> {
         pub fn new(inner: T) -> Self {
             let inner = Arc::new(inner);
-            let inner = _Inner(inner, None);
-            Self { inner }
+            let inner = _Inner(inner);
+            Self {
+                inner,
+                accept_compression_encodings: Default::default(),
+                send_compression_encodings: Default::default(),
+            }
         }
-        pub fn with_interceptor(inner: T, interceptor: impl Into<tonic::Interceptor>) -> Self {
-            let inner = Arc::new(inner);
-            let inner = _Inner(inner, Some(interceptor.into()));
-            Self { inner }
+        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        where
+            F: FnMut(tonic::Request<()>) -> Result<tonic::Request<()>, tonic::Status>,
+        {
+            InterceptedService::new(Self::new(inner), interceptor)
         }
     }
-    impl<T, B> Service<http::Request<B>> for JwtServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for JwtServer<T>
     where
         T: Jwt,
-        B: HttpBody + Send + Sync + 'static,
+        B: Body + Send + Sync + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
@@ -2861,17 +3108,17 @@ pub mod jwt_server {
                             Box::pin(fut)
                         }
                     }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let interceptor = inner.1.clone();
                         let inner = inner.0;
                         let method = ComputeMacAndEncodeSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = if let Some(interceptor) = interceptor {
-                            tonic::server::Grpc::with_interceptor(codec, interceptor)
-                        } else {
-                            tonic::server::Grpc::new(codec)
-                        };
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2892,17 +3139,17 @@ pub mod jwt_server {
                             Box::pin(fut)
                         }
                     }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let interceptor = inner.1.clone();
                         let inner = inner.0;
                         let method = VerifyMacAndDecodeSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = if let Some(interceptor) = interceptor {
-                            tonic::server::Grpc::with_interceptor(codec, interceptor)
-                        } else {
-                            tonic::server::Grpc::new(codec)
-                        };
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2924,17 +3171,17 @@ pub mod jwt_server {
                             Box::pin(fut)
                         }
                     }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let interceptor = inner.1.clone();
                         let inner = inner.0;
                         let method = PublicKeySignAndEncodeSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = if let Some(interceptor) = interceptor {
-                            tonic::server::Grpc::with_interceptor(codec, interceptor)
-                        } else {
-                            tonic::server::Grpc::new(codec)
-                        };
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2958,17 +3205,17 @@ pub mod jwt_server {
                             Box::pin(fut)
                         }
                     }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let interceptor = inner.1.clone();
                         let inner = inner.0;
                         let method = PublicKeyVerifyAndDecodeSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = if let Some(interceptor) = interceptor {
-                            tonic::server::Grpc::with_interceptor(codec, interceptor)
-                        } else {
-                            tonic::server::Grpc::new(codec)
-                        };
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2979,7 +3226,7 @@ pub mod jwt_server {
                         .status(200)
                         .header("grpc-status", "12")
                         .header("content-type", "application/grpc")
-                        .body(tonic::body::BoxBody::empty())
+                        .body(empty_body())
                         .unwrap())
                 }),
             }
@@ -2988,12 +3235,16 @@ pub mod jwt_server {
     impl<T: Jwt> Clone for JwtServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
-            Self { inner }
+            Self {
+                inner,
+                accept_compression_encodings: self.accept_compression_encodings,
+                send_compression_encodings: self.send_compression_encodings,
+            }
         }
     }
     impl<T: Jwt> Clone for _Inner<T> {
         fn clone(&self) -> Self {
-            Self(self.0.clone(), self.1.clone())
+            Self(self.0.clone())
         }
     }
     impl<T: std::fmt::Debug> std::fmt::Debug for _Inner<T> {
