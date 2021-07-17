@@ -22,5 +22,8 @@ pub trait KmsClient: Send + Sync {
     fn supported(&self, key_uri: &str) -> bool;
 
     /// Get an [`Aead`](crate::Aead) backend by `key_uri`.
-    fn get_aead(&self, key_uri: &str) -> Result<Box<dyn crate::Aead>, crate::TinkError>;
+    fn get_aead(
+        &self,
+        key_uri: &str,
+    ) -> Result<alloc::boxed::Box<dyn crate::Aead>, crate::TinkError>;
 }

@@ -16,6 +16,8 @@
 
 //! Deterministic authenticated encryption with associated data.
 
+use alloc::{boxed::Box, vec::Vec};
+
 /// `DeterministicAead` is the interface for deterministic authenticated encryption with associated
 /// data.
 ///

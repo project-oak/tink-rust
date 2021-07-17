@@ -16,6 +16,8 @@
 
 //! Hybrid encryption.
 
+use alloc::{boxed::Box, vec::Vec};
+
 /// `HybridEncrypt` is the interface for hybrid encryption.
 ///
 /// Hybrid Encryption combines the efficiency of symmetric encryption with the convenience of

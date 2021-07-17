@@ -16,6 +16,8 @@
 
 //! Digital signature signing.
 
+use alloc::{boxed::Box, vec::Vec};
+
 /// `Signer` is the signing interface for digital signature.
 ///
 /// Implementations of this trait are secure against adaptive chosen-message
