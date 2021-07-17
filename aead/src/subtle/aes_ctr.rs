@@ -48,7 +48,7 @@ impl AesCtr {
     pub fn new(key: &[u8], iv_size: usize) -> Result<AesCtr, TinkError> {
         let key_size = key.len();
         super::validate_aes_key_size(key_size).map_err(|e| wrap_err("AesCtr", e))?;
-        if iv_size < AES_CTR_MIN_IV_SIZE || iv_size > AES_BLOCK_SIZE_IN_BYTES {
+        if !(AES_CTR_MIN_IV_SIZE..=AES_BLOCK_SIZE_IN_BYTES).contains(&iv_size) {
             return Err(format!("AesCtr: invalid IV size: {}", iv_size).into());
         }
         let key = match key.len() {
