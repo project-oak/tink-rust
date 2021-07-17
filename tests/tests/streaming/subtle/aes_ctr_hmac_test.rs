@@ -26,7 +26,7 @@ fn test_aes_ctr_hmac_encrypt_decrypt() {
         first_segment_offset: usize,
         plaintext_size: usize,
         chunk_size: usize,
-    };
+    }
     let test_cases = vec![
         TestCase {
             name: "small-1",

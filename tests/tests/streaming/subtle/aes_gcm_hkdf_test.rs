@@ -26,7 +26,7 @@ fn test_aes_gcm_hkdf_encrypt_decrypt() {
         first_segment_offset: usize,
         plaintext_size: usize,
         chunk_size: usize,
-    };
+    }
     let test_cases = vec![
         TestCase {
             name: "small-1",
@@ -214,7 +214,7 @@ fn test_aes_gcm_hkdf_invalid_params() {
         key_size_in_bytes: usize,
         segment_size: usize,
         first_segment_offset: usize,
-    };
+    }
     let test_cases = vec![
         TestCase {
             err_msg: "invalid AES key size",

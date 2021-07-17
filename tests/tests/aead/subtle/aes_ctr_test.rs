@@ -58,7 +58,7 @@ fn test_new_aes_ctr() {
     for i in 0..64 {
         let k = &key[..16];
         let result = subtle::AesCtr::new(k, i);
-        if i >= subtle::AES_CTR_MIN_IV_SIZE && i <= subtle::AES_BLOCK_SIZE_IN_BYTES {
+        if (subtle::AES_CTR_MIN_IV_SIZE..=subtle::AES_BLOCK_SIZE_IN_BYTES).contains(&i) {
             let c = result.unwrap_or_else(|e| {
                 panic!("want: valid cipher (IV size={}), got: error {:?}", i, e)
             });
