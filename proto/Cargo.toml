@@ -1,6 +1,6 @@
 [package]
 name = "tink-proto"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -14,9 +14,9 @@ default = []
 json = ["base64", "serde"]
 
 [dependencies]
-base64 = { version = "^0.13", optional = true }
-prost = "^0.8"
-serde = { version = "^1.0.126", features = ["derive"], optional = true }
+base64 = { version = "^0.13", default-features = false, features = ["alloc"], optional = true }
+prost = { version = "^0.8", default-features = false }
+serde = { version = "^1.0.126", default-features = false, features = ["alloc", "derive"], optional = true }
 
 [build-dependencies]
 prost-build = "^0.8"
