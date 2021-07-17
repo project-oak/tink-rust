@@ -513,12 +513,24 @@ pub struct JwtToken {
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtValidator {
+    #[prost(message, optional, tag = "7")]
+    pub expected_type_header: ::core::option::Option<StringValue>,
     #[prost(message, optional, tag = "1")]
-    pub issuer: ::core::option::Option<StringValue>,
+    pub expected_issuer: ::core::option::Option<StringValue>,
     #[prost(message, optional, tag = "2")]
-    pub subject: ::core::option::Option<StringValue>,
+    pub expected_subject: ::core::option::Option<StringValue>,
     #[prost(message, optional, tag = "3")]
-    pub audience: ::core::option::Option<StringValue>,
+    pub expected_audience: ::core::option::Option<StringValue>,
+    #[prost(bool, tag = "8")]
+    pub ignore_type_header: bool,
+    #[prost(bool, tag = "9")]
+    pub ignore_issuer: bool,
+    #[prost(bool, tag = "10")]
+    pub ignore_subject: bool,
+    #[prost(bool, tag = "11")]
+    pub ignore_audience: bool,
+    #[prost(bool, tag = "12")]
+    pub allow_missing_expiration: bool,
     #[prost(message, optional, tag = "5")]
     pub now: ::core::option::Option<Timestamp>,
     #[prost(message, optional, tag = "6")]
