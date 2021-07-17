@@ -568,7 +568,10 @@ pub enum KeyStatusType {
 /// entirely by the primitive, but the prefix has to be one of the following
 /// 4 types:
 ///   - Legacy: prefix is 5 bytes, starts with \x00 and followed by a 4-byte
-///             key id that is computed from the key material.
+///             key id that is computed from the key material. In addition to
+///             that, signature schemes and MACs will add a \x00 byte to the
+///             end of the data being signed / MACed when operating on keys
+///             with this OutputPrefixType.
 ///   - Crunchy: prefix is 5 bytes, starts with \x00 and followed by a 4-byte
 ///             key id that is generated randomly.
 ///   - Tink  : prefix is 5 bytes, starts with \x01 and followed by 4-byte
@@ -581,9 +584,6 @@ pub enum OutputPrefixType {
     Tink = 1,
     Legacy = 2,
     Raw = 3,
-    /// CRUNCHY is like LEGACY, but with two differences:
-    ///   - Its key id is generated randomly (like TINK)
-    ///   - Its signature schemes don't append zero to sign messages
     Crunchy = 4,
 }
 // Protos for keys for ECIES with HKDF and AEAD encryption.
@@ -778,6 +778,18 @@ pub struct JwtHmacKey {
     pub algorithm: i32,
     #[prost(bytes="vec", tag="3")]
     pub key_value: ::prost::alloc::vec::Vec<u8>,
+    #[prost(message, optional, tag="4")]
+    pub custom_kid: ::core::option::Option<jwt_hmac_key::CustomKid>,
+}
+/// Nested message and enum types in `JwtHmacKey`.
+pub mod jwt_hmac_key {
+    /// Optional, custom kid header value to be used with "RAW" keys.
+    /// "TINK" keys with this value set will be rejected.
+    #[derive(Clone, PartialEq, ::prost::Message)]
+    pub struct CustomKid {
+        #[prost(string, tag="1")]
+        pub value: ::prost::alloc::string::String,
+    }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtHmacKeyFormat {
