@@ -16,16 +16,17 @@
 
 //! Utilities for random data.
 
-use rand::{thread_rng, Rng};
+use alloc::vec;
+use rand::{rngs::OsRng, Rng};
 
 /// Return a vector of the given `size` filled with random bytes.
-pub fn get_random_bytes(size: usize) -> Vec<u8> {
+pub fn get_random_bytes(size: usize) -> alloc::vec::Vec<u8> {
     let mut data = vec![0u8; size];
-    thread_rng().fill(&mut data[..]);
+    OsRng.fill(&mut data[..]);
     data
 }
 
 /// Randomly generate an unsigned 32-bit integer.
 pub fn get_random_uint32() -> u32 {
-    thread_rng().gen()
+    OsRng.gen()
 }

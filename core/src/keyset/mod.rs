@@ -16,7 +16,9 @@
 
 //! Provide methods to generate, read, write or validate keysets.
 
+#[cfg(feature = "std")]
 mod binary_io;
+#[cfg(feature = "std")]
 pub use binary_io::*;
 mod handle;
 pub use handle::*;

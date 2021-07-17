@@ -17,6 +17,7 @@
 //! Trait definition for key managers.
 
 use crate::TinkError;
+use alloc::string::ToString;
 
 /// `KeyManager` "understands" keys of a specific key types: it can generate keys of a supported
 /// type and create primitives for supported keys.  A key type is identified by the global name of
@@ -29,7 +30,7 @@ pub trait KeyManager: Send + Sync {
 
     /// Generate a new key according to specification in `serialized_key_format`, which must be
     /// supported by this manager, returned as a serialized protocol buffer.
-    fn new_key(&self, serialized_key_format: &[u8]) -> Result<Vec<u8>, TinkError>;
+    fn new_key(&self, serialized_key_format: &[u8]) -> Result<alloc::vec::Vec<u8>, TinkError>;
 
     /// Return true iff this [`KeyManager`] supports key type identified by `type_url`.
     fn does_support(&self, type_url: &str) -> bool {

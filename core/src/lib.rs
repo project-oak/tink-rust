@@ -15,8 +15,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //! Core crate for Tink.
-
+#![cfg_attr(not(feature = "std"), no_std)]
 #![deny(broken_intra_doc_links)]
+
+extern crate alloc;
+
+use alloc::boxed::Box;
 
 pub mod cryptofmt;
 pub mod keyset;
@@ -48,7 +52,9 @@ mod prf;
 pub use prf::*;
 mod signer;
 pub use signer::*;
+#[cfg(feature = "std")]
 mod streamingaead;
+#[cfg(feature = "std")]
 pub use streamingaead::*;
 mod verifier;
 pub use verifier::*;
@@ -62,6 +68,7 @@ pub enum Primitive {
     Mac(Box<dyn Mac>),
     Prf(Box<dyn Prf>),
     Signer(Box<dyn Signer>),
+    #[cfg(feature = "std")]
     StreamingAead(Box<dyn StreamingAead>),
     Verifier(Box<dyn Verifier>),
 }
@@ -79,6 +86,7 @@ impl Clone for Primitive {
             Primitive::Mac(p) => Primitive::Mac(p.box_clone()),
             Primitive::Prf(p) => Primitive::Prf(p.box_clone()),
             Primitive::Signer(p) => Primitive::Signer(p.box_clone()),
+            #[cfg(feature = "std")]
             Primitive::StreamingAead(p) => Primitive::StreamingAead(p.box_clone()),
             Primitive::Verifier(p) => Primitive::Verifier(p.box_clone()),
         }
@@ -151,6 +159,7 @@ impl From<Primitive> for Box<dyn Signer> {
     }
 }
 
+#[cfg(feature = "std")]
 impl From<Primitive> for Box<dyn StreamingAead> {
     fn from(p: Primitive) -> Box<dyn StreamingAead> {
         match p {

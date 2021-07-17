@@ -16,6 +16,8 @@
 
 //! Hybrid decryption.
 
+use alloc::{boxed::Box, vec::Vec};
+
 /// `HybridDecrypt` is the interface for hybrid decryption.
 ///
 /// Hybrid Encryption combines the efficiency of symmetric encryption with the convenience of

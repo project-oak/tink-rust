@@ -65,6 +65,11 @@ version = "0.5.1"
 name = "rand_chacha"
 version = "0.2.2"
 
+# hyper-rustls(v0.22.1) => rustls => ring(v0.16.20) => spin(v0.5.2)
+[[bans.skip]]
+name = "spin"
+version = "0.5.2"
+
 ######################################
 
 # List of allowed licenses.
