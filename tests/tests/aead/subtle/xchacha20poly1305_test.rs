@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use super::{wycheproof::*, xchacha20poly1305_vectors::*};
-use rand::{thread_rng, Rng};
+use rand::{rngs::OsRng, Rng};
 use std::collections::HashSet;
 use tink_aead::subtle;
 use tink_core::{subtle::random::get_random_bytes, Aead};
@@ -173,7 +173,7 @@ fn test_x_cha_cha20_poly1305_modify_ciphertext() {
             .unwrap_or_else(|e| panic!("#{}: encrypt failed: {:?}", i, e));
 
         if !aad.is_empty() {
-            let alter_aad_idx = thread_rng().gen_range(0, aad.len());
+            let alter_aad_idx = OsRng.gen_range(0, aad.len());
             aad[alter_aad_idx] ^= 0x80;
             assert!(
                 ca.decrypt(&ct, &aad).is_err(),
@@ -183,7 +183,7 @@ fn test_x_cha_cha20_poly1305_modify_ciphertext() {
             aad[alter_aad_idx] ^= 0x80;
         }
 
-        let alter_ct_idx = thread_rng().gen_range(0, ct.len());
+        let alter_ct_idx = OsRng.gen_range(0, ct.len());
         ct[alter_ct_idx] ^= 0x80;
         assert!(
             ca.decrypt(&ct, &aad).is_err(),
