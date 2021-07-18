@@ -16,6 +16,7 @@
 
 //! Key manager for AES-CMAC keys for MAC.
 
+use alloc::{boxed::Box, vec::Vec};
 use prost::Message;
 use tink_core::{utils::wrap_err, TinkError};
 
