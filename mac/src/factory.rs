@@ -106,7 +106,7 @@ impl tink_core::Mac for WrappedMac {
         // try non raw keys
         let prefix = &mac[..prefix_size];
         let mac_no_prefix = &mac[prefix_size..];
-        if let Some(entries) = self.ps.entries_for_prefix(&prefix) {
+        if let Some(entries) = self.ps.entries_for_prefix(prefix) {
             for entry in entries {
                 let result = if entry.prefix_type == OutputPrefixType::Legacy {
                     if data.len() >= MAX_INT {

@@ -192,8 +192,8 @@ fn test_aes_gcm_siv_wycheproof_cases() {
                 "     case {} [{}] {}",
                 tc.case.case_id, tc.case.result, tc.case.comment
             );
-            run_wycheproof_decrypt_only(&tc);
-            run_wycheproof_encrypt_decrypt(&tc);
+            run_wycheproof_decrypt_only(tc);
+            run_wycheproof_encrypt_decrypt(tc);
         }
     }
 }

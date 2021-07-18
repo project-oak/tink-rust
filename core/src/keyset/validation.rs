@@ -42,7 +42,7 @@ pub fn validate(keyset: &tink_proto::Keyset) -> Result<(), TinkError> {
     let mut contains_only_pub = true;
     let mut num_enabled_keys = 0;
     for key in &keyset.key {
-        validate_key(&key)?;
+        validate_key(key)?;
         if key.status != tink_proto::KeyStatusType::Enabled as i32 {
             continue;
         }

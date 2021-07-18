@@ -165,7 +165,7 @@ impl Handle {
                 .ok_or_else(|| TinkError::new("primitives_with_key_manager: no key_data"))?;
             let primitive = match &km {
                 Some(km) if km.does_support(&key_data.type_url) => km.primitive(&key_data.value),
-                Some(_) | None => crate::registry::primitive_from_key_data(&key_data),
+                Some(_) | None => crate::registry::primitive_from_key_data(key_data),
             }
             .map_err(|e| {
                 wrap_err(

@@ -110,7 +110,7 @@ fn validate_key_format(
         .params
         .as_ref()
         .ok_or_else(|| TinkError::new("no format params"))?;
-    validate_params(&format_params).map_err(|e| wrap_err("AesGcmHkdfKeyManager", e))?;
+    validate_params(format_params).map_err(|e| wrap_err("AesGcmHkdfKeyManager", e))?;
     Ok(format_params.clone())
 }
 

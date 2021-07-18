@@ -79,7 +79,7 @@ impl tink_core::Verifier for WrappedVerifier {
         // try non-raw keys
         let prefix = &signature[..prefix_size];
         let signature_no_prefix = &signature[prefix_size..];
-        if let Some(entries) = self.ps.entries_for_prefix(&prefix) {
+        if let Some(entries) = self.ps.entries_for_prefix(prefix) {
             for entry in entries {
                 let result = if entry.prefix_type == tink_proto::OutputPrefixType::Legacy {
                     let mut signed_data_copy = Vec::with_capacity(data.len() + 1);
