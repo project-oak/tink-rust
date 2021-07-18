@@ -609,7 +609,7 @@ version = "0.2.0"
 dependencies = [
  "tempfile",
  "tink-core 0.2.0",
- "tink-streaming-aead",
+ "tink-streaming-aead 0.2.0",
 ]
 
 [[package]]
@@ -1689,7 +1689,7 @@ dependencies = [
  "tink-prf 0.2.0",
  "tink-proto 0.2.0",
  "tink-signature",
- "tink-streaming-aead",
+ "tink-streaming-aead 0.2.0",
 ]
 
 [[package]]
@@ -2380,14 +2380,29 @@ dependencies = [
 [[package]]
 name = "tink-streaming-aead"
 version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "59c06fe5f8643ab730304a797dd8c802ceddde14750d142714a22c7ca6323863"
+dependencies = [
+ "aes",
+ "aes-gcm",
+ "prost 0.7.0",
+ "rand 0.7.3",
+ "tink-core 0.2.0",
+ "tink-mac 0.2.0",
+ "tink-proto 0.2.0",
+]
+
+[[package]]
+name = "tink-streaming-aead"
+version = "0.3.0"
 dependencies = [
  "aes",
  "aes-gcm",
  "prost 0.8.0",
  "rand 0.7.3",
- "tink-core 0.2.0",
- "tink-mac 0.2.0",
- "tink-proto 0.2.0",
+ "tink-core 0.3.0",
+ "tink-mac 0.3.0",
+ "tink-proto 0.3.0",
 ]
 
 [[package]]
@@ -2406,7 +2421,7 @@ dependencies = [
  "tink-prf 0.2.0",
  "tink-proto 0.2.0",
  "tink-signature",
- "tink-streaming-aead",
+ "tink-streaming-aead 0.2.0",
  "tink-tests",
  "tokio",
  "tonic",
@@ -2439,7 +2454,7 @@ dependencies = [
  "tink-prf 0.2.0",
  "tink-proto 0.2.0",
  "tink-signature",
- "tink-streaming-aead",
+ "tink-streaming-aead 0.2.0",
 ]
 
 [[package]]
