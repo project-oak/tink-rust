@@ -1728,7 +1728,7 @@ dependencies = [
  "tink-awskms 0.2.0",
  "tink-core 0.2.0",
  "tink-daead 0.2.0",
- "tink-gcpkms",
+ "tink-gcpkms 0.2.0",
  "tink-mac 0.2.0",
  "tink-prf 0.2.0",
  "tink-proto 0.2.0",
@@ -2540,6 +2540,8 @@ dependencies = [
 [[package]]
 name = "tink-gcpkms"
 version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ff574cafdf268b310b2d4c20e8d66bf98ba35093e41f848dad9144a6e9e642e8"
 dependencies = [
  "base64",
  "chrono",
@@ -2552,6 +2554,25 @@ dependencies = [
  "serde",
  "serde_json",
  "tink-core 0.2.0",
+ "tokio",
+ "yup-oauth2",
+]
+
+[[package]]
+name = "tink-gcpkms"
+version = "0.3.0"
+dependencies = [
+ "base64",
+ "chrono",
+ "futures",
+ "http",
+ "hyper",
+ "hyper-rustls",
+ "lazy_static",
+ "percent-encoding",
+ "serde",
+ "serde_json",
+ "tink-core 0.3.0",
  "tokio",
  "yup-oauth2",
 ]
@@ -2741,7 +2762,7 @@ dependencies = [
  "tink-awskms 0.2.0",
  "tink-core 0.2.0",
  "tink-daead 0.2.0",
- "tink-gcpkms",
+ "tink-gcpkms 0.2.0",
  "tink-mac 0.2.0",
  "tink-prf 0.2.0",
  "tink-proto 0.2.0",
