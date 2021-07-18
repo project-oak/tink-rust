@@ -95,7 +95,7 @@ impl tink_core::DeterministicAead for WrappedDeterministicAead {
         if ct.len() > prefix_size {
             let prefix = &ct[..prefix_size];
             let ct_no_prefix = &ct[prefix_size..];
-            if let Some(entries) = self.ps.entries_for_prefix(&prefix) {
+            if let Some(entries) = self.ps.entries_for_prefix(prefix) {
                 for entry in entries {
                     if let Ok(pt) = entry.primitive.decrypt_deterministically(ct_no_prefix, aad) {
                         return Ok(pt);

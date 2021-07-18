@@ -42,7 +42,7 @@ fn test_get_primitive_with_invalid_input() {
     let test_keys = gen_invalid_hmac_keys();
     for (i, serialized_key) in test_keys.iter().enumerate() {
         assert!(
-            km.primitive(&serialized_key).is_err(),
+            km.primitive(serialized_key).is_err(),
             "expect an error in test case {}",
             i
         );

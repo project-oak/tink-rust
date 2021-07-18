@@ -140,8 +140,7 @@ fn test_ecdsa_sign_new_key_with_invalid_input() {
         },
     ];
     for (i, params) in test_params.iter().enumerate() {
-        let serialized_format =
-            tink_tests::proto_encode(&tink_tests::new_ecdsa_key_format(&params));
+        let serialized_format = tink_tests::proto_encode(&tink_tests::new_ecdsa_key_format(params));
         assert!(
             km.new_key(&serialized_format).is_err(),
             "expect an error in test case {}",

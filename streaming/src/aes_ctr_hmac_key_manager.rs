@@ -113,7 +113,7 @@ fn validate_key_format(
         .params
         .as_ref()
         .ok_or_else(|| TinkError::new("AesCtrHmacKeyManager: no params"))?;
-    validate_params(&key_params)?;
+    validate_params(key_params)?;
     Ok(key_params.clone())
 }
 

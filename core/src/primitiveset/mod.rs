@@ -169,10 +169,7 @@ impl<P: From<crate::Primitive>> TypedPrimitiveSet<P> {
 
     /// Return all primitives in the set that have the given prefix.
     pub fn entries_for_prefix(&self, prefix: &[u8]) -> Option<&Vec<TypedEntry<P>>> {
-        match self.entries.get(prefix) {
-            Some(v) => Some(&v),
-            None => None,
-        }
+        self.entries.get(prefix)
     }
 }
 

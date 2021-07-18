@@ -115,7 +115,7 @@ impl tink_core::Verifier for EcdsaVerifier {
         };
         match &self.public_key {
             EcdsaPublicKey::NistP256(verify_key) => verify_key
-                .verify(&data, &signature)
+                .verify(data, &signature)
                 .map_err(|e| wrap_err("EcdsaVerifier: invalid signature", e)),
         }
     }
