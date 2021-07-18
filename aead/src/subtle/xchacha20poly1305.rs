@@ -16,6 +16,7 @@
 
 //! XChaCha20 Poly1305 implementation of AEAD.
 
+use alloc::vec::Vec;
 use chacha20poly1305::aead::{Aead, NewAead, Payload};
 use tink_core::{utils::wrap_err, TinkError};
 

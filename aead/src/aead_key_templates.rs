@@ -17,6 +17,7 @@
 //! This module contains pre-generated [`KeyTemplate`]s for AEAD keys. One can use these templates
 //! to generate new Keysets.
 
+use alloc::{string::ToString, vec, vec::Vec};
 use prost::Message;
 use tink_proto::{HashType, KeyTemplate, OutputPrefixType};
 

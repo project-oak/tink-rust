@@ -16,6 +16,8 @@
 
 //! Utilities for AEAD functionality.
 
+use alloc::format;
+
 /// Check if the given key size is a valid AES key size.
 pub fn validate_aes_key_size(size_in_bytes: usize) -> Result<(), tink_core::TinkError> {
     match size_in_bytes {

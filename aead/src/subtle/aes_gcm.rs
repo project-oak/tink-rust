@@ -17,6 +17,7 @@
 //! AES-GCM based implementation of the [`tink_core::Aead`] trait.
 
 use aes_gcm::aead::{consts::U12, generic_array::GenericArray, Aead, NewAead, Payload};
+use alloc::{boxed::Box, format, vec::Vec};
 use tink_core::{utils::wrap_err, TinkError};
 
 /// The only IV size that this implementation supports.
@@ -106,5 +107,5 @@ fn new_iv() -> GenericArray<u8, U12> {
 /// Maximum plaintext size.
 fn max_pt_size() -> usize {
     let x = (isize::MAX as usize) - AES_GCM_IV_SIZE - AES_GCM_TAG_SIZE;
-    std::cmp::min(x, MAX_AES_GCM_PLAINTEXT_SIZE)
+    core::cmp::min(x, MAX_AES_GCM_PLAINTEXT_SIZE)
 }

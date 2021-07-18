@@ -16,6 +16,7 @@
 
 //! Key manager for keys wrapped by a KMS.
 
+use alloc::{boxed::Box, vec::Vec};
 use prost::Message;
 use tink_core::{utils::wrap_err, TinkError};
 
