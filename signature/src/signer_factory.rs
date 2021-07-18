@@ -16,7 +16,7 @@
 
 //! Factory methods for [`tink_core::Signer`] instances.
 
-use std::sync::Arc;
+use alloc::{boxed::Box, sync::Arc, vec::Vec};
 use tink_core::{utils::wrap_err, TinkError};
 
 /// Return a [`tink_core::Signer`] primitive from the given keyset handle.

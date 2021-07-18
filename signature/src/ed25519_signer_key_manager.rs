@@ -16,6 +16,7 @@
 
 //! Key manager for ED25519 signing keys.
 
+use alloc::{boxed::Box, format, string::ToString, vec::Vec};
 use prost::Message;
 use tink_core::{utils::wrap_err, TinkError};
 

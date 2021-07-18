@@ -600,7 +600,7 @@ version = "0.2.0"
 dependencies = [
  "hex",
  "tink-core 0.2.0",
- "tink-signature",
+ "tink-signature 0.2.0",
 ]
 
 [[package]]
@@ -1688,7 +1688,7 @@ dependencies = [
  "tink-mac 0.2.0",
  "tink-prf 0.2.0",
  "tink-proto 0.2.0",
- "tink-signature",
+ "tink-signature 0.2.0",
  "tink-streaming-aead 0.2.0",
 ]
 
@@ -2365,6 +2365,23 @@ dependencies = [
 [[package]]
 name = "tink-signature"
 version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c5b54df96bd2a0524d2ffb9f2b6aa9574a4c9a4834e7d8585907f5b04fcd0743"
+dependencies = [
+ "ecdsa",
+ "ed25519-dalek",
+ "generic-array",
+ "p256",
+ "prost 0.7.0",
+ "rand 0.7.3",
+ "signature",
+ "tink-core 0.2.0",
+ "tink-proto 0.2.0",
+]
+
+[[package]]
+name = "tink-signature"
+version = "0.3.0"
 dependencies = [
  "ecdsa",
  "ed25519-dalek",
@@ -2373,8 +2390,9 @@ dependencies = [
  "prost 0.8.0",
  "rand 0.7.3",
  "signature",
- "tink-core 0.2.0",
- "tink-proto 0.2.0",
+ "spin 0.9.2",
+ "tink-core 0.3.0",
+ "tink-proto 0.3.0",
 ]
 
 [[package]]
@@ -2420,7 +2438,7 @@ dependencies = [
  "tink-mac 0.2.0",
  "tink-prf 0.2.0",
  "tink-proto 0.2.0",
- "tink-signature",
+ "tink-signature 0.2.0",
  "tink-streaming-aead 0.2.0",
  "tink-tests",
  "tokio",
@@ -2453,7 +2471,7 @@ dependencies = [
  "tink-mac 0.2.0",
  "tink-prf 0.2.0",
  "tink-proto 0.2.0",
- "tink-signature",
+ "tink-signature 0.2.0",
  "tink-streaming-aead 0.2.0",
 ]
 

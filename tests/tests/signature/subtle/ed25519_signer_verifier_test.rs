@@ -297,6 +297,5 @@ fn test_ed25519_point_on_curve() {
     ];
     let result = ed25519_dalek::PublicKey::from_bytes(&public_key_bytes);
     assert!(result.is_err());
-    assert!(format!("{:?}", result).contains("Cannot decompress"));
     assert!(Ed25519Verifier::new(&public_key_bytes).is_err());
 }
