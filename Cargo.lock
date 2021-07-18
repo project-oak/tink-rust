@@ -1687,7 +1687,7 @@ dependencies = [
  "tink-daead",
  "tink-gcpkms",
  "tink-mac",
- "tink-prf",
+ "tink-prf 0.2.0",
  "tink-proto 0.2.0",
  "tink-signature",
  "tink-streaming-aead",
@@ -2255,13 +2255,31 @@ version = "0.2.0"
 dependencies = [
  "prost 0.8.0",
  "tink-core 0.2.0",
- "tink-prf",
+ "tink-prf 0.2.0",
  "tink-proto 0.2.0",
 ]
 
 [[package]]
 name = "tink-prf"
 version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6ae8bd3f58adff2c1fb3286c9a8ab1c0964045614778595ec9877b9f6ba98d38"
+dependencies = [
+ "aes",
+ "cmac",
+ "digest",
+ "hkdf",
+ "hmac",
+ "prost 0.7.0",
+ "sha-1",
+ "sha2",
+ "tink-core 0.2.0",
+ "tink-proto 0.2.0",
+]
+
+[[package]]
+name = "tink-prf"
+version = "0.3.0"
 dependencies = [
  "aes",
  "cmac",
@@ -2271,8 +2289,9 @@ dependencies = [
  "prost 0.8.0",
  "sha-1",
  "sha2",
- "tink-core 0.2.0",
- "tink-proto 0.2.0",
+ "spin 0.9.2",
+ "tink-core 0.3.0",
+ "tink-proto 0.3.0",
 ]
 
 [[package]]
@@ -2338,7 +2357,7 @@ dependencies = [
  "tink-core 0.2.0",
  "tink-daead",
  "tink-mac",
- "tink-prf",
+ "tink-prf 0.2.0",
  "tink-proto 0.2.0",
  "tink-signature",
  "tink-streaming-aead",
@@ -2371,7 +2390,7 @@ dependencies = [
  "tink-daead",
  "tink-gcpkms",
  "tink-mac",
- "tink-prf",
+ "tink-prf 0.2.0",
  "tink-proto 0.2.0",
  "tink-signature",
  "tink-streaming-aead",

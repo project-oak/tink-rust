@@ -17,11 +17,9 @@
 //! Provides an implementation of PRF using HMAC.
 
 use ::hmac::{Hmac, Mac, NewMac};
-use std::{
-    cmp::min,
-    ops::DerefMut,
-    sync::{Arc, Mutex},
-};
+use alloc::{format, sync::Arc, vec::Vec};
+use core::{cmp::min, ops::DerefMut};
+use spin::Mutex;
 use tink_core::TinkError;
 use tink_proto::HashType;
 
@@ -104,39 +102,32 @@ impl tink_core::Prf for HmacPrf {
             )
             .into());
         }
-        Ok(
-            match self
-                .mac
-                .lock()
-                .expect("internal lock corrupted") // safe: lock
-                .deref_mut()
-            {
-                HmacPrfVariant::Sha1(mac) => {
-                    mac.update(data);
-                    let result = mac.finalize_reset().into_bytes();
-                    result[..min(result.len(), output_length)].to_vec()
-                }
-                HmacPrfVariant::Sha224(mac) => {
-                    mac.update(data);
-                    let result = mac.finalize_reset().into_bytes();
-                    result[..min(result.len(), output_length)].to_vec()
-                }
-                HmacPrfVariant::Sha256(mac) => {
-                    mac.update(data);
-                    let result = mac.finalize_reset().into_bytes();
-                    result[..min(result.len(), output_length)].to_vec()
-                }
-                HmacPrfVariant::Sha384(mac) => {
-                    mac.update(data);
-                    let result = mac.finalize_reset().into_bytes();
-                    result[..min(result.len(), output_length)].to_vec()
-                }
-                HmacPrfVariant::Sha512(mac) => {
-                    mac.update(data);
-                    let result = mac.finalize_reset().into_bytes();
-                    result[..min(result.len(), output_length)].to_vec()
-                }
-            },
-        )
+        Ok(match self.mac.lock().deref_mut() {
+            HmacPrfVariant::Sha1(mac) => {
+                mac.update(data);
+                let result = mac.finalize_reset().into_bytes();
+                result[..min(result.len(), output_length)].to_vec()
+            }
+            HmacPrfVariant::Sha224(mac) => {
+                mac.update(data);
+                let result = mac.finalize_reset().into_bytes();
+                result[..min(result.len(), output_length)].to_vec()
+            }
+            HmacPrfVariant::Sha256(mac) => {
+                mac.update(data);
+                let result = mac.finalize_reset().into_bytes();
+                result[..min(result.len(), output_length)].to_vec()
+            }
+            HmacPrfVariant::Sha384(mac) => {
+                mac.update(data);
+                let result = mac.finalize_reset().into_bytes();
+                result[..min(result.len(), output_length)].to_vec()
+            }
+            HmacPrfVariant::Sha512(mac) => {
+                mac.update(data);
+                let result = mac.finalize_reset().into_bytes();
+                result[..min(result.len(), output_length)].to_vec()
+            }
+        })
     }
 }
