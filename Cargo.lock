@@ -592,7 +592,7 @@ version = "0.2.0"
 dependencies = [
  "hex",
  "tink-core 0.2.0",
- "tink-mac",
+ "tink-mac 0.2.0",
 ]
 
 [[package]]
@@ -1686,7 +1686,7 @@ dependencies = [
  "tink-core 0.2.0",
  "tink-daead",
  "tink-gcpkms",
- "tink-mac",
+ "tink-mac 0.2.0",
  "tink-prf 0.2.0",
  "tink-proto 0.2.0",
  "tink-signature",
@@ -2164,7 +2164,7 @@ dependencies = [
  "prost 0.8.0",
  "rand 0.7.3",
  "tink-core 0.2.0",
- "tink-mac",
+ "tink-mac 0.2.0",
  "tink-proto 0.2.0",
 ]
 
@@ -2252,11 +2252,24 @@ dependencies = [
 [[package]]
 name = "tink-mac"
 version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b4e4cfdad0b51ddd727a51245e860b97ae931be05f99dd98bb7a51b1b19e5a97"
 dependencies = [
- "prost 0.8.0",
+ "prost 0.7.0",
  "tink-core 0.2.0",
  "tink-prf 0.2.0",
  "tink-proto 0.2.0",
+]
+
+[[package]]
+name = "tink-mac"
+version = "0.3.0"
+dependencies = [
+ "prost 0.8.0",
+ "spin 0.9.2",
+ "tink-core 0.3.0",
+ "tink-prf 0.3.0",
+ "tink-proto 0.3.0",
 ]
 
 [[package]]
@@ -2340,7 +2353,7 @@ dependencies = [
  "prost 0.8.0",
  "rand 0.7.3",
  "tink-core 0.2.0",
- "tink-mac",
+ "tink-mac 0.2.0",
  "tink-proto 0.2.0",
 ]
 
@@ -2356,7 +2369,7 @@ dependencies = [
  "tink-aead",
  "tink-core 0.2.0",
  "tink-daead",
- "tink-mac",
+ "tink-mac 0.2.0",
  "tink-prf 0.2.0",
  "tink-proto 0.2.0",
  "tink-signature",
@@ -2389,7 +2402,7 @@ dependencies = [
  "tink-core 0.2.0",
  "tink-daead",
  "tink-gcpkms",
- "tink-mac",
+ "tink-mac 0.2.0",
  "tink-prf 0.2.0",
  "tink-proto 0.2.0",
  "tink-signature",

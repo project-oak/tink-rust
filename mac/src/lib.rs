@@ -20,9 +20,13 @@
 //! message.  MAC protects data integrity as well as provides for authenticity
 //! of the message.
 
+#![no_std]
 #![deny(broken_intra_doc_links)]
 
-use std::sync::Once;
+extern crate alloc;
+
+use alloc::sync::Arc;
+use spin::{Mutex, Once};
 
 mod aes_cmac_key_manager;
 pub use aes_cmac_key_manager::*;
@@ -39,18 +43,16 @@ pub mod subtle;
 /// port is based on.
 pub const UPSTREAM_VERSION: &str = "1.6.0";
 
-static INIT: Once = Once::new();
+static INIT: Mutex<Once> = Mutex::new(Once::new());
 
 /// Initialize the `tink-daead` crate, registering its primitives so they are available via
 /// Tink.
 pub fn init() {
-    INIT.call_once(|| {
-        tink_core::registry::register_key_manager(std::sync::Arc::new(HmacKeyManager::default()))
+    INIT.lock().call_once(|| {
+        tink_core::registry::register_key_manager(Arc::new(HmacKeyManager::default()))
             .expect("tink_mac::init() failed"); // safe: init
-        tink_core::registry::register_key_manager(
-            std::sync::Arc::new(AesCmacKeyManager::default()),
-        )
-        .expect("tink_mac::init() failed"); // safe: init
+        tink_core::registry::register_key_manager(Arc::new(AesCmacKeyManager::default()))
+            .expect("tink_mac::init() failed"); // safe: init
 
         tink_core::registry::register_template_generator(
             "HMAC_SHA256_128BITTAG",
