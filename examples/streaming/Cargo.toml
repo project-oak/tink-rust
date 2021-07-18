@@ -1,6 +1,6 @@
 [package]
 name = "example-streaming"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -8,5 +8,5 @@ publish = false
 
 [dependencies]
 tempfile = "^3.2"
-tink-core = "^0.2"
-tink-streaming-aead = "^0.2"
+tink-core = "^0.3"
+tink-streaming-aead = "^0.3"
