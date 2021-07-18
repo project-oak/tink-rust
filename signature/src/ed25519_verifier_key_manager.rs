@@ -16,6 +16,7 @@
 
 //! Key manager for ED25519 verification keys.
 
+use alloc::{boxed::Box, format, vec::Vec};
 use prost::Message;
 use tink_core::{utils::wrap_err, TinkError};
 

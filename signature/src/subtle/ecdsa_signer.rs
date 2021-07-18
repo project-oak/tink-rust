@@ -14,6 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+use alloc::{format, vec::Vec};
 use generic_array::typenum::Unsigned;
 use p256::{
     ecdsa::signature::{RandomizedSigner, Signature},
