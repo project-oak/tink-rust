@@ -112,6 +112,14 @@ jobs:
           components: rustfmt, clippy
       - run: rustc --version
       - run: cargo clippy --all-features --all-targets -- -Dwarnings
+      - run: cargo clippy --all-targets --manifest-path proto/Cargo.toml --no-default-features -- -Dwarnings
+      - run: cargo clippy --all-targets --manifest-path proto/Cargo.toml --no-default-features --features json -- -Dwarnings
+      - run: cargo clippy --all-targets --manifest-path core/Cargo.toml --no-default-features -- -Dwarnings
+      - run: cargo clippy --all-targets --manifest-path core/Cargo.toml --no-default-features --features insecure -- -Dwarnings
+      - run: cargo clippy --all-targets --manifest-path core/Cargo.toml --no-default-features --features json -- -Dwarnings
+      - run: cargo clippy --all-targets --manifest-path core/Cargo.toml --no-default-features --features std -- -Dwarnings
+      - run: cargo clippy --all-targets --manifest-path core/Cargo.toml --no-default-features --features insecure,json -- -Dwarnings
+      - run: cargo clippy --all-targets --manifest-path core/Cargo.toml --no-default-features --features insecure,std -- -Dwarnings
 
   doc:
     runs-on: ubuntu-latest
