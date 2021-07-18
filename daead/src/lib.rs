@@ -20,8 +20,12 @@
 //! encrypting the same plaintex always yields the same ciphertext.
 
 #![deny(broken_intra_doc_links)]
+#![no_std]
 
-use std::sync::Once;
+extern crate alloc;
+
+use alloc::sync::Arc;
+use spin::{Mutex, Once};
 
 mod aes_siv_key_manager;
 pub use aes_siv_key_manager::*;
@@ -36,13 +40,13 @@ pub mod subtle;
 /// port is based on.
 pub const UPSTREAM_VERSION: &str = "1.6.0";
 
-static INIT: Once = Once::new();
+static INIT: Mutex<Once> = Mutex::new(Once::new());
 
 /// Initialize the `tink-daead` crate, registering its primitives so they are available via
 /// tink-core.
 pub fn init() {
-    INIT.call_once(|| {
-        tink_core::registry::register_key_manager(std::sync::Arc::new(AesSivKeyManager::default()))
+    INIT.lock().call_once(|| {
+        tink_core::registry::register_key_manager(Arc::new(AesSivKeyManager::default()))
             .expect("tink_daead::init() failed"); // safe: init
 
         tink_core::registry::register_template_generator("AES256_SIV", aes_siv_key_template);
