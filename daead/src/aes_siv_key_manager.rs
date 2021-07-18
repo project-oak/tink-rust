@@ -17,6 +17,7 @@
 //! Key manager for AES-SIV keys for deterministic AEAD.
 
 use crate::subtle;
+use alloc::{boxed::Box, format, vec::Vec};
 use prost::Message;
 use tink_core::{
     registry::KeyManager,
