@@ -17,8 +17,8 @@ insecure = []
 json = ["tink-proto/json", "serde", "serde_json", "std"]
 # The `std` feature enables:
 # - the `StreamingAead` primitive
-# - full `Error` behaviour for `TinkError`
 # - methods for serializing keysets to/from binary.
+# - `impl std::error::Error for TinkError`
 std = []
 
 [dependencies]

@@ -19,15 +19,16 @@
 //! Some of these utilities are not idiomatic Rust, but are included to make the process of
 //! translating code from other languages (e.g. Go) easier.
 
-use alloc::string::{String, ToString};
+use alloc::{
+    boxed::Box,
+    string::{String, ToString},
+};
 
 /// `Error` type for errors emitted by Tink. Note that errors from cryptographic
 /// operations are necessarily uninformative, to avoid information leakage.
-#[derive(Debug)]
 pub struct TinkError {
     msg: String,
-    #[cfg(feature = "std")]
-    src: Option<alloc::boxed::Box<dyn std::error::Error>>,
+    src: Option<alloc::boxed::Box<dyn core::fmt::Display>>,
 }
 
 impl TinkError {
@@ -36,9 +37,14 @@ impl TinkError {
     }
 }
 
-#[cfg(feature = "std")]
-impl std::fmt::Display for TinkError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl core::fmt::Debug for TinkError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        <Self as core::fmt::Display>::fmt(self, f)
+    }
+}
+
+impl core::fmt::Display for TinkError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         if let Some(src) = &self.src {
             write!(f, "{}: {}", self.msg, src)
         } else {
@@ -54,7 +60,6 @@ impl From<&str> for TinkError {
     fn from(msg: &str) -> Self {
         TinkError {
             msg: msg.to_string(),
-            #[cfg(feature = "std")]
             src: None,
         }
     }
@@ -62,11 +67,7 @@ impl From<&str> for TinkError {
 
 impl From<String> for TinkError {
     fn from(msg: String) -> Self {
-        TinkError {
-            msg,
-            #[cfg(feature = "std")]
-            src: None,
-        }
+        TinkError { msg, src: None }
     }
 }
 
@@ -79,19 +80,12 @@ impl From<String> for TinkError {
 ///     return nil, fmt.Errorf("FunctionCall failed: %s", err)
 ///   }
 /// ```
-#[cfg(feature = "std")]
 pub fn wrap_err<T>(msg: &str, src: T) -> TinkError
 where
-    T: std::error::Error + 'static,
+    T: core::fmt::Display + 'static,
 {
     TinkError {
         msg: msg.to_string(),
         src: Some(Box::new(src)),
-    }
-}
-#[cfg(not(feature = "std"))]
-pub fn wrap_err<T>(msg: &str, _src: T) -> TinkError {
-    TinkError {
-        msg: msg.to_string(),
     }
 }
