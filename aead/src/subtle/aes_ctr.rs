@@ -21,6 +21,7 @@ use aes::{
     cipher::{consts::U16, generic_array::GenericArray, FromBlockCipher, StreamCipher},
     NewBlockCipher,
 };
+use alloc::{format, vec::Vec};
 use tink_core::{utils::wrap_err, TinkError};
 
 /// The minimum IV size that this implementation supports.

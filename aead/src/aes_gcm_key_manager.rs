@@ -17,6 +17,7 @@
 //! Key manager for AES-GCM keys.
 
 use crate::subtle;
+use alloc::{boxed::Box, vec::Vec};
 use prost::Message;
 use tink_core::{utils::wrap_err, TinkError};
 

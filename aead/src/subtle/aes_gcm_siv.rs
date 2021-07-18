@@ -17,6 +17,7 @@
 //! AES-GCM-SIV based implementation of the [`tink_core::Aead`] trait.
 
 use aes_gcm_siv::aead::{consts::U12, generic_array::GenericArray, Aead, NewAead, Payload};
+use alloc::{boxed::Box, format, vec::Vec};
 use tink_core::{utils::wrap_err, TinkError};
 
 /// The only IV size that this implementation supports.

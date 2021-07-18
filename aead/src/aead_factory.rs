@@ -16,6 +16,7 @@
 
 //! Provides an implementation of AEAD using a set of underlying implementations.
 
+use alloc::{boxed::Box, sync::Arc, vec::Vec};
 use tink_core::{utils::wrap_err, TinkError};
 
 /// Returns a [`tink_core::Aead`] primitive from the given keyset handle.
@@ -27,7 +28,7 @@ pub fn new(h: &tink_core::keyset::Handle) -> Result<Box<dyn tink_core::Aead>, Ti
 /// manager.
 fn new_with_key_manager(
     h: &tink_core::keyset::Handle,
-    km: Option<std::sync::Arc<dyn tink_core::registry::KeyManager>>,
+    km: Option<Arc<dyn tink_core::registry::KeyManager>>,
 ) -> Result<Box<dyn tink_core::Aead>, TinkError> {
     let ps = h
         .primitives_with_key_manager(km)

@@ -17,6 +17,7 @@
 //! Key manager for XChaCha20Poly1305 keys.
 
 use crate::subtle;
+use alloc::{boxed::Box, format, vec::Vec};
 use prost::Message;
 use tink_core::{utils::wrap_err, TinkError};
 
