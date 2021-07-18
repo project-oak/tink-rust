@@ -2486,8 +2486,6 @@ dependencies = [
  "lazy_static",
  "prost 0.7.0",
  "rand 0.7.3",
- "serde",
- "serde_json",
  "sha-1",
  "sha2",
  "subtle",
@@ -2620,10 +2618,8 @@ version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6f097af9d2db1a08ea01008f88bc803d8bda25c13bfdc076df7449da907e259f"
 dependencies = [
- "base64",
  "prost 0.7.0",
  "prost-build 0.7.0",
- "serde",
 ]
 
 [[package]]
@@ -2699,21 +2695,21 @@ dependencies = [
 
 [[package]]
 name = "tink-testing-server"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "env_logger",
  "futures",
  "log",
  "prost 0.8.0",
  "structopt",
- "tink-aead 0.2.0",
- "tink-core 0.2.0",
- "tink-daead 0.2.0",
- "tink-mac 0.2.0",
- "tink-prf 0.2.0",
- "tink-proto 0.2.0",
- "tink-signature 0.2.0",
- "tink-streaming-aead 0.2.0",
+ "tink-aead 0.3.0",
+ "tink-core 0.3.0",
+ "tink-daead 0.3.0",
+ "tink-mac 0.3.0",
+ "tink-prf 0.3.0",
+ "tink-proto 0.3.0",
+ "tink-signature 0.3.0",
+ "tink-streaming-aead 0.3.0",
  "tink-tests",
  "tokio",
  "tonic",
