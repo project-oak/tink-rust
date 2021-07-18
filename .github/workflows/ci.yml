@@ -132,6 +132,19 @@ jobs:
       - run: rustc --version
       - run: cargo doc --no-deps --document-private-items --all-features
 
+  nostd:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly-2021-07-01
+          override: true
+          target: thumbv7em-none-eabi
+      # Target thumbv7em does not have std
+      - run: cargo build --target thumbv7em-none-eabi --manifest-path no-std-check/Cargo.toml
+
   udeps:
     runs-on: ubuntu-latest
     steps:
