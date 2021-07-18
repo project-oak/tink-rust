@@ -16,6 +16,7 @@
 
 //! Provides an implementation of PRF using HKDF.
 
+use alloc::{format, vec, vec::Vec};
 use tink_core::TinkError;
 use tink_proto::HashType;
 
