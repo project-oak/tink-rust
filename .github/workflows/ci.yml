@@ -92,7 +92,7 @@ jobs:
           override: true
           components: rustfmt, clippy
       - run: rustc --version
-      - run: cargo clippy --all-features --all-targets
+      - run: cargo clippy --all-features --all-targets -- -Dwarnings
 
   doc:
     runs-on: ubuntu-latest
