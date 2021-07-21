@@ -47,7 +47,7 @@ impl tink_core::registry::KeyManager for Ed25519SignerKeyManager {
     }
 
     fn new_key(&self, _serialized_key_format: &[u8]) -> Result<Vec<u8>, TinkError> {
-        let mut csprng = rand::rngs::OsRng {};
+        let mut csprng = tink_core::subtle::random::rng();
         let keypair = ed25519_dalek::Keypair::generate(&mut csprng);
 
         let public_proto = tink_proto::Ed25519PublicKey {
