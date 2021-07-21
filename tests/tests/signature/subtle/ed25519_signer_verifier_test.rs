@@ -23,7 +23,7 @@ use tink_tests::WycheproofResult;
 #[test]
 fn test_ed25519_deterministic() {
     let data = get_random_bytes(20);
-    let mut csprng = rand::thread_rng();
+    let mut csprng = rand::rngs::OsRng;
     let keypair = Keypair::generate(&mut csprng);
 
     // Use the private key and public key directly to create new instances
@@ -46,7 +46,7 @@ fn test_ed25519_deterministic() {
 #[test]
 fn test_ed25519_verify_modified_signature() {
     let data = get_random_bytes(20);
-    let mut csprng = rand::thread_rng();
+    let mut csprng = rand::rngs::OsRng;
     let keypair = Keypair::generate(&mut csprng);
 
     // Use the private key and public key directly to create new instances
@@ -73,7 +73,7 @@ fn test_ed25519_verify_modified_signature() {
 #[test]
 fn test_ed25519_verify_truncated_signature() {
     let data = get_random_bytes(20);
-    let mut csprng = rand::thread_rng();
+    let mut csprng = rand::rngs::OsRng;
     let keypair = Keypair::generate(&mut csprng);
 
     // Use the private key and public key directly to create new instances
@@ -89,7 +89,7 @@ fn test_ed25519_verify_truncated_signature() {
 #[test]
 fn test_ed25519_verify_modified_message() {
     let mut data = get_random_bytes(20);
-    let mut csprng = rand::thread_rng();
+    let mut csprng = rand::rngs::OsRng;
     let keypair = Keypair::generate(&mut csprng);
 
     // Use the private key and public key directly to create new instances
@@ -114,7 +114,7 @@ fn test_ed25519_verify_modified_message() {
 }
 #[test]
 fn test_ed25519_sign_verify() {
-    let mut csprng = rand::thread_rng();
+    let mut csprng = rand::rngs::OsRng;
     let keypair = Keypair::generate(&mut csprng);
     let seed = keypair.secret.as_bytes().to_vec();
 
@@ -297,6 +297,5 @@ fn test_ed25519_point_on_curve() {
     ];
     let result = ed25519_dalek::PublicKey::from_bytes(&public_key_bytes);
     assert!(result.is_err());
-    assert!(format!("{:?}", result).contains("Cannot decompress"));
     assert!(Ed25519Verifier::new(&public_key_bytes).is_err());
 }

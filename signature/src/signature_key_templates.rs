@@ -16,6 +16,7 @@
 
 //! This module contains pre-generated KeyTemplates for Signer and Verifier.
 /// One can use these templates to generate new Keysets.
+use alloc::{string::ToString, vec, vec::Vec};
 use prost::Message;
 use tink_proto::KeyTemplate;
 

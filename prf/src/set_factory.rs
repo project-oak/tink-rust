@@ -16,7 +16,7 @@
 
 //! Provides an implementation of PRF using a set of underlying implementations.
 
-use std::{collections::HashMap, sync::Arc};
+use alloc::{boxed::Box, collections::BTreeMap, format, sync::Arc, vec::Vec};
 use tink_core::{utils::wrap_err, Prf, TinkError};
 
 /// `Set` is a set of PRFs. A [`Keyset`](tink_proto::Keyset) can be converted into a set of PRFs
@@ -27,7 +27,7 @@ pub struct Set {
     /// The key ID marked as primary in the corresponding [`Keyset`](tink_proto::Keyset).
     pub primary_id: u32,
     /// Map key IDs to their corresponding Prf.
-    pub prfs: HashMap<u32, Box<dyn Prf>>,
+    pub prfs: BTreeMap<u32, Box<dyn Prf>>,
 }
 
 impl Set {
@@ -74,7 +74,7 @@ fn wrap_prf_set(ps: tink_core::primitiveset::PrimitiveSet) -> Result<Set, TinkEr
     }
     let mut set = Set {
         primary_id: entry.key_id,
-        prfs: HashMap::new(),
+        prfs: BTreeMap::new(),
     };
 
     let entries = ps.raw_entries();

@@ -16,7 +16,7 @@
 
 //! Provides an implementation of deterministic AEAD using a set of underlying implementations.
 
-use std::sync::Arc;
+use alloc::{boxed::Box, sync::Arc, vec::Vec};
 use tink_core::utils::{wrap_err, TinkError};
 
 /// Return a [`tink_core::DeterministicAead`] primitive from the given keyset handle.

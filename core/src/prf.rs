@@ -16,6 +16,8 @@
 
 //! Pseudo-random function.
 
+use alloc::{boxed::Box, vec::Vec};
+
 /// The `Prf` trait is an abstraction for an element of a pseudo random
 /// function family, selected by a key. It has the following property:
 ///   * It is deterministic. `compute_prf(input, length)` will always return the same output if the

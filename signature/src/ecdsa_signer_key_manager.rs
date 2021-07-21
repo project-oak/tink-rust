@@ -16,6 +16,7 @@
 
 //! Key manager for ECDSA signing keys.
 
+use alloc::{boxed::Box, format, string::ToString, vec::Vec};
 use generic_array::typenum::Unsigned;
 use p256::elliptic_curve;
 use prost::Message;

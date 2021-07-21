@@ -1,6 +1,6 @@
 [package]
 name = "tink-mac"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -10,7 +10,8 @@ keywords = ["cryptography", "tink", "mac"]
 categories = ["cryptography"]
 
 [dependencies]
-prost = "^0.8"
-tink-core = "^0.2"
-tink-prf = "^0.2"
-tink-proto = "^0.2"
+prost = { version = "^0.8", default-features = false }
+spin = { version = "^0.9.2", features = ["once"] }
+tink-core = "^0.3"
+tink-prf = "^0.3"
+tink-proto = "^0.3"

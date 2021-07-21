@@ -27,11 +27,9 @@
 //! public though, to enable configurations with custom primitives and [`KeyManager`]s.
 
 use crate::TinkError;
+use alloc::{collections::BTreeMap, format, sync::Arc, vec::Vec};
 use lazy_static::lazy_static;
-use std::{
-    collections::HashMap,
-    sync::{Arc, RwLock},
-};
+use spin::RwLock;
 
 mod kms_client;
 pub use kms_client::*;
@@ -42,23 +40,18 @@ pub use key_templates::*;
 
 lazy_static! {
     /// Global registry of key manager objects, indexed by type URL.
-    static ref KEY_MANAGERS: RwLock<HashMap<&'static str, Arc<dyn KeyManager>>> =
-        RwLock::new(HashMap::new());
+    static ref KEY_MANAGERS: RwLock<BTreeMap<&'static str, Arc<dyn KeyManager>>> =
+        RwLock::new(BTreeMap::new());
     /// Global list of KMS client objects.
     static ref KMS_CLIENTS: RwLock<Vec<Arc<dyn KmsClient>>> = RwLock::new(Vec::new());
 }
-
-/// Error message for global key manager registry lock.
-const MERR: &str = "global KEY_MANAGERS lock poisoned";
-/// Error message for global KMS client list lock.
-const CERR: &str = "global KMS_CLIENTS lock poisoned";
 
 /// Register the given key manager. Does not allow overwrite of existing key managers.
 pub fn register_key_manager<T>(km: Arc<T>) -> Result<(), TinkError>
 where
     T: 'static + KeyManager,
 {
-    let mut key_mgrs = KEY_MANAGERS.write().expect(MERR); // safe: lock
+    let mut key_mgrs = KEY_MANAGERS.write();
 
     let type_url = km.type_url();
     if key_mgrs.contains_key(type_url) {
@@ -74,7 +67,7 @@ where
 
 /// Return the key manager for the given `type_url` if it exists.
 pub fn get_key_manager(type_url: &str) -> Result<Arc<dyn KeyManager>, TinkError> {
-    let key_mgrs = KEY_MANAGERS.read().expect(MERR); // safe: lock
+    let key_mgrs = KEY_MANAGERS.read();
     let km = key_mgrs.get(type_url).ok_or_else(|| {
         TinkError::new(&format!(
             "registry::get_key_manager: unsupported key type: {}",
@@ -113,19 +106,19 @@ pub fn register_kms_client<T>(k: T)
 where
     T: 'static + KmsClient,
 {
-    let mut kms_clients = KMS_CLIENTS.write().expect(CERR); // safe: lock
+    let mut kms_clients = KMS_CLIENTS.write();
     kms_clients.push(Arc::new(k));
 }
 
 /// Remove all registered KMS clients.
 pub fn clear_kms_clients() {
-    let mut kms_clients = KMS_CLIENTS.write().expect(CERR); // safe: lock
+    let mut kms_clients = KMS_CLIENTS.write();
     kms_clients.clear();
 }
 
 /// Fetches a [`KmsClient`] by a given URI.
 pub fn get_kms_client(key_uri: &str) -> Result<Arc<dyn KmsClient>, TinkError> {
-    let kms_clients = KMS_CLIENTS.read().expect(CERR); // safe: lock
+    let kms_clients = KMS_CLIENTS.read();
     for k in kms_clients.iter() {
         if k.supported(key_uri) {
             return Ok(k.clone());

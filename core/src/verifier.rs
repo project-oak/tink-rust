@@ -16,6 +16,8 @@
 
 //! Digital signature verification.
 
+use alloc::boxed::Box;
+
 /// `Verifier` is the verifying interface for digital signature.
 ///
 /// Implementations of this trait are secure against adaptive chosen-message

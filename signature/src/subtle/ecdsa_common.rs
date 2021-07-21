@@ -14,6 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+use alloc::format;
 use tink_core::TinkError;
 use tink_proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType};
 

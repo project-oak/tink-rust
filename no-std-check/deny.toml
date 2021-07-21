@@ -9,9 +9,6 @@ targets = [
     { triple = "x86_64-pc-windows-msvc" },
 ]
 
-[sources]
-allow-git = [ "https://github.com/daviddrysdale/ed25519-dalek" ]
-
 # Deny all advisories unless explicitly ignored.
 [advisories]
 vulnerability = "deny"
@@ -27,33 +24,21 @@ wildcards = "allow"
 
 ######################################
 
-# Old versions of crates pulled in (transitively) by rusoto_*(v0.47.0)
+# ed25519-dalek(v1.0.1) => rand_core(v0.5.x), {rand(v0.7.3) => getrandom(v0.1.*)}
 [[bans.skip]]
-name = "cfg-if"
-version = "0.1.10"
+name = "getrandom"
+version = "0.1.15"
 [[bans.skip]]
-name = "core-foundation"
-version = "=0.7.0"
+name = "rand"
+version = "0.7.3"
 [[bans.skip]]
-name = "core-foundation-sys"
-version = "=0.7.0"
+name = "rand_core"
+version = "0.5.1"
 [[bans.skip]]
-name = "pin-project"
-version = "=0.4.26"
-[[bans.skip]]
-name = "pin-project-internal"
-version = "=0.4.26"
-[[bans.skip]]
-name = "pin-project-lite"
-version = "=0.1.10"
-[[bans.skip]]
-name = "security-framework"
-version = "=0.4.4"
-[[bans.skip]]
-name = "security-framework-sys"
-version = "=0.4.3"
+name = "rand_chacha"
+version = "0.2.2"
 
-# hyper-rustls(v0.22.1) => rustls => ring(v0.16.20) => spin(v0.5.2)
+# lazy_static(v1.4.0) => spin(v0.5.2)
 [[bans.skip]]
 name = "spin"
 version = "0.5.2"
@@ -65,9 +50,7 @@ version = "0.5.2"
 [licenses]
 allow = [
   "Apache-2.0",
-  "ISC",
   "MIT",
-  "OpenSSL",
   "BSD-3-Clause",
 ]
 copyleft = "deny"

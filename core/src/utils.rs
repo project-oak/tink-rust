@@ -19,14 +19,16 @@
 //! Some of these utilities are not idiomatic Rust, but are included to make the process of
 //! translating code from other languages (e.g. Go) easier.
 
-use std::error::Error;
+use alloc::{
+    boxed::Box,
+    string::{String, ToString},
+};
 
 /// `Error` type for errors emitted by Tink. Note that errors from cryptographic
 /// operations are necessarily uninformative, to avoid information leakage.
-#[derive(Debug)]
 pub struct TinkError {
     msg: String,
-    src: Option<Box<dyn Error>>,
+    src: Option<alloc::boxed::Box<dyn core::fmt::Display>>,
 }
 
 impl TinkError {
@@ -35,8 +37,14 @@ impl TinkError {
     }
 }
 
-impl std::fmt::Display for TinkError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl core::fmt::Debug for TinkError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        <Self as core::fmt::Display>::fmt(self, f)
+    }
+}
+
+impl core::fmt::Display for TinkError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         if let Some(src) = &self.src {
             write!(f, "{}: {}", self.msg, src)
         } else {
@@ -45,9 +53,10 @@ impl std::fmt::Display for TinkError {
     }
 }
 
-impl Error for TinkError {}
+#[cfg(feature = "std")]
+impl std::error::Error for TinkError {}
 
-impl std::convert::From<&str> for TinkError {
+impl From<&str> for TinkError {
     fn from(msg: &str) -> Self {
         TinkError {
             msg: msg.to_string(),
@@ -56,7 +65,7 @@ impl std::convert::From<&str> for TinkError {
     }
 }
 
-impl std::convert::From<String> for TinkError {
+impl From<String> for TinkError {
     fn from(msg: String) -> Self {
         TinkError { msg, src: None }
     }
@@ -73,7 +82,7 @@ impl std::convert::From<String> for TinkError {
 /// ```
 pub fn wrap_err<T>(msg: &str, src: T) -> TinkError
 where
-    T: Error + 'static,
+    T: core::fmt::Display + 'static,
 {
     TinkError {
         msg: msg.to_string(),

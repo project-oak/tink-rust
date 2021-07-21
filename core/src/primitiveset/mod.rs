@@ -21,7 +21,12 @@
 //! primary" one.
 
 use crate::utils::{wrap_err, TinkError};
-use std::collections::{hash_map, HashMap};
+use alloc::{
+    boxed::Box,
+    collections::{btree_map, BTreeMap},
+    vec,
+    vec::Vec,
+};
 
 /// `Entry` represents a single entry in the keyset. In addition to the actual
 /// primitive, it holds the identifier and status of the primitive.
@@ -71,7 +76,7 @@ pub struct PrimitiveSet {
     // The primitives are stored in a map of (ciphertext prefix, list of
     // primitives sharing the prefix). This allows quickly retrieving the
     // primitives sharing some particular prefix.
-    pub entries: HashMap<Vec<u8>, Vec<Entry>>,
+    pub entries: BTreeMap<Vec<u8>, Vec<Entry>>,
 }
 
 impl PrimitiveSet {
@@ -79,7 +84,7 @@ impl PrimitiveSet {
     pub fn new() -> Self {
         PrimitiveSet {
             primary: None,
-            entries: HashMap::new(),
+            entries: BTreeMap::new(),
         }
     }
 
@@ -118,8 +123,8 @@ impl PrimitiveSet {
         );
         let retval = entry.clone();
         match self.entries.entry(prefix) {
-            hash_map::Entry::Occupied(mut oe) => oe.get_mut().push(entry),
-            hash_map::Entry::Vacant(ve) => {
+            btree_map::Entry::Occupied(mut oe) => oe.get_mut().push(entry),
+            btree_map::Entry::Vacant(ve) => {
                 ve.insert(vec![entry]);
             }
         };
@@ -158,7 +163,7 @@ pub struct TypedPrimitiveSet<P: From<crate::Primitive>> {
     // The primitives are stored in a map of (ciphertext prefix, list of
     // primitives sharing the prefix). This allows quickly retrieving the
     // primitives sharing some particular prefix.
-    pub entries: HashMap<Vec<u8>, Vec<TypedEntry<P>>>,
+    pub entries: BTreeMap<Vec<u8>, Vec<TypedEntry<P>>>,
 }
 
 impl<P: From<crate::Primitive>> TypedPrimitiveSet<P> {
@@ -251,6 +256,7 @@ impl Clone for TypedEntry<Box<dyn crate::Signer>> {
         }
     }
 }
+#[cfg(feature = "std")]
 impl Clone for TypedEntry<Box<dyn crate::StreamingAead>> {
     fn clone(&self) -> Self {
         Self {
