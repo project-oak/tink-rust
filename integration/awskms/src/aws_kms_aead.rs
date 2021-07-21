@@ -35,7 +35,7 @@ pub struct AwsAead {
 impl AwsAead {
     /// Return a new AWS KMS service.
     /// `key_uri` must have the following format: `arn:<partition>:kms:<region>:[:path]`.
-    /// See http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html.
+    /// See <http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html>.
     pub(crate) fn new(
         key_uri: &str,
         kms: rusoto_kms::KmsClient,
@@ -93,7 +93,7 @@ impl tink_core::Aead for AwsAead {
     ///
     /// This check is disabled if `AwsAead.key_uri` is not in key ARN format.
     ///
-    /// See https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#key-id.
+    /// See <https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#key-id>.
     fn decrypt(
         &self,
         ciphertext: &[u8],
