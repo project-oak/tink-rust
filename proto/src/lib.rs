@@ -24,6 +24,7 @@ include!("codegen/google.crypto.tink.rs");
 include!("codegen/serde/google.crypto.tink.rs");
 
 #[cfg(feature = "json")]
+#[cfg_attr(docsrs, doc(cfg(feature = "json")))]
 pub mod json {
     //! Manual keyset serialization implementations that map enums onto strings rather than
     //! the `i32` values used by prost.
