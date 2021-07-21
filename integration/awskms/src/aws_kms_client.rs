@@ -43,7 +43,7 @@ impl AwsClient {
     /// Return a new AWS KMS client which will use default credentials to handle keys with
     /// `uri_prefix` prefix. `uri_prefix` must have the following format:
     /// `aws-kms://arn:<partition>:kms:<region>:[:path]`
-    /// See http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html.
+    /// See <http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html>.
     pub fn new(uri_prefix: &str) -> Result<AwsClient, TinkError> {
         let r = get_region(uri_prefix)?;
 
@@ -54,7 +54,7 @@ impl AwsClient {
     /// Return a new AWS KMS client which will use given credentials to handle keys with
     /// `uri_prefix` prefix. `uri_prefix` must have the following format:
     /// `aws-kms://arn:<partition>:kms:<region>:[:path]`
-    /// See http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html.
+    /// See <http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html>.
     pub fn new_with_credentials(
         uri_prefix: &str,
         credential_path: &std::path::Path,
@@ -88,7 +88,7 @@ impl AwsClient {
     /// Return a new AWS KMS client with user created KMS client.  Client is responsible for keeping
     /// the region consistency between key URI and KMS client.  `uri_prefix` must have the
     /// following format: `aws-kms://arn:<partition>:kms:<region>:[:path]`
-    /// See http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html.
+    /// See <http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html>.
     pub fn new_with_kms(
         uri_prefix: &str,
         kms: rusoto_kms::KmsClient,
@@ -115,7 +115,7 @@ impl tink_core::registry::KmsClient for AwsClient {
 
     /// Get an AEAD backed by `key_uri`.
     /// `key_uri` must have the following format: `aws-kms://arn:<partition>:kms:<region>:[:path]`.
-    /// See http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html.
+    /// See <http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html>.
     fn get_aead(&self, key_uri: &str) -> Result<Box<dyn tink_core::Aead>, tink_core::TinkError> {
         if !self.supported(key_uri) {
             return Err(format!(
