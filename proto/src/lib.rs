@@ -17,6 +17,7 @@
 //! Protocol buffer message definitions for Tink.
 
 #![deny(broken_intra_doc_links)]
+#![allow(rustdoc::bare_urls)]
 
 #[cfg(not(feature = "json"))]
 include!("codegen/google.crypto.tink.rs");
