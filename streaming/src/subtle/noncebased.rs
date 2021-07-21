@@ -19,7 +19,7 @@
 //! It tackles the segment handling portions of the nonce based online
 //! encryption scheme proposed in "Online Authenticated-Encryption and its
 //! Nonce-Reuse Misuse-Resistance" by Hoang, Reyhanitabar, Rogaway and Vizár
-//! (https://eprint.iacr.org/2015/189.pdf).
+//! (<https://eprint.iacr.org/2015/189.pdf>).
 //!
 //! In this scheme, the format of a ciphertext is:
 //!
