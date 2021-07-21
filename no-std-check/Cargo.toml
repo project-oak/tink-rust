@@ -28,6 +28,8 @@ panic = "abort"
 
 # Patch dependencies on tink crates so that they refer to the versions within this same repository.
 [patch.crates-io]
+# TODO(#7): remove if/when https://github.com/dalek-cryptography/ed25519-dalek/pull/160 is merged.
+ed25519-dalek = { git = "https://github.com/daviddrysdale/ed25519-dalek", branch = "rand-bump" }
 tink-aead = { path = "../aead" }
 tink-core = { path = "../core" }
 tink-daead = { path = "../daead" }

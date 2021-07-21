@@ -13,7 +13,7 @@ categories = ["cryptography"]
 aes = { version = "^0.7.4", features = ["ctr"] }
 aes-gcm = { version = "^0.9.2" }
 prost = { version = "^0.8", default-features = false }
-rand = { version = "^0.7", default-features = false, features = ["alloc", "getrandom"] }
+rand = { version = "^0.8", default-features = false, features = ["alloc", "getrandom"] }
 tink-core = { version = "^0.3", features = ["std"] }
 tink-mac = "^0.3"
 tink-proto = "^0.3"

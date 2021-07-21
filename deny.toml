@@ -9,6 +9,9 @@ targets = [
     { triple = "x86_64-pc-windows-msvc" },
 ]
 
+[sources]
+allow-git = [ "https://github.com/daviddrysdale/ed25519-dalek" ]
+
 # Deny all advisories unless explicitly ignored.
 [advisories]
 vulnerability = "deny"
@@ -49,21 +52,6 @@ version = "=0.4.4"
 [[bans.skip]]
 name = "security-framework-sys"
 version = "=0.4.3"
-
-# ed25519-dalek(v1.0.1) => rand_core(v0.5.x), {rand(v0.7.3) => getrandom(v0.1.*)}
-# tonic(v0.4.0) ..=> rand(v0.8.3) ..=> {rand_core(v0.6.x), getrandom(v0.2.x)}
-[[bans.skip]]
-name = "getrandom"
-version = "0.1.15"
-[[bans.skip]]
-name = "rand"
-version = "0.7.3"
-[[bans.skip]]
-name = "rand_core"
-version = "0.5.1"
-[[bans.skip]]
-name = "rand_chacha"
-version = "0.2.2"
 
 # hyper-rustls(v0.22.1) => rustls => ring(v0.16.20) => spin(v0.5.2)
 [[bans.skip]]
