@@ -103,7 +103,7 @@ jobs:
           profile: minimal
           toolchain: stable
       - run: rustc --version
-      - run: cargo doc --no-deps --document-private-items
+      - run: cargo doc --no-deps --document-private-items --all-features
 
   udeps:
     runs-on: ubuntu-latest
