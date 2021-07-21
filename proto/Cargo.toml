@@ -20,3 +20,7 @@ serde = { version = "^1.0.126", features = ["derive"], optional = true }
 
 [build-dependencies]
 prost-build = "^0.8"
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
