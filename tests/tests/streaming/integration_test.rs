@@ -174,7 +174,8 @@ impl std::io::Read for PartialReader {
     // when more data is available. This is valid for Rust's `std::io::Read`, but
     // would not be valid for an `io::Writer` in Go.
     fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
-        if rand::thread_rng().gen_range(0, 3) == 0 {
+        let mut csprng = tink_core::subtle::random::rng();
+        if csprng.gen_range(0, 3) == 0 {
             // Randomly pretend to have been interrupted.
             return Err(std::io::Error::new(
                 std::io::ErrorKind::Interrupted,

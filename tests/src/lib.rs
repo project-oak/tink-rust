@@ -394,7 +394,7 @@ pub fn get_ecdsa_params(
 /// Create an [`Ed25519PrivateKey`](tink_proto::Ed25519PrivateKey) with randomly generated key
 /// material.
 pub fn new_ed25519_private_key() -> tink_proto::Ed25519PrivateKey {
-    let mut csprng = rand::thread_rng();
+    let mut csprng = tink_core::subtle::random::rng();
     let keypair = ed25519_dalek::Keypair::generate(&mut csprng);
 
     let public_proto = tink_proto::Ed25519PublicKey {

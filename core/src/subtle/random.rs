@@ -16,16 +16,32 @@
 
 //! Utilities for random data.
 
-use rand::{thread_rng, Rng};
+/// Re-export the particular version of the `rand` crate whose types appear in the API.
+pub use rand;
+
+use rand::Rng;
+
+/// Trait that encapsulates the required traits that a random number generator instance must
+/// implement.
+pub trait Generator: rand::RngCore + rand::CryptoRng {}
+
+/// Blanket implementation: any type that is a [`rand::CryptoRng`] is automatically
+/// suitable as a Tink [`Generator`].
+impl<T> Generator for T where T: rand::RngCore + rand::CryptoRng {}
+
+/// Return a random number generator suitable for cryptographic operation.
+pub fn rng() -> Box<dyn Generator> {
+    Box::new(rand::thread_rng())
+}
 
 /// Return a vector of the given `size` filled with random bytes.
 pub fn get_random_bytes(size: usize) -> Vec<u8> {
     let mut data = vec![0u8; size];
-    thread_rng().fill(&mut data[..]);
+    rng().fill(&mut data[..]);
     data
 }
 
 /// Randomly generate an unsigned 32-bit integer.
 pub fn get_random_uint32() -> u32 {
-    thread_rng().gen()
+    rng().gen()
 }

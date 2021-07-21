@@ -2055,7 +2055,6 @@ dependencies = [
  "aes-gcm-siv",
  "chacha20poly1305",
  "generic-array",
- "rand 0.7.3",
  "tink-core",
  "tink-mac",
  "tink-proto",
@@ -2174,7 +2173,6 @@ version = "0.2.1"
 dependencies = [
  "aes",
  "aes-gcm",
- "rand 0.7.3",
  "tink-core",
  "tink-mac",
  "tink-proto",
