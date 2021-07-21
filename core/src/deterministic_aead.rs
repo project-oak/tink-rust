@@ -35,7 +35,7 @@
 ///
 /// ## References
 ///
-/// - [RFC 5116](https://tools.ietf.org/html/rfc5116_
+/// - [RFC 5116](https://tools.ietf.org/html/rfc5116)
 /// - [RFC 5297 s1.3](https://tools.ietf.org/html/rfc5297#section-1.3)
 pub trait DeterministicAead: DeterministicAeadBoxClone {
     /// Deterministical encrypt plaintext with `additional_data` as additional authenticated data.

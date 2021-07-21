@@ -21,12 +21,14 @@ use serde::Deserialize;
 use std::io::{Read, Write};
 
 /// `JsonReader` deserializes a keyset from JSON format.
+#[cfg_attr(docsrs, doc(cfg(feature = "json")))]
 pub struct JsonReader<T: Read> {
     r: T,
 }
 
 impl<T: Read> JsonReader<T> {
     /// Return a new [`JsonReader`] that will read from `r`.
+    #[cfg_attr(docsrs, doc(cfg(feature = "json")))]
     pub fn new(r: T) -> Self {
         JsonReader { r }
     }
@@ -50,12 +52,14 @@ impl<T: Read> super::Reader for JsonReader<T> {
 }
 
 /// `JsonWriter` serializes a keyset into JSON format.
+#[cfg_attr(docsrs, doc(cfg(feature = "json")))]
 pub struct JsonWriter<T: Write> {
     w: T,
 }
 
 impl<T: Write> JsonWriter<T> {
     /// Return a new [`JsonWriter`] that will write to `w`.
+    #[cfg_attr(docsrs, doc(cfg(feature = "json")))]
     pub fn new(w: T) -> Self {
         JsonWriter { w }
     }
