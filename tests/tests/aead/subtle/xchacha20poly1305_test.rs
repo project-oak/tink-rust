@@ -173,7 +173,7 @@ fn test_x_cha_cha20_poly1305_modify_ciphertext() {
             .unwrap_or_else(|e| panic!("#{}: encrypt failed: {:?}", i, e));
 
         if !aad.is_empty() {
-            let alter_aad_idx = OsRng.gen_range(0, aad.len());
+            let alter_aad_idx = OsRng.gen_range(0..aad.len());
             aad[alter_aad_idx] ^= 0x80;
             assert!(
                 ca.decrypt(&ct, &aad).is_err(),
@@ -183,7 +183,7 @@ fn test_x_cha_cha20_poly1305_modify_ciphertext() {
             aad[alter_aad_idx] ^= 0x80;
         }
 
-        let alter_ct_idx = OsRng.gen_range(0, ct.len());
+        let alter_ct_idx = OsRng.gen_range(0..ct.len());
         ct[alter_ct_idx] ^= 0x80;
         assert!(
             ca.decrypt(&ct, &aad).is_err(),

@@ -26,7 +26,7 @@ digest = "^0.9"
 hkdf = "^0.11"
 lazy_static = { version = "^1.4", features = ["spin_no_std"] }
 prost = { version = "^0.8", default-features = false }
-rand = { version = "^0.7", default-features = false, features = ["alloc", "getrandom"] }
+rand = { version = "^0.8", default-features = false, features = ["alloc", "getrandom"] }
 serde = { version = "^1.0.126", features = ["derive"], optional = true }
 serde_json = { version = "^1.0.64", optional = true }
 sha-1 = { version = "^0.9.7", default-features = false }
