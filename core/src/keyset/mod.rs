@@ -21,6 +21,7 @@ pub use binary_io::*;
 mod handle;
 pub use handle::*;
 #[cfg(feature = "json")]
+#[cfg_attr(docsrs, doc(cfg(feature = "json")))]
 mod json_io;
 #[cfg(feature = "json")]
 pub use json_io::*;
@@ -36,4 +37,5 @@ mod writer;
 pub use writer::*;
 
 #[cfg(feature = "insecure")]
+#[cfg_attr(docsrs, doc(cfg(feature = "insecure")))]
 pub mod insecure;

@@ -219,6 +219,7 @@ impl Handle {
     /// Return a copy of the enclosed [`Keyset`]; for internal
     /// use only.
     #[cfg(feature = "insecure")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "insecure")))]
     pub(crate) fn clone_keyset(&self) -> Keyset {
         self.ks.clone()
     }
