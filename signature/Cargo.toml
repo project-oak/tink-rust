@@ -13,7 +13,7 @@ categories = ["cryptography"]
 ecdsa = { version = "^0.11", features = ["der"] }
 ed25519-dalek = "^1.0.1"
 generic-array = "^0.14.4"
-p256 = "^0.8.1"
+p256 = "^0.9.0"
 prost = "^0.8"
 rand = "^0.7"
 signature = "^1.3"
