@@ -126,7 +126,7 @@ jobs:
           profile: minimal
           toolchain: stable
       - run: rustc --version
-      - run: cargo doc --no-deps --document-private-items --all-features
+      - run: cargo doc --no-deps --document-private-items --all-features --workspace --exclude tink-tests
 
   udeps:
     runs-on: ubuntu-latest

@@ -10,6 +10,17 @@ keywords = ["cryptography", "tink", "testing"]
 categories = ["cryptography"]
 publish = false
 
+[features]
+default = ["kms"]
+# The `tink-awskms` crates indirectly depend on OpenSSL, which cannot be linked at the
+# same time as BoringSSL.  Switch to BoringSSL mode with
+#   --no-default-features --features boringssl
+#
+# Note that this means that the features of this crate are *not* additive; turning on
+# --all-features results in link failures.
+boringssl = ["tink-daead/boringssl"]
+kms = ["tink-awskms", "tink-gcpkms"]
+
 [dependencies]
 base64 = "^0.13"
 ed25519-dalek = "^1.0.1"
@@ -21,9 +32,11 @@ rand = "^0.7"
 regex = "^1.5.4"
 serde = { version = "^1.0.126", features = ["derive"] }
 serde_json = "^1.0.64"
-tink-core = { version = "^0.2", features = ["insecure", "json"] }
 tink-aead = "^0.2"
+tink-awskms = { version = "^0.2", optional = true }
+tink-core = { version = "^0.2", features = ["insecure", "json"] }
 tink-daead = "^0.2"
+tink-gcpkms = { version = "^0.2", optional = true }
 tink-mac = "^0.2"
 tink-proto = "^0.2"
 
@@ -34,10 +47,11 @@ lazy_static = "^1.4"
 maplit = "^1.0.2"
 tempfile = "^3.2"
 tink-aead = "^0.2"
-tink-awskms = "^0.2"
 tink-daead = "^0.2"
-tink-gcpkms = "^0.2"
 tink-mac = "^0.2"
 tink-prf = "^0.2"
 tink-signature = "^0.2"
 tink-streaming-aead = "^0.2"
+
+[package.metadata.cargo-udeps.ignore]
+normal = ["tink-awskms", "tink-gcpkms"]

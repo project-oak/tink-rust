@@ -18,6 +18,9 @@
 
 #![deny(broken_intra_doc_links)]
 
+#[cfg(all(feature = "boringssl", feature = "kms"))]
+compile_error!("features \"boringssl\" and \"kms\" cannot co-exist due to linker clashes between BoringSSL and OpenSSL");
+
 use generic_array::typenum::Unsigned;
 use p256::elliptic_curve;
 use serde::{Deserialize, Serialize};
