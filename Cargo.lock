@@ -2256,7 +2256,6 @@ dependencies = [
  "tink-proto",
  "tink-signature",
  "tink-streaming-aead",
- "tink-tests",
 ]
 
 [[package]]
