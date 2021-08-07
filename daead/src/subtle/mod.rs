@@ -16,11 +16,21 @@
 
 //! Provides subtle implementations of the `DeterministicAEAD` primitive using AES-SIV.
 
-use aes_siv::{aead::generic_array::GenericArray, siv::Aes256Siv};
+use aes_siv::aead::generic_array::GenericArray;
 use std::{cell::RefCell, rc::Rc};
 use tink_core::{utils::wrap_err, TinkError};
 
 const AES_BLOCK_SIZE: usize = 16;
+
+#[cfg(not(feature = "boring"))]
+use aes_siv::siv::Aes256Siv;
+
+// When the `boring` feature is enabled, use `boring` to provide basic AES block
+// encryption, but still use RustCrypto traits to wrap this up into AES-SIV-CMAC.
+#[cfg(feature = "boring")]
+mod boring;
+#[cfg(feature = "boring")]
+type Aes256Siv = aes_siv::siv::CmacSiv<self::boring::Aes256>;
 
 /// `AesSiv` is an implementation of AES-SIV-CMAC as defined in
 /// [RFC 5297](https://tools.ietf.org/html/rfc5297).

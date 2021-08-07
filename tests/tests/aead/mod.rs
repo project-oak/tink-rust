@@ -22,6 +22,7 @@ mod aes_gcm_siv_key_manager_test;
 mod chacha20poly1305_key_manager_test;
 mod integration_test;
 mod kms_envelope_aead_test;
+#[cfg(feature = "kms")]
 mod kms_envelope_key_manager_test;
 mod xchacha20poly1305_key_manager_test;
 
