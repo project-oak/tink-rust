@@ -89,6 +89,57 @@ fn test_read() {
 }
 
 #[test]
+fn test_read_with_associated_data() {
+    let main_key = Box::new(tink_aead::subtle::AesGcm::new(&[b'A'; 32]).unwrap());
+
+    // Create a keyset
+    let key_data = tink_tests::new_key_data("some type url", &[0], KeyMaterialType::Symmetric);
+    let key = tink_tests::new_key(
+        &key_data,
+        tink_proto::KeyStatusType::Enabled,
+        1,
+        tink_proto::OutputPrefixType::Tink,
+    );
+    let ks = tink_tests::new_keyset(1, vec![key]);
+    let h = insecure::new_handle(ks).unwrap();
+
+    let mem_keyset = &mut tink_core::keyset::MemReaderWriter::default();
+    assert!(h
+        .write_with_associated_data(mem_keyset, main_key.clone(), &[0x01, 0x02])
+        .is_ok());
+    let h2 = Handle::read_with_associated_data(mem_keyset, main_key, &[0x01, 0x02]).unwrap();
+    assert_eq!(
+        insecure::keyset_material(&h),
+        insecure::keyset_material(&h2),
+        "Decrypt failed: got {:?}, want {:?}",
+        h2,
+        h
+    );
+}
+#[test]
+fn test_read_with_mismatched_associated_data() {
+    let main_key = Box::new(tink_aead::subtle::AesGcm::new(&[b'A'; 32]).unwrap());
+
+    // Create a keyset
+    let key_data = tink_tests::new_key_data("some type url", &[0], KeyMaterialType::Symmetric);
+    let key = tink_tests::new_key(
+        &key_data,
+        tink_proto::KeyStatusType::Enabled,
+        1,
+        tink_proto::OutputPrefixType::Tink,
+    );
+    let ks = tink_tests::new_keyset(1, vec![key]);
+    let h = insecure::new_handle(ks).unwrap();
+
+    let mem_keyset = &mut tink_core::keyset::MemReaderWriter::default();
+    assert!(h
+        .write_with_associated_data(mem_keyset, main_key.clone(), &[0x01, 0x02])
+        .is_ok());
+    let result = Handle::read_with_associated_data(mem_keyset, main_key, &[0x01, 0x03]);
+    tink_tests::expect_err(result, "decryption failed");
+}
+
+#[test]
 fn test_read_with_no_secrets() {
     // Create a keyset containing public key material
     let key_data =

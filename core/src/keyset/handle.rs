@@ -58,8 +58,21 @@ impl Handle {
     where
         T: crate::keyset::Reader,
     {
+        Self::read_with_associated_data(reader, master_key, &[])
+    }
+
+    /// Attempt to create a [`Handle`] from an encrypted keyset obtained via a
+    /// [`Reader`](crate::keyset::Reader) using the provided associated data.
+    pub fn read_with_associated_data<T>(
+        reader: &mut T,
+        master_key: Box<dyn crate::Aead>,
+        associated_data: &[u8],
+    ) -> Result<Self, TinkError>
+    where
+        T: crate::keyset::Reader,
+    {
         let encrypted_keyset = reader.read_encrypted()?;
-        let ks = decrypt(&encrypted_keyset, master_key)?;
+        let ks = decrypt(&encrypted_keyset, master_key, associated_data)?;
         Ok(Handle {
             ks: validate_keyset(ks)?,
         })
@@ -109,7 +122,20 @@ impl Handle {
     where
         T: super::Writer,
     {
-        let encrypted = encrypt(&self.ks, master_key)?;
+        self.write_with_associated_data(writer, master_key, &[])
+    }
+
+    /// Encrypts and writes the enclosed [`Keyset`] using the provided associated data.
+    pub fn write_with_associated_data<T>(
+        &self,
+        writer: &mut T,
+        master_key: Box<dyn crate::Aead>,
+        associated_data: &[u8],
+    ) -> Result<(), TinkError>
+    where
+        T: super::Writer,
+    {
+        let encrypted = encrypt(&self.ks, master_key, associated_data)?;
         writer.write_encrypted(&encrypted)
     }
 
@@ -271,9 +297,10 @@ fn public_key_data(priv_key_data: &tink_proto::KeyData) -> Result<tink_proto::Ke
 fn decrypt(
     encrypted_keyset: &tink_proto::EncryptedKeyset,
     master_key: Box<dyn crate::Aead>,
+    associated_data: &[u8],
 ) -> Result<Keyset, TinkError> {
     let decrypted = master_key
-        .decrypt(&encrypted_keyset.encrypted_keyset, &[])
+        .decrypt(&encrypted_keyset.encrypted_keyset, associated_data)
         .map_err(|e| wrap_err("keyset::Handle: decryption failed", e))?;
     Keyset::decode(&decrypted[..]).map_err(|_| TinkError::new("keyset::Handle:: invalid keyset"))
 }
@@ -282,13 +309,14 @@ fn decrypt(
 fn encrypt(
     keyset: &Keyset,
     master_key: Box<dyn crate::Aead>,
+    associated_data: &[u8],
 ) -> Result<tink_proto::EncryptedKeyset, TinkError> {
     let mut serialized_keyset = vec![];
     keyset
         .encode(&mut serialized_keyset)
         .map_err(|e| wrap_err("keyset::Handle: invalid keyset", e))?;
     let encrypted = master_key
-        .encrypt(&serialized_keyset, &[])
+        .encrypt(&serialized_keyset, associated_data)
         .map_err(|e| wrap_err("keyset::Handle: encrypted failed", e))?;
     Ok(tink_proto::EncryptedKeyset {
         encrypted_keyset: encrypted,
