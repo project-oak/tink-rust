@@ -14,6 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+use alloc::vec::Vec;
 use signature::{Signature, Signer as RustCryptoSigner};
 use tink_core::{utils::wrap_err, Signer, TinkError};
 

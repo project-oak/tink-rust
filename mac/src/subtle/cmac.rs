@@ -16,6 +16,7 @@
 
 //! Provides an implementation of MAC using AES-CMAC.
 
+use alloc::{format, vec::Vec};
 use tink_core::{utils::wrap_err, Prf, TinkError};
 
 const MIN_CMAC_KEY_SIZE_IN_BYTES: usize = 16;

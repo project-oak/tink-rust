@@ -16,7 +16,8 @@
 
 //! Provide an implementation of AEAD using a KMS.
 
-use std::convert::TryInto;
+use alloc::{boxed::Box, vec::Vec};
+use core::convert::TryInto;
 use tink_core::{utils::wrap_err, TinkError};
 
 const LEN_DEK: usize = 4;

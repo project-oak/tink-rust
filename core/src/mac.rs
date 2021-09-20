@@ -16,6 +16,8 @@
 
 //! Message Authentication Codes.
 
+use alloc::{boxed::Box, vec::Vec};
+
 /// `Mac` is the interface for MACs (Message Authentication Codes).
 /// This interface should be used for authentication only, and not for other purposes
 /// (for example, it should not be used to generate pseudorandom bytes).

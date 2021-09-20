@@ -17,6 +17,7 @@
 //! Keyset validation functions.
 
 use crate::TinkError;
+use alloc::format;
 
 /// Check whether the given version is valid. The version is valid
 /// only if it is the range [0..max_expected].

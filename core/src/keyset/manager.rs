@@ -17,7 +17,8 @@
 //! Utilities for managing keys in a keyset.
 
 use crate::{utils::wrap_err, KeyId, TinkError};
-use rand::Rng;
+use alloc::format;
+use rand::{rngs::OsRng, Rng};
 use tink_proto::{KeyStatusType, OutputPrefixType};
 
 /// Manager manages a [`Keyset`](tink_proto::Keyset)-proto, with convenience methods that rotate,
@@ -209,10 +210,8 @@ impl Manager {
 
     /// Generate a key id that has not been used by any key in the [`Keyset`](tink_proto::Keyset).
     fn new_key_id(&self) -> KeyId {
-        let mut rng = rand::thread_rng();
-
         loop {
-            let ret = rng.gen::<u32>();
+            let ret = OsRng.gen::<u32>();
             if self.ks.key.iter().any(|x| x.key_id == ret) {
                 continue;
             }

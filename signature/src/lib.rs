@@ -19,8 +19,12 @@
 //! To sign data using Tink you can use ECDSA or ED25519 key templates.
 
 #![deny(broken_intra_doc_links)]
+#![no_std]
 
-use std::sync::Once;
+extern crate alloc;
+
+use alloc::sync::Arc;
+use spin::{Mutex, Once};
 use tink_core::registry::register_key_manager;
 
 mod ecdsa_signer_key_manager;
@@ -46,22 +50,22 @@ pub mod subtle;
 /// port is based on.
 pub const UPSTREAM_VERSION: &str = "1.6.0";
 
-static INIT: Once = Once::new();
+static INIT: Mutex<Once> = Mutex::new(Once::new());
 
 /// Initialize the `tink-signature` crate, registering its primitives so they are available via
 /// Tink.
 pub fn init() {
-    INIT.call_once(|| {
+    INIT.lock().call_once(|| {
         // ECDSA
-        register_key_manager(std::sync::Arc::new(EcdsaSignerKeyManager::default()))
+        register_key_manager(Arc::new(EcdsaSignerKeyManager::default()))
             .expect("tink_signature::init() failed"); // safe: init
-        register_key_manager(std::sync::Arc::new(EcdsaVerifierKeyManager::default()))
+        register_key_manager(Arc::new(EcdsaVerifierKeyManager::default()))
             .expect("tink_signature::init() failed"); // safe: init
 
         // Ed25519
-        register_key_manager(std::sync::Arc::new(Ed25519SignerKeyManager::default()))
+        register_key_manager(Arc::new(Ed25519SignerKeyManager::default()))
             .expect("tink_signature::init() failed"); // safe: init
-        register_key_manager(std::sync::Arc::new(Ed25519VerifierKeyManager::default()))
+        register_key_manager(Arc::new(Ed25519VerifierKeyManager::default()))
             .expect("tink_signature::init() failed"); // safe: init
 
         tink_core::registry::register_template_generator("ECDSA_P256", ecdsa_p256_key_template);

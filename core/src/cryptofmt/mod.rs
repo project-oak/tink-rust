@@ -17,6 +17,7 @@
 //! Provides constants and convenience methods that define the format of ciphertexts and signatures.
 
 use crate::TinkError;
+use alloc::vec::Vec;
 use tink_proto::OutputPrefixType;
 
 /// Prefix size of Tink and Legacy key types.

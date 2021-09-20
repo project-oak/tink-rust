@@ -15,10 +15,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //! This crate provides implementations of the [`tink_core::Prf`] primitive.
-
+#![no_std]
 #![deny(broken_intra_doc_links)]
 
-use std::sync::Once;
+extern crate alloc;
+
+use alloc::sync::Arc;
+use spin::{Mutex, Once};
 use tink_core::registry::register_key_manager;
 
 mod aes_cmac_prf_key_manager;
@@ -38,17 +41,17 @@ pub mod subtle;
 /// port is based on.
 pub const UPSTREAM_VERSION: &str = "1.6.0";
 
-static INIT: Once = Once::new();
+static INIT: Mutex<Once> = Mutex::new(Once::new());
 
 /// Initialize the `tink-prf` crate, registering its primitives so they are available via
 /// Tink.
 pub fn init() {
-    INIT.call_once(|| {
-        register_key_manager(std::sync::Arc::new(HmacPrfKeyManager::default()))
+    INIT.lock().call_once(|| {
+        register_key_manager(Arc::new(HmacPrfKeyManager::default()))
             .expect("tink_prf::init() failed"); // safe: init
-        register_key_manager(std::sync::Arc::new(HkdfPrfKeyManager::default()))
+        register_key_manager(Arc::new(HkdfPrfKeyManager::default()))
             .expect("tink_prf::init() failed"); // safe: init
-        register_key_manager(std::sync::Arc::new(AesCmacPrfKeyManager::default()))
+        register_key_manager(Arc::new(AesCmacPrfKeyManager::default()))
             .expect("tink_prf::init() failed"); // safe: init
 
         tink_core::registry::register_template_generator(

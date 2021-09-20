@@ -1,6 +1,6 @@
 [package]
 name = "tink-tests"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -12,32 +12,32 @@ publish = false
 
 [dependencies]
 base64 = "^0.13"
-ed25519-dalek = "^1.0.1"
+ed25519-dalek = { version = "^1.0.2", default-features = false, features = ["rand", "u64_backend"]}
 generic-array = "^0.14.4"
 hex = "^0.4.3"
 p256 = "^0.8.1"
-prost = "^0.8"
-rand = "^0.7"
+prost = { version = "^0.8", default-features = false }
+rand = { version = "^0.8", default-features = false, features = ["alloc", "getrandom"] }
 regex = "^1.5.4"
 serde = { version = "^1.0.126", features = ["derive"] }
 serde_json = "^1.0.64"
-tink-core = { version = "^0.2", features = ["insecure", "json"] }
-tink-aead = "^0.2"
-tink-daead = "^0.2"
-tink-mac = "^0.2"
-tink-proto = "^0.2"
+tink-core = { version = "^0.3", features = ["insecure", "json"] }
+tink-aead = "^0.3"
+tink-daead = "^0.3"
+tink-mac = "^0.3"
+tink-proto = "^0.3"
 
 [dev-dependencies]
 base64 = "^0.13"
 hex = "^0.4.3"
-lazy_static = "^1.4"
+lazy_static = { version = "^1.4", features = ["spin_no_std"] }
 maplit = "^1.0.2"
 tempfile = "^3.2"
-tink-aead = "^0.2"
-tink-awskms = "^0.2"
-tink-daead = "^0.2"
-tink-gcpkms = "^0.2"
-tink-mac = "^0.2"
-tink-prf = "^0.2"
-tink-signature = "^0.2"
-tink-streaming-aead = "^0.2"
+tink-aead = "^0.3"
+tink-awskms = "^0.3"
+tink-daead = "^0.3"
+tink-gcpkms = "^0.3"
+tink-mac = "^0.3"
+tink-prf = "^0.3"
+tink-signature = "^0.3"
+tink-streaming-aead = "^0.3"

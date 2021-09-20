@@ -17,7 +17,8 @@
 //! Provides subtle implementations of the `DeterministicAEAD` primitive using AES-SIV.
 
 use aes_siv::{aead::generic_array::GenericArray, siv::Aes256Siv};
-use std::{cell::RefCell, rc::Rc};
+use alloc::{format, rc::Rc, vec::Vec};
+use core::cell::RefCell;
 use tink_core::{utils::wrap_err, TinkError};
 
 const AES_BLOCK_SIZE: usize = 16;

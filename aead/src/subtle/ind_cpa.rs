@@ -16,6 +16,8 @@
 
 //! Trait definition for `IndCpaCipher`.
 
+use alloc::{boxed::Box, vec::Vec};
+
 // `IndCpaCipher` provides an interface for symmetric key ciphers that are
 // indistinguishable against chosen-plaintext attacks. Said primitives do not
 // provide authentication, thus should not be used directly, but only to

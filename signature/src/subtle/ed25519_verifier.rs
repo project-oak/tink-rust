@@ -14,6 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+use alloc::format;
 use signature::{Signature, Verifier as RustCryptoVerifier};
 use tink_core::{utils::wrap_err, TinkError};
 

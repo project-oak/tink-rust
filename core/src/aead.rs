@@ -16,6 +16,8 @@
 
 //! Authenticated encryption with additional authenticated data.
 
+use alloc::{boxed::Box, vec::Vec};
+
 /// `Aead` is the interface for authenticated encryption with additional authenticated data.
 ///
 /// Implementations of this trait are secure against adaptive chosen ciphertext attacks.

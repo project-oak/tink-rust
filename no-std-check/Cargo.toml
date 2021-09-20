@@ -1,0 +1,41 @@
+[package]
+name = "no-std-check"
+version = "0.1.0"
+authors = ["David Drysdale <drysdale@google.com>"]
+edition = "2018"
+license = "Apache-2.0"
+description = "Internal binary crate to check all Tink deps are no_std"
+repository = "https://github.com/project-oak/tink-rust"
+
+[dependencies]
+libc = { version = "0.2", default-features = false }
+tink-aead = "^0.3"
+# tink-awskms requires std
+tink-core = { version = "^0.3", features = ["insecure"] }
+tink-daead = "^0.3"
+# tink-gcpkms requires std
+tink-mac = "^0.3"
+tink-prf = "^0.3"
+tink-proto = "^0.3"
+tink-signature = "^0.3"
+# tink-streaming-aead requires std
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+
+# Patch dependencies on tink crates so that they refer to the versions within this same repository.
+[patch.crates-io]
+# TODO(#7): remove if/when https://github.com/dalek-cryptography/ed25519-dalek/pull/160 is merged.
+ed25519-dalek = { git = "https://github.com/daviddrysdale/ed25519-dalek", branch = "rand-bump" }
+tink-aead = { path = "../aead" }
+tink-core = { path = "../core" }
+tink-daead = { path = "../daead" }
+tink-mac = { path = "../mac" }
+tink-prf = { path = "../prf" }
+tink-proto = { path = "../proto" }
+tink-signature = { path = "../signature" }
+
+[workspace]

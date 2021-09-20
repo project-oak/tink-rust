@@ -112,6 +112,14 @@ jobs:
           components: rustfmt, clippy
       - run: rustc --version
       - run: cargo clippy --all-features --all-targets -- -Dwarnings
+      - run: cargo clippy --all-targets --manifest-path proto/Cargo.toml --no-default-features -- -Dwarnings
+      - run: cargo clippy --all-targets --manifest-path proto/Cargo.toml --no-default-features --features json -- -Dwarnings
+      - run: cargo clippy --all-targets --manifest-path core/Cargo.toml --no-default-features -- -Dwarnings
+      - run: cargo clippy --all-targets --manifest-path core/Cargo.toml --no-default-features --features insecure -- -Dwarnings
+      - run: cargo clippy --all-targets --manifest-path core/Cargo.toml --no-default-features --features json -- -Dwarnings
+      - run: cargo clippy --all-targets --manifest-path core/Cargo.toml --no-default-features --features std -- -Dwarnings
+      - run: cargo clippy --all-targets --manifest-path core/Cargo.toml --no-default-features --features insecure,json -- -Dwarnings
+      - run: cargo clippy --all-targets --manifest-path core/Cargo.toml --no-default-features --features insecure,std -- -Dwarnings
 
   doc:
     runs-on: ubuntu-latest
@@ -123,6 +131,19 @@ jobs:
           toolchain: stable
       - run: rustc --version
       - run: cargo doc --no-deps --document-private-items --all-features
+
+  nostd:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly-2021-07-01
+          override: true
+          target: thumbv7em-none-eabi
+      # Target thumbv7em does not have std
+      - run: cargo build --target thumbv7em-none-eabi --manifest-path no-std-check/Cargo.toml
 
   udeps:
     runs-on: ubuntu-latest

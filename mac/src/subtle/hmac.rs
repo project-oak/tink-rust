@@ -16,6 +16,7 @@
 
 //! Provides an implementation of MAC using HMAC.
 
+use alloc::vec::Vec;
 use tink_core::{utils::wrap_err, Prf, TinkError};
 use tink_proto::HashType;
 

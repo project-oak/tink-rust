@@ -17,12 +17,10 @@
 //! Provides an implementation of PRF using AES-CMAC.
 
 use aes::{Aes128, Aes192, Aes256};
+use alloc::{boxed::Box, format, sync::Arc, vec::Vec};
 use cmac::{Cmac, Mac, NewMac};
-use std::{
-    cmp::min,
-    ops::DerefMut,
-    sync::{Arc, Mutex},
-};
+use core::{cmp::min, ops::DerefMut};
+use spin::Mutex;
 use tink_core::TinkError;
 
 const RECOMMENDED_KEY_SIZE: usize = 32;
@@ -89,29 +87,22 @@ impl tink_core::Prf for AesCmacPrf {
             )
             .into());
         }
-        Ok(
-            match self
-                .mac
-                .lock()
-                .expect("internal lock corrupted") // safe: lock
-                .deref_mut()
-            {
-                AesCmacVariant::Aes128(mac) => {
-                    mac.update(data);
-                    let result = mac.finalize_reset().into_bytes();
-                    result[..min(result.len(), output_length)].to_vec()
-                }
-                AesCmacVariant::Aes192(mac) => {
-                    mac.update(data);
-                    let result = mac.finalize_reset().into_bytes();
-                    result[..min(result.len(), output_length)].to_vec()
-                }
-                AesCmacVariant::Aes256(mac) => {
-                    mac.update(data);
-                    let result = mac.finalize_reset().into_bytes();
-                    result[..min(result.len(), output_length)].to_vec()
-                }
-            },
-        )
+        Ok(match self.mac.lock().deref_mut() {
+            AesCmacVariant::Aes128(mac) => {
+                mac.update(data);
+                let result = mac.finalize_reset().into_bytes();
+                result[..min(result.len(), output_length)].to_vec()
+            }
+            AesCmacVariant::Aes192(mac) => {
+                mac.update(data);
+                let result = mac.finalize_reset().into_bytes();
+                result[..min(result.len(), output_length)].to_vec()
+            }
+            AesCmacVariant::Aes256(mac) => {
+                mac.update(data);
+                let result = mac.finalize_reset().into_bytes();
+                result[..min(result.len(), output_length)].to_vec()
+            }
+        })
     }
 }

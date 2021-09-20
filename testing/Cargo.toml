@@ -1,6 +1,6 @@
 [package]
 name = "tink-testing-server"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -16,18 +16,18 @@ futures = "^0.3.15"
 log = "^0.4.14"
 prost = "^0.8"
 structopt = "^0.3.22"
-tink-aead = "^0.2"
-tink-core = { version = "^0.2", features = [
+tink-aead = "^0.3"
+tink-core = { version = "^0.3", features = [
   "insecure",
   "json",
  ] }
-tink-daead = "^0.2"
-tink-mac = "^0.2"
-tink-prf = "^0.2"
-tink-proto = "^0.2"
-tink-signature = "^0.2"
-tink-streaming-aead = "^0.2"
-tink-tests = "^0.2"
+tink-daead = "^0.3"
+tink-mac = "^0.3"
+tink-prf = "^0.3"
+tink-proto = "^0.3"
+tink-signature = "^0.3"
+tink-streaming-aead = "^0.3"
+tink-tests = "^0.3"
 tokio = { version = "^1.8", features = [
   "macros",
   "rt-multi-thread",

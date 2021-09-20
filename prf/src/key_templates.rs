@@ -16,6 +16,7 @@
 
 //! This module contains pre-generated [`KeyTemplate`] instances for PRF.
 
+use alloc::{string::ToString, vec::Vec};
 use prost::Message;
 use tink_proto::KeyTemplate;
 

@@ -16,7 +16,11 @@
 
 //! Protocol buffer message definitions for Tink.
 
+#![no_std]
 #![deny(broken_intra_doc_links)]
+
+#[cfg(feature = "json")]
+extern crate alloc;
 
 #[cfg(not(feature = "json"))]
 include!("codegen/google.crypto.tink.rs");
@@ -30,6 +34,7 @@ pub mod json {
     //! the `i32` values used by prost.
     pub mod key_status_type {
         //! Manual JSON serialization for [`KeyStatusType`](crate::KeyStatusType) enums.
+        use alloc::string::String;
         use serde::Deserialize;
         pub fn serialize<S: serde::Serializer>(
             val: &i32,
@@ -56,6 +61,7 @@ pub mod json {
     }
     pub mod output_prefix_type {
         //! Manual JSON serialization for [`OutputPrefixType`](crate::OutputPrefixType) enums.
+        use alloc::string::String;
         use serde::Deserialize;
         pub fn serialize<S: serde::Serializer>(
             val: &i32,
@@ -85,6 +91,7 @@ pub mod json {
     pub mod key_material_type {
         //! Manual JSON serialization for [`KeyMaterialType`](crate::key_data::KeyMaterialType)
         //! enums.
+        use alloc::string::String;
         use serde::Deserialize;
         pub fn serialize<S: serde::Serializer>(
             val: &i32,
@@ -113,6 +120,7 @@ pub mod json {
     }
     pub mod b64 {
         //! Manual serialization implementations for base64-encoded binary data.
+        use alloc::{string::String, vec::Vec};
         use serde::Deserialize;
         pub fn serialize<S: serde::Serializer>(
             val: &[u8],

@@ -17,6 +17,7 @@
 //! Common methods needed in subtle implementations.
 
 use crate::TinkError;
+use alloc::vec::Vec;
 use digest::Digest;
 use subtle::ConstantTimeEq;
 use tink_proto::HashType;

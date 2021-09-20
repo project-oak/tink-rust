@@ -16,6 +16,7 @@
 
 //! Key manager for AES-CMAC keys for HMAC.
 
+use alloc::{boxed::Box, vec::Vec};
 use prost::Message;
 use tink_core::{utils::wrap_err, TinkError};
 use tink_proto::HashType;

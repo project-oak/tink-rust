@@ -17,6 +17,7 @@
 //! Key manager for AES-CTR-HMAC keys.
 
 use crate::subtle;
+use alloc::{boxed::Box, format, vec::Vec};
 use prost::Message;
 use tink_core::{utils::wrap_err, TinkError};
 use tink_proto::HashType;

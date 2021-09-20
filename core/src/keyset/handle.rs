@@ -17,8 +17,8 @@
 //! Handle wrapper for keysets.
 
 use crate::{utils::wrap_err, TinkError};
+use alloc::{boxed::Box, format, string::ToString, sync::Arc, vec, vec::Vec};
 use prost::Message;
-use std::sync::Arc;
 use tink_proto::{key_data::KeyMaterialType, Keyset, KeysetInfo};
 
 /// `Handle` provides access to a [`Keyset`] protobuf, to limit the exposure
@@ -351,10 +351,10 @@ fn get_key_info(key: &tink_proto::keyset::Key) -> tink_proto::keyset_info::KeyIn
     }
 }
 
-impl std::fmt::Debug for Handle {
+impl core::fmt::Debug for Handle {
     /// Return a string representation of the managed keyset.
     /// The result does not contain any sensitive key material.
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "{:?}", get_keyset_info(&self.ks))
     }
 }

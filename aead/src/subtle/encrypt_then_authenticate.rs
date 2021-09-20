@@ -17,6 +17,7 @@
 //! General AEAD implementation combining an `IndCpaCipher` with a `tink_core::Mac`
 
 use super::IndCpaCipher;
+use alloc::{boxed::Box, vec::Vec};
 use tink_core::{utils::wrap_err, TinkError};
 
 /// `EncryptThenAuthenticate` performs an encrypt-then-MAC operation on plaintext

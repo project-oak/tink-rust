@@ -19,9 +19,13 @@
 //! AEAD encryption assures the confidentiality and authenticity of the data. This primitive is CPA
 //! secure.
 
+#![no_std]
 #![deny(broken_intra_doc_links)]
 
-use std::sync::Once;
+extern crate alloc;
+
+use alloc::sync::Arc;
+use spin::{Mutex, Once};
 use tink_core::registry::register_key_manager;
 
 mod aead_factory;
@@ -49,23 +53,23 @@ pub mod subtle;
 /// port is based on.
 pub const UPSTREAM_VERSION: &str = "1.6.0";
 
-static INIT: Once = Once::new();
+static INIT: Mutex<Once> = Mutex::new(Once::new());
 
 /// Initialize the `tink-aead` crate, registering its primitives so they are available via
 /// tink-core.
 pub fn init() {
-    INIT.call_once(|| {
-        register_key_manager(std::sync::Arc::new(AesCtrHmacAeadKeyManager::default()))
+    INIT.lock().call_once(|| {
+        register_key_manager(Arc::new(AesCtrHmacAeadKeyManager::default()))
             .expect("tink_aead::init() failed"); // safe: init
-        register_key_manager(std::sync::Arc::new(AesGcmKeyManager::default()))
+        register_key_manager(Arc::new(AesGcmKeyManager::default()))
             .expect("tink_aead::init() failed"); // safe: init
-        register_key_manager(std::sync::Arc::new(AesGcmSivKeyManager::default()))
+        register_key_manager(Arc::new(AesGcmSivKeyManager::default()))
             .expect("tink_aead::init() failed"); // safe: init
-        register_key_manager(std::sync::Arc::new(ChaCha20Poly1305KeyManager::default()))
+        register_key_manager(Arc::new(ChaCha20Poly1305KeyManager::default()))
             .expect("tink_aead::init() failed"); // safe: init
-        register_key_manager(std::sync::Arc::new(XChaCha20Poly1305KeyManager::default()))
+        register_key_manager(Arc::new(XChaCha20Poly1305KeyManager::default()))
             .expect("tink_aead::init() failed"); // safe: init
-        register_key_manager(std::sync::Arc::new(KmsEnvelopeAeadKeyManager::default()))
+        register_key_manager(Arc::new(KmsEnvelopeAeadKeyManager::default()))
             .expect("tink_aead::init() failed"); // safe:init
 
         tink_core::registry::register_template_generator("AES128_GCM", aes128_gcm_key_template);
