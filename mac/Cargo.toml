@@ -1,6 +1,6 @@
 [package]
 name = "tink-mac"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 license = "Apache-2.0"
