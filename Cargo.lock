@@ -2097,7 +2097,7 @@ dependencies = [
 
 [[package]]
 name = "tink-core"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "digest",
  "hkdf",
@@ -2170,7 +2170,7 @@ dependencies = [
 
 [[package]]
 name = "tink-proto"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "base64",
  "prost",
