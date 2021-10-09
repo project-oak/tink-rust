@@ -18,9 +18,8 @@
 
 use generic_array::typenum::Unsigned;
 use p256::elliptic_curve;
-use prost::Message;
 use tink_core::{utils::wrap_err, TinkError};
-use tink_proto::EllipticCurveType;
+use tink_proto::{prost::Message, EllipticCurveType};
 
 /// Maximal version of ECDSA keys.
 pub const ECDSA_SIGNER_KEY_VERSION: u32 = 0;

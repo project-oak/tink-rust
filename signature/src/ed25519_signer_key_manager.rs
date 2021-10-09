@@ -16,8 +16,8 @@
 
 //! Key manager for ED25519 signing keys.
 
-use prost::Message;
 use tink_core::{utils::wrap_err, TinkError};
+use tink_proto::prost::Message;
 
 /// Maximal version of ED25519 keys.
 pub const ED25519_SIGNER_KEY_VERSION: u32 = 0;

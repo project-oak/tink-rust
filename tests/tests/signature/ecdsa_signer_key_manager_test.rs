@@ -14,12 +14,11 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use prost::Message;
 use std::collections::HashSet;
 use tink_core::{subtle::random::get_random_bytes, Signer, TinkError, Verifier};
 use tink_proto::{
-    EcdsaKeyFormat, EcdsaParams, EcdsaPrivateKey, EcdsaPublicKey, EcdsaSignatureEncoding,
-    EllipticCurveType, HashType,
+    prost::Message, EcdsaKeyFormat, EcdsaParams, EcdsaPrivateKey, EcdsaPublicKey,
+    EcdsaSignatureEncoding, EllipticCurveType, HashType,
 };
 
 use super::common::*;

@@ -14,9 +14,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use prost::Message;
 use tink_aead::subtle;
 use tink_core::{subtle::random::get_random_bytes, TinkError};
+use tink_proto::prost::Message;
 
 #[test]
 fn test_cha_cha20_poly1305_get_primitive() {

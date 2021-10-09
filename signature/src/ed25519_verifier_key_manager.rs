@@ -16,8 +16,8 @@
 
 //! Key manager for ED25519 verification keys.
 
-use prost::Message;
 use tink_core::{utils::wrap_err, TinkError};
+use tink_proto::prost::Message;
 
 /// Maximal version of ED25519 keys.
 pub const ED25519_VERIFIER_KEY_VERSION: u32 = 0;

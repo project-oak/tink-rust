@@ -16,9 +16,8 @@
 
 //! Key manager for AES-CMAC keys for HMAC.
 
-use prost::Message;
 use tink_core::{utils::wrap_err, TinkError};
-use tink_proto::HashType;
+use tink_proto::{prost::Message, HashType};
 
 /// Maximal version of HMAC keys.
 pub const HMAC_KEY_VERSION: u32 = 0;

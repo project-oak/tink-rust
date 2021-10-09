@@ -17,9 +17,8 @@
 //! Key manager for AES-CTR-HMAC keys.
 
 use crate::subtle;
-use prost::Message;
 use tink_core::{utils::wrap_err, TinkError};
-use tink_proto::HashType;
+use tink_proto::{prost::Message, HashType};
 
 /// Maximal version of AES-CTR-HMAC keys.
 pub const AES_CTR_HMAC_AEAD_KEY_VERSION: u32 = 0;

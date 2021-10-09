@@ -16,8 +16,7 @@
 
 //! This module contains pre-generated [`KeyTemplate`] instances for PRF.
 
-use prost::Message;
-use tink_proto::KeyTemplate;
+use tink_proto::{prost::Message, KeyTemplate};
 
 /// Return a [`KeyTemplate`] that generates an HMAC key with the following parameters:
 ///  - Key size: 32 bytes

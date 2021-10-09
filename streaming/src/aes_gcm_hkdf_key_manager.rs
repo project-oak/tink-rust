@@ -17,9 +17,8 @@
 //! Key manager for streaming AES-GCM-HKDF.
 
 use crate::subtle;
-use prost::Message;
 use tink_core::{subtle::random::get_random_bytes, utils::wrap_err, TinkError};
-use tink_proto::HashType;
+use tink_proto::{prost::Message, HashType};
 
 /// Maximal version of AES-GCM-HKDF keys.
 pub const AES_GCM_HKDF_KEY_VERSION: u32 = 0;

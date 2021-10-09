@@ -18,6 +18,9 @@
 
 #![deny(broken_intra_doc_links)]
 
+/// Re-export to ensure that users of this crate can access the same version.
+pub use prost;
+
 #[cfg(not(feature = "json"))]
 include!("codegen/google.crypto.tink.rs");
 #[cfg(feature = "json")]

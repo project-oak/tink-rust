@@ -17,9 +17,8 @@
 //! Handle wrapper for keysets.
 
 use crate::{utils::wrap_err, TinkError};
-use prost::Message;
 use std::sync::Arc;
-use tink_proto::{key_data::KeyMaterialType, Keyset, KeysetInfo};
+use tink_proto::{key_data::KeyMaterialType, prost::Message, Keyset, KeysetInfo};
 
 /// `Handle` provides access to a [`Keyset`] protobuf, to limit the exposure
 /// of actual protocol buffers that hold sensitive key material.

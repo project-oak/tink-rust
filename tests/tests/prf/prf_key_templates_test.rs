@@ -14,8 +14,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use prost::Message;
 use tink_core::{utils::wrap_err, TinkError};
+use tink_proto::prost::Message;
 
 #[test]
 fn test_key_templates() {

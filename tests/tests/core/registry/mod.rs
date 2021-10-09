@@ -14,8 +14,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use prost::Message;
 use std::sync::Arc;
+use tink_proto::prost::Message;
 use tink_tests::fakekms;
 
 #[test]

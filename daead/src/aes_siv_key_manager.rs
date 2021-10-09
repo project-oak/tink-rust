@@ -17,12 +17,12 @@
 //! Key manager for AES-SIV keys for deterministic AEAD.
 
 use crate::subtle;
-use prost::Message;
 use tink_core::{
     registry::KeyManager,
     subtle::random::get_random_bytes,
     utils::{wrap_err, TinkError},
 };
+use tink_proto::prost::Message;
 
 /// Maximal version of AES-SIV keys.
 pub const AES_SIV_KEY_VERSION: u32 = 0;

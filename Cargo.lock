@@ -2074,7 +2074,6 @@ dependencies = [
  "aes-gcm-siv",
  "chacha20poly1305",
  "generic-array",
- "prost",
  "rand 0.7.3",
  "tink-core",
  "tink-mac",
@@ -2102,7 +2101,6 @@ dependencies = [
  "digest",
  "hkdf",
  "lazy_static",
- "prost",
  "rand 0.7.3",
  "serde",
  "serde_json",
@@ -2118,7 +2116,6 @@ version = "0.2.1"
 dependencies = [
  "aead",
  "aes-siv",
- "prost",
  "tink-core",
  "tink-proto",
 ]
@@ -2146,7 +2143,6 @@ dependencies = [
 name = "tink-mac"
 version = "0.2.1"
 dependencies = [
- "prost",
  "tink-core",
  "tink-prf",
  "tink-proto",
@@ -2161,7 +2157,6 @@ dependencies = [
  "digest",
  "hkdf",
  "hmac",
- "prost",
  "sha-1",
  "sha2",
  "tink-core",
@@ -2186,7 +2181,6 @@ dependencies = [
  "ed25519-dalek",
  "generic-array",
  "p256",
- "prost",
  "rand 0.7.3",
  "signature",
  "tink-core",
@@ -2199,7 +2193,6 @@ version = "0.2.1"
 dependencies = [
  "aes",
  "aes-gcm",
- "prost",
  "rand 0.7.3",
  "tink-core",
  "tink-mac",
@@ -2240,7 +2233,6 @@ dependencies = [
  "lazy_static",
  "maplit",
  "p256",
- "prost",
  "rand 0.7.3",
  "regex",
  "serde",

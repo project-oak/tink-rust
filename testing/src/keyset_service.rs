@@ -17,8 +17,8 @@
 //! Testing server for keyset manipulation.
 
 use crate::proto;
-use prost::Message;
 use tink_core::{utils::wrap_err, TinkError};
+use tink_proto::prost::Message;
 
 #[derive(Debug, Default)]
 pub struct KeysetServerImpl;

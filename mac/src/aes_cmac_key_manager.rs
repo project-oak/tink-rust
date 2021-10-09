@@ -16,8 +16,8 @@
 
 //! Key manager for AES-CMAC keys for MAC.
 
-use prost::Message;
 use tink_core::{utils::wrap_err, TinkError};
+use tink_proto::prost::Message;
 
 /// Maximal version of AES-CMAC keys.
 pub const CMAC_KEY_VERSION: u32 = 0;

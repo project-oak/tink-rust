@@ -17,9 +17,8 @@
 //! Key manager for HKDF keys for PRF.
 
 use crate::subtle;
-use prost::Message;
 use tink_core::{utils::wrap_err, TinkError};
-use tink_proto::HashType;
+use tink_proto::{prost::Message, HashType};
 
 /// Maximal version of HKDF PRF keys.
 pub const HKDF_PRF_KEY_VERSION: u32 = 0;
