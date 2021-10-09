@@ -16,6 +16,7 @@
 
 //! Protocol buffer message definitions for Tink.
 
+#![cfg_attr(docsrs, feature(doc_cfg))]
 #![deny(broken_intra_doc_links)]
 
 #[cfg(not(feature = "json"))]
