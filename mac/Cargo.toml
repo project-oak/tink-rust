@@ -7,6 +7,7 @@ license = "Apache-2.0"
 description = "MAC functionality for Rust port of Google's Tink cryptography library"
 repository = "https://github.com/project-oak/tink-rust"
 documentation = "https://docs.rs/tink-mac"
+readme = "README.md"
 keywords = ["cryptography", "tink", "mac"]
 categories = ["cryptography"]
 
