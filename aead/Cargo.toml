@@ -6,6 +6,7 @@ edition = "2018"
 license = "Apache-2.0"
 description = "AEAD functionality for Rust port of Google's Tink cryptography library"
 repository = "https://github.com/project-oak/tink-rust"
+documentation = "https://docs.rs/tink-aead"
 keywords = ["cryptography", "tink", "aead"]
 categories = ["cryptography"]
 
