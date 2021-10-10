@@ -12,6 +12,7 @@ categories = ["cryptography"]
 
 [features]
 default = []
+# The `json` feature enables methods for JSON-serializing keysets with text enum values.
 json = ["base64", "serde"]
 
 [dependencies]

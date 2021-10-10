@@ -15,6 +15,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //! Protocol buffer message definitions for Tink.
+//!
+//! Almost all of the code in this crate is auto-generated (using [prost](https://docs.rs/prost)) from the protocol
+//! buffer message definitions in the `proto/` subdirectory.  These `.proto` files are copies from
+//! the upstream [Tink project](https://github.com/google/tink/tree/master/proto).
 
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![deny(broken_intra_doc_links)]
@@ -28,7 +32,7 @@ include!("codegen/serde/google.crypto.tink.rs");
 #[cfg_attr(docsrs, doc(cfg(feature = "json")))]
 pub mod json {
     //! Manual keyset serialization implementations that map enums onto strings rather than
-    //! the `i32` values used by prost.
+    //! the `i32` values used by [prost](https://docs.rs/prost).
     pub mod key_status_type {
         //! Manual JSON serialization for [`KeyStatusType`](crate::KeyStatusType) enums.
         use serde::Deserialize;
