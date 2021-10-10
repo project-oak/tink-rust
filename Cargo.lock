@@ -596,6 +596,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "example-prf"
+version = "0.2.1"
+dependencies = [
+ "hex",
+ "tink-core",
+ "tink-prf",
+]
+
+[[package]]
 name = "example-signature"
 version = "0.2.1"
 dependencies = [

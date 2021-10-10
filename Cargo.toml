@@ -9,6 +9,7 @@ members = [
   "examples/keymgr",
   "examples/kms",
   "examples/mac",
+  "examples/prf",
   "examples/signature",
   "examples/streaming",
   "integration/awskms",
