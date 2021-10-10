@@ -6,6 +6,7 @@ edition = "2018"
 license = "Apache-2.0"
 description = "AWS-KMS integration for Rust port of Google's Tink cryptography library"
 repository = "https://github.com/project-oak/tink-rust"
+documentation = "https://docs.rs/tink-awskms"
 keywords = ["cryptography", "tink", "kms", "aws"]
 categories = ["cryptography"]
 
