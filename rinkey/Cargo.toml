@@ -6,6 +6,7 @@ edition = "2018"
 license = "Apache-2.0"
 description = "Keyset manipulation command-line tool for Rust port of Google's Tink cryptography library"
 repository = "https://github.com/project-oak/tink-rust"
+readme = "README.md"
 keywords = ["cryptography", "tink"]
 categories = ["cryptography", "command-line-utilities"]
 
