@@ -68,6 +68,11 @@ version = "0.5.1"
 name = "rand_chacha"
 version = "0.2.2"
 
+# Various dependencies use cpufeatures(v0.1.5)
+[[bans.skip]]
+name = "cpufeatures"
+version = "0.1.5"
+
 ######################################
 
 # List of allowed licenses.
