@@ -1,7 +1,7 @@
 # Tink-Rust: Authenticated Encryption with Additional Data
 
 [![Docs](https://img.shields.io/badge/docs-rust-brightgreen?style=for-the-badge)](https://docs.rs/tink-aead)
-![MSRV](https://img.shields.io/badge/rustc-1.49+-yellow?style=for-the-badge)
+![MSRV](https://img.shields.io/badge/rustc-1.51+-yellow?style=for-the-badge)
 
 This crate provides authenticated encryption with additional data (AEAD) functionality, as described in the upstream
 [Tink documentation](https://github.com/google/tink/blob/master/docs/PRIMITIVES.md#authenticated-encryption-with-associated-data).
