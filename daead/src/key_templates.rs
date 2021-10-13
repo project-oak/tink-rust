@@ -16,8 +16,7 @@
 
 //! This module contains pre-generated [`KeyTemplate`] instances for deterministic AEAD.
 
-use prost::Message;
-use tink_proto::KeyTemplate;
+use tink_proto::{prost::Message, KeyTemplate};
 
 /// Return a [`KeyTemplate`](tink_proto::KeyTemplate) that generates a AES-SIV key.
 pub fn aes_siv_key_template() -> KeyTemplate {

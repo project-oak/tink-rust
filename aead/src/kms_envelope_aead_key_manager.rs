@@ -16,8 +16,8 @@
 
 //! Key manager for keys wrapped by a KMS.
 
-use prost::Message;
 use tink_core::{utils::wrap_err, TinkError};
+use tink_proto::prost::Message;
 
 /// Maximal version of KMS-wrapped keys.
 pub const KMS_ENVELOPE_AEAD_KEY_VERSION: u32 = 0;

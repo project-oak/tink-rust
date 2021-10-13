@@ -14,9 +14,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use prost::Message;
 use std::collections::HashSet;
-use tink_proto::{AesCtrHmacAeadKey, AesCtrHmacAeadKeyFormat, HashType};
+use tink_proto::{prost::Message, AesCtrHmacAeadKey, AesCtrHmacAeadKeyFormat, HashType};
 
 #[test]
 fn test_new_key_multiple_times() {

@@ -14,11 +14,11 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use prost::Message;
 use std::collections::HashSet;
 use tink_core::TinkError;
 use tink_proto::{
-    AesCtrHmacStreamingKey, AesCtrHmacStreamingKeyFormat, AesCtrHmacStreamingParams, HashType,
+    prost::Message, AesCtrHmacStreamingKey, AesCtrHmacStreamingKeyFormat,
+    AesCtrHmacStreamingParams, HashType,
 };
 use tink_streaming_aead::subtle;
 use tink_tests::proto_encode;

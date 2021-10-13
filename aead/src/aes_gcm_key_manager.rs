@@ -17,8 +17,8 @@
 //! Key manager for AES-GCM keys.
 
 use crate::subtle;
-use prost::Message;
 use tink_core::{utils::wrap_err, TinkError};
+use tink_proto::prost::Message;
 
 /// Maximal version of AES-GCM keys.
 pub const AES_GCM_KEY_VERSION: u32 = 0;

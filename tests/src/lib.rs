@@ -23,7 +23,7 @@ use p256::elliptic_curve;
 use serde::{Deserialize, Serialize};
 use std::convert::TryInto;
 use tink_core::{subtle::random::get_random_bytes, utils::wrap_err, Aead, TinkError};
-use tink_proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType, KeyData, Keyset};
+use tink_proto::{prost, EcdsaSignatureEncoding, EllipticCurveType, HashType, KeyData, Keyset};
 
 mod constant;
 pub use constant::*;

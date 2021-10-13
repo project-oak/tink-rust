@@ -18,6 +18,7 @@
 
 use crate::{utils::wrap_err, TinkError};
 use std::io::{Read, Write};
+use tink_proto::prost;
 
 /// `BinaryReader` deserializes a keyset from binary proto format.
 pub struct BinaryReader<T: Read> {

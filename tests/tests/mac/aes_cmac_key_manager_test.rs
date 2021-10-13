@@ -14,9 +14,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use prost::Message;
 use std::collections::HashSet;
 use tink_core::{utils::wrap_err, Mac, TinkError};
+use tink_proto::prost::Message;
 use tink_tests::proto_encode;
 
 #[test]

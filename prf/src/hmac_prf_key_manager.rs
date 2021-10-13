@@ -17,9 +17,8 @@
 //! Key manager for HMAC keys for PRF.
 
 use crate::subtle;
-use prost::Message;
 use tink_core::{utils::wrap_err, TinkError};
-use tink_proto::HashType;
+use tink_proto::{prost::Message, HashType};
 
 /// Maximal version of HMAC PRF keys.
 pub const HMAC_PRF_KEY_VERSION: u32 = 0;

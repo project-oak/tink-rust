@@ -17,8 +17,8 @@
 //! Key manager for ChaCha20Poly1305 keys.
 
 use crate::subtle;
-use prost::Message;
 use tink_core::{utils::wrap_err, TinkError};
+use tink_proto::prost::Message;
 
 /// Maximal version of ChaCha20Poly1305 keys.
 pub const CHA_CHA20_POLY1305_KEY_VERSION: u32 = 0;

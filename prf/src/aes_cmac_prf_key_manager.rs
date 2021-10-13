@@ -17,8 +17,8 @@
 //! Key manager for AES-CMAC keys for PRF.
 
 use crate::subtle;
-use prost::Message;
 use tink_core::{utils::wrap_err, TinkError};
+use tink_proto::prost::Message;
 
 /// Maximal version of AES-CMAC PRF keys.
 pub const AES_CMAC_PRF_KEY_VERSION: u32 = 0;

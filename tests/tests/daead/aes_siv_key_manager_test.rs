@@ -14,8 +14,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use prost::Message;
 use tink_core::{subtle::random::get_random_bytes, TinkError};
+use tink_proto::prost::Message;
 
 #[test]
 fn test_aes_siv_primitive() {

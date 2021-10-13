@@ -14,9 +14,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use prost::Message;
 use std::collections::HashSet;
 use tink_core::{subtle::random::get_random_bytes, TinkError};
+use tink_proto::prost::Message;
 use tink_tests::proto_encode;
 
 const KEY_SIZES: &[u32] = &[16, 32];

@@ -16,8 +16,7 @@
 
 //! This module contains pre-generated KeyTemplates for Signer and Verifier.
 /// One can use these templates to generate new Keysets.
-use prost::Message;
-use tink_proto::KeyTemplate;
+use tink_proto::{prost::Message, KeyTemplate};
 
 /// Return a [`KeyTemplate`] that generates a new ECDSA private key with the following parameters:
 ///   - Hash function: SHA256

@@ -17,8 +17,7 @@
 //! This module contains pre-generated [`KeyTemplate`]s for streaming AEAD keys. One can use these
 //! templates to generate new Keysets.
 
-use prost::Message;
-use tink_proto::{HashType, KeyTemplate, OutputPrefixType};
+use tink_proto::{prost::Message, HashType, KeyTemplate, OutputPrefixType};
 
 /// Return a [`KeyTemplate`] that generates an AES-GCM key with the following parameters:
 ///   - Main key size: 16 bytes

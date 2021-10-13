@@ -16,9 +16,8 @@
 
 //! Key manager for streaming AES-CTR-HMAC keys.
 
-use prost::Message;
 use tink_core::{subtle::random::get_random_bytes, utils::wrap_err, TinkError};
-use tink_proto::HashType;
+use tink_proto::{prost::Message, HashType};
 
 /// Maximal version of AES-CTR-HMAC keys.
 pub const AES_CTR_HMAC_KEY_VERSION: u32 = 0;

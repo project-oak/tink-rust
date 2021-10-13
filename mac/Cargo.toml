@@ -12,7 +12,6 @@ keywords = ["cryptography", "tink", "mac"]
 categories = ["cryptography"]
 
 [dependencies]
-prost = "^0.8"
 tink-core = "^0.2"
 tink-prf = "^0.2"
 tink-proto = "^0.2"

@@ -14,9 +14,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use prost::Message;
 use tink_core::{subtle::random::get_random_bytes, utils::wrap_err, Signer, TinkError, Verifier};
-use tink_proto::{Ed25519PrivateKey, Ed25519PublicKey};
+use tink_proto::{prost::Message, Ed25519PrivateKey, Ed25519PublicKey};
 
 #[test]
 fn test_ed25519_signer_get_primitive_basic() {
