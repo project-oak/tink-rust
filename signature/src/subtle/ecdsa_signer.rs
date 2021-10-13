@@ -58,9 +58,7 @@ impl EcdsaSigner {
     ) -> Result<Self, TinkError> {
         let priv_key = match curve {
             EllipticCurveType::NistP256 => {
-                if key_value.len()
-                    != <p256::NistP256 as elliptic_curve::Curve>::FieldSize::to_usize()
-                {
+                if key_value.len() != elliptic_curve::FieldSize::<p256::NistP256>::to_usize() {
                     return Err("EcdsaSigner: invalid private key len".into());
                 }
                 EcdsaPrivateKey::NistP256(
