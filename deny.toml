@@ -15,10 +15,7 @@ vulnerability = "deny"
 unmaintained = "deny"
 yanked = "deny"
 notice = "deny"
-ignore = [
-  # TODO(#202): Remove when zeroize_derive upgraded
-  "RUSTSEC-2021-0115",
-]
+ignore = []
 
 # Deny multiple versions unless explicitly skipped.
 [bans]
