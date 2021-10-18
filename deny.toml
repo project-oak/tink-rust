@@ -15,7 +15,12 @@ vulnerability = "deny"
 unmaintained = "deny"
 yanked = "deny"
 notice = "deny"
-ignore = []
+ignore = [
+    # Remove once chrono has been updated to pull in a fixed version of time
+    # See https://github.com/chronotope/chrono/issues/553
+    "RUSTSEC-2020-0071",
+    "RUSTSEC-2020-0159",
+]
 
 # Deny multiple versions unless explicitly skipped.
 [bans]
