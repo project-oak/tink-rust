@@ -36,4 +36,4 @@ tokio = { version = "^1.12", features = [
 tonic = "^0.5"
 
 [build-dependencies]
-tonic-build = "^0.5"
+tonic-build = "^0.6"
