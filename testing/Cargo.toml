@@ -33,7 +33,7 @@ tokio = { version = "^1.12", features = [
   "rt-multi-thread",
   "signal",
 ] }
-tonic = "^0.5"
+tonic = "^0.6"
 
 [build-dependencies]
 tonic-build = "^0.5"
