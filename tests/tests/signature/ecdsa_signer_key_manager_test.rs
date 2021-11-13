@@ -326,6 +326,11 @@ fn test_public_key_data_with_invalid_input() {
         km.public_key_data(&[]).is_err(),
         "expect an error when input is an empty slice"
     );
+    // invalid with a single byte
+    assert!(
+        km.public_key_data(&[42]).is_err(),
+        "expect an error when input is a single byte"
+    );
 }
 
 fn validate_ecdsa_private_key(
