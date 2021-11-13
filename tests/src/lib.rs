@@ -199,6 +199,13 @@ pub fn new_test_aes_gcm_keyset(primary_output_prefix_type: tink_proto::OutputPre
     new_test_keyset(|| new_aes_gcm_key_data(16), primary_output_prefix_type)
 }
 
+/// Create a new [`Keyset`] containing an [`AesGcmSivKey`](tink_proto::AesGcmSivKey).
+pub fn new_test_aes_gcm_siv_keyset(
+    primary_output_prefix_type: tink_proto::OutputPrefixType,
+) -> Keyset {
+    new_test_keyset(|| new_aes_gcm_siv_key_data(16), primary_output_prefix_type)
+}
+
 /// Create a new [`Keyset`] containing an [`AesSivKey`](tink_proto::AesSivKey).
 pub fn new_test_aes_siv_keyset(primary_output_prefix_type: tink_proto::OutputPrefixType) -> Keyset {
     new_test_keyset(new_aes_siv_key_data, primary_output_prefix_type)
