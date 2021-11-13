@@ -23,6 +23,7 @@ use tink_proto::{prost::Message, KeyTemplate};
 ///   - Curve: NIST P-256
 ///   - Signature encoding: DER
 ///   - Output prefix type: TINK
+/// Note that this template uses a different encoding than ESDSA_P256_RAW in Tinkey / `rinkey`.
 pub fn ecdsa_p256_key_template() -> KeyTemplate {
     create_ecdsa_key_template(
         tink_proto::HashType::Sha256,
@@ -46,6 +47,20 @@ pub fn ecdsa_p256_key_p1363_template() -> KeyTemplate {
     )
 }
 
+/// Return a [`KeyTemplate`] that generates a new ECDSA private key with the following parameters:
+///   - Hash function: SHA256
+///   - Curve: NIST P-256
+///   - Signature encoding: IEEE_P1363
+///   - Output prefix type: RAW
+pub fn ecdsa_p256_raw_key_template() -> KeyTemplate {
+    create_ecdsa_key_template(
+        tink_proto::HashType::Sha256,
+        tink_proto::EllipticCurveType::NistP256,
+        tink_proto::EcdsaSignatureEncoding::IeeeP1363,
+        tink_proto::OutputPrefixType::Raw,
+    )
+}
+
 /// Return a [`KeyTemplate`] that generates a new ECDSA private key with the following
 /// parameters:
 ///   - Hash function: SHA256
@@ -66,7 +81,36 @@ pub fn ecdsa_p256_key_without_prefix_template() -> KeyTemplate {
 ///   - Curve: NIST P-384
 ///   - Signature encoding: DER
 ///   - Output prefix type: TINK
+/// DEPRECATED. Use ecdsa_p384_sha384_key_template() or ecdsa_p384_sha512_key_template() instead.
 pub fn ecdsa_p384_key_template() -> KeyTemplate {
+    create_ecdsa_key_template(
+        tink_proto::HashType::Sha512,
+        tink_proto::EllipticCurveType::NistP384,
+        tink_proto::EcdsaSignatureEncoding::Der,
+        tink_proto::OutputPrefixType::Tink,
+    )
+}
+
+/// Return a [`KeyTemplate`] that generates a new ECDSA private key with the following parameters:
+///   - Hash function: SHA384
+///   - Curve: NIST P-384
+///   - Signature encoding: DER
+///   - Output prefix type: TINK
+pub fn ecdsa_p384_sha384_key_template() -> KeyTemplate {
+    create_ecdsa_key_template(
+        tink_proto::HashType::Sha384,
+        tink_proto::EllipticCurveType::NistP384,
+        tink_proto::EcdsaSignatureEncoding::Der,
+        tink_proto::OutputPrefixType::Tink,
+    )
+}
+
+/// Return a [`KeyTemplate`] that generates a new ECDSA private key with the following parameters:
+///   - Hash function: SHA512
+///   - Curve: NIST P-384
+///   - Signature encoding: DER
+///   - Output prefix type: TINK
+pub fn ecdsa_p384_sha512_key_template() -> KeyTemplate {
     create_ecdsa_key_template(
         tink_proto::HashType::Sha512,
         tink_proto::EllipticCurveType::NistP384,
