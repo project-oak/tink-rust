@@ -10,6 +10,28 @@ pub struct ServerInfoResponse {
     pub language: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
+pub struct KeysetTemplateRequest {
+    /// template name used by Tinkey
+    #[prost(string, tag = "1")]
+    pub template_name: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct KeysetTemplateResponse {
+    #[prost(oneof = "keyset_template_response::Result", tags = "1, 2")]
+    pub result: ::core::option::Option<keyset_template_response::Result>,
+}
+/// Nested message and enum types in `KeysetTemplateResponse`.
+pub mod keyset_template_response {
+    #[derive(Clone, PartialEq, ::prost::Oneof)]
+    pub enum Result {
+        /// serialized google.crypto.tink.KeyTemplate.
+        #[prost(bytes, tag = "1")]
+        KeyTemplate(::prost::alloc::vec::Vec<u8>),
+        #[prost(string, tag = "2")]
+        Err(::prost::alloc::string::String),
+    }
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetGenerateRequest {
     /// serialized google.crypto.tink.KeyTemplate.
     #[prost(bytes = "vec", tag = "1")]
@@ -517,20 +539,18 @@ pub struct JwtValidator {
     pub expected_type_header: ::core::option::Option<StringValue>,
     #[prost(message, optional, tag = "1")]
     pub expected_issuer: ::core::option::Option<StringValue>,
-    #[prost(message, optional, tag = "2")]
-    pub expected_subject: ::core::option::Option<StringValue>,
     #[prost(message, optional, tag = "3")]
     pub expected_audience: ::core::option::Option<StringValue>,
     #[prost(bool, tag = "8")]
     pub ignore_type_header: bool,
     #[prost(bool, tag = "9")]
     pub ignore_issuer: bool,
-    #[prost(bool, tag = "10")]
-    pub ignore_subject: bool,
     #[prost(bool, tag = "11")]
     pub ignore_audience: bool,
     #[prost(bool, tag = "12")]
     pub allow_missing_expiration: bool,
+    #[prost(bool, tag = "13")]
+    pub expect_issued_in_the_past: bool,
     #[prost(message, optional, tag = "5")]
     pub now: ::core::option::Option<Timestamp>,
     #[prost(message, optional, tag = "6")]
@@ -580,6 +600,48 @@ pub mod jwt_verify_response {
     pub enum Result {
         #[prost(message, tag = "1")]
         VerifiedJwt(super::JwtToken),
+        #[prost(string, tag = "2")]
+        Err(::prost::alloc::string::String),
+    }
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct JwtToJwkSetRequest {
+    /// serialized google.crypto.tink.Keyset.
+    #[prost(bytes = "vec", tag = "1")]
+    pub keyset: ::prost::alloc::vec::Vec<u8>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct JwtToJwkSetResponse {
+    #[prost(oneof = "jwt_to_jwk_set_response::Result", tags = "1, 2")]
+    pub result: ::core::option::Option<jwt_to_jwk_set_response::Result>,
+}
+/// Nested message and enum types in `JwtToJwkSetResponse`.
+pub mod jwt_to_jwk_set_response {
+    #[derive(Clone, PartialEq, ::prost::Oneof)]
+    pub enum Result {
+        #[prost(string, tag = "1")]
+        JwkSet(::prost::alloc::string::String),
+        #[prost(string, tag = "2")]
+        Err(::prost::alloc::string::String),
+    }
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct JwtFromJwkSetRequest {
+    #[prost(string, tag = "1")]
+    pub jwk_set: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct JwtFromJwkSetResponse {
+    #[prost(oneof = "jwt_from_jwk_set_response::Result", tags = "1, 2")]
+    pub result: ::core::option::Option<jwt_from_jwk_set_response::Result>,
+}
+/// Nested message and enum types in `JwtFromJwkSetResponse`.
+pub mod jwt_from_jwk_set_response {
+    #[derive(Clone, PartialEq, ::prost::Oneof)]
+    pub enum Result {
+        /// serialized google.crypto.tink.Keyset.
+        #[prost(bytes, tag = "1")]
+        Keyset(::prost::alloc::vec::Vec<u8>),
         #[prost(string, tag = "2")]
         Err(::prost::alloc::string::String),
     }
@@ -730,6 +792,21 @@ pub mod keyset_client {
         pub fn accept_gzip(mut self) -> Self {
             self.inner = self.inner.accept_gzip();
             self
+        }
+        /// Generates a key template from a key template name.
+        pub async fn get_template(
+            &mut self,
+            request: impl tonic::IntoRequest<super::KeysetTemplateRequest>,
+        ) -> Result<tonic::Response<super::KeysetTemplateResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static("/tink_testing_api.Keyset/GetTemplate");
+            self.inner.unary(request.into_request(), path, codec).await
         }
         /// Generates a new keyset from a template.
         pub async fn generate(
@@ -1570,6 +1647,36 @@ pub mod jwt_client {
             );
             self.inner.unary(request.into_request(), path, codec).await
         }
+        /// Converts a Keyset from Tink Binary to JWK Set Format
+        pub async fn to_jwk_set(
+            &mut self,
+            request: impl tonic::IntoRequest<super::JwtToJwkSetRequest>,
+        ) -> Result<tonic::Response<super::JwtToJwkSetResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static("/tink_testing_api.Jwt/ToJwkSet");
+            self.inner.unary(request.into_request(), path, codec).await
+        }
+        /// Converts a Keyset from JWK Set to Tink Binary Format
+        pub async fn from_jwk_set(
+            &mut self,
+            request: impl tonic::IntoRequest<super::JwtFromJwkSetRequest>,
+        ) -> Result<tonic::Response<super::JwtFromJwkSetResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static("/tink_testing_api.Jwt/FromJwkSet");
+            self.inner.unary(request.into_request(), path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -1701,6 +1808,11 @@ pub mod keyset_server {
     /// KeysetServer.
     #[async_trait]
     pub trait Keyset: Send + Sync + 'static {
+        /// Generates a key template from a key template name.
+        async fn get_template(
+            &self,
+            request: tonic::Request<super::KeysetTemplateRequest>,
+        ) -> Result<tonic::Response<super::KeysetTemplateResponse>, tonic::Status>;
         /// Generates a new keyset from a template.
         async fn generate(
             &self,
@@ -1762,6 +1874,37 @@ pub mod keyset_server {
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
             let inner = self.inner.clone();
             match req.uri().path() {
+                "/tink_testing_api.Keyset/GetTemplate" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetTemplateSvc<T: Keyset>(pub Arc<T>);
+                    impl<T: Keyset> tonic::server::UnaryService<super::KeysetTemplateRequest> for GetTemplateSvc<T> {
+                        type Response = super::KeysetTemplateResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::KeysetTemplateRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).get_template(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = GetTemplateSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
                 "/tink_testing_api.Keyset/Generate" => {
                     #[allow(non_camel_case_types)]
                     struct GenerateSvc<T: Keyset>(pub Arc<T>);
@@ -3052,6 +3195,16 @@ pub mod jwt_server {
             &self,
             request: tonic::Request<super::JwtVerifyRequest>,
         ) -> Result<tonic::Response<super::JwtVerifyResponse>, tonic::Status>;
+        /// Converts a Keyset from Tink Binary to JWK Set Format
+        async fn to_jwk_set(
+            &self,
+            request: tonic::Request<super::JwtToJwkSetRequest>,
+        ) -> Result<tonic::Response<super::JwtToJwkSetResponse>, tonic::Status>;
+        /// Converts a Keyset from JWK Set to Tink Binary Format
+        async fn from_jwk_set(
+            &self,
+            request: tonic::Request<super::JwtFromJwkSetRequest>,
+        ) -> Result<tonic::Response<super::JwtFromJwkSetResponse>, tonic::Status>;
     }
     /// Service for JSON Web Tokens (JWT)
     #[derive(Debug)]
@@ -3211,6 +3364,68 @@ pub mod jwt_server {
                     let fut = async move {
                         let inner = inner.0;
                         let method = PublicKeyVerifyAndDecodeSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/tink_testing_api.Jwt/ToJwkSet" => {
+                    #[allow(non_camel_case_types)]
+                    struct ToJwkSetSvc<T: Jwt>(pub Arc<T>);
+                    impl<T: Jwt> tonic::server::UnaryService<super::JwtToJwkSetRequest> for ToJwkSetSvc<T> {
+                        type Response = super::JwtToJwkSetResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::JwtToJwkSetRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).to_jwk_set(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = ToJwkSetSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/tink_testing_api.Jwt/FromJwkSet" => {
+                    #[allow(non_camel_case_types)]
+                    struct FromJwkSetSvc<T: Jwt>(pub Arc<T>);
+                    impl<T: Jwt> tonic::server::UnaryService<super::JwtFromJwkSetRequest> for FromJwkSetSvc<T> {
+                        type Response = super::JwtFromJwkSetResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::JwtFromJwkSetRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).from_jwk_set(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = FromJwkSetSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
                             accept_compression_encodings,
