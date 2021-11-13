@@ -17,43 +17,59 @@ syntax = "proto3";
 
 package google.crypto.tink;
 
-enum DilithiumSeedExpansion {
-  SEED_EXPANSION_UNKNOWN = 0;
-  SEED_EXPANSION_SHAKE = 1;
-  SEED_EXPANSION_AES = 2;
-}
+enum SphincsHashType {
+  HARAKA = 0;
+  SHA256 = 1;
+  SHAKE256 = 2;
+  UNKNOWN_HASH_TYPE = 3;
+};
 
-// Protos for Dilithium Digital Signature Algorithm.
-// See https://pq-crystals.org/dilithium/data/dilithium-specification-round3.pdf
-message DilithiumParams {
+enum SphincsVariant {
+  ROBUST = 0;
+  SIMPLE = 1;
+  UNKNOWN_VARIANT = 2;
+};
+
+enum SphincsSignatureType {
+  FAST_SIGNING = 0;
+  SMALL_SIGNATURE = 1;
+  UNKNOWN_SIG_TYPE = 3;
+};
+
+// Protos for Sphincs Digital Signature Algorithm.
+message SphincsParams {
   // Required
   int32 key_size = 1;
   // Required.
-  DilithiumSeedExpansion seed_expansion = 2;
+  SphincsHashType hash_type = 2;
+  // Required.
+  SphincsVariant variant = 3;
+  // Required.
+  SphincsSignatureType sig_length_type = 4;
 }
 
-message DilithiumKeyFormat {
+message SphincsKeyFormat {
   uint32 version = 1;
   // Required.
-  DilithiumParams params = 2;
+  SphincsParams params = 2;
 }
 
-// key_type: type.googleapis.com/google.crypto.tink.DilithiumPublicKey
-message DilithiumPublicKey {
+// key_type: type.googleapis.com/google.crypto.tink.SphincsPublicKey
+message SphincsPublicKey {
   // Required.
   uint32 version = 1;
   // Required.
   bytes key_value = 2;
   // Required
-  DilithiumParams params = 3;
+  SphincsParams params = 3;
 }
 
-// key_type: type.googleapis.com/google.crypto.tink.DilithiumPrivateKey
-message DilithiumPrivateKey {
+// key_type: type.googleapis.com/google.crypto.tink.SphincsPrivateKey
+message SphincsPrivateKey {
   // Required.
   uint32 version = 1;
   // Required.
   bytes key_value = 2;
   // The corresponding public key.
-  DilithiumPublicKey public_key = 3;
+  SphincsPublicKey public_key = 3;
 }
