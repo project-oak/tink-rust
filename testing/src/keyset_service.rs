@@ -25,6 +25,13 @@ pub struct KeysetServerImpl;
 
 #[tonic::async_trait]
 impl proto::keyset_server::Keyset for KeysetServerImpl {
+    async fn get_template(
+        &self,
+        _request: tonic::Request<proto::KeysetTemplateRequest>,
+    ) -> Result<tonic::Response<proto::KeysetTemplateResponse>, tonic::Status> {
+        // TODO: add implementation
+        Err(tonic::Status::unimplemented("TODO"))
+    }
     async fn generate(
         &self,
         request: tonic::Request<proto::KeysetGenerateRequest>,
