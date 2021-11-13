@@ -27,10 +27,21 @@ pub struct KeysetServerImpl;
 impl proto::keyset_server::Keyset for KeysetServerImpl {
     async fn get_template(
         &self,
-        _request: tonic::Request<proto::KeysetTemplateRequest>,
+        request: tonic::Request<proto::KeysetTemplateRequest>,
     ) -> Result<tonic::Response<proto::KeysetTemplateResponse>, tonic::Status> {
-        // TODO: add implementation
-        Err(tonic::Status::unimplemented("TODO"))
+        let req = request.into_inner(); // discard metadata
+        let generator = tink_core::registry::get_template_generator(&req.template_name);
+        Ok(tonic::Response::new(proto::KeysetTemplateResponse {
+            result: Some(match generator {
+                Some(f) => {
+                    proto::keyset_template_response::Result::KeyTemplate(f().encode_to_vec())
+                }
+                None => proto::keyset_template_response::Result::Err(format!(
+                    "key template {} not found",
+                    req.template_name
+                )),
+            }),
+        }))
     }
     async fn generate(
         &self,
