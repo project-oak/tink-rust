@@ -21,9 +21,9 @@ use tink_proto::prost::Message;
 fn test_key_templates() {
     tink_prf::init();
     let test_cases = vec![
-        ("HMAC_PRF_SHA256", tink_prf::hmac_sha256_prf_key_template()),
-        ("HMAC_PRF_SHA512", tink_prf::hmac_sha512_prf_key_template()),
-        ("HKDF_PRF_SHA256", tink_prf::hkdf_sha256_prf_key_template()),
+        ("HMAC_SHA256_PRF", tink_prf::hmac_sha256_prf_key_template()),
+        ("HMAC_SHA512_PRF", tink_prf::hmac_sha512_prf_key_template()),
+        ("HKDF_SHA256", tink_prf::hkdf_sha256_prf_key_template()),
         ("AES_CMAC_PRF", tink_prf::aes_cmac_prf_key_template()),
     ];
     for (name, template) in test_cases {
