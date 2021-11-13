@@ -31,6 +31,11 @@ fn test_key_templates() {
             false,
         ),
         (
+            "ECDSA_P384_SHA384",
+            tink_signature::ecdsa_p384_sha384_key_template(),
+            false,
+        ),
+        (
             "ECDSA_P521",
             tink_signature::ecdsa_p521_key_template(),
             false,
