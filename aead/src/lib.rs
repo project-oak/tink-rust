@@ -71,12 +71,20 @@ pub fn init() {
         tink_core::registry::register_template_generator("AES128_GCM", aes128_gcm_key_template);
         tink_core::registry::register_template_generator("AES256_GCM", aes256_gcm_key_template);
         tink_core::registry::register_template_generator(
+            "AES256_GCM_NO_PREFIX",
+            aes256_gcm_no_prefix_key_template,
+        );
+        tink_core::registry::register_template_generator(
             "AES128_GCM_SIV",
             aes128_gcm_siv_key_template,
         );
         tink_core::registry::register_template_generator(
             "AES256_GCM_SIV",
             aes256_gcm_siv_key_template,
+        );
+        tink_core::registry::register_template_generator(
+            "AES256_GCM_SIV_NO_PREFIX",
+            aes256_gcm_siv_no_prefix_key_template,
         );
         tink_core::registry::register_template_generator(
             "AES128_CTR_HMAC_SHA256",
