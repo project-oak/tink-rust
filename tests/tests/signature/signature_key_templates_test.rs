@@ -50,6 +50,12 @@ fn test_key_templates() {
     for (name, template, supported) in test_cases {
         let want = tink_tests::key_template_proto("signature", name).unwrap();
         assert_eq!(want, template);
+
+        // Check that the same template is registered under the same name.
+        let generator = tink_core::registry::get_template_generator(name).unwrap();
+        let registered = generator();
+        assert_eq!(registered, template);
+
         // TODO(#16): more ECDSA curves
         if supported {
             assert!(test_sign_verify(&template).is_ok());
