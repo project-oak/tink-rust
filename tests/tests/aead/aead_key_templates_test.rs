@@ -44,6 +44,12 @@ fn test_key_templates() {
     for (name, template) in test_cases {
         let want = tink_tests::key_template_proto("aead", name).unwrap();
         assert_eq!(want, template);
+
+        // Check that the same template is registered under the same name.
+        let generator = tink_core::registry::get_template_generator(name).unwrap();
+        let registered = generator();
+        assert_eq!(registered, template);
+
         assert!(test_encrypt_decrypt(&template).is_ok());
     }
 }
