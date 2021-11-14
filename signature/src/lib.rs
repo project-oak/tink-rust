@@ -21,7 +21,7 @@
 #![deny(broken_intra_doc_links)]
 
 use std::sync::Once;
-use tink_core::registry::register_key_manager;
+use tink_core::registry::{register_key_manager, register_template_generator};
 
 mod ecdsa_signer_key_manager;
 pub use ecdsa_signer_key_manager::*;
@@ -64,15 +64,30 @@ pub fn init() {
         register_key_manager(std::sync::Arc::new(Ed25519VerifierKeyManager::default()))
             .expect("tink_signature::init() failed"); // safe: init
 
-        tink_core::registry::register_template_generator("ECDSA_P256", ecdsa_p256_key_template);
-        tink_core::registry::register_template_generator(
-            "ECDSA_P256_IEEE_P1363",
-            ecdsa_p256_key_p1363_template,
+        register_template_generator("ECDSA_P256", ecdsa_p256_key_template);
+        register_template_generator("ECDSA_P256_RAW", ecdsa_p256_raw_key_template);
+        register_template_generator("ECDSA_P256_IEEE_P1363", ecdsa_p256_key_p1363_template);
+        register_template_generator(
+            "ECDSA_P256_NO_PREFIX",
+            ecdsa_p256_key_without_prefix_template,
         );
-        tink_core::registry::register_template_generator("ED25519", ed25519_key_template);
-        tink_core::registry::register_template_generator(
-            "ED25519WithRawOutput",
-            ed25519_key_without_prefix_template,
+        register_template_generator("ED25519", ed25519_key_template);
+        register_template_generator("ED25519WithRawOutput", ed25519_key_without_prefix_template);
+
+        // TODO(#16): the following code registers key template generators that aren't actually
+        // supported.
+        register_template_generator("ECDSA_P384", ecdsa_p384_key_template);
+        register_template_generator("ECDSA_P384_SHA384", ecdsa_p384_sha384_key_template);
+        register_template_generator("ECDSA_P384_SHA512", ecdsa_p384_sha512_key_template);
+        register_template_generator("ECDSA_P521", ecdsa_p521_key_template);
+        register_template_generator(
+            "ECDSA_P384_NO_PREFIX",
+            ecdsa_p384_key_without_prefix_template,
         );
+        register_template_generator(
+            "ECDSA_P521_NO_PREFIX",
+            ecdsa_p521_key_without_prefix_template,
+        );
+        register_template_generator("ED25519_NO_PREFIX", ed25519_key_without_prefix_template);
     });
 }
