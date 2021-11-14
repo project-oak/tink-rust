@@ -54,36 +54,35 @@ pub fn init() {
 
         tink_core::registry::register_template_generator(
             "AES128_CTR_HMAC_SHA256_4KB",
-            aes128_gcm_hkdf_4kb_key_template,
-        );
-        tink_core::registry::register_template_generator(
-            "AES128_CTR_HMAC_SHA256_1MB",
-            aes128_gcm_hkdf_1mb_key_template,
-        );
-
-        tink_core::registry::register_template_generator(
-            "AES256_CTR_HMAC_SHA256_4KB",
-            aes256_gcm_hkdf_4kb_key_template,
-        );
-        tink_core::registry::register_template_generator(
-            "AES256_CTR_HMAC_SHA256_1MB",
-            aes256_gcm_hkdf_1mb_key_template,
-        );
-        tink_core::registry::register_template_generator(
-            "AES128_GCM_HKDF_4KB",
             aes128_ctr_hmac_sha256_segment_4kb_key_template,
         );
         tink_core::registry::register_template_generator(
-            "AES128_GCM_HKDF_1MB",
+            "AES128_CTR_HMAC_SHA256_1MB",
             aes128_ctr_hmac_sha256_segment_1mb_key_template,
         );
         tink_core::registry::register_template_generator(
-            "AES256_GCM_HKDF_4KB",
+            "AES256_CTR_HMAC_SHA256_4KB",
             aes256_ctr_hmac_sha256_segment_4kb_key_template,
         );
         tink_core::registry::register_template_generator(
-            "AES256_GCM_HKDF_1MB",
+            "AES256_CTR_HMAC_SHA256_1MB",
             aes256_ctr_hmac_sha256_segment_1mb_key_template,
+        );
+        tink_core::registry::register_template_generator(
+            "AES128_GCM_HKDF_4KB",
+            aes128_gcm_hkdf_4kb_key_template,
+        );
+        tink_core::registry::register_template_generator(
+            "AES128_GCM_HKDF_1MB",
+            aes128_gcm_hkdf_1mb_key_template,
+        );
+        tink_core::registry::register_template_generator(
+            "AES256_GCM_HKDF_4KB",
+            aes256_gcm_hkdf_4kb_key_template,
+        );
+        tink_core::registry::register_template_generator(
+            "AES256_GCM_HKDF_1MB",
+            aes256_gcm_hkdf_1mb_key_template,
         );
     });
 }
