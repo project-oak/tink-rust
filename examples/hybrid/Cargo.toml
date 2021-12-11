@@ -1,0 +1,12 @@
+[package]
+name = "example-hybrid"
+version = "0.2.1"
+authors = ["David Drysdale <drysdale@google.com>"]
+edition = "2018"
+license = "Apache-2.0"
+publish = false
+
+[dependencies]
+hex = "^0.4.3"
+tink-core = "^0.2"
+tink-hybrid = "^0.2"

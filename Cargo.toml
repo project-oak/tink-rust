@@ -5,6 +5,7 @@ members = [
   "daead",
   "examples/aead",
   "examples/daead",
+  "examples/hybrid",
   "examples/keygen",
   "examples/keymgr",
   "examples/kms",
@@ -12,6 +13,7 @@ members = [
   "examples/prf",
   "examples/signature",
   "examples/streaming",
+  "hybrid",
   "integration/awskms",
   "integration/gcpkms",
   "mac",
@@ -32,6 +34,7 @@ tink-awskms = { path = "integration/awskms" }
 tink-core = { path = "core" }
 tink-daead = { path = "daead" }
 tink-gcpkms = { path = "integration/gcpkms" }
+tink-hybrid = { path = "hybrid" }
 tink-mac = { path = "mac" }
 tink-prf = { path = "prf" }
 tink-proto = { path = "proto" }

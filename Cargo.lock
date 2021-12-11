@@ -569,6 +569,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "example-hybrid"
+version = "0.2.1"
+dependencies = [
+ "hex",
+ "tink-core",
+ "tink-hybrid",
+]
+
+[[package]]
 name = "example-keygen"
 version = "0.2.1"
 dependencies = [
@@ -1142,6 +1151,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3f6bb902e437b6d86e03cce10a7e2af662292c5dfef23b65899ea3ac9354ad44"
 dependencies = [
  "winapi",
+]
+
+[[package]]
+name = "num-bigint"
+version = "0.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f93ab6289c7b344a8a9f60f88d80aa20032336fe78da341afc91c8a2341fc75f"
+dependencies = [
+ "autocfg",
+ "num-integer",
+ "num-traits",
 ]
 
 [[package]]
@@ -2121,6 +2141,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "tink-hybrid"
+version = "0.2.1"
+dependencies = [
+ "p256",
+ "rand 0.7.3",
+ "tink-aead",
+ "tink-core",
+ "tink-daead",
+ "tink-proto",
+]
+
+[[package]]
 name = "tink-mac"
 version = "0.2.1"
 dependencies = [
@@ -2213,6 +2245,7 @@ dependencies = [
  "hex",
  "lazy_static",
  "maplit",
+ "num-bigint",
  "p256",
  "rand 0.7.3",
  "regex",
@@ -2224,6 +2257,7 @@ dependencies = [
  "tink-core",
  "tink-daead",
  "tink-gcpkms",
+ "tink-hybrid",
  "tink-mac",
  "tink-prf",
  "tink-proto",
