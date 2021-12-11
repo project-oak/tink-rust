@@ -229,6 +229,28 @@ impl Clone for TypedEntry<Box<dyn crate::DeterministicAead>> {
         }
     }
 }
+impl Clone for TypedEntry<Box<dyn crate::HybridDecrypt>> {
+    fn clone(&self) -> Self {
+        Self {
+            key_id: self.key_id,
+            primitive: self.primitive.box_clone(),
+            prefix: self.prefix.clone(),
+            prefix_type: self.prefix_type,
+            status: self.status,
+        }
+    }
+}
+impl Clone for TypedEntry<Box<dyn crate::HybridEncrypt>> {
+    fn clone(&self) -> Self {
+        Self {
+            key_id: self.key_id,
+            primitive: self.primitive.box_clone(),
+            prefix: self.prefix.clone(),
+            prefix_type: self.prefix_type,
+            status: self.status,
+        }
+    }
+}
 impl Clone for TypedEntry<Box<dyn crate::Mac>> {
     fn clone(&self) -> Self {
         Self {

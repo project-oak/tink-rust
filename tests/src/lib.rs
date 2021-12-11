@@ -806,7 +806,7 @@ pub fn generate_mutations(src: &[u8]) -> Vec<Vec<u8>> {
     }
 
     // truncate bytes
-    for i in 0..src.len() {
+    for i in 1..src.len() {
         all.push(src[i..].to_vec());
     }
 
@@ -959,32 +959,16 @@ pub fn ecies_aead_hkdf_private_key(
 
 /// Generate a new EC key pair and returns the private key proto.
 pub fn generate_ecies_aead_hkdf_private_key(
-    c: EllipticCurveType,
+    curve: EllipticCurveType,
     ht: HashType,
-    ptfmt: tink_proto::EcPointFormat,
+    pt_fmt: tink_proto::EcPointFormat,
     dek_t: tink_proto::KeyTemplate,
     salt: &[u8],
 ) -> Result<tink_proto::EciesAeadHkdfPrivateKey, TinkError> {
-    // TODO(#17): implementation via ECC library
-    /*
-    let curve = subtlehybrid.get_curve(format!("{:?}", c))?;
-    let pvt = subtlehybrid.generate_ecdh_key_pair(curve)?;
-    let pubKey = ecies_aead_hkdf_public_key(
-        c,
-        ht,
-        ptfmt,
-        dek_t,
-        pvt.public_key.point.x.bytes(),
-        pvt.public_key.point.y.bytes(),
-        salt,
-    );
-    Ok(ecies_aead_hkdf_private_key(pubKey, pvt.d.Bytes()))
-     */
-    Err(format!(
-        "unimplemented for {:?} {:?} {:?} {:?} {:?}",
-        c, ht, ptfmt, dek_t, salt
-    )
-    .into())
+    let pvt = tink_hybrid::subtle::generate_ecdh_key_pair(curve)?;
+    let (x, y) = pvt.public_key().x_y_bytes()?;
+    let pub_key = ecies_aead_hkdf_public_key(curve, ht, pt_fmt, dek_t, &x, &y, salt);
+    Ok(ecies_aead_hkdf_private_key(pub_key, &pvt.d_bytes()))
 }
 
 /// Convert a protocol buffer message to its serialized form.

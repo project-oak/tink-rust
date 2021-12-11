@@ -35,7 +35,7 @@
 /// ## Security guarantees
 ///
 /// The functionality of Hybrid Encryption is represented as a pair of primitives (traits):
-/// `HybridEncrypt` for encryption of data, and `HybridDecrypt` for decryption.
+/// [`crate::HybridEncrypt`] for encryption of data, and `HybridDecrypt` for decryption.
 /// Implementations of these traits are secure against adaptive chosen ciphertext attacks. In
 /// addition to plaintext the encryption takes an extra parameter contextInfo, which
 /// usually is public data implicit from the context, but should be bound to the resulting
@@ -44,7 +44,7 @@
 ///
 /// `context_info` can be empty, but to ensure the correct decryption of a ciphertext
 /// the same value must be provided for the decryption operation as was used during encryption
-/// (`HybridEncrypt`).
+/// ([`crate::HybridEncrypt`]).
 ///
 /// A concrete implementation of this trait can implement the binding of `context_info` to
 /// the ciphertext in various ways, for example:
@@ -54,7 +54,7 @@
 /// - use `context_info` as "CtxInfo"-input for HKDF (if the implementation uses HKDF as key
 ///   derivation function, cf. [RFC 5869](https://tools.ietf.org/html/rfc5869)).
 pub trait HybridDecrypt: HybridDecryptBoxClone {
-    /// Decrypt ciphertext verifying the integrity of `context_info`.
+    /// Decrypt `ciphertext` verifying the integrity of `context_info`.
     /// Returns resulting plaintext
     fn decrypt(&self, ciphertext: &[u8], context_info: &[u8]) -> Result<Vec<u8>, crate::TinkError>;
 }
