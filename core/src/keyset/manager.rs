@@ -209,7 +209,7 @@ impl Manager {
 
     /// Generate a key id that has not been used by any key in the [`Keyset`](tink_proto::Keyset).
     fn new_key_id(&self) -> KeyId {
-        let mut rng = rand::thread_rng();
+        let mut rng = crate::subtle::random::rng();
 
         loop {
             let ret = rng.gen::<u32>();
