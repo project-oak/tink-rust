@@ -1621,6 +1621,7 @@ dependencies = [
  "tink-core",
  "tink-daead",
  "tink-gcpkms",
+ "tink-hybrid",
  "tink-mac",
  "tink-prf",
  "tink-proto",
