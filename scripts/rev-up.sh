@@ -15,7 +15,7 @@ function crate_name() {
 }
 
 # All available crates.
-CRATE_DIRS=(proto core prf mac aead daead streaming signature integration/awskms integration/gcpkms rinkey tests testing examples/aead examples/daead examples/keygen examples/keymgr examples/kms examples/mac examples/signature examples/streaming)
+CRATE_DIRS=(proto core prf mac aead daead streaming signature hybrid integration/awskms integration/gcpkms rinkey tests testing examples/aead examples/daead examples/keygen examples/keymgr examples/kms examples/mac examples/signature examples/streaming examples/hybrid)
 
 for dir in "${CRATE_DIRS[@]}"; do
     echo "Update $dir to $VERSION"
