@@ -48,6 +48,7 @@ bazel test --cache_test_results=no --test_output=errors \
       :deterministic_aead_test \
       :key_generation_consistency_test \
       :key_version_test \
+      :hybrid_encryption_test \
       :json_test \
       :mac_test \
       :prf_set_test \

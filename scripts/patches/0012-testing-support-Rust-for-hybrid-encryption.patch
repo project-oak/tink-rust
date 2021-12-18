@@ -1,0 +1,69 @@
+From 527f3d574c4e21256ef2f090a0fa3266d2bc07fe Mon Sep 17 00:00:00 2001
+From: David Drysdale <drysdale@google.com>
+Date: Sat, 18 Dec 2021 10:28:16 +0000
+Subject: [PATCH] testing: support Rust for hybrid encryption
+
+---
+ .../key_generation_consistency_test.py         | 18 ++++++++++++++++++
+ .../cross_language/util/supported_key_types.py |  2 +-
+ testing/cross_language/util/testing_servers.py |  2 +-
+ 3 files changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/testing/cross_language/key_generation_consistency_test.py b/testing/cross_language/key_generation_consistency_test.py
+index 20297f345316..0542761024c2 100644
+--- a/testing/cross_language/key_generation_consistency_test.py
++++ b/testing/cross_language/key_generation_consistency_test.py
+@@ -74,6 +74,24 @@ FAILS_BUT_SHOULD_SUCCEED = [
+     ('EcdsaPrivateKey(SHA512,NIST_P384,DER)', 'rust'),
+     ('EcdsaPrivateKey(SHA512,NIST_P521,IEEE_P1363)', 'rust'),
+     ('EcdsaPrivateKey(SHA512,NIST_P521,DER)', 'rust'),
++
++    ('EciesAeadHkdfPrivateKey(NIST_P384,UNCOMPRESSED,SHA1,AesGcmKey(16))', 'rust'),
++    ('EciesAeadHkdfPrivateKey(NIST_P384,UNCOMPRESSED,SHA224,AesGcmKey(16))', 'rust'),
++    ('EciesAeadHkdfPrivateKey(NIST_P384,UNCOMPRESSED,SHA256,AesGcmKey(16))', 'rust'),
++    ('EciesAeadHkdfPrivateKey(NIST_P384,UNCOMPRESSED,SHA384,AesGcmKey(16))', 'rust'),
++    ('EciesAeadHkdfPrivateKey(NIST_P384,UNCOMPRESSED,SHA512,AesGcmKey(16))', 'rust'),
++    ('EciesAeadHkdfPrivateKey(NIST_P521,UNCOMPRESSED,SHA1,AesGcmKey(16))', 'rust'),
++    ('EciesAeadHkdfPrivateKey(NIST_P521,UNCOMPRESSED,SHA224,AesGcmKey(16))', 'rust'),
++    ('EciesAeadHkdfPrivateKey(NIST_P521,UNCOMPRESSED,SHA256,AesGcmKey(16))', 'rust'),
++    ('EciesAeadHkdfPrivateKey(NIST_P521,UNCOMPRESSED,SHA384,AesGcmKey(16))', 'rust'),
++    ('EciesAeadHkdfPrivateKey(NIST_P521,UNCOMPRESSED,SHA512,AesGcmKey(16))', 'rust'),
++
++    # TODO: Rust does not support hybrid encryption templates with CURVE25519.
++    ('EciesAeadHkdfPrivateKey(CURVE25519,UNCOMPRESSED,SHA1,AesGcmKey(16))', 'rust'),
++    ('EciesAeadHkdfPrivateKey(CURVE25519,UNCOMPRESSED,SHA224,AesGcmKey(16))', 'rust'),
++    ('EciesAeadHkdfPrivateKey(CURVE25519,UNCOMPRESSED,SHA256,AesGcmKey(16))', 'rust'),
++    ('EciesAeadHkdfPrivateKey(CURVE25519,UNCOMPRESSED,SHA384,AesGcmKey(16))', 'rust'),
++    ('EciesAeadHkdfPrivateKey(CURVE25519,UNCOMPRESSED,SHA512,AesGcmKey(16))', 'rust'),
+ ]
+ 
+ HASH_TYPES = [
+diff --git a/testing/cross_language/util/supported_key_types.py b/testing/cross_language/util/supported_key_types.py
+index e1c58f05fdbb..92d1e47ca284 100644
+--- a/testing/cross_language/util/supported_key_types.py
++++ b/testing/cross_language/util/supported_key_types.py
+@@ -99,7 +99,7 @@ SUPPORTED_LANGUAGES = {
+     'AesSivKey': ['cc', 'java', 'go', 'python', 'rust'],
+     'AesCtrHmacStreamingKey': ['cc', 'java', 'go', 'python', 'rust'],
+     'AesGcmHkdfStreamingKey': ['cc', 'java', 'go', 'python', 'rust'],
+-    'EciesAeadHkdfPrivateKey': ['cc', 'java', 'go', 'python'],
++    'EciesAeadHkdfPrivateKey': ['cc', 'java', 'go', 'python', 'rust'],
+     'AesCmacKey': ['cc', 'java', 'go', 'python', 'rust'],
+     'HmacKey': ['cc', 'java', 'go', 'python', 'rust'],
+     'EcdsaPrivateKey': ['cc', 'java', 'go', 'python', 'rust'],
+diff --git a/testing/cross_language/util/testing_servers.py b/testing/cross_language/util/testing_servers.py
+index 51c3e8e376bd..e4af2cdd2779 100644
+--- a/testing/cross_language/util/testing_servers.py
++++ b/testing/cross_language/util/testing_servers.py
+@@ -82,7 +82,7 @@ SUPPORTED_LANGUAGES_BY_PRIMITIVE = {
+     'aead': ['cc', 'go', 'java', 'python', 'rust'],
+     'daead': ['cc', 'go', 'java', 'python', 'rust'],
+     'streaming_aead': ['cc', 'go', 'java', 'python', 'rust'],
+-    'hybrid': ['cc', 'go', 'java', 'python'],
++    'hybrid': ['cc', 'go', 'java', 'python', 'rust'],
+     'mac': ['cc', 'go', 'java', 'python', 'rust'],
+     'signature': ['cc', 'go', 'java', 'python', 'rust'],
+     'prf': ['cc', 'java', 'go', 'python', 'rust'],
+-- 
+2.34.1
+
