@@ -14,7 +14,7 @@ function crate_version() {
 }
 
 # Add tags for all released crates based on version field in Cargo.toml
-RELEASED_CRATE_DIRS=(proto core prf mac aead daead streaming signature integration/awskms integration/gcpkms rinkey)
+RELEASED_CRATE_DIRS=(proto core prf mac aead daead streaming signature hybrid integration/awskms integration/gcpkms rinkey)
 for dir in "${RELEASED_CRATE_DIRS[@]}"; do
     crate_name=$(crate_name "$dir")
     crate_version=$(crate_version "$dir")
