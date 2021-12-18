@@ -31,6 +31,8 @@ mod aead_service;
 use aead_service::*;
 mod daead_service;
 use daead_service::*;
+mod hybrid_service;
+use hybrid_service::*;
 mod keyset_service;
 use keyset_service::*;
 mod mac_service;
@@ -59,6 +61,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     env_logger::init();
     tink_aead::init();
     tink_daead::init();
+    tink_hybrid::init();
     tink_mac::init();
     tink_prf::init();
     tink_signature::init();
@@ -74,6 +77,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let keyset_handler = KeysetServerImpl {};
     let aead_handler = AeadServerImpl {};
     let daead_handler = DaeadServerImpl {};
+    let hybrid_handler = HybridServerImpl {};
     let mac_handler = MacServerImpl {};
     let prf_set_handler = PrfSetServerImpl {};
     let signature_handler = SignatureServerImpl {};
@@ -88,6 +92,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .add_service(proto::keyset_server::KeysetServer::new(keyset_handler))
         .add_service(proto::aead_server::AeadServer::new(aead_handler))
         .add_service(proto::deterministic_aead_server::DeterministicAeadServer::new(daead_handler))
+        .add_service(proto::hybrid_server::HybridServer::new(hybrid_handler))
         .add_service(proto::mac_server::MacServer::new(mac_handler))
         .add_service(proto::prf_set_server::PrfSetServer::new(prf_set_handler))
         .add_service(proto::signature_server::SignatureServer::new(

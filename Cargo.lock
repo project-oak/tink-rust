@@ -2225,6 +2225,7 @@ dependencies = [
  "tink-aead",
  "tink-core",
  "tink-daead",
+ "tink-hybrid",
  "tink-mac",
  "tink-prf",
  "tink-proto",

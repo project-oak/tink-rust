@@ -22,6 +22,7 @@ tink-core = { version = "^0.2", features = [
   "json",
  ] }
 tink-daead = "^0.2"
+tink-hybrid = "^0.2"
 tink-mac = "^0.2"
 tink-prf = "^0.2"
 tink-proto = "^0.2"
