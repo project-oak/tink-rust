@@ -276,6 +276,7 @@ enum Command {
 fn main() {
     tink_aead::init();
     tink_daead::init();
+    tink_hybrid::init();
     tink_mac::init();
     tink_prf::init();
     tink_signature::init();
