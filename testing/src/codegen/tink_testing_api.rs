@@ -675,7 +675,7 @@ pub mod metadata_client {
     impl<T> MetadataClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + Send + Sync + 'static,
+        T::ResponseBody: Body + Send + 'static,
         T::Error: Into<StdError>,
         <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
@@ -755,7 +755,7 @@ pub mod keyset_client {
     impl<T> KeysetClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + Send + Sync + 'static,
+        T::ResponseBody: Body + Send + 'static,
         T::Error: Into<StdError>,
         <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
@@ -893,7 +893,7 @@ pub mod aead_client {
     impl<T> AeadClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + Send + Sync + 'static,
+        T::ResponseBody: Body + Send + 'static,
         T::Error: Into<StdError>,
         <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
@@ -983,7 +983,7 @@ pub mod deterministic_aead_client {
     impl<T> DeterministicAeadClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + Send + Sync + 'static,
+        T::ResponseBody: Body + Send + 'static,
         T::Error: Into<StdError>,
         <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
@@ -1082,7 +1082,7 @@ pub mod streaming_aead_client {
     impl<T> StreamingAeadClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + Send + Sync + 'static,
+        T::ResponseBody: Body + Send + 'static,
         T::Error: Into<StdError>,
         <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
@@ -1177,7 +1177,7 @@ pub mod mac_client {
     impl<T> MacClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + Send + Sync + 'static,
+        T::ResponseBody: Body + Send + 'static,
         T::Error: Into<StdError>,
         <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
@@ -1267,7 +1267,7 @@ pub mod hybrid_client {
     impl<T> HybridClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + Send + Sync + 'static,
+        T::ResponseBody: Body + Send + 'static,
         T::Error: Into<StdError>,
         <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
@@ -1360,7 +1360,7 @@ pub mod signature_client {
     impl<T> SignatureClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + Send + Sync + 'static,
+        T::ResponseBody: Body + Send + 'static,
         T::Error: Into<StdError>,
         <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
@@ -1453,7 +1453,7 @@ pub mod prf_set_client {
     impl<T> PrfSetClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + Send + Sync + 'static,
+        T::ResponseBody: Body + Send + 'static,
         T::Error: Into<StdError>,
         <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
@@ -1546,7 +1546,7 @@ pub mod jwt_client {
     impl<T> JwtClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + Send + Sync + 'static,
+        T::ResponseBody: Body + Send + 'static,
         T::Error: Into<StdError>,
         <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
@@ -1722,7 +1722,7 @@ pub mod metadata_server {
     impl<T, B> tonic::codegen::Service<http::Request<B>> for MetadataServer<T>
     where
         T: Metadata,
-        B: Body + Send + Sync + 'static,
+        B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
@@ -1862,7 +1862,7 @@ pub mod keyset_server {
     impl<T, B> tonic::codegen::Service<http::Request<B>> for KeysetServer<T>
     where
         T: Keyset,
-        B: Body + Send + Sync + 'static,
+        B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
@@ -2110,7 +2110,7 @@ pub mod aead_server {
     impl<T, B> tonic::codegen::Service<http::Request<B>> for AeadServer<T>
     where
         T: Aead,
-        B: Body + Send + Sync + 'static,
+        B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
@@ -2266,7 +2266,7 @@ pub mod deterministic_aead_server {
     impl<T, B> tonic::codegen::Service<http::Request<B>> for DeterministicAeadServer<T>
     where
         T: DeterministicAead,
-        B: Body + Send + Sync + 'static,
+        B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
@@ -2430,7 +2430,7 @@ pub mod streaming_aead_server {
     impl<T, B> tonic::codegen::Service<http::Request<B>> for StreamingAeadServer<T>
     where
         T: StreamingAead,
-        B: Body + Send + Sync + 'static,
+        B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
@@ -2591,7 +2591,7 @@ pub mod mac_server {
     impl<T, B> tonic::codegen::Service<http::Request<B>> for MacServer<T>
     where
         T: Mac,
-        B: Body + Send + Sync + 'static,
+        B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
@@ -2747,7 +2747,7 @@ pub mod hybrid_server {
     impl<T, B> tonic::codegen::Service<http::Request<B>> for HybridServer<T>
     where
         T: Hybrid,
-        B: Body + Send + Sync + 'static,
+        B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
@@ -2903,7 +2903,7 @@ pub mod signature_server {
     impl<T, B> tonic::codegen::Service<http::Request<B>> for SignatureServer<T>
     where
         T: Signature,
-        B: Body + Send + Sync + 'static,
+        B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
@@ -3059,7 +3059,7 @@ pub mod prf_set_server {
     impl<T, B> tonic::codegen::Service<http::Request<B>> for PrfSetServer<T>
     where
         T: PrfSet,
-        B: Body + Send + Sync + 'static,
+        B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
@@ -3234,7 +3234,7 @@ pub mod jwt_server {
     impl<T, B> tonic::codegen::Service<http::Request<B>> for JwtServer<T>
     where
         T: Jwt,
-        B: Body + Send + Sync + 'static,
+        B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
