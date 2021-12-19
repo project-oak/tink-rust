@@ -22,7 +22,7 @@ prost = "^0.8"
 serde = { version = "^1.0.132", features = ["derive"], optional = true }
 
 [build-dependencies]
-prost-build = "^0.8"
+prost-build = "^0.9"
 
 [package.metadata.docs.rs]
 all-features = true
