@@ -277,7 +277,7 @@ pub struct ChaCha20Poly1305KeyFormat {
 }
 /// key_type: type.googleapis.com/google.crypto.tink.ChaCha20Poly1305.
 /// This key type actually implements ChaCha20Poly1305 as described
-/// at https://tools.ietf.org/html/rfc7539#section-2.8.
+/// at <https://tools.ietf.org/html/rfc7539#section-2.8.>
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ChaCha20Poly1305Key {
     #[prost(uint32, tag="1")]
@@ -378,7 +378,7 @@ pub enum EcdsaSignatureEncoding {
     /// P-256 curve, r and s are zero-padded to 32 bytes.
     IeeeP1363 = 1,
     /// The signature is encoded using ASN.1
-    /// (https://tools.ietf.org/html/rfc5480#appendix-A):
+    /// (<https://tools.ietf.org/html/rfc5480#appendix-A>):
     /// ECDSA-Sig-Value :: = SEQUENCE {
     ///  r INTEGER,
     ///  s INTEGER
@@ -603,13 +603,13 @@ pub enum OutputPrefixType {
 //
 // These definitions follow loosely ECIES ISO 18033-2 standard
 // (Elliptic Curve Integrated Encryption Scheme, see
-// http://www.shoup.net/iso/std6.pdf), with but with some differences:
+// <http://www.shoup.net/iso/std6.pdf>), with but with some differences:
 //  * use of HKDF key derivation function (instead of KDF1 and KDF2) enabling
 //  the use
 //    of optional parameters to the key derivation function, which strenghten
 //    the overall security and allow for binding the key material to
 //    application-specific information (cf. RFC 5869,
-//    https://tools.ietf.org/html/rfc5869)
+//    <https://tools.ietf.org/html/rfc5869>)
 //  * use of modern AEAD schemes rather than "manual composition" of symmetric
 //  encryption
 //    with message authentication codes (as in DEM1, DEM2, and DEM3 schemes of
@@ -707,7 +707,7 @@ pub struct Ed25519PublicKey {
     #[prost(uint32, tag="1")]
     pub version: u32,
     /// The public key is 32 bytes, encoded according to
-    /// https://tools.ietf.org/html/rfc8032#section-5.1.2.
+    /// <https://tools.ietf.org/html/rfc8032#section-5.1.2.>
     /// Required.
     #[prost(bytes="vec", tag="2")]
     pub key_value: ::prost::alloc::vec::Vec<u8>,
@@ -719,7 +719,7 @@ pub struct Ed25519PrivateKey {
     #[prost(uint32, tag="1")]
     pub version: u32,
     /// The private key is 32 bytes of cryptographically secure random data.
-    /// See https://tools.ietf.org/html/rfc8032#section-5.1.5.
+    /// See <https://tools.ietf.org/html/rfc8032#section-5.1.5.>
     /// Required.
     #[prost(bytes="vec", tag="2")]
     pub key_value: ::prost::alloc::vec::Vec<u8>,
@@ -890,7 +890,7 @@ pub struct PrfBasedDeriverKey {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RsaSsaPkcs1Params {
     /// Hash function used in computing hash of the signing message
-    /// (see https://tools.ietf.org/html/rfc8017#section-9.2).
+    /// (see <https://tools.ietf.org/html/rfc8017#section-9.2>).
     /// Required.
     #[prost(enumeration="HashType", tag="1")]
     pub hash_type: i32,
@@ -969,16 +969,16 @@ pub struct RsaSsaPkcs1KeyFormat {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RsaSsaPssParams {
     /// Hash function used in computing hash of the signing message
-    /// (see https://tools.ietf.org/html/rfc8017#section-9.1.1).
+    /// (see <https://tools.ietf.org/html/rfc8017#section-9.1.1>).
     /// Required.
     #[prost(enumeration="HashType", tag="1")]
     pub sig_hash: i32,
     /// Hash function used in MGF1 (a mask generation function based on a
-    /// hash function) (see https://tools.ietf.org/html/rfc8017#appendix-B.2.1).
+    /// hash function) (see <https://tools.ietf.org/html/rfc8017#appendix-B.2.1>).
     /// Required.
     #[prost(enumeration="HashType", tag="2")]
     pub mgf1_hash: i32,
-    /// Salt length (see https://tools.ietf.org/html/rfc8017#section-9.1.1)
+    /// Salt length (see <https://tools.ietf.org/html/rfc8017#section-9.1.1>)
     /// Required.
     #[prost(int32, tag="3")]
     pub salt_length: i32,
