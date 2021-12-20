@@ -27,6 +27,7 @@ fn test_key_templates() {
         ),
         (
             "ECDSA_P384",
+            #[allow(deprecated)]
             tink_signature::ecdsa_p384_key_template(),
             false,
         ),
