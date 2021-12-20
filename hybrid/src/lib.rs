@@ -27,6 +27,7 @@
 //! ciphertext allows for checking the integrity of `context_info` (but there are no guarantees wrt.
 //! the secrecy or authenticity of `context_info`).
 
+#![cfg_attr(docsrs, feature(doc_cfg))]
 #![deny(broken_intra_doc_links)]
 
 use std::sync::Once;

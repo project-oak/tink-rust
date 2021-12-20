@@ -24,6 +24,7 @@ use tink_proto::{prost::Message, EcPointFormat, EllipticCurveType, HashType, Key
 ///  - DEM: AES128-GCM
 ///  - KDF: HKDF-HMAC-SHA256 with an empty salt
 #[cfg(feature = "aead")]
+#[cfg_attr(docsrs, doc(cfg(feature = "aead")))]
 pub fn ecies_hkdf_aes128_gcm_key_template() -> KeyTemplate {
     create_ecies_aead_hkdf_key_template(
         EllipticCurveType::NistP256,
@@ -44,6 +45,7 @@ pub fn ecies_hkdf_aes128_gcm_key_template() -> KeyTemplate {
 ///      - HMAC tag size: 16 bytes
 ///  - KDF: HKDF-HMAC-SHA256 with an empty salt
 #[cfg(feature = "aead")]
+#[cfg_attr(docsrs, doc(cfg(feature = "aead")))]
 pub fn ecies_hkdf_aes128_ctr_hmac_sha256_key_template() -> KeyTemplate {
     create_ecies_aead_hkdf_key_template(
         EllipticCurveType::NistP256,
