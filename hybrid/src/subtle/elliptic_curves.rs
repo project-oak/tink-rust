@@ -231,7 +231,7 @@ pub fn point_decode(
                 _ => Err(format!("unsupported curve {:?}", c).into()),
             }
         }
-        _ => Err(format!("invalid format: {:?}", p_format).into()),
+        _ => Err(format!("invalid point format: {:?}", p_format).into()),
     }
 }
 
