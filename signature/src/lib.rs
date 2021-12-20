@@ -76,6 +76,7 @@ pub fn init() {
 
         // TODO(#16): the following code registers key template generators that aren't actually
         // supported.
+        #[allow(deprecated)]
         register_template_generator("ECDSA_P384", ecdsa_p384_key_template);
         register_template_generator("ECDSA_P384_SHA384", ecdsa_p384_sha384_key_template);
         register_template_generator("ECDSA_P384_SHA512", ecdsa_p384_sha512_key_template);

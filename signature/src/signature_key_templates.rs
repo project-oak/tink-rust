@@ -81,7 +81,10 @@ pub fn ecdsa_p256_key_without_prefix_template() -> KeyTemplate {
 ///   - Curve: NIST P-384
 ///   - Signature encoding: DER
 ///   - Output prefix type: TINK
-/// DEPRECATED. Use ecdsa_p384_sha384_key_template() or ecdsa_p384_sha512_key_template() instead.
+#[deprecated(
+    since = "0.2.3",
+    note = "Use `ecdsa_p384_sha384_key_template()` or `ecdsa_p384_sha512_key_template()` instead."
+)]
 pub fn ecdsa_p384_key_template() -> KeyTemplate {
     create_ecdsa_key_template(
         tink_proto::HashType::Sha512,

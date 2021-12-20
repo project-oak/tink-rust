@@ -1,6 +1,6 @@
 [package]
 name = "tink-hybrid"
-version = "0.2.1"
+version = "0.2.3"
 authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -21,7 +21,7 @@ daead = ["tink-daead"]
 p256 = { version = "^0.9", features = ["ecdh"] }
 rand = "^0.7"
 tink-aead = { version = "^0.2", optional = true }
-tink-core = "^0.2"
+tink-core = "^0.2.3"
 tink-daead = { version = "^0.2", optional = true }
 tink-proto = "^0.2"
 
