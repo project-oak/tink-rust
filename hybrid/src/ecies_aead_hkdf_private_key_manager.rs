@@ -18,8 +18,7 @@
 
 use tink_core::{utils::wrap_err, TinkError};
 use tink_proto::{
-    prost::Message, EcPointFormat, EciesAeadDemParams, EciesHkdfKemParams, EllipticCurveType,
-    HashType,
+    prost::Message, EcPointFormat, EciesHkdfKemParams, EllipticCurveType, HashType, KeyTemplate,
 };
 
 /// Maximal version of ECIES-AEAD-HKDF private keys.
@@ -41,15 +40,12 @@ impl tink_core::registry::KeyManager for EciesAeadHkdfPrivateKeyKeyManager {
         }
         let key = tink_proto::EciesAeadHkdfPrivateKey::decode(serialized_key)
             .map_err(|e| wrap_err("EciesAeadHkdfPrivateKeyKeyManager: invalid key", e))?;
-        let (pt_format, curve, hash, kem_params, dem_params) =
+        let (pt_format, curve, hash, kem_params, aead_dem) =
             validate_key(&key).map_err(|e| wrap_err("EciesAeadHkdfPrivateKeyKeyManager", e))?;
 
         let pvt = crate::subtle::EcPrivateKey::new(curve, &key.key_value)
             .map_err(|e| wrap_err("EciesAeadHkdfPrivateKeyKeyManager", e))?;
-        let r_dem =
-            crate::EciesAeadHkdfDemHelper::new(dem_params.aead_dem.as_ref().ok_or_else(|| {
-                TinkError::new("EciesAeadHkdfPrivateKeyKeyManager: invalid key")
-            })?)?;
+        let r_dem = crate::EciesAeadHkdfDemHelper::new(aead_dem)?;
         let salt = &kem_params.hkdf_salt;
         match crate::subtle::EciesAeadHkdfHybridDecrypt::new(pvt, salt, hash, pt_format, r_dem) {
             Ok(p) => Ok(tink_core::Primitive::HybridDecrypt(Box::new(p))),
@@ -66,8 +62,9 @@ impl tink_core::registry::KeyManager for EciesAeadHkdfPrivateKeyKeyManager {
         }
         let key_format = tink_proto::EciesAeadHkdfKeyFormat::decode(serialized_key_format)
             .map_err(|e| wrap_err("EciesAeadHkdfPrivateKeyKeyManager: invalid key format", e))?;
-        let (_pt_format, curve, _hash, _kem_params, _dem_params) = validate_key_format(&key_format)
-            .map_err(|e| wrap_err("EciesAeadHkdfPrivateKeyKeyManager", e))?;
+        let (_pt_format, curve, _hash, _kem_params, _aead_dem) =
+            validate_key_format(&key_format)
+                .map_err(|e| wrap_err("EciesAeadHkdfPrivateKeyKeyManager", e))?;
         let pvt = crate::subtle::generate_ecdh_key_pair(curve)?;
         let (x, y) = pvt
             .public_key()
@@ -135,7 +132,7 @@ fn validate_key(
         EllipticCurveType,
         HashType,
         &EciesHkdfKemParams,
-        &EciesAeadDemParams,
+        &KeyTemplate,
     ),
     TinkError,
 > {
@@ -144,6 +141,10 @@ fn validate_key(
         .public_key
         .as_ref()
         .ok_or_else(|| TinkError::new("no public key"))?;
+    tink_core::keyset::validate_key_version(
+        pub_key.version,
+        crate::ECIES_AEAD_HKDF_PUBLIC_KEY_KEY_VERSION,
+    )?;
     check_ecies_aead_hkdf_params(
         pub_key
             .params
@@ -161,7 +162,7 @@ fn validate_key_format(
         EllipticCurveType,
         HashType,
         &EciesHkdfKemParams,
-        &EciesAeadDemParams,
+        &KeyTemplate,
     ),
     TinkError,
 > {
@@ -181,7 +182,7 @@ pub(crate) fn check_ecies_aead_hkdf_params(
         EllipticCurveType,
         HashType,
         &EciesHkdfKemParams,
-        &EciesAeadDemParams,
+        &KeyTemplate,
     ),
     TinkError,
 > {
@@ -214,5 +215,5 @@ pub(crate) fn check_ecies_aead_hkdf_params(
     // Check that the relevant data encapsulation mechanism is supported in Tink.
     let km = tink_core::registry::get_key_manager(&aead_dem.type_url)?;
     let _ = km.new_key_data(&aead_dem.value)?;
-    Ok((ec_point_format, curve, hkdf_hash, kem_params, dem_params))
+    Ok((ec_point_format, curve, hkdf_hash, kem_params, aead_dem))
 }

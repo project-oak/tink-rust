@@ -20,4 +20,5 @@ mod ecies_aead_hkdf_hybrid_encrypt_test;
 mod hybrid_factory_test;
 mod hybrid_key_templates_test;
 mod integration_test;
+mod key_manager_test;
 mod subtle;

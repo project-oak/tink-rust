@@ -44,4 +44,11 @@ fn example() {
     println!("Original  plaintext: {}", std::str::from_utf8(msg).unwrap());
     println!("Decrypted Plaintext: {}", std::str::from_utf8(&pt).unwrap());
     assert_eq!(msg, &pt[..]);
+
+    // Altering either the ciphertext or context results in failure to decrypt.
+    let altered_context = b"encryptionXcontext";
+    assert!(dec.decrypt(&ct, altered_context).is_err());
+    let mut altered_ct = ct;
+    altered_ct[0] ^= 0x01;
+    assert!(dec.decrypt(&altered_ct, encryption_context).is_err());
 }

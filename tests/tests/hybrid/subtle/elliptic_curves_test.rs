@@ -21,7 +21,7 @@ use std::collections::HashSet;
 use tink_core::TinkError;
 use tink_hybrid::subtle;
 use tink_proto::{EcPointFormat, EllipticCurveType};
-use tink_tests::{hex_string, WycheproofResult};
+use tink_tests::{expect_err, hex_string, WycheproofResult};
 
 // The tests are from
 // http://google.github.io/end-to-end/api/source/src/javascript/crypto/e2e/ecc/ecdh_testdata.js.src.html.
@@ -570,8 +570,49 @@ fn test_point_on_curve() {
         ye[y.len() - 1] ^= 0x01;
 
         let result = subtle::EcPublicKey::new(tc.curve, &x, &ye);
-        tink_tests::expect_err(result, "invalid point");
+        expect_err(result, "invalid point");
+
+        let result = subtle::EcPublicKey::new(EllipticCurveType::UnknownCurve, &x, &y);
+        expect_err(result, "unsupported curve");
     }
+}
+
+#[test]
+fn test_encoding_size_in_bytes() {
+    assert_eq!(
+        subtle::encoding_size_in_bytes(EllipticCurveType::NistP256, EcPointFormat::Compressed)
+            .unwrap(),
+        1 + 32
+    );
+    assert_eq!(
+        subtle::encoding_size_in_bytes(EllipticCurveType::NistP256, EcPointFormat::Uncompressed)
+            .unwrap(),
+        1 + 2 * 32
+    );
+    assert_eq!(
+        subtle::encoding_size_in_bytes(
+            EllipticCurveType::NistP256,
+            EcPointFormat::DoNotUseCrunchyUncompressed
+        )
+        .unwrap(),
+        2 * 32
+    );
+    assert_eq!(
+        subtle::encoding_size_in_bytes(
+            EllipticCurveType::NistP256,
+            EcPointFormat::DoNotUseCrunchyUncompressed
+        )
+        .unwrap(),
+        2 * 32
+    );
+    expect_err(
+        subtle::encoding_size_in_bytes(EllipticCurveType::UnknownCurve, EcPointFormat::Compressed),
+        "unsupported curve",
+    );
+    expect_err(
+        subtle::encoding_size_in_bytes(EllipticCurveType::NistP256, EcPointFormat::UnknownFormat),
+        "invalid point format",
+    );
 }
 
 fn bigint_str_to_bytes(curve: EllipticCurveType, val: &str) -> Vec<u8> {
@@ -610,6 +651,13 @@ fn test_point_encode() {
             "mismatch point encoding in test case {}",
             i
         );
+
+        // Check some invalid variants are rejected.
+        let result =
+            subtle::point_encode(EllipticCurveType::UnknownCurve, tc.point_format, &pub_key);
+        expect_err(result, "unsupported curve");
+        let result = subtle::point_encode(tc.curve, EcPointFormat::UnknownFormat, &pub_key);
+        expect_err(result, "invalid point format");
     }
 }
 
@@ -636,7 +684,52 @@ fn test_point_decode() {
             "mismatch point decoding in test case {}",
             i
         );
+
+        // Check some invalid variants are rejected.
+        assert!(subtle::point_decode(tc.curve, tc.point_format, &e[1..]).is_err());
+        let mut e_mod = e.clone();
+        e_mod[0] ^= 0x10;
+        assert!(subtle::point_decode(tc.curve, tc.point_format, &e_mod).is_err());
+        let result = subtle::point_decode(EllipticCurveType::UnknownCurve, tc.point_format, &e);
+        expect_err(result, "unsupported curve");
+        let result = subtle::point_decode(tc.curve, EcPointFormat::UnknownFormat, &e);
+        expect_err(result, "invalid point format");
     }
+}
+
+#[test]
+fn test_point_decode_pads() {
+    let pub_x =
+        hex::decode("00c7defeb1a16236738e9a1123ba621bc8e9a3f2485b3f8ffde7f9ce98f5a8a1").unwrap();
+    let pub_y =
+        hex::decode("cb338c3912b1792f60c2b06ec5231e2d84b0e596e9b76d419ce105ece3791dbc").unwrap();
+    let _priv_d =
+        hex::decode("0a0d622a47e48f6bc1038ace438c6f528aa00ad2bd1da5f13ee46bf5f633d71a").unwrap();
+
+    let pub_key = subtle::EcPublicKey::new(EllipticCurveType::NistP256, &pub_x, &pub_y).unwrap();
+    let (x, y) = pub_key.x_y_bytes().unwrap();
+
+    // Point parsing allows for zero bytes at the start (e.g. for x coord) to be skipped.
+    let pub_key2 =
+        subtle::EcPublicKey::new(EllipticCurveType::NistP256, &pub_x[1..], &pub_y).unwrap();
+    let (x2, y2) = pub_key2.x_y_bytes().unwrap();
+    assert_eq!((x.clone(), y.clone()), (x2, y2));
+
+    // Point parsing allows for extra zero bytes at the start.
+    let mut padded_x = vec![0, 0];
+    padded_x.extend_from_slice(&pub_x);
+    let pub_key3 =
+        subtle::EcPublicKey::new(EllipticCurveType::NistP256, &padded_x, &pub_y).unwrap();
+    let (x3, y3) = pub_key3.x_y_bytes().unwrap();
+    assert_eq!((x, y), (x3, y3));
+
+    // Prefixing with non-zero bytes is a no-no.
+    let mut padded_x = vec![0x01];
+    padded_x.extend_from_slice(&pub_x);
+    expect_err(
+        subtle::EcPublicKey::new(EllipticCurveType::NistP256, &padded_x, &pub_y),
+        "point too large",
+    );
 }
 
 fn check_flag(flags: &[String], check: &[&str]) -> bool {
