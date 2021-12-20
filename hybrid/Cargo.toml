@@ -24,3 +24,7 @@ tink-aead = { version = "^0.2", optional = true }
 tink-core = "^0.2"
 tink-daead = { version = "^0.2", optional = true }
 tink-proto = "^0.2"
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
