@@ -19,7 +19,7 @@ insecure = []
 json = ["tink-proto/json", "serde", "serde_json"]
 
 [dependencies]
-digest = "^0.9"
+digest = "^0.10"
 hkdf = "^0.11"
 lazy_static = "^1.4"
 rand = "^0.7"
