@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.2.3 - TBD
+## 0.2.3 - 2022-01-03
 
 - Add crate `README.md`.
 - Re-export `prost`.
