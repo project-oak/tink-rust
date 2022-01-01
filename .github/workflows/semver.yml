@@ -1,0 +1,34 @@
+name: semver
+on:
+  pull_request:
+  push:
+    branches: main
+    paths-ignore:
+      - README.md
+
+jobs:
+  semver:
+    name: semver
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly-2021-11-30
+          components: rustc-dev llvm-tools-preview
+          override: true
+      - run: cargo +nightly-2021-11-30 install --git https://github.com/rust-lang/rust-semverver
+      - run: rustc --version
+      - run: (cd proto && cargo semver)
+      - run: (cd core && cargo semver)
+      - run: (cd prf && cargo semver)
+      - run: (cd mac && cargo semver)
+      - run: (cd aead && cargo semver)
+      - run: (cd daead && cargo semver)
+      - run: (cd streaming && cargo semver)
+      - run: (cd signature && cargo semver)
+      - run: (cd hybrid && cargo semver)
+      - run: (cd integration/awskms && cargo semver)
+      - run: (cd integration/gcpkms && cargo semver)
+      - run: (cd rinkey && cargo semver)
