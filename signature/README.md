@@ -11,20 +11,21 @@ This crate provides digital signature functionality, as described in the upstrea
 <!-- prettier-ignore-start -->
 [embedmd]:# (../examples/signature/src/main.rs Rust /fn main/ /^}/)
 ```Rust
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     tink_signature::init();
     // Other key templates can also be used.
-    let kh = tink_core::keyset::Handle::new(&tink_signature::ecdsa_p256_key_template()).unwrap();
-    let s = tink_signature::new_signer(&kh).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_signature::ecdsa_p256_key_template())?;
+    let s = tink_signature::new_signer(&kh)?;
 
     let pt = b"this data needs to be signed";
-    let a = s.sign(pt).unwrap();
+    let a = s.sign(pt)?;
     println!("'{}' => {}", String::from_utf8_lossy(pt), hex::encode(&a));
 
-    let pubkh = kh.public().unwrap();
-    let v = tink_signature::new_verifier(&pubkh).unwrap();
+    let pubkh = kh.public()?;
+    let v = tink_signature::new_verifier(&pubkh)?;
     assert!(v.verify(&a, b"this data needs to be signed").is_ok());
     println!("Signature verified.");
+    Ok(())
 }
 ```
 <!-- prettier-ignore-end -->

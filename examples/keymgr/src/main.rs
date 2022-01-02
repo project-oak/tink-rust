@@ -16,38 +16,39 @@
 
 //! Example program demonstrating keyset management.
 
-fn main() {
+use std::error::Error;
+
+fn main() -> Result<(), Box<dyn Error>> {
     tink_aead::init();
 
     // Create a keyset with a single key in it, and encrypt something.
-    let kh = tink_core::keyset::Handle::new(&tink_aead::aes128_gcm_key_template()).unwrap();
-    let cipher = tink_aead::new(&kh).unwrap();
-    let ct = cipher.encrypt(b"data", b"aad").unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_aead::aes128_gcm_key_template())?;
+    let cipher = tink_aead::new(&kh)?;
+    let ct = cipher.encrypt(b"data", b"aad")?;
 
     // Move ownership of the `Handle` into a `keyset::Manager`.
     let mut km = tink_core::keyset::Manager::new_from_handle(kh);
 
     // Rotate in a new primary key, and add an additional secondary key.
-    let key_id_a = km.rotate(&tink_aead::aes256_gcm_key_template()).unwrap();
-    let key_id_b = km
-        .add(
-            &tink_aead::aes256_gcm_key_template(),
-            /* primary = */ false,
-        )
-        .unwrap();
+    let key_id_a = km.rotate(&tink_aead::aes256_gcm_key_template())?;
+    let key_id_b = km.add(
+        &tink_aead::aes256_gcm_key_template(),
+        /* primary = */ false,
+    )?;
 
     // Create a new keyset handle for the current state of the managed keyset.
-    let kh2 = km.handle().unwrap();
+    let kh2 = km.handle()?;
     println!("{:?}", kh2); // debug output does not include key material
 
     // The original key is still in the keyset, and so can decrypt.
-    let cipher2 = tink_aead::new(&kh2).unwrap();
-    let pt = cipher2.decrypt(&ct, b"aad").unwrap();
+    let cipher2 = tink_aead::new(&kh2)?;
+    let pt = cipher2.decrypt(&ct, b"aad")?;
     assert_eq!(pt, b"data");
 
     // Set the third key to primary and disable the previous primary key.
-    km.set_primary(key_id_b).unwrap();
-    km.disable(key_id_a).unwrap();
-    let kh3 = km.handle().unwrap();
+    km.set_primary(key_id_b)?;
+    km.disable(key_id_a)?;
+    let kh3 = km.handle()?;
     println!("{:?}", kh3);
+    Ok(())
 }

@@ -16,12 +16,15 @@
 
 //! Example program demonstrating key generation.
 
-fn main() {
+use std::error::Error;
+
+fn main() -> Result<(), Box<dyn Error>> {
     tink_daead::init();
 
     // Other key templates can also be used, if the relevant primitive crate
     // is initialized.
-    let kh = tink_core::keyset::Handle::new(&tink_daead::aes_siv_key_template()).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_daead::aes_siv_key_template())?;
 
     println!("{:?}", kh);
+    Ok(())
 }

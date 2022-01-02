@@ -11,53 +11,48 @@ This crate provides streaming authenticated encryption with additional data func
 <!-- prettier-ignore-start -->
 [embedmd]:# (../examples/streaming/src/main.rs Rust /fn main/ /^}/)
 ```Rust
-fn main() {
-    let dir = tempfile::tempdir().unwrap().into_path();
+fn main() -> Result<(), Box<dyn Error>> {
+    let dir = tempfile::tempdir()?.into_path();
     let ct_filename = dir.join("ciphertext.bin");
 
     tink_streaming_aead::init();
 
     // Generate fresh key material.
     let kh =
-        tink_core::keyset::Handle::new(&tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template())
-            .unwrap();
+        tink_core::keyset::Handle::new(&tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template())?;
 
     // Get the primitive that uses the key material.
-    let a = tink_streaming_aead::new(&kh).unwrap();
+    let a = tink_streaming_aead::new(&kh)?;
 
     // Use the primitive to create a [`std::io::Write`] object that writes ciphertext
     // to a file.
     let aad = b"this data needs to be authenticated, but not encrypted";
-    let ct_file = std::fs::File::create(ct_filename.clone()).unwrap();
-    let mut w = a
-        .new_encrypting_writer(Box::new(ct_file), &aad[..])
-        .unwrap();
+    let ct_file = std::fs::File::create(ct_filename.clone())?;
+    let mut w = a.new_encrypting_writer(Box::new(ct_file), &aad[..])?;
 
     // Write data to the encrypting-writer, in chunks to simulate streaming.
     let mut offset = 0;
     while offset < PT.len() {
         let end = std::cmp::min(PT.len(), offset + CHUNK_SIZE);
-        let written = w.write(&PT[offset..end]).unwrap();
+        let written = w.write(&PT[offset..end])?;
         offset += written;
         // Can flush but it does nothing.
-        w.flush().unwrap();
+        w.flush()?;
     }
     // Complete the encryption (process any remaining buffered plaintext).
-    w.close().unwrap();
+    w.close()?;
 
     // For the other direction, given a [`std::io::Read`] object that reads ciphertext,
     // use the primitive to create a [`std::io::Read`] object that emits the corresponding
     // plaintext.
-    let ct_file = std::fs::File::open(ct_filename).unwrap();
-    let mut r = a
-        .new_decrypting_reader(Box::new(ct_file), &aad[..])
-        .unwrap();
+    let ct_file = std::fs::File::open(ct_filename)?;
+    let mut r = a.new_decrypting_reader(Box::new(ct_file), &aad[..])?;
 
     // Read data from the decrypting-reader, in chunks to simulate streaming.
     let mut recovered = vec![];
     loop {
         let mut chunk = vec![0; CHUNK_SIZE];
-        let len = r.read(&mut chunk).unwrap();
+        let len = r.read(&mut chunk)?;
         if len == 0 {
             break;
         }
@@ -65,6 +60,7 @@ fn main() {
     }
 
     assert_eq!(recovered, PT);
+    Ok(())
 }
 ```
 <!-- prettier-ignore-end -->

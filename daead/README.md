@@ -12,22 +12,23 @@ documentation](https://github.com/google/tink/blob/master/docs/PRIMITIVES.md#det
 <!-- prettier-ignore-start -->
 [embedmd]:# (../examples/daead/src/main.rs Rust /fn main/ /^}/)
 ```Rust
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     tink_daead::init();
-    let kh = tink_core::keyset::Handle::new(&tink_daead::aes_siv_key_template()).unwrap();
-    let d = tink_daead::new(&kh).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_daead::aes_siv_key_template())?;
+    let d = tink_daead::new(&kh)?;
 
     let pt = b"this data needs to be encrypted";
     let ad = b"additional data";
-    let ct1 = d.encrypt_deterministically(pt, ad).unwrap();
+    let ct1 = d.encrypt_deterministically(pt, ad)?;
     println!("'{}' => {}", String::from_utf8_lossy(pt), hex::encode(&ct1));
 
-    let ct2 = d.encrypt_deterministically(pt, ad).unwrap();
+    let ct2 = d.encrypt_deterministically(pt, ad)?;
     assert_eq!(ct1, ct2, "cipher texts are not equal");
     println!("Cipher texts are equal.");
 
-    let pt2 = d.decrypt_deterministically(&ct1, ad).unwrap();
+    let pt2 = d.decrypt_deterministically(&ct1, ad)?;
     assert_eq!(&pt[..], pt2);
+    Ok(())
 }
 ```
 <!-- prettier-ignore-end -->

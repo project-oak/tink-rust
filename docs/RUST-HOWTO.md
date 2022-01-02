@@ -59,18 +59,19 @@ primitive is CPA secure.
 <!-- prettier-ignore-start -->
 [embedmd]:# (../examples/aead/src/main.rs Rust /fn main/ /^}/)
 ```Rust
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     tink_aead::init();
-    let kh = tink_core::keyset::Handle::new(&tink_aead::aes256_gcm_key_template()).unwrap();
-    let a = tink_aead::new(&kh).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_aead::aes256_gcm_key_template())?;
+    let a = tink_aead::new(&kh)?;
 
     let pt = b"this data needs to be encrypted";
     let aad = b"this data needs to be authenticated, but not encrypted";
-    let ct = a.encrypt(pt, aad).unwrap();
+    let ct = a.encrypt(pt, aad)?;
     println!("'{}' => {}", String::from_utf8_lossy(pt), hex::encode(&ct));
 
-    let pt2 = a.decrypt(&ct, aad).unwrap();
+    let pt2 = a.decrypt(&ct, aad)?;
     assert_eq!(&pt[..], pt2);
+    Ok(())
 }
 ```
 <!-- prettier-ignore-end -->
@@ -84,17 +85,18 @@ message.
 <!-- prettier-ignore-start -->
 [embedmd]:# (../examples/mac/src/main.rs Rust /fn main/ /^}/)
 ```Rust
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     tink_mac::init();
-    let kh = tink_core::keyset::Handle::new(&tink_mac::hmac_sha256_tag256_key_template()).unwrap();
-    let m = tink_mac::new(&kh).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_mac::hmac_sha256_tag256_key_template())?;
+    let m = tink_mac::new(&kh)?;
 
     let pt = b"this data needs to be MACed";
-    let mac = m.compute_mac(pt).unwrap();
+    let mac = m.compute_mac(pt)?;
     println!("'{}' => {}", String::from_utf8_lossy(pt), hex::encode(&mac));
 
     assert!(m.verify_mac(&mac, b"this data needs to be MACed").is_ok());
     println!("MAC verification succeeded.");
+    Ok(())
 }
 ```
 <!-- prettier-ignore-end -->
@@ -107,22 +109,23 @@ because encrypting the same plaintext always yields the same ciphertext.
 <!-- prettier-ignore-start -->
 [embedmd]:# (../examples/daead/src/main.rs Rust /fn main/ /^}/)
 ```Rust
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     tink_daead::init();
-    let kh = tink_core::keyset::Handle::new(&tink_daead::aes_siv_key_template()).unwrap();
-    let d = tink_daead::new(&kh).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_daead::aes_siv_key_template())?;
+    let d = tink_daead::new(&kh)?;
 
     let pt = b"this data needs to be encrypted";
     let ad = b"additional data";
-    let ct1 = d.encrypt_deterministically(pt, ad).unwrap();
+    let ct1 = d.encrypt_deterministically(pt, ad)?;
     println!("'{}' => {}", String::from_utf8_lossy(pt), hex::encode(&ct1));
 
-    let ct2 = d.encrypt_deterministically(pt, ad).unwrap();
+    let ct2 = d.encrypt_deterministically(pt, ad)?;
     assert_eq!(ct1, ct2, "cipher texts are not equal");
     println!("Cipher texts are equal.");
 
-    let pt2 = d.decrypt_deterministically(&ct1, ad).unwrap();
+    let pt2 = d.decrypt_deterministically(&ct1, ad)?;
     assert_eq!(&pt[..], pt2);
+    Ok(())
 }
 ```
 <!-- prettier-ignore-end -->
@@ -134,20 +137,21 @@ To sign data using Tink you can use ECDSA (with P-256) or ED25519 key templates.
 <!-- prettier-ignore-start -->
 [embedmd]:# (../examples/signature/src/main.rs Rust /fn main/ /^}/)
 ```Rust
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     tink_signature::init();
     // Other key templates can also be used.
-    let kh = tink_core::keyset::Handle::new(&tink_signature::ecdsa_p256_key_template()).unwrap();
-    let s = tink_signature::new_signer(&kh).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_signature::ecdsa_p256_key_template())?;
+    let s = tink_signature::new_signer(&kh)?;
 
     let pt = b"this data needs to be signed";
-    let a = s.sign(pt).unwrap();
+    let a = s.sign(pt)?;
     println!("'{}' => {}", String::from_utf8_lossy(pt), hex::encode(&a));
 
-    let pubkh = kh.public().unwrap();
-    let v = tink_signature::new_verifier(&pubkh).unwrap();
+    let pubkh = kh.public()?;
+    let v = tink_signature::new_verifier(&pubkh)?;
     assert!(v.verify(&a, b"this data needs to be signed").is_ok());
     println!("Signature verified.");
+    Ok(())
 }
 ```
 <!-- prettier-ignore-end -->
@@ -166,45 +170,40 @@ or decrypt data streams:
 
     // Generate fresh key material.
     let kh =
-        tink_core::keyset::Handle::new(&tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template())
-            .unwrap();
+        tink_core::keyset::Handle::new(&tink_streaming_aead::aes128_gcm_hkdf_4kb_key_template())?;
 
     // Get the primitive that uses the key material.
-    let a = tink_streaming_aead::new(&kh).unwrap();
+    let a = tink_streaming_aead::new(&kh)?;
 
     // Use the primitive to create a [`std::io::Write`] object that writes ciphertext
     // to a file.
     let aad = b"this data needs to be authenticated, but not encrypted";
-    let ct_file = std::fs::File::create(ct_filename.clone()).unwrap();
-    let mut w = a
-        .new_encrypting_writer(Box::new(ct_file), &aad[..])
-        .unwrap();
+    let ct_file = std::fs::File::create(ct_filename.clone())?;
+    let mut w = a.new_encrypting_writer(Box::new(ct_file), &aad[..])?;
 
     // Write data to the encrypting-writer, in chunks to simulate streaming.
     let mut offset = 0;
     while offset < PT.len() {
         let end = std::cmp::min(PT.len(), offset + CHUNK_SIZE);
-        let written = w.write(&PT[offset..end]).unwrap();
+        let written = w.write(&PT[offset..end])?;
         offset += written;
         // Can flush but it does nothing.
-        w.flush().unwrap();
+        w.flush()?;
     }
     // Complete the encryption (process any remaining buffered plaintext).
-    w.close().unwrap();
+    w.close()?;
 
     // For the other direction, given a [`std::io::Read`] object that reads ciphertext,
     // use the primitive to create a [`std::io::Read`] object that emits the corresponding
     // plaintext.
-    let ct_file = std::fs::File::open(ct_filename).unwrap();
-    let mut r = a
-        .new_decrypting_reader(Box::new(ct_file), &aad[..])
-        .unwrap();
+    let ct_file = std::fs::File::open(ct_filename)?;
+    let mut r = a.new_decrypting_reader(Box::new(ct_file), &aad[..])?;
 
     // Read data from the decrypting-reader, in chunks to simulate streaming.
     let mut recovered = vec![];
     loop {
         let mut chunk = vec![0; CHUNK_SIZE];
-        let len = r.read(&mut chunk).unwrap();
+        let len = r.read(&mut chunk)?;
         if len == 0 {
             break;
         }
@@ -212,6 +211,7 @@ or decrypt data streams:
     }
 
     assert_eq!(recovered, PT);
+    Ok(())
 }
 ```
 <!-- prettier-ignore-end -->
@@ -235,14 +235,15 @@ describes the parameters of the key being generated.
 <!-- prettier-ignore-start -->
 [embedmd]:# (../examples/keygen/src/main.rs Rust /fn main/ /^}/)
 ```Rust
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     tink_daead::init();
 
     // Other key templates can also be used, if the relevant primitive crate
     // is initialized.
-    let kh = tink_core::keyset::Handle::new(&tink_daead::aes_siv_key_template()).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_daead::aes_siv_key_template())?;
 
     println!("{:?}", kh);
+    Ok(())
 }
 ```
 <!-- prettier-ignore-end -->
@@ -260,40 +261,39 @@ multiple keys, each identified by a key ID.  This manager allows keys to be:
 <!-- prettier-ignore-start -->
 [embedmd]:# (../examples/keymgr/src/main.rs Rust /fn main/ /^}/)
 ```Rust
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     tink_aead::init();
 
     // Create a keyset with a single key in it, and encrypt something.
-    let kh = tink_core::keyset::Handle::new(&tink_aead::aes128_gcm_key_template()).unwrap();
-    let cipher = tink_aead::new(&kh).unwrap();
-    let ct = cipher.encrypt(b"data", b"aad").unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_aead::aes128_gcm_key_template())?;
+    let cipher = tink_aead::new(&kh)?;
+    let ct = cipher.encrypt(b"data", b"aad")?;
 
     // Move ownership of the `Handle` into a `keyset::Manager`.
     let mut km = tink_core::keyset::Manager::new_from_handle(kh);
 
     // Rotate in a new primary key, and add an additional secondary key.
-    let key_id_a = km.rotate(&tink_aead::aes256_gcm_key_template()).unwrap();
-    let key_id_b = km
-        .add(
-            &tink_aead::aes256_gcm_key_template(),
-            /* primary = */ false,
-        )
-        .unwrap();
+    let key_id_a = km.rotate(&tink_aead::aes256_gcm_key_template())?;
+    let key_id_b = km.add(
+        &tink_aead::aes256_gcm_key_template(),
+        /* primary = */ false,
+    )?;
 
     // Create a new keyset handle for the current state of the managed keyset.
-    let kh2 = km.handle().unwrap();
+    let kh2 = km.handle()?;
     println!("{:?}", kh2); // debug output does not include key material
 
     // The original key is still in the keyset, and so can decrypt.
-    let cipher2 = tink_aead::new(&kh2).unwrap();
-    let pt = cipher2.decrypt(&ct, b"aad").unwrap();
+    let cipher2 = tink_aead::new(&kh2)?;
+    let pt = cipher2.decrypt(&ct, b"aad")?;
     assert_eq!(pt, b"data");
 
     // Set the third key to primary and disable the previous primary key.
-    km.set_primary(key_id_b).unwrap();
-    km.disable(key_id_a).unwrap();
-    let kh3 = km.handle().unwrap();
+    km.set_primary(key_id_b)?;
+    km.disable(key_id_a)?;
+    let kh3 = km.handle()?;
     println!("{:?}", kh3);
+    Ok(())
 }
 ```
 <!-- prettier-ignore-end -->
@@ -344,20 +344,19 @@ Tink supports persisting the keys after encryption to any `std::io::Write` and
 <!-- prettier-ignore-start -->
 [embedmd]:# (../examples/kms/src/main.rs Rust /fn main/ /^}/)
 ```Rust
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     tink_aead::init();
 
     // Generate a new key.
-    let kh1 = tink_core::keyset::Handle::new(&tink_aead::aes256_gcm_key_template()).unwrap();
+    let kh1 = tink_core::keyset::Handle::new(&tink_aead::aes256_gcm_key_template())?;
 
     // Set up the main key-encryption key at a KMS. This is an AEAD which will generate a new
     // data-encryption key (DEK) for each encryption operation; the DEK is included in the
     // ciphertext emitted from the encryption operation, in encrypted form (encrypted by the
     // KMS main key).
     let kms_client =
-        tink_awskms::AwsClient::new_with_credentials(KEY_URI, &PathBuf::from(CRED_INI_FILE))
-            .unwrap();
-    let backend = kms_client.get_aead(KEY_URI).unwrap();
+        tink_awskms::AwsClient::new_with_credentials(KEY_URI, &PathBuf::from(CRED_INI_FILE))?;
+    let backend = kms_client.get_aead(KEY_URI)?;
     let main_key = Box::new(tink_aead::KmsEnvelopeAead::new(
         tink_aead::aes256_gcm_key_template(),
         backend,
@@ -371,19 +370,20 @@ fn main() {
     // given AEAD (`main_key`), and then writes the encrypted keyset to the `keyset::Writer`
     // implementation (`mem_keyset`).  We recommend you encrypt the keyset handle before
     // persisting it.
-    kh1.write(&mut mem_keyset, main_key.box_clone()).unwrap();
+    kh1.write(&mut mem_keyset, main_key.box_clone())?;
     println!("Encrypted keyset: {:?}", mem_keyset.encrypted_keyset);
 
     // The `Handle::read` method reads the encrypted keyset back from the `keyset::Reader`
     // implementation and decrypts it using the AEAD used to encrypt it (`main_key`), giving a
     // handle to the recovered keyset.
-    let kh2 = tink_core::keyset::Handle::read(&mut mem_keyset, main_key).unwrap();
+    let kh2 = tink_core::keyset::Handle::read(&mut mem_keyset, main_key)?;
 
     assert_eq!(
         insecure::keyset_material(&kh1),
         insecure::keyset_material(&kh2)
     );
     println!("Key handles are equal.");
+    Ok(())
 }
 ```
 <!-- prettier-ignore-end -->
