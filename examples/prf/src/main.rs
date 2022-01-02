@@ -16,13 +16,16 @@
 
 //! Example program demonstrating `tink-prf`
 
-fn main() {
+use std::error::Error;
+
+fn main() -> Result<(), Box<dyn Error>> {
     tink_prf::init();
-    let kh = tink_core::keyset::Handle::new(&tink_prf::hmac_sha256_prf_key_template()).unwrap();
-    let m = tink_prf::Set::new(&kh).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_prf::hmac_sha256_prf_key_template())?;
+    let m = tink_prf::Set::new(&kh)?;
 
     let pt = b"need pseudo-random data deterministically produced from this input";
-    let out = m.compute_primary_prf(pt, 16).unwrap();
+    let out = m.compute_primary_prf(pt, 16)?;
     println!("'{}' => {}", String::from_utf8_lossy(pt), hex::encode(&out));
     assert_eq!(out.len(), 16);
+    Ok(())
 }

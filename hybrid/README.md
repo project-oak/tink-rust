@@ -11,35 +11,35 @@ This crate provides hybrid encryption functionality, as described in the upstrea
 <!-- prettier-ignore-start -->
 [embedmd]:# (../examples/hybrid/src/main.rs Rust /fn main/ /^}/)
 ```Rust
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     tink_hybrid::init();
     let kh_priv = tink_core::keyset::Handle::new(
         &tink_hybrid::ecies_hkdf_aes128_ctr_hmac_sha256_key_template(),
-    )
-    .unwrap();
+    )?;
 
     // NOTE: save the private keyset to a safe location. DO NOT hardcode it in source code.
     // Consider encrypting it with a remote key in Cloud KMS, AWS KMS or HashiCorp Vault.  See
     // https://github.com/google/tink/blob/master/docs/GOLANG-HOWTO.md#storing-and-loading-existing-keysets.
 
-    let kh_pub = kh_priv.public().unwrap();
+    let kh_pub = kh_priv.public()?;
 
     // NOTE: share the public keyset with the sender.
 
-    let enc = tink_hybrid::new_encrypt(&kh_pub).unwrap();
+    let enc = tink_hybrid::new_encrypt(&kh_pub)?;
 
     let msg = b"this data needs to be encrypted";
     let encryption_context = b"encryption context";
-    let ct = enc.encrypt(msg, encryption_context).unwrap();
+    let ct = enc.encrypt(msg, encryption_context)?;
 
-    let dec = tink_hybrid::new_decrypt(&kh_priv).unwrap();
+    let dec = tink_hybrid::new_decrypt(&kh_priv)?;
 
-    let pt = dec.decrypt(&ct, encryption_context).unwrap();
+    let pt = dec.decrypt(&ct, encryption_context)?;
     assert_eq!(msg[..], pt);
 
     println!("Ciphertext: {}\n", hex::encode(&ct));
     println!("Original  plaintext: {}\n", String::from_utf8_lossy(msg));
     println!("Decrypted plaintext: {}\n", String::from_utf8_lossy(&pt));
+    Ok(())
 }
 ```
 <!-- prettier-ignore-end -->

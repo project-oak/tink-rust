@@ -16,27 +16,26 @@
 
 //! Example program demonstrating `tink-awskms`
 
-use std::path::PathBuf;
+use std::{error::Error, path::PathBuf};
 use tink_core::{keyset::insecure, registry::KmsClient, AeadBoxClone};
 
 const KEY_URI: &str =
     "aws-kms://arn:aws:kms:us-east-2:235739564943:key/3ee50705-5a82-4f5b-9753-05c4f473922f";
 const CRED_INI_FILE: &str = "../../../testdata/credentials_aws.ini";
 
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     tink_aead::init();
 
     // Generate a new key.
-    let kh1 = tink_core::keyset::Handle::new(&tink_aead::aes256_gcm_key_template()).unwrap();
+    let kh1 = tink_core::keyset::Handle::new(&tink_aead::aes256_gcm_key_template())?;
 
     // Set up the main key-encryption key at a KMS. This is an AEAD which will generate a new
     // data-encryption key (DEK) for each encryption operation; the DEK is included in the
     // ciphertext emitted from the encryption operation, in encrypted form (encrypted by the
     // KMS main key).
     let kms_client =
-        tink_awskms::AwsClient::new_with_credentials(KEY_URI, &PathBuf::from(CRED_INI_FILE))
-            .unwrap();
-    let backend = kms_client.get_aead(KEY_URI).unwrap();
+        tink_awskms::AwsClient::new_with_credentials(KEY_URI, &PathBuf::from(CRED_INI_FILE))?;
+    let backend = kms_client.get_aead(KEY_URI)?;
     let main_key = Box::new(tink_aead::KmsEnvelopeAead::new(
         tink_aead::aes256_gcm_key_template(),
         backend,
@@ -50,17 +49,18 @@ fn main() {
     // given AEAD (`main_key`), and then writes the encrypted keyset to the `keyset::Writer`
     // implementation (`mem_keyset`).  We recommend you encrypt the keyset handle before
     // persisting it.
-    kh1.write(&mut mem_keyset, main_key.box_clone()).unwrap();
+    kh1.write(&mut mem_keyset, main_key.box_clone())?;
     println!("Encrypted keyset: {:?}", mem_keyset.encrypted_keyset);
 
     // The `Handle::read` method reads the encrypted keyset back from the `keyset::Reader`
     // implementation and decrypts it using the AEAD used to encrypt it (`main_key`), giving a
     // handle to the recovered keyset.
-    let kh2 = tink_core::keyset::Handle::read(&mut mem_keyset, main_key).unwrap();
+    let kh2 = tink_core::keyset::Handle::read(&mut mem_keyset, main_key)?;
 
     assert_eq!(
         insecure::keyset_material(&kh1),
         insecure::keyset_material(&kh2)
     );
     println!("Key handles are equal.");
+    Ok(())
 }

@@ -16,15 +16,18 @@
 
 //! Example program demonstrating `tink-mac`
 
-fn main() {
+use std::error::Error;
+
+fn main() -> Result<(), Box<dyn Error>> {
     tink_mac::init();
-    let kh = tink_core::keyset::Handle::new(&tink_mac::hmac_sha256_tag256_key_template()).unwrap();
-    let m = tink_mac::new(&kh).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_mac::hmac_sha256_tag256_key_template())?;
+    let m = tink_mac::new(&kh)?;
 
     let pt = b"this data needs to be MACed";
-    let mac = m.compute_mac(pt).unwrap();
+    let mac = m.compute_mac(pt)?;
     println!("'{}' => {}", String::from_utf8_lossy(pt), hex::encode(&mac));
 
     assert!(m.verify_mac(&mac, b"this data needs to be MACed").is_ok());
     println!("MAC verification succeeded.");
+    Ok(())
 }

@@ -11,18 +11,19 @@ This crate provides authenticated encryption with additional data (AEAD) functio
 <!-- prettier-ignore-start -->
 [embedmd]:# (../examples/aead/src/main.rs Rust /fn main/ /^}/)
 ```Rust
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     tink_aead::init();
-    let kh = tink_core::keyset::Handle::new(&tink_aead::aes256_gcm_key_template()).unwrap();
-    let a = tink_aead::new(&kh).unwrap();
+    let kh = tink_core::keyset::Handle::new(&tink_aead::aes256_gcm_key_template())?;
+    let a = tink_aead::new(&kh)?;
 
     let pt = b"this data needs to be encrypted";
     let aad = b"this data needs to be authenticated, but not encrypted";
-    let ct = a.encrypt(pt, aad).unwrap();
+    let ct = a.encrypt(pt, aad)?;
     println!("'{}' => {}", String::from_utf8_lossy(pt), hex::encode(&ct));
 
-    let pt2 = a.decrypt(&ct, aad).unwrap();
+    let pt2 = a.decrypt(&ct, aad)?;
     assert_eq!(&pt[..], pt2);
+    Ok(())
 }
 ```
 <!-- prettier-ignore-end -->
