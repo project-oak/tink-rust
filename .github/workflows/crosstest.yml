@@ -1,4 +1,6 @@
 name: crosstest
+permissions:
+  contents: read
 on:
   push:
     branches:
@@ -11,19 +13,19 @@ jobs:
   crosstest:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@629c2de402a417ea7690ca6ce3f33229e27606a5 # v2
+      - uses: actions-rs/toolchain@63eb9591781c46a70274cb3ebdf190fce92702e8 # v1
         with:
           profile: minimal
           toolchain: stable
           components: rustfmt
       - run: git clone --depth 1 --branch v1.6.0 https://github.com/google/tink upstream
       - run: (cd upstream && git apply ../scripts/patches/*)
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@f38219332975fe8f9c04cca981d674bf22aea1d3 # v2
         with:
           python-version: '3.7'
       - run: python --version
-      - uses: abhinavsingh/setup-bazel@v3
+      - uses: abhinavsingh/setup-bazel@1fe920bf5df3791aab606c06a3608f4bb600c4f2 # v3
         with:
           version: 3.7.2
       - run: bazel --version
