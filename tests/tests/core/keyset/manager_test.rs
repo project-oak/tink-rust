@@ -190,7 +190,7 @@ fn test_keyset_manager_operations() {
         keyset.key[2].status,
         tink_proto::KeyStatusType::Enabled as i32
     );
-    assert!(!keyset.key[2].key_data.is_none());
+    assert!(keyset.key[2].key_data.is_some());
 
     keyset_manager.destroy(key_id_2).unwrap();
     assert_eq!(3, keyset_manager.key_count());

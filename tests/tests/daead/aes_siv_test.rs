@@ -185,6 +185,7 @@ fn test_aes_siv_ciphertext_too_short() {
     tink_tests::expect_err(result, "too short");
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 struct TestData {
     #[serde(flatten)]
@@ -193,6 +194,7 @@ struct TestData {
     pub test_groups: Vec<TestGroup>,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 struct TestGroup {
     #[serde(flatten)]
