@@ -149,6 +149,7 @@ fn test_ed25519_signer_invalid_seed() {
     tink_tests::expect_err(result, "invalid key");
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 struct TestDataEd25519 {
     #[serde(flatten)]
@@ -157,6 +158,7 @@ struct TestDataEd25519 {
     pub test_groups: Vec<TestGroupEd25519>,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 struct TestGroupEd25519 {
     #[serde(flatten)]

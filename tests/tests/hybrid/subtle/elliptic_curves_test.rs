@@ -781,6 +781,7 @@ struct EcdhSuite {
     pub test_groups: Vec<EcdhGroup>,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 struct EcdhGroup {
     #[serde(flatten)]

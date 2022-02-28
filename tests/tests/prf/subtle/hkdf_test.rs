@@ -106,6 +106,7 @@ fn test_vectors_rfc5869() {
     }
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 struct HkdfTestData {
     #[serde(flatten)]
@@ -114,6 +115,7 @@ struct HkdfTestData {
     pub test_groups: Vec<HkdfTestGroup>,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 struct HkdfTestGroup {
     #[serde(flatten)]

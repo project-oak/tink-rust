@@ -24,6 +24,7 @@ use tonic::transport::Server;
 #[allow(clippy::wrong_self_convention)]
 pub mod proto {
     //! Auto-generated code from protocol buffer message and service definitions.
+    #![allow(clippy::large_enum_variant)]
     include!("codegen/tink_testing_api.rs");
 }
 

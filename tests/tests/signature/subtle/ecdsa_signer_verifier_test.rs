@@ -152,6 +152,7 @@ fn test_ecdsa_invalid_verifier_params() {
     tink_tests::expect_err(result, "unsupported encoding");
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 struct TestData {
     #[serde(flatten)]
@@ -160,6 +161,7 @@ struct TestData {
     pub test_groups: Vec<TestGroup>,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 struct TestGroup {
     #[serde(flatten)]
@@ -174,6 +176,7 @@ struct TestGroup {
     pub tests: Vec<TestCase>,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 struct TestKey {
     curve: String,
@@ -185,6 +188,7 @@ struct TestKey {
     wy: Vec<u8>,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 struct Jwk {
     crv: String,
