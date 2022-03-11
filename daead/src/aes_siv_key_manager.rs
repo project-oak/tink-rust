@@ -56,7 +56,7 @@ impl KeyManager for AesSivKeyManager {
         if !serialized_key_format.is_empty() {
             // If a key format was provided, check it is valid.
             let key_format = tink_proto::AesSivKeyFormat::decode(serialized_key_format)
-                .map_err(|_| TinkError::new("AesSivKeyManager: invalid key format"))?;
+                .map_err(|_| "AesSivKeyManager: invalid key format")?;
             if key_format.key_size as usize != subtle::AES_SIV_KEY_SIZE {
                 return Err(format!(
                     "AesSivKeyManager: key_format.key_size != {}",

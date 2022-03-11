@@ -36,7 +36,7 @@ impl tink_core::registry::KeyManager for HmacPrfKeyManager {
             return Err("HmacPrfKeyManager: invalid key".into());
         }
         let key = tink_proto::HmacPrfKey::decode(serialized_key)
-            .map_err(|_| TinkError::new("HmacPrfKeyManager: invalid key"))?;
+            .map_err(|_| "HmacPrfKeyManager: invalid key")?;
         let (_params, hash) = validate_key(&key).map_err(|e| wrap_err("HmacPrfKeyManager", e))?;
 
         match subtle::HmacPrf::new(hash, &key.key_value) {
@@ -52,7 +52,7 @@ impl tink_core::registry::KeyManager for HmacPrfKeyManager {
             return Err("HmacPrfKeyManager: invalid key format".into());
         }
         let key_format = tink_proto::HmacPrfKeyFormat::decode(serialized_key_format)
-            .map_err(|_| TinkError::new("HmacPrfKeyManager: invalid key format"))?;
+            .map_err(|_| "HmacPrfKeyManager: invalid key format")?;
         validate_key_format(&key_format)
             .map_err(|e| wrap_err("HmacPrfKeyManager: invalid key format", e))?;
 

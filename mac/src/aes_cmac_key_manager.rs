@@ -55,7 +55,7 @@ impl tink_core::registry::KeyManager for AesCmacKeyManager {
             return Err("AesCmacKeyManager: invalid key format".into());
         }
         let key_format = tink_proto::AesCmacKeyFormat::decode(serialized_key_format)
-            .map_err(|_| TinkError::new("AesCmacKeyManager: invalid key format"))?;
+            .map_err(|_| "AesCmacKeyManager: invalid key format")?;
         validate_key_format(&key_format)
             .map_err(|e| wrap_err("AesCmacKeyManager: invalid key format", e))?;
         let key_value = tink_core::subtle::random::get_random_bytes(key_format.key_size as usize);

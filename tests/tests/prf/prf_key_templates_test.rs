@@ -87,7 +87,7 @@ fn check_hmac_template(
         return Err("Not RAW output prefix".into());
     }
     let format = tink_proto::HmacPrfKeyFormat::decode(template.value.as_ref())
-        .map_err(|_| TinkError::new("unable to unmarshal serialized key format"))?;
+        .map_err(|_| "unable to unmarshal serialized key format")?;
     if format.key_size != key_size || format.params.unwrap().hash != hash_type as i32 {
         return Err("KeyFormat is incorrect".into());
     }
@@ -114,7 +114,7 @@ fn check_hkdf_template(
     }
 
     let format = tink_proto::HkdfPrfKeyFormat::decode(template.value.as_ref())
-        .map_err(|_| TinkError::new("unable to unmarshal serialized key format"))?;
+        .map_err(|_| "unable to unmarshal serialized key format")?;
     if format.key_size != key_size
         || format.params.as_ref().unwrap().hash != hash_type as i32
         || hex::encode(salt) != hex::encode(format.params.unwrap().salt)
@@ -139,7 +139,7 @@ fn check_cmac_template(template: &tink_proto::KeyTemplate, key_size: u32) -> Res
     }
 
     let format = tink_proto::AesCmacPrfKeyFormat::decode(template.value.as_ref())
-        .map_err(|_| TinkError::new("unable to unmarshal serialized key format"))?;
+        .map_err(|_| "unable to unmarshal serialized key format")?;
     if format.key_size != key_size {
         return Err("KeyFormat is incorrect".into());
     }

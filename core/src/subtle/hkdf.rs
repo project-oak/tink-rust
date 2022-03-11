@@ -27,7 +27,7 @@ fn validate_hkdf_params(
     hash: HashType,
     _key_size: usize,
     tag_size: usize,
-) -> Result<(), crate::TinkError> {
+) -> Result<(), TinkError> {
     // validate tag size
     let digest_size = super::get_hash_digest_size(hash)?;
     if tag_size > 255 * digest_size {
@@ -46,7 +46,7 @@ pub fn compute_hkdf(
     salt: &[u8],
     info: &[u8],
     tag_size: usize,
-) -> Result<Vec<u8>, crate::TinkError> {
+) -> Result<Vec<u8>, TinkError> {
     let key_size = key.len();
     validate_hkdf_params(hash_alg, key_size, tag_size).map_err(|e| wrap_err("hkdf", e))?;
 
@@ -65,14 +65,14 @@ fn compute_hkdf_with<D>(
     salt: &[u8],
     info: &[u8],
     tag_size: usize,
-) -> Result<Vec<u8>, crate::TinkError>
+) -> Result<Vec<u8>, TinkError>
 where
     D: digest::Update + digest::BlockInput + digest::FixedOutput + digest::Reset + Default + Clone,
 {
     let prk = hkdf::Hkdf::<D>::new(Some(salt), key);
     let mut okm = vec![0; tag_size];
     prk.expand(info, &mut okm)
-        .map_err(|_| TinkError::new("compute of hkdf failed"))?;
+        .map_err(|_| "compute of hkdf failed")?;
 
     Ok(okm)
 }

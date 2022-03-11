@@ -751,7 +751,7 @@ fn convert_x509_public_key(
     match curve {
         EllipticCurveType::NistP256 => {
             let pub_key = p256::PublicKey::from_public_key_der(b)
-                .map_err(|_e| TinkError::new("failed to decode X509 public key"))?;
+                .map_err(|_e| "failed to decode X509 public key")?;
             Ok(subtle::EcPublicKey::NistP256(*pub_key.as_affine()))
         }
         _ => Err(format!("unsupported curve {:?}", curve).into()),

@@ -94,7 +94,7 @@ where
 {
     let mut okm = vec![0; out_len];
     prk.expand(data, &mut okm)
-        .map_err(|_| TinkError::new("HkdfPrf: compute of hkdf failed"))?;
+        .map_err(|_| "HkdfPrf: compute of hkdf failed")?;
 
     Ok(okm)
 }

@@ -57,7 +57,7 @@ impl tink_core::registry::KeyManager for HmacKeyManager {
             return Err("HmacKeyManager: invalid key format".into());
         }
         let key_format = tink_proto::HmacKeyFormat::decode(serialized_key_format)
-            .map_err(|_| TinkError::new("HmacKeyManager: invalid key format"))?;
+            .map_err(|_| "HmacKeyManager: invalid key format")?;
         validate_key_format(&key_format)
             .map_err(|e| wrap_err("HmacKeyManager: invalid key format", e))?;
         let key_value = tink_core::subtle::random::get_random_bytes(key_format.key_size as usize);
