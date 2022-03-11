@@ -36,7 +36,7 @@ impl tink_core::registry::KeyManager for HkdfPrfKeyManager {
             return Err("HkdfPrfKeyManager: invalid key".into());
         }
         let key = tink_proto::HkdfPrfKey::decode(serialized_key)
-            .map_err(|_| TinkError::new("HkdfPrfKeyManager: invalid key"))?;
+            .map_err(|_| "HkdfPrfKeyManager: invalid key")?;
         let (params, hash) = validate_key(&key).map_err(|e| wrap_err("HkdfPrfKeyManager", e))?;
 
         match subtle::HkdfPrf::new(hash, &key.key_value, &params.salt) {
@@ -53,7 +53,7 @@ impl tink_core::registry::KeyManager for HkdfPrfKeyManager {
         }
 
         let key_format = tink_proto::HkdfPrfKeyFormat::decode(serialized_key_format)
-            .map_err(|_| TinkError::new("HkdfPrfKeyManager: invalid key format"))?;
+            .map_err(|_| "HkdfPrfKeyManager: invalid key format")?;
         validate_key_format(&key_format)
             .map_err(|e| wrap_err("HkdfPrfKeyManager: invalid key format", e))?;
 

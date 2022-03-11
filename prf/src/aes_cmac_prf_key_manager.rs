@@ -38,7 +38,7 @@ impl tink_core::registry::KeyManager for AesCmacPrfKeyManager {
         }
 
         let key = tink_proto::AesCmacPrfKey::decode(serialized_key)
-            .map_err(|_| TinkError::new("AesCmacPrfKeyManager: invalid key"))?;
+            .map_err(|_| "AesCmacPrfKeyManager: invalid key")?;
         validate_key(&key)?;
         match subtle::AesCmacPrf::new(&key.key_value) {
             Ok(p) => Ok(tink_core::Primitive::Prf(Box::new(p))),
@@ -56,7 +56,7 @@ impl tink_core::registry::KeyManager for AesCmacPrfKeyManager {
             return Err("AesCmacPrfKeyManager: invalid key format".into());
         }
         let key_format = tink_proto::AesCmacPrfKeyFormat::decode(serialized_key_format)
-            .map_err(|_| TinkError::new("AesCmacPrfKeyManager: invalid key format"))?;
+            .map_err(|_| "AesCmacPrfKeyManager: invalid key format")?;
         validate_key_format(&key_format)
             .map_err(|e| wrap_err("AesCmacPrfKeyManager: invalid key format", e))?;
         let key_value = tink_core::subtle::random::get_random_bytes(key_format.key_size as usize);
