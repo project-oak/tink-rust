@@ -75,6 +75,11 @@ version = "0.2.2"
 name = "cpufeatures"
 version = "0.1.5"
 
+# Various dependencies use itoa(0.4.6)
+[[bans.skip]]
+name = "itoa"
+version = "0.4.6"
+
 ######################################
 
 # List of allowed licenses.
