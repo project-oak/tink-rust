@@ -7,6 +7,6 @@ license = "Apache-2.0"
 publish = false
 
 [dependencies]
-tempfile = "^3.2"
+tempfile = "^3.3"
 tink-core = "^0.2"
 tink-streaming-aead = "^0.2"
