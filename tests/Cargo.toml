@@ -13,7 +13,7 @@ publish = false
 [dependencies]
 base64 = "^0.13"
 ed25519-dalek = "^1.0.1"
-generic-array = "^0.14.4"
+generic-array = "^0.14.5"
 hex = "^0.4.3"
 p256 = { version = "^0.9", features = ["pkcs8"] }
 rand = "^0.7"
