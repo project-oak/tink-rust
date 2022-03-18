@@ -20,4 +20,4 @@ rusoto_credential = "^0.47"
 rusoto_kms = "^0.47"
 tink-core = "^0.2"
 # Match the version of tokio required by rusoto_* v0.46.0
-tokio = "^1.15"
+tokio = "^1.16"
