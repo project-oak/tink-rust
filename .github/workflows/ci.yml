@@ -52,6 +52,27 @@ jobs:
       - run: rustc --version
       - run: cargo test --all -- --nocapture
 
+  check32b:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust:
+          - stable
+          - beta
+          - nightly-2022-02-22
+    steps:
+      - uses: actions/checkout@629c2de402a417ea7690ca6ce3f33229e27606a5 # v2
+        with:
+          submodules: true
+      - uses: actions-rs/toolchain@63eb9591781c46a70274cb3ebdf190fce92702e8 # v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.rust }}
+          components: rustfmt
+          target: i686-unknown-linux-gnu
+          override: true
+      - run: for dir in proto core prf mac aead daead streaming signature hybrid; do cargo build --target=i686-unknown-linux-gnu --manifest-path=$dir/Cargo.toml; done
+
   msrv:
     name: Rust ${{matrix.rust}}
     runs-on: ubuntu-latest
