@@ -81,7 +81,7 @@ impl tink_core::Aead for EncryptThenAuthenticate {
         let mut to_auth_data = Vec::with_capacity(additional_data.len() + ciphertext.len() + 8);
         to_auth_data.extend_from_slice(additional_data);
         to_auth_data.extend_from_slice(&ciphertext);
-        let aad_size_in_bits = (additional_data.len() as u64)
+        let aad_size_in_bits: u64 = (additional_data.len() as u64)
             .checked_mul(8)
             .ok_or_else(|| TinkError::new("EncryptThenAuthenticate: additional data too long"))?;
         to_auth_data.extend_from_slice(&aad_size_in_bits.to_be_bytes());
@@ -114,7 +114,7 @@ impl tink_core::Aead for EncryptThenAuthenticate {
         let mut to_auth_data = Vec::with_capacity(additional_data.len() + payload.len() + 8);
         to_auth_data.extend_from_slice(additional_data);
         to_auth_data.extend_from_slice(payload);
-        let aad_size_in_bits = (additional_data.len() as u64)
+        let aad_size_in_bits: u64 = (additional_data.len() as u64)
             .checked_mul(8)
             .ok_or_else(|| TinkError::new("EncryptThenAuthenticate: additional data too long"))?;
         to_auth_data.extend_from_slice(&aad_size_in_bits.to_be_bytes());
