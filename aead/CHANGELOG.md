@@ -2,6 +2,7 @@
 
 ## 0.2.4 - TBD
 
+- Fix potential AAD overflow vulnerability on 32-bit platforms.
 - Increase MSRV to 1.52.0
 - Upgrade dependencies
 

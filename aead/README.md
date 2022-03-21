@@ -32,6 +32,15 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
+## Known Issues
+
+- Before version 0.2.4, AES-CTR-HMAC-AEAD keys and the
+  [`subtle::EncryptThenAuthenticate`](https://docs.rs/tink-aead/latest/tink_aead/subtle/struct.EncryptThenAuthenticate.html)
+  implementation may be vulnerable to chosen-ciphertext attacks. An attacker can generate ciphertexts that bypass the
+  HMAC verification if and only if all of the following conditions are true:
+    - Tink is used on systems where `usize` is a 32-bit integer. This is usually the case on 32-bit machines.
+    - The attacker can specify long (>= 2^29 bytes ~ 536MB) associated data
+
 ## Disclaimer
 
 This is not an officially supported Google product.
