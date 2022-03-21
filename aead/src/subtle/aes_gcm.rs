@@ -24,7 +24,7 @@ pub const AES_GCM_IV_SIZE: usize = 12;
 /// The only tag size that this implementation supports.
 pub const AES_GCM_TAG_SIZE: usize = 16;
 /// The maximum supported plaintext size.
-const MAX_AES_GCM_PLAINTEXT_SIZE: usize = (1 << 36) - 32;
+const MAX_AES_GCM_PLAINTEXT_SIZE: u64 = (1 << 36) - 32;
 
 #[derive(Clone)]
 enum AesGcmVariant {
@@ -62,7 +62,7 @@ impl tink_core::Aead for AesGcm {
     ///
     /// Note: AES-GCM implementation of crypto library always returns ciphertext with 128-bit tag.
     fn encrypt(&self, pt: &[u8], aad: &[u8]) -> Result<Vec<u8>, TinkError> {
-        if pt.len() > max_pt_size() {
+        if pt.len() as u64 > max_pt_size() {
             return Err("AesGcm: plaintext too long".into());
         }
         let iv = new_iv();
@@ -104,7 +104,14 @@ fn new_iv() -> GenericArray<u8, U12> {
 }
 
 /// Maximum plaintext size.
-fn max_pt_size() -> usize {
-    let x = (isize::MAX as usize) - AES_GCM_IV_SIZE - AES_GCM_TAG_SIZE;
-    std::cmp::min(x, MAX_AES_GCM_PLAINTEXT_SIZE)
+///  - 32-bit platform: (2^31 - 1) - 12 - 16
+///  - 64-bit platform: 2^36 - 32
+const fn max_pt_size() -> u64 {
+    let x: usize = (isize::MAX as usize) - AES_GCM_IV_SIZE - AES_GCM_TAG_SIZE;
+    let x: u64 = x as u64;
+    if x > MAX_AES_GCM_PLAINTEXT_SIZE {
+        MAX_AES_GCM_PLAINTEXT_SIZE
+    } else {
+        x
+    }
 }
