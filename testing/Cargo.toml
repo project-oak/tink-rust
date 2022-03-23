@@ -13,7 +13,7 @@ publish = false
 [dependencies]
 env_logger = "^0.9.0"
 futures = "^0.3.21"
-log = "^0.4.14"
+log = "^0.4.16"
 prost = "^0.9"
 structopt = "^0.3.26"
 tink-aead = "^0.2"
