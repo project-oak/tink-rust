@@ -90,9 +90,9 @@ dependencies = [
 
 [[package]]
 name = "anyhow"
-version = "1.0.33"
+version = "1.0.56"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a1fd36ffbb1fb7c834eac128ea8d0e310c5aeb635548f9d58861e1308d46e71c"
+checksum = "4361135be9122e0870de935d7c439aef945b9f9ddd4199a553b5270b49c82a27"
 
 [[package]]
 name = "arc-swap"
@@ -253,7 +253,7 @@ dependencies = [
  "num-integer",
  "num-traits",
  "serde",
- "time",
+ "time 0.1.44",
  "winapi",
 ]
 
@@ -1080,9 +1080,9 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
-version = "0.2.103"
+version = "0.2.121"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dd8f7255a17a627354f321ef0055d63b898c6fb27eff628af4d1b66b7331edf6"
+checksum = "efaa7b300f3b5fe8eb6bf21ce3895e1751d9665086af2d64b42f19701015ff4f"
 
 [[package]]
 name = "log"
@@ -1214,6 +1214,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "05499f3756671c15885fee9034446956fff3f243d6077b91e5767df161f766b3"
 dependencies = [
  "hermit-abi",
+ "libc",
+]
+
+[[package]]
+name = "num_threads"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "aba1801fb138d8e85e11d0fc70baf4fe1cdfffda7c6cd34a854905df588e5ed0"
+dependencies = [
  "libc",
 ]
 
@@ -1639,7 +1648,7 @@ dependencies = [
 
 [[package]]
 name = "rinkey"
-version = "0.2.3"
+version = "0.2.4"
 dependencies = [
  "structopt",
  "tink-aead",
@@ -2093,8 +2102,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "time"
+version = "0.3.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c2702e08a7a860f005826c6815dcac101b19b5eb330c27fe4a5928fec1d20ddd"
+dependencies = [
+ "libc",
+ "num_threads",
+ "serde",
+]
+
+[[package]]
 name = "tink-aead"
-version = "0.2.3"
+version = "0.2.4"
 dependencies = [
  "aead",
  "aes",
@@ -2110,7 +2130,7 @@ dependencies = [
 
 [[package]]
 name = "tink-awskms"
-version = "0.2.3"
+version = "0.2.4"
 dependencies = [
  "csv",
  "hex",
@@ -2124,7 +2144,7 @@ dependencies = [
 
 [[package]]
 name = "tink-core"
-version = "0.2.3"
+version = "0.2.4"
 dependencies = [
  "digest",
  "hkdf",
@@ -2140,7 +2160,7 @@ dependencies = [
 
 [[package]]
 name = "tink-daead"
-version = "0.2.3"
+version = "0.2.4"
 dependencies = [
  "aead",
  "aes-siv",
@@ -2150,7 +2170,7 @@ dependencies = [
 
 [[package]]
 name = "tink-gcpkms"
-version = "0.2.3"
+version = "0.2.4"
 dependencies = [
  "base64",
  "chrono",
@@ -2169,7 +2189,7 @@ dependencies = [
 
 [[package]]
 name = "tink-hybrid"
-version = "0.2.3"
+version = "0.2.4"
 dependencies = [
  "p256",
  "rand 0.7.3",
@@ -2181,7 +2201,7 @@ dependencies = [
 
 [[package]]
 name = "tink-mac"
-version = "0.2.3"
+version = "0.2.4"
 dependencies = [
  "tink-core",
  "tink-prf",
@@ -2190,7 +2210,7 @@ dependencies = [
 
 [[package]]
 name = "tink-prf"
-version = "0.2.3"
+version = "0.2.4"
 dependencies = [
  "aes",
  "cmac",
@@ -2205,7 +2225,7 @@ dependencies = [
 
 [[package]]
 name = "tink-proto"
-version = "0.2.3"
+version = "0.2.4"
 dependencies = [
  "base64",
  "prost",
@@ -2215,7 +2235,7 @@ dependencies = [
 
 [[package]]
 name = "tink-signature"
-version = "0.2.3"
+version = "0.2.4"
 dependencies = [
  "ecdsa",
  "ed25519-dalek",
@@ -2229,7 +2249,7 @@ dependencies = [
 
 [[package]]
 name = "tink-streaming-aead"
-version = "0.2.3"
+version = "0.2.4"
 dependencies = [
  "aes",
  "aes-gcm",
@@ -2241,7 +2261,7 @@ dependencies = [
 
 [[package]]
 name = "tink-testing-server"
-version = "0.2.3"
+version = "0.2.4"
 dependencies = [
  "env_logger",
  "futures",
@@ -2265,7 +2285,7 @@ dependencies = [
 
 [[package]]
 name = "tink-tests"
-version = "0.2.3"
+version = "0.2.4"
 dependencies = [
  "base64",
  "ed25519-dalek",
@@ -2750,22 +2770,25 @@ checksum = "b07db065a5cf61a7e4ba64f29e67db906fb1787316516c4e6e5ff0fea1efcd8a"
 
 [[package]]
 name = "yup-oauth2"
-version = "5.1.0"
+version = "6.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2573621fa28865489bdf556cdb8703604f4e8498612e3041a212ac20e59c4aeb"
+checksum = "60f4735745047b40de5b982ed1645b9c7b0508d12439302e596774ac4ba9f4c0"
 dependencies = [
+ "anyhow",
+ "async-trait",
  "base64",
- "chrono",
  "futures",
  "http",
  "hyper",
  "hyper-rustls",
+ "itertools",
  "log",
  "percent-encoding",
  "rustls",
  "seahash",
  "serde",
  "serde_json",
+ "time 0.3.9",
  "tokio",
  "url",
 ]
