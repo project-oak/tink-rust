@@ -23,5 +23,5 @@ percent-encoding = "^2.1"
 serde = { version = "^1.0", features = ["derive"] }
 serde_json = "^1.0.72"
 tink-core = "^0.2"
-tokio = "^1.16"
+tokio = "^1.17"
 yup-oauth2 = "^5.1"
