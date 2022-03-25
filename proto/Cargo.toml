@@ -1,6 +1,6 @@
 [package]
 name = "tink-proto"
-version = "0.2.3"
+version = "0.2.4"
 authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 license = "Apache-2.0"
