@@ -14,7 +14,7 @@ categories = ["cryptography"]
 [dependencies]
 aes = "^0.7.4"
 cmac = "^0.6"
-digest = "^0.9"
+digest = "^0.10"
 hkdf = "^0.11"
 hmac = "^0.11"
 sha-1 = "^0.9.8"
