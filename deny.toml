@@ -19,7 +19,6 @@ ignore = [
     # Remove once chrono has been updated to pull in a fixed version of time
     # See https://github.com/chronotope/chrono/issues/553
     "RUSTSEC-2020-0071",
-    "RUSTSEC-2020-0159",
 ]
 
 # Deny multiple versions unless explicitly skipped.
@@ -41,13 +40,10 @@ name = "core-foundation-sys"
 version = "=0.7.0"
 [[bans.skip]]
 name = "pin-project"
-version = "=0.4.26"
+version = "=0.4.29"
 [[bans.skip]]
 name = "pin-project-internal"
-version = "=0.4.26"
-[[bans.skip]]
-name = "pin-project-lite"
-version = "=0.1.10"
+version = "=0.4.29"
 [[bans.skip]]
 name = "security-framework"
 version = "=0.4.4"
@@ -69,6 +65,11 @@ version = "0.5.1"
 [[bans.skip]]
 name = "rand_chacha"
 version = "0.2.2"
+
+# structopt(0.3.26) => structopt-derive(0.4.18) => heck(0.3.*)
+[[bans.skip]]
+name = "heck"
+version = "0.3.1"
 
 # Various dependencies use cpufeatures(v0.1.5)
 [[bans.skip]]

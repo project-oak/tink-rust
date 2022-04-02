@@ -66,6 +66,21 @@ pub enum EllipticCurveType {
     NistP521 = 4,
     Curve25519 = 5,
 }
+impl EllipticCurveType {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            EllipticCurveType::UnknownCurve => "UNKNOWN_CURVE",
+            EllipticCurveType::NistP256 => "NIST_P256",
+            EllipticCurveType::NistP384 => "NIST_P384",
+            EllipticCurveType::NistP521 => "NIST_P521",
+            EllipticCurveType::Curve25519 => "CURVE25519",
+        }
+    }
+}
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum EcPointFormat {
@@ -75,6 +90,20 @@ pub enum EcPointFormat {
     /// Like UNCOMPRESSED but without the \x04 prefix. Crunchy uses this format.
     /// DO NOT USE unless you are a Crunchy user moving to Tink.
     DoNotUseCrunchyUncompressed = 3,
+}
+impl EcPointFormat {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            EcPointFormat::UnknownFormat => "UNKNOWN_FORMAT",
+            EcPointFormat::Uncompressed => "UNCOMPRESSED",
+            EcPointFormat::Compressed => "COMPRESSED",
+            EcPointFormat::DoNotUseCrunchyUncompressed => "DO_NOT_USE_CRUNCHY_UNCOMPRESSED",
+        }
+    }
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
@@ -87,6 +116,22 @@ pub enum HashType {
     Sha256 = 3,
     Sha512 = 4,
     Sha224 = 5,
+}
+impl HashType {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            HashType::UnknownHash => "UNKNOWN_HASH",
+            HashType::Sha1 => "SHA1",
+            HashType::Sha384 => "SHA384",
+            HashType::Sha256 => "SHA256",
+            HashType::Sha512 => "SHA512",
+            HashType::Sha224 => "SHA224",
+        }
+    }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HmacParams {
@@ -380,10 +425,23 @@ pub enum EcdsaSignatureEncoding {
     /// The signature is encoded using ASN.1
     /// (<https://tools.ietf.org/html/rfc5480#appendix-A>):
     /// ECDSA-Sig-Value :: = SEQUENCE {
-    ///  r INTEGER,
-    ///  s INTEGER
+    ///   r INTEGER,
+    ///   s INTEGER
     /// }
     Der = 2,
+}
+impl EcdsaSignatureEncoding {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            EcdsaSignatureEncoding::UnknownEncoding => "UNKNOWN_ENCODING",
+            EcdsaSignatureEncoding::IeeeP1363 => "IEEE_P1363",
+            EcdsaSignatureEncoding::Der => "DER",
+        }
+    }
 }
 // Each instantiation of a Tink primitive is identified by type_url,
 // which is a global URL pointing to a *Key-proto that holds key material
@@ -391,21 +449,21 @@ pub enum EcdsaSignatureEncoding {
 // the value of type_url follows the structure of type_url-field of
 // google.protobuf.Any-protos, and is given as:
 //
-//   type.googleapis.com/packagename.messagename
+//    type.googleapis.com/packagename.messagename
 //
 // For example, for an HMAC key defined in proto google.cloud.tink.HmacKey
 // the value of type_url is:
 //
-//   type.googleapis.com/google.cloud.tink.HmacKey
+//    type.googleapis.com/google.cloud.tink.HmacKey
 //
 // For each type_url, in addition to the *Key proto, there exist two
 // related structures:
-//   1. *Params: parameters of an instantiation of the primitive,
-//      needed when a key is being used.
-//   2. *KeyFormat: parameters needed to generate a new key; these
-//      include the corresponding Params, since when a factory generates
-//      a key based on KeyFormat, it must add Params to the resulting
-//      key proto with the actual key material.
+//    1. *Params: parameters of an instantiation of the primitive,
+//       needed when a key is being used.
+//    2. *KeyFormat: parameters needed to generate a new key; these
+//       include the corresponding Params, since when a factory generates
+//       a key based on KeyFormat, it must add Params to the resulting
+//       key proto with the actual key material.
 // The actual *KeyFormat proto is wrapped in a KeyTemplate message.
 // By convention, the name of the *KeyFormat-proto must be equal
 // to the name of the *Key-proto from type_url-field suffixed with "Format".
@@ -428,10 +486,10 @@ pub struct KeyTemplate {
 }
 // Each *Key proto by convention contains a version field, which
 // identifies the version of implementation that can work with this key.
-//   message SomeInstantiationKey {
-//     uint32 version = 1;
-//     ...
-//   }
+//    message SomeInstantiationKey {
+//      uint32 version = 1;
+//      ...
+//    }
 // Version is a monotonic counter: each implementation of a primitive
 // has its associated "current version", which starts at 0 and is incremented
 // upon updates of the code/key proto.  A key with version n needs
@@ -476,6 +534,21 @@ pub mod key_data {
         AsymmetricPublic = 3,
         /// points to a remote key, i.e., in a KMS.
         Remote = 4,
+    }
+    impl KeyMaterialType {
+        /// String value of the enum field names used in the ProtoBuf definition.
+        ///
+        /// The values are not transformed in any way and thus are considered stable
+        /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+        pub fn as_str_name(&self) -> &'static str {
+            match self {
+                KeyMaterialType::UnknownKeymaterial => "UNKNOWN_KEYMATERIAL",
+                KeyMaterialType::Symmetric => "SYMMETRIC",
+                KeyMaterialType::AsymmetricPrivate => "ASYMMETRIC_PRIVATE",
+                KeyMaterialType::AsymmetricPublic => "ASYMMETRIC_PUBLIC",
+                KeyMaterialType::Remote => "REMOTE",
+            }
+        }
     }
 }
 /// A Tink user works usually not with single keys, but with keysets,
@@ -576,20 +649,34 @@ pub enum KeyStatusType {
     /// Key data does not exist in this Keyset any more.
     Destroyed = 3,
 }
+impl KeyStatusType {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            KeyStatusType::UnknownStatus => "UNKNOWN_STATUS",
+            KeyStatusType::Enabled => "ENABLED",
+            KeyStatusType::Disabled => "DISABLED",
+            KeyStatusType::Destroyed => "DESTROYED",
+        }
+    }
+}
 /// Tink produces and accepts ciphertexts or signatures that consist
 /// of a prefix and a payload. The payload and its format is determined
 /// entirely by the primitive, but the prefix has to be one of the following
 /// 4 types:
-///   - Legacy: prefix is 5 bytes, starts with \x00 and followed by a 4-byte
-///             key id that is computed from the key material. In addition to
-///             that, signature schemes and MACs will add a \x00 byte to the
-///             end of the data being signed / MACed when operating on keys
-///             with this OutputPrefixType.
-///   - Crunchy: prefix is 5 bytes, starts with \x00 and followed by a 4-byte
-///             key id that is generated randomly.
-///   - Tink  : prefix is 5 bytes, starts with \x01 and followed by 4-byte
-///             key id that is generated randomly.
-///   - Raw   : prefix is 0 byte, i.e., empty.
+///    - Legacy: prefix is 5 bytes, starts with \x00 and followed by a 4-byte
+///              key id that is computed from the key material. In addition to
+///              that, signature schemes and MACs will add a \x00 byte to the
+///              end of the data being signed / MACed when operating on keys
+///              with this OutputPrefixType.
+///    - Crunchy: prefix is 5 bytes, starts with \x00 and followed by a 4-byte
+///              key id that is generated randomly.
+///    - Tink  : prefix is 5 bytes, starts with \x01 and followed by 4-byte
+///              key id that is generated randomly.
+///    - Raw   : prefix is 0 byte, i.e., empty.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum OutputPrefixType {
@@ -599,21 +686,36 @@ pub enum OutputPrefixType {
     Raw = 3,
     Crunchy = 4,
 }
+impl OutputPrefixType {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            OutputPrefixType::UnknownPrefix => "UNKNOWN_PREFIX",
+            OutputPrefixType::Tink => "TINK",
+            OutputPrefixType::Legacy => "LEGACY",
+            OutputPrefixType::Raw => "RAW",
+            OutputPrefixType::Crunchy => "CRUNCHY",
+        }
+    }
+}
 // Protos for keys for ECIES with HKDF and AEAD encryption.
 //
 // These definitions follow loosely ECIES ISO 18033-2 standard
 // (Elliptic Curve Integrated Encryption Scheme, see
 // <http://www.shoup.net/iso/std6.pdf>), with but with some differences:
-//  * use of HKDF key derivation function (instead of KDF1 and KDF2) enabling
-//  the use
-//    of optional parameters to the key derivation function, which strenghten
-//    the overall security and allow for binding the key material to
-//    application-specific information (cf. RFC 5869,
-//    <https://tools.ietf.org/html/rfc5869>)
-//  * use of modern AEAD schemes rather than "manual composition" of symmetric
-//  encryption
-//    with message authentication codes (as in DEM1, DEM2, and DEM3 schemes of
-//    ISO 18033-2)
+//   * use of HKDF key derivation function (instead of KDF1 and KDF2) enabling
+//   the use
+//     of optional parameters to the key derivation function, which strenghten
+//     the overall security and allow for binding the key material to
+//     application-specific information (cf. RFC 5869,
+//     <https://tools.ietf.org/html/rfc5869>)
+//   * use of modern AEAD schemes rather than "manual composition" of symmetric
+//   encryption
+//     with message authentication codes (as in DEM1, DEM2, and DEM3 schemes of
+//     ISO 18033-2)
 //
 // ECIES-keys represent HybridEncryption resp. HybridDecryption primitives.
 
@@ -820,6 +922,20 @@ pub enum JwtHmacAlgorithm {
     Hs256 = 1,
     Hs384 = 2,
     Hs512 = 3,
+}
+impl JwtHmacAlgorithm {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            JwtHmacAlgorithm::HsUnknown => "HS_UNKNOWN",
+            JwtHmacAlgorithm::Hs256 => "HS256",
+            JwtHmacAlgorithm::Hs384 => "HS384",
+            JwtHmacAlgorithm::Hs512 => "HS512",
+        }
+    }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KmsAeadKeyFormat {

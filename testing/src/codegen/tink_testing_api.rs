@@ -1,23 +1,24 @@
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ServerInfoRequest {}
+pub struct ServerInfoRequest {
+}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ServerInfoResponse {
     /// For example '1.4'
-    #[prost(string, tag = "1")]
+    #[prost(string, tag="1")]
     pub tink_version: ::prost::alloc::string::String,
     /// For example 'cc', 'java', 'go' or 'python'.
-    #[prost(string, tag = "2")]
+    #[prost(string, tag="2")]
     pub language: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetTemplateRequest {
     /// template name used by Tinkey
-    #[prost(string, tag = "1")]
+    #[prost(string, tag="1")]
     pub template_name: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetTemplateResponse {
-    #[prost(oneof = "keyset_template_response::Result", tags = "1, 2")]
+    #[prost(oneof="keyset_template_response::Result", tags="1, 2")]
     pub result: ::core::option::Option<keyset_template_response::Result>,
 }
 /// Nested message and enum types in `KeysetTemplateResponse`.
@@ -25,21 +26,21 @@ pub mod keyset_template_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         /// serialized google.crypto.tink.KeyTemplate.
-        #[prost(bytes, tag = "1")]
+        #[prost(bytes, tag="1")]
         KeyTemplate(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag = "2")]
+        #[prost(string, tag="2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetGenerateRequest {
     /// serialized google.crypto.tink.KeyTemplate.
-    #[prost(bytes = "vec", tag = "1")]
+    #[prost(bytes="vec", tag="1")]
     pub template: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetGenerateResponse {
-    #[prost(oneof = "keyset_generate_response::Result", tags = "1, 2")]
+    #[prost(oneof="keyset_generate_response::Result", tags="1, 2")]
     pub result: ::core::option::Option<keyset_generate_response::Result>,
 }
 /// Nested message and enum types in `KeysetGenerateResponse`.
@@ -47,21 +48,21 @@ pub mod keyset_generate_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         /// serialized google.crypto.tink.Keyset.
-        #[prost(bytes, tag = "1")]
+        #[prost(bytes, tag="1")]
         Keyset(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag = "2")]
+        #[prost(string, tag="2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetPublicRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes = "vec", tag = "1")]
+    #[prost(bytes="vec", tag="1")]
     pub private_keyset: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetPublicResponse {
-    #[prost(oneof = "keyset_public_response::Result", tags = "1, 2")]
+    #[prost(oneof="keyset_public_response::Result", tags="1, 2")]
     pub result: ::core::option::Option<keyset_public_response::Result>,
 }
 /// Nested message and enum types in `KeysetPublicResponse`.
@@ -69,41 +70,41 @@ pub mod keyset_public_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         /// serialized google.crypto.tink.Keyset.
-        #[prost(bytes, tag = "1")]
+        #[prost(bytes, tag="1")]
         PublicKeyset(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag = "2")]
+        #[prost(string, tag="2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetToJsonRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes = "vec", tag = "1")]
+    #[prost(bytes="vec", tag="1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetToJsonResponse {
-    #[prost(oneof = "keyset_to_json_response::Result", tags = "1, 2")]
+    #[prost(oneof="keyset_to_json_response::Result", tags="1, 2")]
     pub result: ::core::option::Option<keyset_to_json_response::Result>,
 }
 /// Nested message and enum types in `KeysetToJsonResponse`.
 pub mod keyset_to_json_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(string, tag = "1")]
+        #[prost(string, tag="1")]
         JsonKeyset(::prost::alloc::string::String),
-        #[prost(string, tag = "2")]
+        #[prost(string, tag="2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetFromJsonRequest {
-    #[prost(string, tag = "1")]
+    #[prost(string, tag="1")]
     pub json_keyset: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetFromJsonResponse {
-    #[prost(oneof = "keyset_from_json_response::Result", tags = "1, 2")]
+    #[prost(oneof="keyset_from_json_response::Result", tags="1, 2")]
     pub result: ::core::option::Option<keyset_from_json_response::Result>,
 }
 /// Nested message and enum types in `KeysetFromJsonResponse`.
@@ -111,340 +112,340 @@ pub mod keyset_from_json_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         /// serialized google.crypto.tink.Keyset.
-        #[prost(bytes, tag = "1")]
+        #[prost(bytes, tag="1")]
         Keyset(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag = "2")]
+        #[prost(string, tag="2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AeadEncryptRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes = "vec", tag = "1")]
+    #[prost(bytes="vec", tag="1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes = "vec", tag = "2")]
+    #[prost(bytes="vec", tag="2")]
     pub plaintext: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes = "vec", tag = "3")]
+    #[prost(bytes="vec", tag="3")]
     pub associated_data: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AeadEncryptResponse {
-    #[prost(oneof = "aead_encrypt_response::Result", tags = "1, 2")]
+    #[prost(oneof="aead_encrypt_response::Result", tags="1, 2")]
     pub result: ::core::option::Option<aead_encrypt_response::Result>,
 }
 /// Nested message and enum types in `AeadEncryptResponse`.
 pub mod aead_encrypt_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(bytes, tag = "1")]
+        #[prost(bytes, tag="1")]
         Ciphertext(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag = "2")]
+        #[prost(string, tag="2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AeadDecryptRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes = "vec", tag = "1")]
+    #[prost(bytes="vec", tag="1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes = "vec", tag = "2")]
+    #[prost(bytes="vec", tag="2")]
     pub ciphertext: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes = "vec", tag = "3")]
+    #[prost(bytes="vec", tag="3")]
     pub associated_data: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AeadDecryptResponse {
-    #[prost(oneof = "aead_decrypt_response::Result", tags = "1, 2")]
+    #[prost(oneof="aead_decrypt_response::Result", tags="1, 2")]
     pub result: ::core::option::Option<aead_decrypt_response::Result>,
 }
 /// Nested message and enum types in `AeadDecryptResponse`.
 pub mod aead_decrypt_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(bytes, tag = "1")]
+        #[prost(bytes, tag="1")]
         Plaintext(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag = "2")]
+        #[prost(string, tag="2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DeterministicAeadEncryptRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes = "vec", tag = "1")]
+    #[prost(bytes="vec", tag="1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes = "vec", tag = "2")]
+    #[prost(bytes="vec", tag="2")]
     pub plaintext: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes = "vec", tag = "3")]
+    #[prost(bytes="vec", tag="3")]
     pub associated_data: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DeterministicAeadEncryptResponse {
-    #[prost(oneof = "deterministic_aead_encrypt_response::Result", tags = "1, 2")]
+    #[prost(oneof="deterministic_aead_encrypt_response::Result", tags="1, 2")]
     pub result: ::core::option::Option<deterministic_aead_encrypt_response::Result>,
 }
 /// Nested message and enum types in `DeterministicAeadEncryptResponse`.
 pub mod deterministic_aead_encrypt_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(bytes, tag = "1")]
+        #[prost(bytes, tag="1")]
         Ciphertext(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag = "2")]
+        #[prost(string, tag="2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DeterministicAeadDecryptRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes = "vec", tag = "1")]
+    #[prost(bytes="vec", tag="1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes = "vec", tag = "2")]
+    #[prost(bytes="vec", tag="2")]
     pub ciphertext: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes = "vec", tag = "3")]
+    #[prost(bytes="vec", tag="3")]
     pub associated_data: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DeterministicAeadDecryptResponse {
-    #[prost(oneof = "deterministic_aead_decrypt_response::Result", tags = "1, 2")]
+    #[prost(oneof="deterministic_aead_decrypt_response::Result", tags="1, 2")]
     pub result: ::core::option::Option<deterministic_aead_decrypt_response::Result>,
 }
 /// Nested message and enum types in `DeterministicAeadDecryptResponse`.
 pub mod deterministic_aead_decrypt_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(bytes, tag = "1")]
+        #[prost(bytes, tag="1")]
         Plaintext(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag = "2")]
+        #[prost(string, tag="2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StreamingAeadEncryptRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes = "vec", tag = "1")]
+    #[prost(bytes="vec", tag="1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes = "vec", tag = "2")]
+    #[prost(bytes="vec", tag="2")]
     pub plaintext: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes = "vec", tag = "3")]
+    #[prost(bytes="vec", tag="3")]
     pub associated_data: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StreamingAeadEncryptResponse {
-    #[prost(oneof = "streaming_aead_encrypt_response::Result", tags = "1, 2")]
+    #[prost(oneof="streaming_aead_encrypt_response::Result", tags="1, 2")]
     pub result: ::core::option::Option<streaming_aead_encrypt_response::Result>,
 }
 /// Nested message and enum types in `StreamingAeadEncryptResponse`.
 pub mod streaming_aead_encrypt_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(bytes, tag = "1")]
+        #[prost(bytes, tag="1")]
         Ciphertext(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag = "2")]
+        #[prost(string, tag="2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StreamingAeadDecryptRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes = "vec", tag = "1")]
+    #[prost(bytes="vec", tag="1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes = "vec", tag = "2")]
+    #[prost(bytes="vec", tag="2")]
     pub ciphertext: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes = "vec", tag = "3")]
+    #[prost(bytes="vec", tag="3")]
     pub associated_data: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StreamingAeadDecryptResponse {
-    #[prost(oneof = "streaming_aead_decrypt_response::Result", tags = "1, 2")]
+    #[prost(oneof="streaming_aead_decrypt_response::Result", tags="1, 2")]
     pub result: ::core::option::Option<streaming_aead_decrypt_response::Result>,
 }
 /// Nested message and enum types in `StreamingAeadDecryptResponse`.
 pub mod streaming_aead_decrypt_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(bytes, tag = "1")]
+        #[prost(bytes, tag="1")]
         Plaintext(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag = "2")]
+        #[prost(string, tag="2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ComputeMacRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes = "vec", tag = "1")]
+    #[prost(bytes="vec", tag="1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes = "vec", tag = "2")]
+    #[prost(bytes="vec", tag="2")]
     pub data: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ComputeMacResponse {
-    #[prost(oneof = "compute_mac_response::Result", tags = "1, 2")]
+    #[prost(oneof="compute_mac_response::Result", tags="1, 2")]
     pub result: ::core::option::Option<compute_mac_response::Result>,
 }
 /// Nested message and enum types in `ComputeMacResponse`.
 pub mod compute_mac_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(bytes, tag = "1")]
+        #[prost(bytes, tag="1")]
         MacValue(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag = "2")]
+        #[prost(string, tag="2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct VerifyMacRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes = "vec", tag = "1")]
+    #[prost(bytes="vec", tag="1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes = "vec", tag = "2")]
+    #[prost(bytes="vec", tag="2")]
     pub mac_value: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes = "vec", tag = "3")]
+    #[prost(bytes="vec", tag="3")]
     pub data: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct VerifyMacResponse {
-    #[prost(string, tag = "1")]
+    #[prost(string, tag="1")]
     pub err: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HybridEncryptRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes = "vec", tag = "1")]
+    #[prost(bytes="vec", tag="1")]
     pub public_keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes = "vec", tag = "2")]
+    #[prost(bytes="vec", tag="2")]
     pub plaintext: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes = "vec", tag = "3")]
+    #[prost(bytes="vec", tag="3")]
     pub context_info: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HybridEncryptResponse {
-    #[prost(oneof = "hybrid_encrypt_response::Result", tags = "1, 2")]
+    #[prost(oneof="hybrid_encrypt_response::Result", tags="1, 2")]
     pub result: ::core::option::Option<hybrid_encrypt_response::Result>,
 }
 /// Nested message and enum types in `HybridEncryptResponse`.
 pub mod hybrid_encrypt_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(bytes, tag = "1")]
+        #[prost(bytes, tag="1")]
         Ciphertext(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag = "2")]
+        #[prost(string, tag="2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HybridDecryptRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes = "vec", tag = "1")]
+    #[prost(bytes="vec", tag="1")]
     pub private_keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes = "vec", tag = "2")]
+    #[prost(bytes="vec", tag="2")]
     pub ciphertext: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes = "vec", tag = "3")]
+    #[prost(bytes="vec", tag="3")]
     pub context_info: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HybridDecryptResponse {
-    #[prost(oneof = "hybrid_decrypt_response::Result", tags = "1, 2")]
+    #[prost(oneof="hybrid_decrypt_response::Result", tags="1, 2")]
     pub result: ::core::option::Option<hybrid_decrypt_response::Result>,
 }
 /// Nested message and enum types in `HybridDecryptResponse`.
 pub mod hybrid_decrypt_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(bytes, tag = "1")]
+        #[prost(bytes, tag="1")]
         Plaintext(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag = "2")]
+        #[prost(string, tag="2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SignatureSignRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes = "vec", tag = "1")]
+    #[prost(bytes="vec", tag="1")]
     pub private_keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes = "vec", tag = "2")]
+    #[prost(bytes="vec", tag="2")]
     pub data: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SignatureSignResponse {
-    #[prost(oneof = "signature_sign_response::Result", tags = "1, 2")]
+    #[prost(oneof="signature_sign_response::Result", tags="1, 2")]
     pub result: ::core::option::Option<signature_sign_response::Result>,
 }
 /// Nested message and enum types in `SignatureSignResponse`.
 pub mod signature_sign_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(bytes, tag = "1")]
+        #[prost(bytes, tag="1")]
         Signature(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag = "2")]
+        #[prost(string, tag="2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SignatureVerifyRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes = "vec", tag = "1")]
+    #[prost(bytes="vec", tag="1")]
     pub public_keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes = "vec", tag = "2")]
+    #[prost(bytes="vec", tag="2")]
     pub signature: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes = "vec", tag = "3")]
+    #[prost(bytes="vec", tag="3")]
     pub data: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SignatureVerifyResponse {
-    #[prost(string, tag = "1")]
+    #[prost(string, tag="1")]
     pub err: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PrfSetKeyIdsRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes = "vec", tag = "1")]
+    #[prost(bytes="vec", tag="1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PrfSetKeyIdsResponse {
-    #[prost(oneof = "prf_set_key_ids_response::Result", tags = "1, 2")]
+    #[prost(oneof="prf_set_key_ids_response::Result", tags="1, 2")]
     pub result: ::core::option::Option<prf_set_key_ids_response::Result>,
 }
 /// Nested message and enum types in `PrfSetKeyIdsResponse`.
 pub mod prf_set_key_ids_response {
     #[derive(Clone, PartialEq, ::prost::Message)]
     pub struct Output {
-        #[prost(uint32, tag = "1")]
+        #[prost(uint32, tag="1")]
         pub primary_key_id: u32,
-        #[prost(uint32, repeated, tag = "2")]
+        #[prost(uint32, repeated, tag="2")]
         pub key_id: ::prost::alloc::vec::Vec<u32>,
     }
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(message, tag = "1")]
+        #[prost(message, tag="1")]
         Output(Output),
-        #[prost(string, tag = "2")]
+        #[prost(string, tag="2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PrfSetComputeRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes = "vec", tag = "1")]
+    #[prost(bytes="vec", tag="1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(uint32, tag = "2")]
+    #[prost(uint32, tag="2")]
     pub key_id: u32,
-    #[prost(bytes = "vec", tag = "3")]
+    #[prost(bytes="vec", tag="3")]
     pub input_data: ::prost::alloc::vec::Vec<u8>,
-    #[prost(int32, tag = "4")]
+    #[prost(int32, tag="4")]
     pub output_length: i32,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PrfSetComputeResponse {
-    #[prost(oneof = "prf_set_compute_response::Result", tags = "1, 2")]
+    #[prost(oneof="prf_set_compute_response::Result", tags="1, 2")]
     pub result: ::core::option::Option<prf_set_compute_response::Result>,
 }
 /// Nested message and enum types in `PrfSetComputeResponse`.
 pub mod prf_set_compute_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(bytes, tag = "1")]
+        #[prost(bytes, tag="1")]
         Output(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag = "2")]
+        #[prost(string, tag="2")]
         Err(::prost::alloc::string::String),
     }
 }
@@ -456,13 +457,13 @@ pub struct Timestamp {
     /// Represents seconds of UTC time since Unix epoch
     /// 1970-01-01T00:00:00Z. Must be from 0001-01-01T00:00:00Z to
     /// 9999-12-31T23:59:59Z inclusive.
-    #[prost(int64, tag = "1")]
+    #[prost(int64, tag="1")]
     pub seconds: i64,
     /// Non-negative fractions of a second at nanosecond resolution. Negative
     /// second values with fractions must still have non-negative nanos values
     /// that count forward in time. Must be from 0 to 999,999,999
     /// inclusive.
-    #[prost(int32, tag = "2")]
+    #[prost(int32, tag="2")]
     pub nanos: i32,
 }
 /// Copied from duration.proto
@@ -471,7 +472,7 @@ pub struct Duration {
     /// Signed seconds of the span of time. Must be from -315,576,000,000
     /// to +315,576,000,000 inclusive. Note: these bounds are computed from:
     /// 60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years
-    #[prost(int64, tag = "1")]
+    #[prost(int64, tag="1")]
     pub seconds: i64,
     /// Signed fractions of a second at nanosecond resolution of the span
     /// of time. Durations less than one second are represented with a 0
@@ -479,160 +480,160 @@ pub struct Duration {
     /// of one second or more, a non-zero value for the `nanos` field must be
     /// of the same sign as the `seconds` field. Must be from -999,999,999
     /// to +999,999,999 inclusive.
-    #[prost(int32, tag = "2")]
+    #[prost(int32, tag="2")]
     pub nanos: i32,
 }
 /// Copied from wrappers.proto
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StringValue {
     /// The string value.
-    #[prost(string, tag = "1")]
+    #[prost(string, tag="1")]
     pub value: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtClaimValue {
-    #[prost(oneof = "jwt_claim_value::Kind", tags = "2, 3, 4, 5, 6, 7")]
+    #[prost(oneof="jwt_claim_value::Kind", tags="2, 3, 4, 5, 6, 7")]
     pub kind: ::core::option::Option<jwt_claim_value::Kind>,
 }
 /// Nested message and enum types in `JwtClaimValue`.
 pub mod jwt_claim_value {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Kind {
-        #[prost(enumeration = "super::NullValue", tag = "2")]
+        #[prost(enumeration="super::NullValue", tag="2")]
         NullValue(i32),
-        #[prost(double, tag = "3")]
+        #[prost(double, tag="3")]
         NumberValue(f64),
-        #[prost(string, tag = "4")]
+        #[prost(string, tag="4")]
         StringValue(::prost::alloc::string::String),
-        #[prost(bool, tag = "5")]
+        #[prost(bool, tag="5")]
         BoolValue(bool),
-        #[prost(string, tag = "6")]
+        #[prost(string, tag="6")]
         JsonObjectValue(::prost::alloc::string::String),
-        #[prost(string, tag = "7")]
+        #[prost(string, tag="7")]
         JsonArrayValue(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtToken {
-    #[prost(message, optional, tag = "1")]
+    #[prost(message, optional, tag="1")]
     pub issuer: ::core::option::Option<StringValue>,
-    #[prost(message, optional, tag = "2")]
+    #[prost(message, optional, tag="2")]
     pub subject: ::core::option::Option<StringValue>,
-    #[prost(string, repeated, tag = "3")]
+    #[prost(string, repeated, tag="3")]
     pub audiences: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
-    #[prost(message, optional, tag = "4")]
+    #[prost(message, optional, tag="4")]
     pub jwt_id: ::core::option::Option<StringValue>,
-    #[prost(message, optional, tag = "5")]
+    #[prost(message, optional, tag="5")]
     pub expiration: ::core::option::Option<Timestamp>,
-    #[prost(message, optional, tag = "6")]
+    #[prost(message, optional, tag="6")]
     pub not_before: ::core::option::Option<Timestamp>,
-    #[prost(message, optional, tag = "7")]
+    #[prost(message, optional, tag="7")]
     pub issued_at: ::core::option::Option<Timestamp>,
-    #[prost(map = "string, message", tag = "8")]
+    #[prost(map="string, message", tag="8")]
     pub custom_claims: ::std::collections::HashMap<::prost::alloc::string::String, JwtClaimValue>,
-    #[prost(message, optional, tag = "9")]
+    #[prost(message, optional, tag="9")]
     pub type_header: ::core::option::Option<StringValue>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtValidator {
-    #[prost(message, optional, tag = "7")]
+    #[prost(message, optional, tag="7")]
     pub expected_type_header: ::core::option::Option<StringValue>,
-    #[prost(message, optional, tag = "1")]
+    #[prost(message, optional, tag="1")]
     pub expected_issuer: ::core::option::Option<StringValue>,
-    #[prost(message, optional, tag = "3")]
+    #[prost(message, optional, tag="3")]
     pub expected_audience: ::core::option::Option<StringValue>,
-    #[prost(bool, tag = "8")]
+    #[prost(bool, tag="8")]
     pub ignore_type_header: bool,
-    #[prost(bool, tag = "9")]
+    #[prost(bool, tag="9")]
     pub ignore_issuer: bool,
-    #[prost(bool, tag = "11")]
+    #[prost(bool, tag="11")]
     pub ignore_audience: bool,
-    #[prost(bool, tag = "12")]
+    #[prost(bool, tag="12")]
     pub allow_missing_expiration: bool,
-    #[prost(bool, tag = "13")]
+    #[prost(bool, tag="13")]
     pub expect_issued_in_the_past: bool,
-    #[prost(message, optional, tag = "5")]
+    #[prost(message, optional, tag="5")]
     pub now: ::core::option::Option<Timestamp>,
-    #[prost(message, optional, tag = "6")]
+    #[prost(message, optional, tag="6")]
     pub clock_skew: ::core::option::Option<Duration>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtSignRequest {
     /// serialized google.crypto.tink.Keyset
-    #[prost(bytes = "vec", tag = "1")]
+    #[prost(bytes="vec", tag="1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(message, optional, tag = "2")]
+    #[prost(message, optional, tag="2")]
     pub raw_jwt: ::core::option::Option<JwtToken>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtSignResponse {
-    #[prost(oneof = "jwt_sign_response::Result", tags = "1, 2")]
+    #[prost(oneof="jwt_sign_response::Result", tags="1, 2")]
     pub result: ::core::option::Option<jwt_sign_response::Result>,
 }
 /// Nested message and enum types in `JwtSignResponse`.
 pub mod jwt_sign_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(string, tag = "1")]
+        #[prost(string, tag="1")]
         SignedCompactJwt(::prost::alloc::string::String),
-        #[prost(string, tag = "2")]
+        #[prost(string, tag="2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtVerifyRequest {
     /// serialized google.crypto.tink.Keyset
-    #[prost(bytes = "vec", tag = "1")]
+    #[prost(bytes="vec", tag="1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(string, tag = "2")]
+    #[prost(string, tag="2")]
     pub signed_compact_jwt: ::prost::alloc::string::String,
-    #[prost(message, optional, tag = "3")]
+    #[prost(message, optional, tag="3")]
     pub validator: ::core::option::Option<JwtValidator>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtVerifyResponse {
-    #[prost(oneof = "jwt_verify_response::Result", tags = "1, 2")]
+    #[prost(oneof="jwt_verify_response::Result", tags="1, 2")]
     pub result: ::core::option::Option<jwt_verify_response::Result>,
 }
 /// Nested message and enum types in `JwtVerifyResponse`.
 pub mod jwt_verify_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(message, tag = "1")]
+        #[prost(message, tag="1")]
         VerifiedJwt(super::JwtToken),
-        #[prost(string, tag = "2")]
+        #[prost(string, tag="2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtToJwkSetRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes = "vec", tag = "1")]
+    #[prost(bytes="vec", tag="1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtToJwkSetResponse {
-    #[prost(oneof = "jwt_to_jwk_set_response::Result", tags = "1, 2")]
+    #[prost(oneof="jwt_to_jwk_set_response::Result", tags="1, 2")]
     pub result: ::core::option::Option<jwt_to_jwk_set_response::Result>,
 }
 /// Nested message and enum types in `JwtToJwkSetResponse`.
 pub mod jwt_to_jwk_set_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(string, tag = "1")]
+        #[prost(string, tag="1")]
         JwkSet(::prost::alloc::string::String),
-        #[prost(string, tag = "2")]
+        #[prost(string, tag="2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtFromJwkSetRequest {
-    #[prost(string, tag = "1")]
+    #[prost(string, tag="1")]
     pub jwk_set: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtFromJwkSetResponse {
-    #[prost(oneof = "jwt_from_jwk_set_response::Result", tags = "1, 2")]
+    #[prost(oneof="jwt_from_jwk_set_response::Result", tags="1, 2")]
     pub result: ::core::option::Option<jwt_from_jwk_set_response::Result>,
 }
 /// Nested message and enum types in `JwtFromJwkSetResponse`.
@@ -640,22 +641,34 @@ pub mod jwt_from_jwk_set_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         /// serialized google.crypto.tink.Keyset.
-        #[prost(bytes, tag = "1")]
+        #[prost(bytes, tag="1")]
         Keyset(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag = "2")]
+        #[prost(string, tag="2")]
         Err(::prost::alloc::string::String),
     }
 }
-///  Used to represent the JSON null value.
+///   Used to represent the JSON null value.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum NullValue {
     NullValue = 0,
 }
+impl NullValue {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            NullValue::NullValue => "NULL_VALUE",
+        }
+    }
+}
 /// Generated client implementations.
 pub mod metadata_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
     /// Service providing metadata about the server.
     #[derive(Debug, Clone)]
     pub struct MetadataClient<T> {
@@ -675,12 +688,16 @@ pub mod metadata_client {
     impl<T> MetadataClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + Send + 'static,
         T::Error: Into<StdError>,
+        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
         <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
+            Self { inner }
+        }
+        pub fn with_origin(inner: T, origin: Uri) -> Self {
+            let inner = tonic::client::Grpc::with_origin(inner, origin);
             Self { inner }
         }
         pub fn with_interceptor<F>(
@@ -689,28 +706,32 @@ pub mod metadata_client {
         ) -> MetadataClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
+            T::ResponseBody: Default,
             T: tonic::codegen::Service<
                 http::Request<tonic::body::BoxBody>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
-                Into<StdError> + Send + Sync,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+            >>::Error: Into<StdError> + Send + Sync,
         {
             MetadataClient::new(InterceptedService::new(inner, interceptor))
         }
-        /// Compress requests with `gzip`.
+        /// Compress requests with the given encoding.
         ///
         /// This requires the server to support it otherwise it might respond with an
         /// error.
-        pub fn send_gzip(mut self) -> Self {
-            self.inner = self.inner.send_gzip();
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.send_compressed(encoding);
             self
         }
-        /// Enable decompressing responses with `gzip`.
-        pub fn accept_gzip(mut self) -> Self {
-            self.inner = self.inner.accept_gzip();
+        /// Enable decompressing responses.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.accept_compressed(encoding);
             self
         }
         /// Returns some server information. A test may use this information to verify
@@ -719,15 +740,19 @@ pub mod metadata_client {
             &mut self,
             request: impl tonic::IntoRequest<super::ServerInfoRequest>,
         ) -> Result<tonic::Response<super::ServerInfoResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path =
-                http::uri::PathAndQuery::from_static("/tink_testing_api.Metadata/GetServerInfo");
+            let path = http::uri::PathAndQuery::from_static(
+                "/tink_testing_api.Metadata/GetServerInfo",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
     }
@@ -736,6 +761,7 @@ pub mod metadata_client {
 pub mod keyset_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
     /// Service for Keyset operations.
     #[derive(Debug, Clone)]
     pub struct KeysetClient<T> {
@@ -755,12 +781,16 @@ pub mod keyset_client {
     impl<T> KeysetClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + Send + 'static,
         T::Error: Into<StdError>,
+        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
         <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
+            Self { inner }
+        }
+        pub fn with_origin(inner: T, origin: Uri) -> Self {
+            let inner = tonic::client::Grpc::with_origin(inner, origin);
             Self { inner }
         }
         pub fn with_interceptor<F>(
@@ -769,28 +799,32 @@ pub mod keyset_client {
         ) -> KeysetClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
+            T::ResponseBody: Default,
             T: tonic::codegen::Service<
                 http::Request<tonic::body::BoxBody>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
-                Into<StdError> + Send + Sync,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+            >>::Error: Into<StdError> + Send + Sync,
         {
             KeysetClient::new(InterceptedService::new(inner, interceptor))
         }
-        /// Compress requests with `gzip`.
+        /// Compress requests with the given encoding.
         ///
         /// This requires the server to support it otherwise it might respond with an
         /// error.
-        pub fn send_gzip(mut self) -> Self {
-            self.inner = self.inner.send_gzip();
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.send_compressed(encoding);
             self
         }
-        /// Enable decompressing responses with `gzip`.
-        pub fn accept_gzip(mut self) -> Self {
-            self.inner = self.inner.accept_gzip();
+        /// Enable decompressing responses.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.accept_compressed(encoding);
             self
         }
         /// Generates a key template from a key template name.
@@ -798,14 +832,19 @@ pub mod keyset_client {
             &mut self,
             request: impl tonic::IntoRequest<super::KeysetTemplateRequest>,
         ) -> Result<tonic::Response<super::KeysetTemplateResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/tink_testing_api.Keyset/GetTemplate");
+            let path = http::uri::PathAndQuery::from_static(
+                "/tink_testing_api.Keyset/GetTemplate",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
         /// Generates a new keyset from a template.
@@ -813,14 +852,19 @@ pub mod keyset_client {
             &mut self,
             request: impl tonic::IntoRequest<super::KeysetGenerateRequest>,
         ) -> Result<tonic::Response<super::KeysetGenerateResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/tink_testing_api.Keyset/Generate");
+            let path = http::uri::PathAndQuery::from_static(
+                "/tink_testing_api.Keyset/Generate",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
         /// Generates a public-key keyset from a private-key keyset.
@@ -828,14 +872,19 @@ pub mod keyset_client {
             &mut self,
             request: impl tonic::IntoRequest<super::KeysetPublicRequest>,
         ) -> Result<tonic::Response<super::KeysetPublicResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/tink_testing_api.Keyset/Public");
+            let path = http::uri::PathAndQuery::from_static(
+                "/tink_testing_api.Keyset/Public",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
         /// Converts a Keyset from Binary to Json Format
@@ -843,14 +892,19 @@ pub mod keyset_client {
             &mut self,
             request: impl tonic::IntoRequest<super::KeysetToJsonRequest>,
         ) -> Result<tonic::Response<super::KeysetToJsonResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/tink_testing_api.Keyset/ToJson");
+            let path = http::uri::PathAndQuery::from_static(
+                "/tink_testing_api.Keyset/ToJson",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
         /// Converts a Keyset from Json to Binary Format
@@ -858,14 +912,19 @@ pub mod keyset_client {
             &mut self,
             request: impl tonic::IntoRequest<super::KeysetFromJsonRequest>,
         ) -> Result<tonic::Response<super::KeysetFromJsonResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/tink_testing_api.Keyset/FromJson");
+            let path = http::uri::PathAndQuery::from_static(
+                "/tink_testing_api.Keyset/FromJson",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
     }
@@ -874,6 +933,7 @@ pub mod keyset_client {
 pub mod aead_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
     /// Service for AEAD encryption and decryption
     #[derive(Debug, Clone)]
     pub struct AeadClient<T> {
@@ -893,39 +953,50 @@ pub mod aead_client {
     impl<T> AeadClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + Send + 'static,
         T::Error: Into<StdError>,
+        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
         <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
             Self { inner }
         }
-        pub fn with_interceptor<F>(inner: T, interceptor: F) -> AeadClient<InterceptedService<T, F>>
+        pub fn with_origin(inner: T, origin: Uri) -> Self {
+            let inner = tonic::client::Grpc::with_origin(inner, origin);
+            Self { inner }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> AeadClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
+            T::ResponseBody: Default,
             T: tonic::codegen::Service<
                 http::Request<tonic::body::BoxBody>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
-                Into<StdError> + Send + Sync,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+            >>::Error: Into<StdError> + Send + Sync,
         {
             AeadClient::new(InterceptedService::new(inner, interceptor))
         }
-        /// Compress requests with `gzip`.
+        /// Compress requests with the given encoding.
         ///
         /// This requires the server to support it otherwise it might respond with an
         /// error.
-        pub fn send_gzip(mut self) -> Self {
-            self.inner = self.inner.send_gzip();
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.send_compressed(encoding);
             self
         }
-        /// Enable decompressing responses with `gzip`.
-        pub fn accept_gzip(mut self) -> Self {
-            self.inner = self.inner.accept_gzip();
+        /// Enable decompressing responses.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.accept_compressed(encoding);
             self
         }
         /// Encrypts a plaintext with the provided keyset
@@ -933,14 +1004,19 @@ pub mod aead_client {
             &mut self,
             request: impl tonic::IntoRequest<super::AeadEncryptRequest>,
         ) -> Result<tonic::Response<super::AeadEncryptResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/tink_testing_api.Aead/Encrypt");
+            let path = http::uri::PathAndQuery::from_static(
+                "/tink_testing_api.Aead/Encrypt",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
         /// Decrypts a ciphertext with the provided keyset
@@ -948,14 +1024,19 @@ pub mod aead_client {
             &mut self,
             request: impl tonic::IntoRequest<super::AeadDecryptRequest>,
         ) -> Result<tonic::Response<super::AeadDecryptResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/tink_testing_api.Aead/Decrypt");
+            let path = http::uri::PathAndQuery::from_static(
+                "/tink_testing_api.Aead/Decrypt",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
     }
@@ -964,6 +1045,7 @@ pub mod aead_client {
 pub mod deterministic_aead_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
     /// Service for Deterministic AEAD encryption and decryption
     #[derive(Debug, Clone)]
     pub struct DeterministicAeadClient<T> {
@@ -983,12 +1065,16 @@ pub mod deterministic_aead_client {
     impl<T> DeterministicAeadClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + Send + 'static,
         T::Error: Into<StdError>,
+        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
         <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
+            Self { inner }
+        }
+        pub fn with_origin(inner: T, origin: Uri) -> Self {
+            let inner = tonic::client::Grpc::with_origin(inner, origin);
             Self { inner }
         }
         pub fn with_interceptor<F>(
@@ -997,42 +1083,51 @@ pub mod deterministic_aead_client {
         ) -> DeterministicAeadClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
+            T::ResponseBody: Default,
             T: tonic::codegen::Service<
                 http::Request<tonic::body::BoxBody>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
-                Into<StdError> + Send + Sync,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+            >>::Error: Into<StdError> + Send + Sync,
         {
             DeterministicAeadClient::new(InterceptedService::new(inner, interceptor))
         }
-        /// Compress requests with `gzip`.
+        /// Compress requests with the given encoding.
         ///
         /// This requires the server to support it otherwise it might respond with an
         /// error.
-        pub fn send_gzip(mut self) -> Self {
-            self.inner = self.inner.send_gzip();
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.send_compressed(encoding);
             self
         }
-        /// Enable decompressing responses with `gzip`.
-        pub fn accept_gzip(mut self) -> Self {
-            self.inner = self.inner.accept_gzip();
+        /// Enable decompressing responses.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.accept_compressed(encoding);
             self
         }
         /// Encrypts a plaintext with the provided keyset
         pub async fn encrypt_deterministically(
             &mut self,
             request: impl tonic::IntoRequest<super::DeterministicAeadEncryptRequest>,
-        ) -> Result<tonic::Response<super::DeterministicAeadEncryptResponse>, tonic::Status>
-        {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+        ) -> Result<
+                tonic::Response<super::DeterministicAeadEncryptResponse>,
+                tonic::Status,
+            > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/tink_testing_api.DeterministicAead/EncryptDeterministically",
@@ -1043,14 +1138,19 @@ pub mod deterministic_aead_client {
         pub async fn decrypt_deterministically(
             &mut self,
             request: impl tonic::IntoRequest<super::DeterministicAeadDecryptRequest>,
-        ) -> Result<tonic::Response<super::DeterministicAeadDecryptResponse>, tonic::Status>
-        {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+        ) -> Result<
+                tonic::Response<super::DeterministicAeadDecryptResponse>,
+                tonic::Status,
+            > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/tink_testing_api.DeterministicAead/DecryptDeterministically",
@@ -1063,6 +1163,7 @@ pub mod deterministic_aead_client {
 pub mod streaming_aead_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
     /// Service for Streaming AEAD encryption and decryption
     #[derive(Debug, Clone)]
     pub struct StreamingAeadClient<T> {
@@ -1082,12 +1183,16 @@ pub mod streaming_aead_client {
     impl<T> StreamingAeadClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + Send + 'static,
         T::Error: Into<StdError>,
+        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
         <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
+            Self { inner }
+        }
+        pub fn with_origin(inner: T, origin: Uri) -> Self {
+            let inner = tonic::client::Grpc::with_origin(inner, origin);
             Self { inner }
         }
         pub fn with_interceptor<F>(
@@ -1096,60 +1201,78 @@ pub mod streaming_aead_client {
         ) -> StreamingAeadClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
+            T::ResponseBody: Default,
             T: tonic::codegen::Service<
                 http::Request<tonic::body::BoxBody>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
-                Into<StdError> + Send + Sync,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+            >>::Error: Into<StdError> + Send + Sync,
         {
             StreamingAeadClient::new(InterceptedService::new(inner, interceptor))
         }
-        /// Compress requests with `gzip`.
+        /// Compress requests with the given encoding.
         ///
         /// This requires the server to support it otherwise it might respond with an
         /// error.
-        pub fn send_gzip(mut self) -> Self {
-            self.inner = self.inner.send_gzip();
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.send_compressed(encoding);
             self
         }
-        /// Enable decompressing responses with `gzip`.
-        pub fn accept_gzip(mut self) -> Self {
-            self.inner = self.inner.accept_gzip();
+        /// Enable decompressing responses.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.accept_compressed(encoding);
             self
         }
         /// Encrypts a plaintext with the provided keyset
         pub async fn encrypt(
             &mut self,
             request: impl tonic::IntoRequest<super::StreamingAeadEncryptRequest>,
-        ) -> Result<tonic::Response<super::StreamingAeadEncryptResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+        ) -> Result<
+                tonic::Response<super::StreamingAeadEncryptResponse>,
+                tonic::Status,
+            > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path =
-                http::uri::PathAndQuery::from_static("/tink_testing_api.StreamingAead/Encrypt");
+            let path = http::uri::PathAndQuery::from_static(
+                "/tink_testing_api.StreamingAead/Encrypt",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
         /// Decrypts a ciphertext with the provided keyset
         pub async fn decrypt(
             &mut self,
             request: impl tonic::IntoRequest<super::StreamingAeadDecryptRequest>,
-        ) -> Result<tonic::Response<super::StreamingAeadDecryptResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+        ) -> Result<
+                tonic::Response<super::StreamingAeadDecryptResponse>,
+                tonic::Status,
+            > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path =
-                http::uri::PathAndQuery::from_static("/tink_testing_api.StreamingAead/Decrypt");
+            let path = http::uri::PathAndQuery::from_static(
+                "/tink_testing_api.StreamingAead/Decrypt",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
     }
@@ -1158,6 +1281,7 @@ pub mod streaming_aead_client {
 pub mod mac_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
     /// Service to compute and verify MACs
     #[derive(Debug, Clone)]
     pub struct MacClient<T> {
@@ -1177,39 +1301,50 @@ pub mod mac_client {
     impl<T> MacClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + Send + 'static,
         T::Error: Into<StdError>,
+        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
         <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
             Self { inner }
         }
-        pub fn with_interceptor<F>(inner: T, interceptor: F) -> MacClient<InterceptedService<T, F>>
+        pub fn with_origin(inner: T, origin: Uri) -> Self {
+            let inner = tonic::client::Grpc::with_origin(inner, origin);
+            Self { inner }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> MacClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
+            T::ResponseBody: Default,
             T: tonic::codegen::Service<
                 http::Request<tonic::body::BoxBody>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
-                Into<StdError> + Send + Sync,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+            >>::Error: Into<StdError> + Send + Sync,
         {
             MacClient::new(InterceptedService::new(inner, interceptor))
         }
-        /// Compress requests with `gzip`.
+        /// Compress requests with the given encoding.
         ///
         /// This requires the server to support it otherwise it might respond with an
         /// error.
-        pub fn send_gzip(mut self) -> Self {
-            self.inner = self.inner.send_gzip();
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.send_compressed(encoding);
             self
         }
-        /// Enable decompressing responses with `gzip`.
-        pub fn accept_gzip(mut self) -> Self {
-            self.inner = self.inner.accept_gzip();
+        /// Enable decompressing responses.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.accept_compressed(encoding);
             self
         }
         /// Computes a MAC for given data
@@ -1217,14 +1352,19 @@ pub mod mac_client {
             &mut self,
             request: impl tonic::IntoRequest<super::ComputeMacRequest>,
         ) -> Result<tonic::Response<super::ComputeMacResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/tink_testing_api.Mac/ComputeMac");
+            let path = http::uri::PathAndQuery::from_static(
+                "/tink_testing_api.Mac/ComputeMac",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
         /// Verifies the validity of the MAC value, no error means success
@@ -1232,14 +1372,19 @@ pub mod mac_client {
             &mut self,
             request: impl tonic::IntoRequest<super::VerifyMacRequest>,
         ) -> Result<tonic::Response<super::VerifyMacResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/tink_testing_api.Mac/VerifyMac");
+            let path = http::uri::PathAndQuery::from_static(
+                "/tink_testing_api.Mac/VerifyMac",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
     }
@@ -1248,6 +1393,7 @@ pub mod mac_client {
 pub mod hybrid_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
     /// Service to hybrid encrypt and decrypt
     #[derive(Debug, Clone)]
     pub struct HybridClient<T> {
@@ -1267,12 +1413,16 @@ pub mod hybrid_client {
     impl<T> HybridClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + Send + 'static,
         T::Error: Into<StdError>,
+        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
         <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
+            Self { inner }
+        }
+        pub fn with_origin(inner: T, origin: Uri) -> Self {
+            let inner = tonic::client::Grpc::with_origin(inner, origin);
             Self { inner }
         }
         pub fn with_interceptor<F>(
@@ -1281,28 +1431,32 @@ pub mod hybrid_client {
         ) -> HybridClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
+            T::ResponseBody: Default,
             T: tonic::codegen::Service<
                 http::Request<tonic::body::BoxBody>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
-                Into<StdError> + Send + Sync,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+            >>::Error: Into<StdError> + Send + Sync,
         {
             HybridClient::new(InterceptedService::new(inner, interceptor))
         }
-        /// Compress requests with `gzip`.
+        /// Compress requests with the given encoding.
         ///
         /// This requires the server to support it otherwise it might respond with an
         /// error.
-        pub fn send_gzip(mut self) -> Self {
-            self.inner = self.inner.send_gzip();
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.send_compressed(encoding);
             self
         }
-        /// Enable decompressing responses with `gzip`.
-        pub fn accept_gzip(mut self) -> Self {
-            self.inner = self.inner.accept_gzip();
+        /// Enable decompressing responses.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.accept_compressed(encoding);
             self
         }
         /// Encrypts plaintext binding context_info to the resulting ciphertext
@@ -1310,14 +1464,19 @@ pub mod hybrid_client {
             &mut self,
             request: impl tonic::IntoRequest<super::HybridEncryptRequest>,
         ) -> Result<tonic::Response<super::HybridEncryptResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/tink_testing_api.Hybrid/Encrypt");
+            let path = http::uri::PathAndQuery::from_static(
+                "/tink_testing_api.Hybrid/Encrypt",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
         /// Decrypts ciphertext verifying the integrity of context_info
@@ -1325,14 +1484,19 @@ pub mod hybrid_client {
             &mut self,
             request: impl tonic::IntoRequest<super::HybridDecryptRequest>,
         ) -> Result<tonic::Response<super::HybridDecryptResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/tink_testing_api.Hybrid/Decrypt");
+            let path = http::uri::PathAndQuery::from_static(
+                "/tink_testing_api.Hybrid/Decrypt",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
     }
@@ -1341,6 +1505,7 @@ pub mod hybrid_client {
 pub mod signature_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
     /// Service to sign and verify signatures.
     #[derive(Debug, Clone)]
     pub struct SignatureClient<T> {
@@ -1360,12 +1525,16 @@ pub mod signature_client {
     impl<T> SignatureClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + Send + 'static,
         T::Error: Into<StdError>,
+        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
         <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
+            Self { inner }
+        }
+        pub fn with_origin(inner: T, origin: Uri) -> Self {
+            let inner = tonic::client::Grpc::with_origin(inner, origin);
             Self { inner }
         }
         pub fn with_interceptor<F>(
@@ -1374,28 +1543,32 @@ pub mod signature_client {
         ) -> SignatureClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
+            T::ResponseBody: Default,
             T: tonic::codegen::Service<
                 http::Request<tonic::body::BoxBody>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
-                Into<StdError> + Send + Sync,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+            >>::Error: Into<StdError> + Send + Sync,
         {
             SignatureClient::new(InterceptedService::new(inner, interceptor))
         }
-        /// Compress requests with `gzip`.
+        /// Compress requests with the given encoding.
         ///
         /// This requires the server to support it otherwise it might respond with an
         /// error.
-        pub fn send_gzip(mut self) -> Self {
-            self.inner = self.inner.send_gzip();
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.send_compressed(encoding);
             self
         }
-        /// Enable decompressing responses with `gzip`.
-        pub fn accept_gzip(mut self) -> Self {
-            self.inner = self.inner.accept_gzip();
+        /// Enable decompressing responses.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.accept_compressed(encoding);
             self
         }
         /// Computes the signature for data
@@ -1403,14 +1576,19 @@ pub mod signature_client {
             &mut self,
             request: impl tonic::IntoRequest<super::SignatureSignRequest>,
         ) -> Result<tonic::Response<super::SignatureSignResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/tink_testing_api.Signature/Sign");
+            let path = http::uri::PathAndQuery::from_static(
+                "/tink_testing_api.Signature/Sign",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
         /// Verifies that signature is a digital signature for data
@@ -1418,14 +1596,19 @@ pub mod signature_client {
             &mut self,
             request: impl tonic::IntoRequest<super::SignatureVerifyRequest>,
         ) -> Result<tonic::Response<super::SignatureVerifyResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/tink_testing_api.Signature/Verify");
+            let path = http::uri::PathAndQuery::from_static(
+                "/tink_testing_api.Signature/Verify",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
     }
@@ -1434,6 +1617,7 @@ pub mod signature_client {
 pub mod prf_set_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
     /// Service for PrfSet computation
     #[derive(Debug, Clone)]
     pub struct PrfSetClient<T> {
@@ -1453,12 +1637,16 @@ pub mod prf_set_client {
     impl<T> PrfSetClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + Send + 'static,
         T::Error: Into<StdError>,
+        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
         <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
+            Self { inner }
+        }
+        pub fn with_origin(inner: T, origin: Uri) -> Self {
+            let inner = tonic::client::Grpc::with_origin(inner, origin);
             Self { inner }
         }
         pub fn with_interceptor<F>(
@@ -1467,28 +1655,32 @@ pub mod prf_set_client {
         ) -> PrfSetClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
+            T::ResponseBody: Default,
             T: tonic::codegen::Service<
                 http::Request<tonic::body::BoxBody>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
-                Into<StdError> + Send + Sync,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+            >>::Error: Into<StdError> + Send + Sync,
         {
             PrfSetClient::new(InterceptedService::new(inner, interceptor))
         }
-        /// Compress requests with `gzip`.
+        /// Compress requests with the given encoding.
         ///
         /// This requires the server to support it otherwise it might respond with an
         /// error.
-        pub fn send_gzip(mut self) -> Self {
-            self.inner = self.inner.send_gzip();
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.send_compressed(encoding);
             self
         }
-        /// Enable decompressing responses with `gzip`.
-        pub fn accept_gzip(mut self) -> Self {
-            self.inner = self.inner.accept_gzip();
+        /// Enable decompressing responses.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.accept_compressed(encoding);
             self
         }
         /// Returns the key ids and the primary key id in the keyset.
@@ -1496,14 +1688,19 @@ pub mod prf_set_client {
             &mut self,
             request: impl tonic::IntoRequest<super::PrfSetKeyIdsRequest>,
         ) -> Result<tonic::Response<super::PrfSetKeyIdsResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/tink_testing_api.PrfSet/KeyIds");
+            let path = http::uri::PathAndQuery::from_static(
+                "/tink_testing_api.PrfSet/KeyIds",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
         /// Computes the output of the PRF with the given key_id in the PrfSet.
@@ -1511,14 +1708,19 @@ pub mod prf_set_client {
             &mut self,
             request: impl tonic::IntoRequest<super::PrfSetComputeRequest>,
         ) -> Result<tonic::Response<super::PrfSetComputeResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/tink_testing_api.PrfSet/Compute");
+            let path = http::uri::PathAndQuery::from_static(
+                "/tink_testing_api.PrfSet/Compute",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
     }
@@ -1527,6 +1729,7 @@ pub mod prf_set_client {
 pub mod jwt_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
     /// Service for JSON Web Tokens (JWT)
     #[derive(Debug, Clone)]
     pub struct JwtClient<T> {
@@ -1546,39 +1749,50 @@ pub mod jwt_client {
     impl<T> JwtClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
-        T::ResponseBody: Body + Send + 'static,
         T::Error: Into<StdError>,
+        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
         <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
             Self { inner }
         }
-        pub fn with_interceptor<F>(inner: T, interceptor: F) -> JwtClient<InterceptedService<T, F>>
+        pub fn with_origin(inner: T, origin: Uri) -> Self {
+            let inner = tonic::client::Grpc::with_origin(inner, origin);
+            Self { inner }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> JwtClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
+            T::ResponseBody: Default,
             T: tonic::codegen::Service<
                 http::Request<tonic::body::BoxBody>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
-                Into<StdError> + Send + Sync,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+            >>::Error: Into<StdError> + Send + Sync,
         {
             JwtClient::new(InterceptedService::new(inner, interceptor))
         }
-        /// Compress requests with `gzip`.
+        /// Compress requests with the given encoding.
         ///
         /// This requires the server to support it otherwise it might respond with an
         /// error.
-        pub fn send_gzip(mut self) -> Self {
-            self.inner = self.inner.send_gzip();
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.send_compressed(encoding);
             self
         }
-        /// Enable decompressing responses with `gzip`.
-        pub fn accept_gzip(mut self) -> Self {
-            self.inner = self.inner.accept_gzip();
+        /// Enable decompressing responses.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.accept_compressed(encoding);
             self
         }
         /// Computes a signed compact JWT token.
@@ -1586,15 +1800,19 @@ pub mod jwt_client {
             &mut self,
             request: impl tonic::IntoRequest<super::JwtSignRequest>,
         ) -> Result<tonic::Response<super::JwtSignResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path =
-                http::uri::PathAndQuery::from_static("/tink_testing_api.Jwt/ComputeMacAndEncode");
+            let path = http::uri::PathAndQuery::from_static(
+                "/tink_testing_api.Jwt/ComputeMacAndEncode",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
         /// Verifies the validity of the signed compact JWT token
@@ -1602,15 +1820,19 @@ pub mod jwt_client {
             &mut self,
             request: impl tonic::IntoRequest<super::JwtVerifyRequest>,
         ) -> Result<tonic::Response<super::JwtVerifyResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path =
-                http::uri::PathAndQuery::from_static("/tink_testing_api.Jwt/VerifyMacAndDecode");
+            let path = http::uri::PathAndQuery::from_static(
+                "/tink_testing_api.Jwt/VerifyMacAndDecode",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
         /// Computes a signed compact JWT token.
@@ -1618,12 +1840,15 @@ pub mod jwt_client {
             &mut self,
             request: impl tonic::IntoRequest<super::JwtSignRequest>,
         ) -> Result<tonic::Response<super::JwtSignResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/tink_testing_api.Jwt/PublicKeySignAndEncode",
@@ -1635,12 +1860,15 @@ pub mod jwt_client {
             &mut self,
             request: impl tonic::IntoRequest<super::JwtVerifyRequest>,
         ) -> Result<tonic::Response<super::JwtVerifyResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/tink_testing_api.Jwt/PublicKeyVerifyAndDecode",
@@ -1652,14 +1880,19 @@ pub mod jwt_client {
             &mut self,
             request: impl tonic::IntoRequest<super::JwtToJwkSetRequest>,
         ) -> Result<tonic::Response<super::JwtToJwkSetResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/tink_testing_api.Jwt/ToJwkSet");
+            let path = http::uri::PathAndQuery::from_static(
+                "/tink_testing_api.Jwt/ToJwkSet",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
         /// Converts a Keyset from JWK Set to Tink Binary Format
@@ -1667,14 +1900,19 @@ pub mod jwt_client {
             &mut self,
             request: impl tonic::IntoRequest<super::JwtFromJwkSetRequest>,
         ) -> Result<tonic::Response<super::JwtFromJwkSetResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/tink_testing_api.Jwt/FromJwkSet");
+            let path = http::uri::PathAndQuery::from_static(
+                "/tink_testing_api.Jwt/FromJwkSet",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
     }
@@ -1683,8 +1921,7 @@ pub mod jwt_client {
 pub mod metadata_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with
-    /// MetadataServer.
+    ///Generated trait containing gRPC methods that should be implemented for use with MetadataServer.
     #[async_trait]
     pub trait Metadata: Send + Sync + 'static {
         /// Returns some server information. A test may use this information to verify
@@ -1698,13 +1935,15 @@ pub mod metadata_server {
     #[derive(Debug)]
     pub struct MetadataServer<T: Metadata> {
         inner: _Inner<T>,
-        accept_compression_encodings: (),
-        send_compression_encodings: (),
+        accept_compression_encodings: EnabledCompressionEncodings,
+        send_compression_encodings: EnabledCompressionEncodings,
     }
     struct _Inner<T>(Arc<T>);
     impl<T: Metadata> MetadataServer<T> {
         pub fn new(inner: T) -> Self {
-            let inner = Arc::new(inner);
+            Self::from_arc(Arc::new(inner))
+        }
+        pub fn from_arc(inner: Arc<T>) -> Self {
             let inner = _Inner(inner);
             Self {
                 inner,
@@ -1712,11 +1951,26 @@ pub mod metadata_server {
                 send_compression_encodings: Default::default(),
             }
         }
-        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
             InterceptedService::new(Self::new(inner), interceptor)
+        }
+        /// Enable decompressing requests with the given encoding.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.accept_compression_encodings.enable(encoding);
+            self
+        }
+        /// Compress responses with the given encoding, if the client supports it.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.send_compression_encodings.enable(encoding);
+            self
         }
     }
     impl<T, B> tonic::codegen::Service<http::Request<B>> for MetadataServer<T>
@@ -1726,9 +1980,12 @@ pub mod metadata_server {
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
-        type Error = Never;
+        type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
@@ -1737,15 +1994,23 @@ pub mod metadata_server {
                 "/tink_testing_api.Metadata/GetServerInfo" => {
                     #[allow(non_camel_case_types)]
                     struct GetServerInfoSvc<T: Metadata>(pub Arc<T>);
-                    impl<T: Metadata> tonic::server::UnaryService<super::ServerInfoRequest> for GetServerInfoSvc<T> {
+                    impl<
+                        T: Metadata,
+                    > tonic::server::UnaryService<super::ServerInfoRequest>
+                    for GetServerInfoSvc<T> {
                         type Response = super::ServerInfoResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::ServerInfoRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move { (*inner).get_server_info(request).await };
+                            let fut = async move {
+                                (*inner).get_server_info(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -1756,23 +2021,28 @@ pub mod metadata_server {
                         let inner = inner.0;
                         let method = GetServerInfoSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
                     Box::pin(fut)
                 }
-                _ => Box::pin(async move {
-                    Ok(http::Response::builder()
-                        .status(200)
-                        .header("grpc-status", "12")
-                        .header("content-type", "application/grpc")
-                        .body(empty_body())
-                        .unwrap())
-                }),
+                _ => {
+                    Box::pin(async move {
+                        Ok(
+                            http::Response::builder()
+                                .status(200)
+                                .header("grpc-status", "12")
+                                .header("content-type", "application/grpc")
+                                .body(empty_body())
+                                .unwrap(),
+                        )
+                    })
+                }
             }
         }
     }
@@ -1796,7 +2066,7 @@ pub mod metadata_server {
             write!(f, "{:?}", self.0)
         }
     }
-    impl<T: Metadata> tonic::transport::NamedService for MetadataServer<T> {
+    impl<T: Metadata> tonic::server::NamedService for MetadataServer<T> {
         const NAME: &'static str = "tink_testing_api.Metadata";
     }
 }
@@ -1804,8 +2074,7 @@ pub mod metadata_server {
 pub mod keyset_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with
-    /// KeysetServer.
+    ///Generated trait containing gRPC methods that should be implemented for use with KeysetServer.
     #[async_trait]
     pub trait Keyset: Send + Sync + 'static {
         /// Generates a key template from a key template name.
@@ -1838,13 +2107,15 @@ pub mod keyset_server {
     #[derive(Debug)]
     pub struct KeysetServer<T: Keyset> {
         inner: _Inner<T>,
-        accept_compression_encodings: (),
-        send_compression_encodings: (),
+        accept_compression_encodings: EnabledCompressionEncodings,
+        send_compression_encodings: EnabledCompressionEncodings,
     }
     struct _Inner<T>(Arc<T>);
     impl<T: Keyset> KeysetServer<T> {
         pub fn new(inner: T) -> Self {
-            let inner = Arc::new(inner);
+            Self::from_arc(Arc::new(inner))
+        }
+        pub fn from_arc(inner: Arc<T>) -> Self {
             let inner = _Inner(inner);
             Self {
                 inner,
@@ -1852,11 +2123,26 @@ pub mod keyset_server {
                 send_compression_encodings: Default::default(),
             }
         }
-        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
             InterceptedService::new(Self::new(inner), interceptor)
+        }
+        /// Enable decompressing requests with the given encoding.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.accept_compression_encodings.enable(encoding);
+            self
+        }
+        /// Compress responses with the given encoding, if the client supports it.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.send_compression_encodings.enable(encoding);
+            self
         }
     }
     impl<T, B> tonic::codegen::Service<http::Request<B>> for KeysetServer<T>
@@ -1866,9 +2152,12 @@ pub mod keyset_server {
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
-        type Error = Never;
+        type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
@@ -1877,15 +2166,23 @@ pub mod keyset_server {
                 "/tink_testing_api.Keyset/GetTemplate" => {
                     #[allow(non_camel_case_types)]
                     struct GetTemplateSvc<T: Keyset>(pub Arc<T>);
-                    impl<T: Keyset> tonic::server::UnaryService<super::KeysetTemplateRequest> for GetTemplateSvc<T> {
+                    impl<
+                        T: Keyset,
+                    > tonic::server::UnaryService<super::KeysetTemplateRequest>
+                    for GetTemplateSvc<T> {
                         type Response = super::KeysetTemplateResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::KeysetTemplateRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move { (*inner).get_template(request).await };
+                            let fut = async move {
+                                (*inner).get_template(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -1896,10 +2193,11 @@ pub mod keyset_server {
                         let inner = inner.0;
                         let method = GetTemplateSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -1908,9 +2206,15 @@ pub mod keyset_server {
                 "/tink_testing_api.Keyset/Generate" => {
                     #[allow(non_camel_case_types)]
                     struct GenerateSvc<T: Keyset>(pub Arc<T>);
-                    impl<T: Keyset> tonic::server::UnaryService<super::KeysetGenerateRequest> for GenerateSvc<T> {
+                    impl<
+                        T: Keyset,
+                    > tonic::server::UnaryService<super::KeysetGenerateRequest>
+                    for GenerateSvc<T> {
                         type Response = super::KeysetGenerateResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::KeysetGenerateRequest>,
@@ -1927,10 +2231,11 @@ pub mod keyset_server {
                         let inner = inner.0;
                         let method = GenerateSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -1939,9 +2244,15 @@ pub mod keyset_server {
                 "/tink_testing_api.Keyset/Public" => {
                     #[allow(non_camel_case_types)]
                     struct PublicSvc<T: Keyset>(pub Arc<T>);
-                    impl<T: Keyset> tonic::server::UnaryService<super::KeysetPublicRequest> for PublicSvc<T> {
+                    impl<
+                        T: Keyset,
+                    > tonic::server::UnaryService<super::KeysetPublicRequest>
+                    for PublicSvc<T> {
                         type Response = super::KeysetPublicResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::KeysetPublicRequest>,
@@ -1958,10 +2269,11 @@ pub mod keyset_server {
                         let inner = inner.0;
                         let method = PublicSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -1970,9 +2282,15 @@ pub mod keyset_server {
                 "/tink_testing_api.Keyset/ToJson" => {
                     #[allow(non_camel_case_types)]
                     struct ToJsonSvc<T: Keyset>(pub Arc<T>);
-                    impl<T: Keyset> tonic::server::UnaryService<super::KeysetToJsonRequest> for ToJsonSvc<T> {
+                    impl<
+                        T: Keyset,
+                    > tonic::server::UnaryService<super::KeysetToJsonRequest>
+                    for ToJsonSvc<T> {
                         type Response = super::KeysetToJsonResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::KeysetToJsonRequest>,
@@ -1989,10 +2307,11 @@ pub mod keyset_server {
                         let inner = inner.0;
                         let method = ToJsonSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2001,9 +2320,15 @@ pub mod keyset_server {
                 "/tink_testing_api.Keyset/FromJson" => {
                     #[allow(non_camel_case_types)]
                     struct FromJsonSvc<T: Keyset>(pub Arc<T>);
-                    impl<T: Keyset> tonic::server::UnaryService<super::KeysetFromJsonRequest> for FromJsonSvc<T> {
+                    impl<
+                        T: Keyset,
+                    > tonic::server::UnaryService<super::KeysetFromJsonRequest>
+                    for FromJsonSvc<T> {
                         type Response = super::KeysetFromJsonResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::KeysetFromJsonRequest>,
@@ -2020,23 +2345,28 @@ pub mod keyset_server {
                         let inner = inner.0;
                         let method = FromJsonSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
                     Box::pin(fut)
                 }
-                _ => Box::pin(async move {
-                    Ok(http::Response::builder()
-                        .status(200)
-                        .header("grpc-status", "12")
-                        .header("content-type", "application/grpc")
-                        .body(empty_body())
-                        .unwrap())
-                }),
+                _ => {
+                    Box::pin(async move {
+                        Ok(
+                            http::Response::builder()
+                                .status(200)
+                                .header("grpc-status", "12")
+                                .header("content-type", "application/grpc")
+                                .body(empty_body())
+                                .unwrap(),
+                        )
+                    })
+                }
             }
         }
     }
@@ -2060,7 +2390,7 @@ pub mod keyset_server {
             write!(f, "{:?}", self.0)
         }
     }
-    impl<T: Keyset> tonic::transport::NamedService for KeysetServer<T> {
+    impl<T: Keyset> tonic::server::NamedService for KeysetServer<T> {
         const NAME: &'static str = "tink_testing_api.Keyset";
     }
 }
@@ -2086,13 +2416,15 @@ pub mod aead_server {
     #[derive(Debug)]
     pub struct AeadServer<T: Aead> {
         inner: _Inner<T>,
-        accept_compression_encodings: (),
-        send_compression_encodings: (),
+        accept_compression_encodings: EnabledCompressionEncodings,
+        send_compression_encodings: EnabledCompressionEncodings,
     }
     struct _Inner<T>(Arc<T>);
     impl<T: Aead> AeadServer<T> {
         pub fn new(inner: T) -> Self {
-            let inner = Arc::new(inner);
+            Self::from_arc(Arc::new(inner))
+        }
+        pub fn from_arc(inner: Arc<T>) -> Self {
             let inner = _Inner(inner);
             Self {
                 inner,
@@ -2100,11 +2432,26 @@ pub mod aead_server {
                 send_compression_encodings: Default::default(),
             }
         }
-        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
             InterceptedService::new(Self::new(inner), interceptor)
+        }
+        /// Enable decompressing requests with the given encoding.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.accept_compression_encodings.enable(encoding);
+            self
+        }
+        /// Compress responses with the given encoding, if the client supports it.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.send_compression_encodings.enable(encoding);
+            self
         }
     }
     impl<T, B> tonic::codegen::Service<http::Request<B>> for AeadServer<T>
@@ -2114,9 +2461,12 @@ pub mod aead_server {
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
-        type Error = Never;
+        type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
@@ -2125,9 +2475,13 @@ pub mod aead_server {
                 "/tink_testing_api.Aead/Encrypt" => {
                     #[allow(non_camel_case_types)]
                     struct EncryptSvc<T: Aead>(pub Arc<T>);
-                    impl<T: Aead> tonic::server::UnaryService<super::AeadEncryptRequest> for EncryptSvc<T> {
+                    impl<T: Aead> tonic::server::UnaryService<super::AeadEncryptRequest>
+                    for EncryptSvc<T> {
                         type Response = super::AeadEncryptResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::AeadEncryptRequest>,
@@ -2144,10 +2498,11 @@ pub mod aead_server {
                         let inner = inner.0;
                         let method = EncryptSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2156,9 +2511,13 @@ pub mod aead_server {
                 "/tink_testing_api.Aead/Decrypt" => {
                     #[allow(non_camel_case_types)]
                     struct DecryptSvc<T: Aead>(pub Arc<T>);
-                    impl<T: Aead> tonic::server::UnaryService<super::AeadDecryptRequest> for DecryptSvc<T> {
+                    impl<T: Aead> tonic::server::UnaryService<super::AeadDecryptRequest>
+                    for DecryptSvc<T> {
                         type Response = super::AeadDecryptResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::AeadDecryptRequest>,
@@ -2175,23 +2534,28 @@ pub mod aead_server {
                         let inner = inner.0;
                         let method = DecryptSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
                     Box::pin(fut)
                 }
-                _ => Box::pin(async move {
-                    Ok(http::Response::builder()
-                        .status(200)
-                        .header("grpc-status", "12")
-                        .header("content-type", "application/grpc")
-                        .body(empty_body())
-                        .unwrap())
-                }),
+                _ => {
+                    Box::pin(async move {
+                        Ok(
+                            http::Response::builder()
+                                .status(200)
+                                .header("grpc-status", "12")
+                                .header("content-type", "application/grpc")
+                                .body(empty_body())
+                                .unwrap(),
+                        )
+                    })
+                }
             }
         }
     }
@@ -2215,7 +2579,7 @@ pub mod aead_server {
             write!(f, "{:?}", self.0)
         }
     }
-    impl<T: Aead> tonic::transport::NamedService for AeadServer<T> {
+    impl<T: Aead> tonic::server::NamedService for AeadServer<T> {
         const NAME: &'static str = "tink_testing_api.Aead";
     }
 }
@@ -2223,32 +2587,39 @@ pub mod aead_server {
 pub mod deterministic_aead_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with
-    /// DeterministicAeadServer.
+    ///Generated trait containing gRPC methods that should be implemented for use with DeterministicAeadServer.
     #[async_trait]
     pub trait DeterministicAead: Send + Sync + 'static {
         /// Encrypts a plaintext with the provided keyset
         async fn encrypt_deterministically(
             &self,
             request: tonic::Request<super::DeterministicAeadEncryptRequest>,
-        ) -> Result<tonic::Response<super::DeterministicAeadEncryptResponse>, tonic::Status>;
+        ) -> Result<
+                tonic::Response<super::DeterministicAeadEncryptResponse>,
+                tonic::Status,
+            >;
         /// Decrypts a ciphertext with the provided keyset
         async fn decrypt_deterministically(
             &self,
             request: tonic::Request<super::DeterministicAeadDecryptRequest>,
-        ) -> Result<tonic::Response<super::DeterministicAeadDecryptResponse>, tonic::Status>;
+        ) -> Result<
+                tonic::Response<super::DeterministicAeadDecryptResponse>,
+                tonic::Status,
+            >;
     }
     /// Service for Deterministic AEAD encryption and decryption
     #[derive(Debug)]
     pub struct DeterministicAeadServer<T: DeterministicAead> {
         inner: _Inner<T>,
-        accept_compression_encodings: (),
-        send_compression_encodings: (),
+        accept_compression_encodings: EnabledCompressionEncodings,
+        send_compression_encodings: EnabledCompressionEncodings,
     }
     struct _Inner<T>(Arc<T>);
     impl<T: DeterministicAead> DeterministicAeadServer<T> {
         pub fn new(inner: T) -> Self {
-            let inner = Arc::new(inner);
+            Self::from_arc(Arc::new(inner))
+        }
+        pub fn from_arc(inner: Arc<T>) -> Self {
             let inner = _Inner(inner);
             Self {
                 inner,
@@ -2256,11 +2627,26 @@ pub mod deterministic_aead_server {
                 send_compression_encodings: Default::default(),
             }
         }
-        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
             InterceptedService::new(Self::new(inner), interceptor)
+        }
+        /// Enable decompressing requests with the given encoding.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.accept_compression_encodings.enable(encoding);
+            self
+        }
+        /// Compress responses with the given encoding, if the client supports it.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.send_compression_encodings.enable(encoding);
+            self
         }
     }
     impl<T, B> tonic::codegen::Service<http::Request<B>> for DeterministicAeadServer<T>
@@ -2270,9 +2656,12 @@ pub mod deterministic_aead_server {
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
-        type Error = Never;
+        type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
@@ -2281,19 +2670,25 @@ pub mod deterministic_aead_server {
                 "/tink_testing_api.DeterministicAead/EncryptDeterministically" => {
                     #[allow(non_camel_case_types)]
                     struct EncryptDeterministicallySvc<T: DeterministicAead>(pub Arc<T>);
-                    impl<T: DeterministicAead>
-                        tonic::server::UnaryService<super::DeterministicAeadEncryptRequest>
-                        for EncryptDeterministicallySvc<T>
-                    {
+                    impl<
+                        T: DeterministicAead,
+                    > tonic::server::UnaryService<super::DeterministicAeadEncryptRequest>
+                    for EncryptDeterministicallySvc<T> {
                         type Response = super::DeterministicAeadEncryptResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
-                            request: tonic::Request<super::DeterministicAeadEncryptRequest>,
+                            request: tonic::Request<
+                                super::DeterministicAeadEncryptRequest,
+                            >,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut =
-                                async move { (*inner).encrypt_deterministically(request).await };
+                            let fut = async move {
+                                (*inner).encrypt_deterministically(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -2304,10 +2699,11 @@ pub mod deterministic_aead_server {
                         let inner = inner.0;
                         let method = EncryptDeterministicallySvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2316,19 +2712,25 @@ pub mod deterministic_aead_server {
                 "/tink_testing_api.DeterministicAead/DecryptDeterministically" => {
                     #[allow(non_camel_case_types)]
                     struct DecryptDeterministicallySvc<T: DeterministicAead>(pub Arc<T>);
-                    impl<T: DeterministicAead>
-                        tonic::server::UnaryService<super::DeterministicAeadDecryptRequest>
-                        for DecryptDeterministicallySvc<T>
-                    {
+                    impl<
+                        T: DeterministicAead,
+                    > tonic::server::UnaryService<super::DeterministicAeadDecryptRequest>
+                    for DecryptDeterministicallySvc<T> {
                         type Response = super::DeterministicAeadDecryptResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
-                            request: tonic::Request<super::DeterministicAeadDecryptRequest>,
+                            request: tonic::Request<
+                                super::DeterministicAeadDecryptRequest,
+                            >,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut =
-                                async move { (*inner).decrypt_deterministically(request).await };
+                            let fut = async move {
+                                (*inner).decrypt_deterministically(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -2339,23 +2741,28 @@ pub mod deterministic_aead_server {
                         let inner = inner.0;
                         let method = DecryptDeterministicallySvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
                     Box::pin(fut)
                 }
-                _ => Box::pin(async move {
-                    Ok(http::Response::builder()
-                        .status(200)
-                        .header("grpc-status", "12")
-                        .header("content-type", "application/grpc")
-                        .body(empty_body())
-                        .unwrap())
-                }),
+                _ => {
+                    Box::pin(async move {
+                        Ok(
+                            http::Response::builder()
+                                .status(200)
+                                .header("grpc-status", "12")
+                                .header("content-type", "application/grpc")
+                                .body(empty_body())
+                                .unwrap(),
+                        )
+                    })
+                }
             }
         }
     }
@@ -2379,7 +2786,8 @@ pub mod deterministic_aead_server {
             write!(f, "{:?}", self.0)
         }
     }
-    impl<T: DeterministicAead> tonic::transport::NamedService for DeterministicAeadServer<T> {
+    impl<T: DeterministicAead> tonic::server::NamedService
+    for DeterministicAeadServer<T> {
         const NAME: &'static str = "tink_testing_api.DeterministicAead";
     }
 }
@@ -2387,8 +2795,7 @@ pub mod deterministic_aead_server {
 pub mod streaming_aead_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with
-    /// StreamingAeadServer.
+    ///Generated trait containing gRPC methods that should be implemented for use with StreamingAeadServer.
     #[async_trait]
     pub trait StreamingAead: Send + Sync + 'static {
         /// Encrypts a plaintext with the provided keyset
@@ -2406,13 +2813,15 @@ pub mod streaming_aead_server {
     #[derive(Debug)]
     pub struct StreamingAeadServer<T: StreamingAead> {
         inner: _Inner<T>,
-        accept_compression_encodings: (),
-        send_compression_encodings: (),
+        accept_compression_encodings: EnabledCompressionEncodings,
+        send_compression_encodings: EnabledCompressionEncodings,
     }
     struct _Inner<T>(Arc<T>);
     impl<T: StreamingAead> StreamingAeadServer<T> {
         pub fn new(inner: T) -> Self {
-            let inner = Arc::new(inner);
+            Self::from_arc(Arc::new(inner))
+        }
+        pub fn from_arc(inner: Arc<T>) -> Self {
             let inner = _Inner(inner);
             Self {
                 inner,
@@ -2420,11 +2829,26 @@ pub mod streaming_aead_server {
                 send_compression_encodings: Default::default(),
             }
         }
-        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
             InterceptedService::new(Self::new(inner), interceptor)
+        }
+        /// Enable decompressing requests with the given encoding.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.accept_compression_encodings.enable(encoding);
+            self
+        }
+        /// Compress responses with the given encoding, if the client supports it.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.send_compression_encodings.enable(encoding);
+            self
         }
     }
     impl<T, B> tonic::codegen::Service<http::Request<B>> for StreamingAeadServer<T>
@@ -2434,9 +2858,12 @@ pub mod streaming_aead_server {
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
-        type Error = Never;
+        type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
@@ -2445,12 +2872,15 @@ pub mod streaming_aead_server {
                 "/tink_testing_api.StreamingAead/Encrypt" => {
                     #[allow(non_camel_case_types)]
                     struct EncryptSvc<T: StreamingAead>(pub Arc<T>);
-                    impl<T: StreamingAead>
-                        tonic::server::UnaryService<super::StreamingAeadEncryptRequest>
-                        for EncryptSvc<T>
-                    {
+                    impl<
+                        T: StreamingAead,
+                    > tonic::server::UnaryService<super::StreamingAeadEncryptRequest>
+                    for EncryptSvc<T> {
                         type Response = super::StreamingAeadEncryptResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::StreamingAeadEncryptRequest>,
@@ -2467,10 +2897,11 @@ pub mod streaming_aead_server {
                         let inner = inner.0;
                         let method = EncryptSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2479,12 +2910,15 @@ pub mod streaming_aead_server {
                 "/tink_testing_api.StreamingAead/Decrypt" => {
                     #[allow(non_camel_case_types)]
                     struct DecryptSvc<T: StreamingAead>(pub Arc<T>);
-                    impl<T: StreamingAead>
-                        tonic::server::UnaryService<super::StreamingAeadDecryptRequest>
-                        for DecryptSvc<T>
-                    {
+                    impl<
+                        T: StreamingAead,
+                    > tonic::server::UnaryService<super::StreamingAeadDecryptRequest>
+                    for DecryptSvc<T> {
                         type Response = super::StreamingAeadDecryptResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::StreamingAeadDecryptRequest>,
@@ -2501,23 +2935,28 @@ pub mod streaming_aead_server {
                         let inner = inner.0;
                         let method = DecryptSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
                     Box::pin(fut)
                 }
-                _ => Box::pin(async move {
-                    Ok(http::Response::builder()
-                        .status(200)
-                        .header("grpc-status", "12")
-                        .header("content-type", "application/grpc")
-                        .body(empty_body())
-                        .unwrap())
-                }),
+                _ => {
+                    Box::pin(async move {
+                        Ok(
+                            http::Response::builder()
+                                .status(200)
+                                .header("grpc-status", "12")
+                                .header("content-type", "application/grpc")
+                                .body(empty_body())
+                                .unwrap(),
+                        )
+                    })
+                }
             }
         }
     }
@@ -2541,7 +2980,7 @@ pub mod streaming_aead_server {
             write!(f, "{:?}", self.0)
         }
     }
-    impl<T: StreamingAead> tonic::transport::NamedService for StreamingAeadServer<T> {
+    impl<T: StreamingAead> tonic::server::NamedService for StreamingAeadServer<T> {
         const NAME: &'static str = "tink_testing_api.StreamingAead";
     }
 }
@@ -2567,13 +3006,15 @@ pub mod mac_server {
     #[derive(Debug)]
     pub struct MacServer<T: Mac> {
         inner: _Inner<T>,
-        accept_compression_encodings: (),
-        send_compression_encodings: (),
+        accept_compression_encodings: EnabledCompressionEncodings,
+        send_compression_encodings: EnabledCompressionEncodings,
     }
     struct _Inner<T>(Arc<T>);
     impl<T: Mac> MacServer<T> {
         pub fn new(inner: T) -> Self {
-            let inner = Arc::new(inner);
+            Self::from_arc(Arc::new(inner))
+        }
+        pub fn from_arc(inner: Arc<T>) -> Self {
             let inner = _Inner(inner);
             Self {
                 inner,
@@ -2581,11 +3022,26 @@ pub mod mac_server {
                 send_compression_encodings: Default::default(),
             }
         }
-        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
             InterceptedService::new(Self::new(inner), interceptor)
+        }
+        /// Enable decompressing requests with the given encoding.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.accept_compression_encodings.enable(encoding);
+            self
+        }
+        /// Compress responses with the given encoding, if the client supports it.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.send_compression_encodings.enable(encoding);
+            self
         }
     }
     impl<T, B> tonic::codegen::Service<http::Request<B>> for MacServer<T>
@@ -2595,9 +3051,12 @@ pub mod mac_server {
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
-        type Error = Never;
+        type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
@@ -2606,9 +3065,13 @@ pub mod mac_server {
                 "/tink_testing_api.Mac/ComputeMac" => {
                     #[allow(non_camel_case_types)]
                     struct ComputeMacSvc<T: Mac>(pub Arc<T>);
-                    impl<T: Mac> tonic::server::UnaryService<super::ComputeMacRequest> for ComputeMacSvc<T> {
+                    impl<T: Mac> tonic::server::UnaryService<super::ComputeMacRequest>
+                    for ComputeMacSvc<T> {
                         type Response = super::ComputeMacResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::ComputeMacRequest>,
@@ -2625,10 +3088,11 @@ pub mod mac_server {
                         let inner = inner.0;
                         let method = ComputeMacSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2637,9 +3101,13 @@ pub mod mac_server {
                 "/tink_testing_api.Mac/VerifyMac" => {
                     #[allow(non_camel_case_types)]
                     struct VerifyMacSvc<T: Mac>(pub Arc<T>);
-                    impl<T: Mac> tonic::server::UnaryService<super::VerifyMacRequest> for VerifyMacSvc<T> {
+                    impl<T: Mac> tonic::server::UnaryService<super::VerifyMacRequest>
+                    for VerifyMacSvc<T> {
                         type Response = super::VerifyMacResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::VerifyMacRequest>,
@@ -2656,23 +3124,28 @@ pub mod mac_server {
                         let inner = inner.0;
                         let method = VerifyMacSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
                     Box::pin(fut)
                 }
-                _ => Box::pin(async move {
-                    Ok(http::Response::builder()
-                        .status(200)
-                        .header("grpc-status", "12")
-                        .header("content-type", "application/grpc")
-                        .body(empty_body())
-                        .unwrap())
-                }),
+                _ => {
+                    Box::pin(async move {
+                        Ok(
+                            http::Response::builder()
+                                .status(200)
+                                .header("grpc-status", "12")
+                                .header("content-type", "application/grpc")
+                                .body(empty_body())
+                                .unwrap(),
+                        )
+                    })
+                }
             }
         }
     }
@@ -2696,7 +3169,7 @@ pub mod mac_server {
             write!(f, "{:?}", self.0)
         }
     }
-    impl<T: Mac> tonic::transport::NamedService for MacServer<T> {
+    impl<T: Mac> tonic::server::NamedService for MacServer<T> {
         const NAME: &'static str = "tink_testing_api.Mac";
     }
 }
@@ -2704,8 +3177,7 @@ pub mod mac_server {
 pub mod hybrid_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with
-    /// HybridServer.
+    ///Generated trait containing gRPC methods that should be implemented for use with HybridServer.
     #[async_trait]
     pub trait Hybrid: Send + Sync + 'static {
         /// Encrypts plaintext binding context_info to the resulting ciphertext
@@ -2723,13 +3195,15 @@ pub mod hybrid_server {
     #[derive(Debug)]
     pub struct HybridServer<T: Hybrid> {
         inner: _Inner<T>,
-        accept_compression_encodings: (),
-        send_compression_encodings: (),
+        accept_compression_encodings: EnabledCompressionEncodings,
+        send_compression_encodings: EnabledCompressionEncodings,
     }
     struct _Inner<T>(Arc<T>);
     impl<T: Hybrid> HybridServer<T> {
         pub fn new(inner: T) -> Self {
-            let inner = Arc::new(inner);
+            Self::from_arc(Arc::new(inner))
+        }
+        pub fn from_arc(inner: Arc<T>) -> Self {
             let inner = _Inner(inner);
             Self {
                 inner,
@@ -2737,11 +3211,26 @@ pub mod hybrid_server {
                 send_compression_encodings: Default::default(),
             }
         }
-        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
             InterceptedService::new(Self::new(inner), interceptor)
+        }
+        /// Enable decompressing requests with the given encoding.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.accept_compression_encodings.enable(encoding);
+            self
+        }
+        /// Compress responses with the given encoding, if the client supports it.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.send_compression_encodings.enable(encoding);
+            self
         }
     }
     impl<T, B> tonic::codegen::Service<http::Request<B>> for HybridServer<T>
@@ -2751,9 +3240,12 @@ pub mod hybrid_server {
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
-        type Error = Never;
+        type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
@@ -2762,9 +3254,15 @@ pub mod hybrid_server {
                 "/tink_testing_api.Hybrid/Encrypt" => {
                     #[allow(non_camel_case_types)]
                     struct EncryptSvc<T: Hybrid>(pub Arc<T>);
-                    impl<T: Hybrid> tonic::server::UnaryService<super::HybridEncryptRequest> for EncryptSvc<T> {
+                    impl<
+                        T: Hybrid,
+                    > tonic::server::UnaryService<super::HybridEncryptRequest>
+                    for EncryptSvc<T> {
                         type Response = super::HybridEncryptResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::HybridEncryptRequest>,
@@ -2781,10 +3279,11 @@ pub mod hybrid_server {
                         let inner = inner.0;
                         let method = EncryptSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2793,9 +3292,15 @@ pub mod hybrid_server {
                 "/tink_testing_api.Hybrid/Decrypt" => {
                     #[allow(non_camel_case_types)]
                     struct DecryptSvc<T: Hybrid>(pub Arc<T>);
-                    impl<T: Hybrid> tonic::server::UnaryService<super::HybridDecryptRequest> for DecryptSvc<T> {
+                    impl<
+                        T: Hybrid,
+                    > tonic::server::UnaryService<super::HybridDecryptRequest>
+                    for DecryptSvc<T> {
                         type Response = super::HybridDecryptResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::HybridDecryptRequest>,
@@ -2812,23 +3317,28 @@ pub mod hybrid_server {
                         let inner = inner.0;
                         let method = DecryptSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
                     Box::pin(fut)
                 }
-                _ => Box::pin(async move {
-                    Ok(http::Response::builder()
-                        .status(200)
-                        .header("grpc-status", "12")
-                        .header("content-type", "application/grpc")
-                        .body(empty_body())
-                        .unwrap())
-                }),
+                _ => {
+                    Box::pin(async move {
+                        Ok(
+                            http::Response::builder()
+                                .status(200)
+                                .header("grpc-status", "12")
+                                .header("content-type", "application/grpc")
+                                .body(empty_body())
+                                .unwrap(),
+                        )
+                    })
+                }
             }
         }
     }
@@ -2852,7 +3362,7 @@ pub mod hybrid_server {
             write!(f, "{:?}", self.0)
         }
     }
-    impl<T: Hybrid> tonic::transport::NamedService for HybridServer<T> {
+    impl<T: Hybrid> tonic::server::NamedService for HybridServer<T> {
         const NAME: &'static str = "tink_testing_api.Hybrid";
     }
 }
@@ -2860,8 +3370,7 @@ pub mod hybrid_server {
 pub mod signature_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with
-    /// SignatureServer.
+    ///Generated trait containing gRPC methods that should be implemented for use with SignatureServer.
     #[async_trait]
     pub trait Signature: Send + Sync + 'static {
         /// Computes the signature for data
@@ -2879,13 +3388,15 @@ pub mod signature_server {
     #[derive(Debug)]
     pub struct SignatureServer<T: Signature> {
         inner: _Inner<T>,
-        accept_compression_encodings: (),
-        send_compression_encodings: (),
+        accept_compression_encodings: EnabledCompressionEncodings,
+        send_compression_encodings: EnabledCompressionEncodings,
     }
     struct _Inner<T>(Arc<T>);
     impl<T: Signature> SignatureServer<T> {
         pub fn new(inner: T) -> Self {
-            let inner = Arc::new(inner);
+            Self::from_arc(Arc::new(inner))
+        }
+        pub fn from_arc(inner: Arc<T>) -> Self {
             let inner = _Inner(inner);
             Self {
                 inner,
@@ -2893,11 +3404,26 @@ pub mod signature_server {
                 send_compression_encodings: Default::default(),
             }
         }
-        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
             InterceptedService::new(Self::new(inner), interceptor)
+        }
+        /// Enable decompressing requests with the given encoding.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.accept_compression_encodings.enable(encoding);
+            self
+        }
+        /// Compress responses with the given encoding, if the client supports it.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.send_compression_encodings.enable(encoding);
+            self
         }
     }
     impl<T, B> tonic::codegen::Service<http::Request<B>> for SignatureServer<T>
@@ -2907,9 +3433,12 @@ pub mod signature_server {
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
-        type Error = Never;
+        type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
@@ -2918,9 +3447,15 @@ pub mod signature_server {
                 "/tink_testing_api.Signature/Sign" => {
                     #[allow(non_camel_case_types)]
                     struct SignSvc<T: Signature>(pub Arc<T>);
-                    impl<T: Signature> tonic::server::UnaryService<super::SignatureSignRequest> for SignSvc<T> {
+                    impl<
+                        T: Signature,
+                    > tonic::server::UnaryService<super::SignatureSignRequest>
+                    for SignSvc<T> {
                         type Response = super::SignatureSignResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::SignatureSignRequest>,
@@ -2937,10 +3472,11 @@ pub mod signature_server {
                         let inner = inner.0;
                         let method = SignSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -2949,9 +3485,15 @@ pub mod signature_server {
                 "/tink_testing_api.Signature/Verify" => {
                     #[allow(non_camel_case_types)]
                     struct VerifySvc<T: Signature>(pub Arc<T>);
-                    impl<T: Signature> tonic::server::UnaryService<super::SignatureVerifyRequest> for VerifySvc<T> {
+                    impl<
+                        T: Signature,
+                    > tonic::server::UnaryService<super::SignatureVerifyRequest>
+                    for VerifySvc<T> {
                         type Response = super::SignatureVerifyResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::SignatureVerifyRequest>,
@@ -2968,23 +3510,28 @@ pub mod signature_server {
                         let inner = inner.0;
                         let method = VerifySvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
                     Box::pin(fut)
                 }
-                _ => Box::pin(async move {
-                    Ok(http::Response::builder()
-                        .status(200)
-                        .header("grpc-status", "12")
-                        .header("content-type", "application/grpc")
-                        .body(empty_body())
-                        .unwrap())
-                }),
+                _ => {
+                    Box::pin(async move {
+                        Ok(
+                            http::Response::builder()
+                                .status(200)
+                                .header("grpc-status", "12")
+                                .header("content-type", "application/grpc")
+                                .body(empty_body())
+                                .unwrap(),
+                        )
+                    })
+                }
             }
         }
     }
@@ -3008,7 +3555,7 @@ pub mod signature_server {
             write!(f, "{:?}", self.0)
         }
     }
-    impl<T: Signature> tonic::transport::NamedService for SignatureServer<T> {
+    impl<T: Signature> tonic::server::NamedService for SignatureServer<T> {
         const NAME: &'static str = "tink_testing_api.Signature";
     }
 }
@@ -3016,8 +3563,7 @@ pub mod signature_server {
 pub mod prf_set_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with
-    /// PrfSetServer.
+    ///Generated trait containing gRPC methods that should be implemented for use with PrfSetServer.
     #[async_trait]
     pub trait PrfSet: Send + Sync + 'static {
         /// Returns the key ids and the primary key id in the keyset.
@@ -3035,13 +3581,15 @@ pub mod prf_set_server {
     #[derive(Debug)]
     pub struct PrfSetServer<T: PrfSet> {
         inner: _Inner<T>,
-        accept_compression_encodings: (),
-        send_compression_encodings: (),
+        accept_compression_encodings: EnabledCompressionEncodings,
+        send_compression_encodings: EnabledCompressionEncodings,
     }
     struct _Inner<T>(Arc<T>);
     impl<T: PrfSet> PrfSetServer<T> {
         pub fn new(inner: T) -> Self {
-            let inner = Arc::new(inner);
+            Self::from_arc(Arc::new(inner))
+        }
+        pub fn from_arc(inner: Arc<T>) -> Self {
             let inner = _Inner(inner);
             Self {
                 inner,
@@ -3049,11 +3597,26 @@ pub mod prf_set_server {
                 send_compression_encodings: Default::default(),
             }
         }
-        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
             InterceptedService::new(Self::new(inner), interceptor)
+        }
+        /// Enable decompressing requests with the given encoding.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.accept_compression_encodings.enable(encoding);
+            self
+        }
+        /// Compress responses with the given encoding, if the client supports it.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.send_compression_encodings.enable(encoding);
+            self
         }
     }
     impl<T, B> tonic::codegen::Service<http::Request<B>> for PrfSetServer<T>
@@ -3063,9 +3626,12 @@ pub mod prf_set_server {
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
-        type Error = Never;
+        type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
@@ -3074,9 +3640,15 @@ pub mod prf_set_server {
                 "/tink_testing_api.PrfSet/KeyIds" => {
                     #[allow(non_camel_case_types)]
                     struct KeyIdsSvc<T: PrfSet>(pub Arc<T>);
-                    impl<T: PrfSet> tonic::server::UnaryService<super::PrfSetKeyIdsRequest> for KeyIdsSvc<T> {
+                    impl<
+                        T: PrfSet,
+                    > tonic::server::UnaryService<super::PrfSetKeyIdsRequest>
+                    for KeyIdsSvc<T> {
                         type Response = super::PrfSetKeyIdsResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::PrfSetKeyIdsRequest>,
@@ -3093,10 +3665,11 @@ pub mod prf_set_server {
                         let inner = inner.0;
                         let method = KeyIdsSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -3105,9 +3678,15 @@ pub mod prf_set_server {
                 "/tink_testing_api.PrfSet/Compute" => {
                     #[allow(non_camel_case_types)]
                     struct ComputeSvc<T: PrfSet>(pub Arc<T>);
-                    impl<T: PrfSet> tonic::server::UnaryService<super::PrfSetComputeRequest> for ComputeSvc<T> {
+                    impl<
+                        T: PrfSet,
+                    > tonic::server::UnaryService<super::PrfSetComputeRequest>
+                    for ComputeSvc<T> {
                         type Response = super::PrfSetComputeResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::PrfSetComputeRequest>,
@@ -3124,23 +3703,28 @@ pub mod prf_set_server {
                         let inner = inner.0;
                         let method = ComputeSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
                     Box::pin(fut)
                 }
-                _ => Box::pin(async move {
-                    Ok(http::Response::builder()
-                        .status(200)
-                        .header("grpc-status", "12")
-                        .header("content-type", "application/grpc")
-                        .body(empty_body())
-                        .unwrap())
-                }),
+                _ => {
+                    Box::pin(async move {
+                        Ok(
+                            http::Response::builder()
+                                .status(200)
+                                .header("grpc-status", "12")
+                                .header("content-type", "application/grpc")
+                                .body(empty_body())
+                                .unwrap(),
+                        )
+                    })
+                }
             }
         }
     }
@@ -3164,7 +3748,7 @@ pub mod prf_set_server {
             write!(f, "{:?}", self.0)
         }
     }
-    impl<T: PrfSet> tonic::transport::NamedService for PrfSetServer<T> {
+    impl<T: PrfSet> tonic::server::NamedService for PrfSetServer<T> {
         const NAME: &'static str = "tink_testing_api.PrfSet";
     }
 }
@@ -3210,13 +3794,15 @@ pub mod jwt_server {
     #[derive(Debug)]
     pub struct JwtServer<T: Jwt> {
         inner: _Inner<T>,
-        accept_compression_encodings: (),
-        send_compression_encodings: (),
+        accept_compression_encodings: EnabledCompressionEncodings,
+        send_compression_encodings: EnabledCompressionEncodings,
     }
     struct _Inner<T>(Arc<T>);
     impl<T: Jwt> JwtServer<T> {
         pub fn new(inner: T) -> Self {
-            let inner = Arc::new(inner);
+            Self::from_arc(Arc::new(inner))
+        }
+        pub fn from_arc(inner: Arc<T>) -> Self {
             let inner = _Inner(inner);
             Self {
                 inner,
@@ -3224,11 +3810,26 @@ pub mod jwt_server {
                 send_compression_encodings: Default::default(),
             }
         }
-        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
             InterceptedService::new(Self::new(inner), interceptor)
+        }
+        /// Enable decompressing requests with the given encoding.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.accept_compression_encodings.enable(encoding);
+            self
+        }
+        /// Compress responses with the given encoding, if the client supports it.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.send_compression_encodings.enable(encoding);
+            self
         }
     }
     impl<T, B> tonic::codegen::Service<http::Request<B>> for JwtServer<T>
@@ -3238,9 +3839,12 @@ pub mod jwt_server {
         B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::BoxBody>;
-        type Error = Never;
+        type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
@@ -3249,15 +3853,21 @@ pub mod jwt_server {
                 "/tink_testing_api.Jwt/ComputeMacAndEncode" => {
                     #[allow(non_camel_case_types)]
                     struct ComputeMacAndEncodeSvc<T: Jwt>(pub Arc<T>);
-                    impl<T: Jwt> tonic::server::UnaryService<super::JwtSignRequest> for ComputeMacAndEncodeSvc<T> {
+                    impl<T: Jwt> tonic::server::UnaryService<super::JwtSignRequest>
+                    for ComputeMacAndEncodeSvc<T> {
                         type Response = super::JwtSignResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::JwtSignRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move { (*inner).compute_mac_and_encode(request).await };
+                            let fut = async move {
+                                (*inner).compute_mac_and_encode(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -3268,10 +3878,11 @@ pub mod jwt_server {
                         let inner = inner.0;
                         let method = ComputeMacAndEncodeSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -3280,15 +3891,21 @@ pub mod jwt_server {
                 "/tink_testing_api.Jwt/VerifyMacAndDecode" => {
                     #[allow(non_camel_case_types)]
                     struct VerifyMacAndDecodeSvc<T: Jwt>(pub Arc<T>);
-                    impl<T: Jwt> tonic::server::UnaryService<super::JwtVerifyRequest> for VerifyMacAndDecodeSvc<T> {
+                    impl<T: Jwt> tonic::server::UnaryService<super::JwtVerifyRequest>
+                    for VerifyMacAndDecodeSvc<T> {
                         type Response = super::JwtVerifyResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::JwtVerifyRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move { (*inner).verify_mac_and_decode(request).await };
+                            let fut = async move {
+                                (*inner).verify_mac_and_decode(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -3299,10 +3916,11 @@ pub mod jwt_server {
                         let inner = inner.0;
                         let method = VerifyMacAndDecodeSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -3311,16 +3929,21 @@ pub mod jwt_server {
                 "/tink_testing_api.Jwt/PublicKeySignAndEncode" => {
                     #[allow(non_camel_case_types)]
                     struct PublicKeySignAndEncodeSvc<T: Jwt>(pub Arc<T>);
-                    impl<T: Jwt> tonic::server::UnaryService<super::JwtSignRequest> for PublicKeySignAndEncodeSvc<T> {
+                    impl<T: Jwt> tonic::server::UnaryService<super::JwtSignRequest>
+                    for PublicKeySignAndEncodeSvc<T> {
                         type Response = super::JwtSignResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::JwtSignRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut =
-                                async move { (*inner).public_key_sign_and_encode(request).await };
+                            let fut = async move {
+                                (*inner).public_key_sign_and_encode(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -3331,10 +3954,11 @@ pub mod jwt_server {
                         let inner = inner.0;
                         let method = PublicKeySignAndEncodeSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -3344,17 +3968,20 @@ pub mod jwt_server {
                     #[allow(non_camel_case_types)]
                     struct PublicKeyVerifyAndDecodeSvc<T: Jwt>(pub Arc<T>);
                     impl<T: Jwt> tonic::server::UnaryService<super::JwtVerifyRequest>
-                        for PublicKeyVerifyAndDecodeSvc<T>
-                    {
+                    for PublicKeyVerifyAndDecodeSvc<T> {
                         type Response = super::JwtVerifyResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::JwtVerifyRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut =
-                                async move { (*inner).public_key_verify_and_decode(request).await };
+                            let fut = async move {
+                                (*inner).public_key_verify_and_decode(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -3365,10 +3992,11 @@ pub mod jwt_server {
                         let inner = inner.0;
                         let method = PublicKeyVerifyAndDecodeSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -3377,9 +4005,13 @@ pub mod jwt_server {
                 "/tink_testing_api.Jwt/ToJwkSet" => {
                     #[allow(non_camel_case_types)]
                     struct ToJwkSetSvc<T: Jwt>(pub Arc<T>);
-                    impl<T: Jwt> tonic::server::UnaryService<super::JwtToJwkSetRequest> for ToJwkSetSvc<T> {
+                    impl<T: Jwt> tonic::server::UnaryService<super::JwtToJwkSetRequest>
+                    for ToJwkSetSvc<T> {
                         type Response = super::JwtToJwkSetResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::JwtToJwkSetRequest>,
@@ -3396,10 +4028,11 @@ pub mod jwt_server {
                         let inner = inner.0;
                         let method = ToJwkSetSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -3408,15 +4041,21 @@ pub mod jwt_server {
                 "/tink_testing_api.Jwt/FromJwkSet" => {
                     #[allow(non_camel_case_types)]
                     struct FromJwkSetSvc<T: Jwt>(pub Arc<T>);
-                    impl<T: Jwt> tonic::server::UnaryService<super::JwtFromJwkSetRequest> for FromJwkSetSvc<T> {
+                    impl<T: Jwt> tonic::server::UnaryService<super::JwtFromJwkSetRequest>
+                    for FromJwkSetSvc<T> {
                         type Response = super::JwtFromJwkSetResponse;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::JwtFromJwkSetRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move { (*inner).from_jwk_set(request).await };
+                            let fut = async move {
+                                (*inner).from_jwk_set(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -3427,23 +4066,28 @@ pub mod jwt_server {
                         let inner = inner.0;
                         let method = FromJwkSetSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
                     Box::pin(fut)
                 }
-                _ => Box::pin(async move {
-                    Ok(http::Response::builder()
-                        .status(200)
-                        .header("grpc-status", "12")
-                        .header("content-type", "application/grpc")
-                        .body(empty_body())
-                        .unwrap())
-                }),
+                _ => {
+                    Box::pin(async move {
+                        Ok(
+                            http::Response::builder()
+                                .status(200)
+                                .header("grpc-status", "12")
+                                .header("content-type", "application/grpc")
+                                .body(empty_body())
+                                .unwrap(),
+                        )
+                    })
+                }
             }
         }
     }
@@ -3467,7 +4111,7 @@ pub mod jwt_server {
             write!(f, "{:?}", self.0)
         }
     }
-    impl<T: Jwt> tonic::transport::NamedService for JwtServer<T> {
+    impl<T: Jwt> tonic::server::NamedService for JwtServer<T> {
         const NAME: &'static str = "tink_testing_api.Jwt";
     }
 }
