@@ -16,7 +16,7 @@ csv = "^1.1.6"
 hex = "^0.4.3"
 regex = "^1.5.4"
 rusoto_core = "^0.47"
-rusoto_credential = "^0.47"
+rusoto_credential = "^0.48"
 rusoto_kms = "^0.47"
 tink-core = "^0.2"
 # Match the version of tokio required by rusoto_* v0.46.0
