@@ -79,8 +79,9 @@ for f in "${CODE_FILES[@]}"; do
   errcount=$((errcount + $?))
 done
 
+# Requires: `go install github.com/campoy/embedmd@v1.0.0`
 for f in "${MD_FILES[@]}"; do
-  go run github.com/campoy/embedmd -d "$f"
+  embedmd -d "$f"
   errcount=$((errcount + $?))
   check_todo "$f"
   errcount=$((errcount + $?))
