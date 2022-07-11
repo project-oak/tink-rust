@@ -19,7 +19,7 @@ json = ["base64", "serde"]
 [dependencies]
 base64 = { version = "^0.13", optional = true }
 prost = "^0.9"
-serde = { version = "^1.0.136", features = ["derive"], optional = true }
+serde = { version = "^1.0.139", features = ["derive"], optional = true }
 
 [build-dependencies]
 prost-build = "^0.9"
