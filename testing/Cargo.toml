@@ -14,7 +14,7 @@ publish = false
 env_logger = "^0.9.0"
 futures = "^0.3.21"
 log = "^0.4.17"
-prost = "^0.9"
+prost = "^0.11"
 structopt = "^0.3.26"
 tink-aead = "^0.2"
 tink-core = { version = "^0.2", features = [
