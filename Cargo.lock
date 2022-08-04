@@ -1710,7 +1710,7 @@ dependencies = [
 
 [[package]]
 name = "rinkey"
-version = "0.2.4"
+version = "0.2.5"
 dependencies = [
  "structopt",
  "tink-aead",
@@ -2171,7 +2171,7 @@ dependencies = [
 
 [[package]]
 name = "tink-aead"
-version = "0.2.4"
+version = "0.2.5"
 dependencies = [
  "aead",
  "aes",
@@ -2187,7 +2187,7 @@ dependencies = [
 
 [[package]]
 name = "tink-awskms"
-version = "0.2.4"
+version = "0.2.5"
 dependencies = [
  "csv",
  "hex",
@@ -2201,7 +2201,7 @@ dependencies = [
 
 [[package]]
 name = "tink-core"
-version = "0.2.4"
+version = "0.2.5"
 dependencies = [
  "digest",
  "hkdf",
@@ -2217,7 +2217,7 @@ dependencies = [
 
 [[package]]
 name = "tink-daead"
-version = "0.2.4"
+version = "0.2.5"
 dependencies = [
  "aead",
  "aes-siv",
@@ -2227,7 +2227,7 @@ dependencies = [
 
 [[package]]
 name = "tink-gcpkms"
-version = "0.2.4"
+version = "0.2.5"
 dependencies = [
  "base64",
  "chrono",
@@ -2246,7 +2246,7 @@ dependencies = [
 
 [[package]]
 name = "tink-hybrid"
-version = "0.2.4"
+version = "0.2.5"
 dependencies = [
  "p256",
  "rand 0.7.3",
@@ -2258,7 +2258,7 @@ dependencies = [
 
 [[package]]
 name = "tink-mac"
-version = "0.2.4"
+version = "0.2.5"
 dependencies = [
  "tink-core",
  "tink-prf",
@@ -2267,7 +2267,7 @@ dependencies = [
 
 [[package]]
 name = "tink-prf"
-version = "0.2.4"
+version = "0.2.5"
 dependencies = [
  "aes",
  "cmac",
@@ -2282,7 +2282,7 @@ dependencies = [
 
 [[package]]
 name = "tink-proto"
-version = "0.2.4"
+version = "0.2.5"
 dependencies = [
  "base64",
  "prost",
@@ -2292,7 +2292,7 @@ dependencies = [
 
 [[package]]
 name = "tink-signature"
-version = "0.2.4"
+version = "0.2.5"
 dependencies = [
  "ecdsa",
  "ed25519-dalek",
@@ -2306,7 +2306,7 @@ dependencies = [
 
 [[package]]
 name = "tink-streaming-aead"
-version = "0.2.4"
+version = "0.2.5"
 dependencies = [
  "aes",
  "aes-gcm",
@@ -2318,7 +2318,7 @@ dependencies = [
 
 [[package]]
 name = "tink-testing-server"
-version = "0.2.4"
+version = "0.2.5"
 dependencies = [
  "env_logger",
  "futures",
@@ -2342,7 +2342,7 @@ dependencies = [
 
 [[package]]
 name = "tink-tests"
-version = "0.2.4"
+version = "0.2.5"
 dependencies = [
  "base64",
  "ed25519-dalek",

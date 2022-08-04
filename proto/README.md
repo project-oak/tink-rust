@@ -1,7 +1,7 @@
 # Tink-Rust: Protobuf Definitions
 
 [![Docs](https://img.shields.io/badge/docs-rust-brightgreen?style=for-the-badge)](https://docs.rs/tink-proto)
-![MSRV](https://img.shields.io/badge/rustc-1.51+-yellow?style=for-the-badge)
+![MSRV](https://img.shields.io/badge/rustc-1.56+-yellow?style=for-the-badge)
 
 This crate holds Rust structures auto-generated (using [prost](https://docs.rs/prost)) from the protocol
 buffer message definitions in the `proto/` subdirectory.  These `.proto` files are copies from

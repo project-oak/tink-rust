@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.2.5 - TBD
+
+- Increase MSRV to 1.56.0
+- Upgrade dependencies
+
 ## 0.2.4 - 2022-03-25
 
 - Increase MSRV to 1.52.0
