@@ -12,10 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+////////////////////////////////////////////////////////////////////////////////
 
 use std::path::{Path, PathBuf};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // As of prost-build v0.11, there is no longer a fallback version of `protoc` included in
+    // prost-build; instead, prost-build needs an externally supplied version of `protoc`.
+    //
+    // - If `PROTOC` is set, assume that it points to a valid `protoc` and continue with generation.
+    // - If `PROTOC` is not set, don't generate (and use the checked-in pre-generated versions of
+    //   the code).
+    if std::env::var_os("PROTOC").is_none() {
+        return Ok(());
+    }
+
     let source_files = [
         "aes_cmac.proto",
         "aes_cmac_prf.proto",
