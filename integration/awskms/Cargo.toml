@@ -1,6 +1,6 @@
 [package]
 name = "tink-awskms"
-version = "0.2.4"
+version = "0.2.5"
 authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 license = "Apache-2.0"
