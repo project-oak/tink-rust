@@ -175,7 +175,7 @@ jobs:
         with:
           crate: cargo-udeps
           use-tool-cache: true
-          version: 0.1.23
+          version: 0.1.30
       - run: cargo udeps
 
   deny:
