@@ -4,6 +4,7 @@
 
 - Increase MSRV to 1.56.0
 - Upgrade dependencies
+- Only rebuild generated code if PROTOC environment variable is set
 
 ## 0.2.4 - 2022-03-25
 

@@ -111,6 +111,20 @@ jobs:
       - run: cargo fmt --all -- --check
       - run: PATH=$PATH:$HOME/go/bin scripts/check-format.sh
 
+  regen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@629c2de402a417ea7690ca6ce3f33229e27606a5 # v2
+      - uses: actions-rs/toolchain@63eb9591781c46a70274cb3ebdf190fce92702e8 # v1
+        with:
+          profile: minimal
+          toolchain: stable
+          components: rustfmt
+      - run: sudo apt-get install -y protobuf-compiler
+      - run: export PROTOC=/usr/bin/protoc && cargo build --workspace --all-features
+        # Check that regeneration of code produces exactly what's checked in
+      - run: git diff --exit-code -- .
+
   bench:
     runs-on: ubuntu-latest
     steps:
