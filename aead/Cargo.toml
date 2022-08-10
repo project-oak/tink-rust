@@ -16,7 +16,7 @@ categories = ["cryptography"]
 aead = { version = "^0.4.3", features = ["std"] }
 aes = { version = "^0.7.4", features = ["ctr"] }
 aes-gcm = "^0.9.2"
-aes-gcm-siv = "^0.10"
+aes-gcm-siv = "^0.11"
 chacha20poly1305 = "^0.9"
 generic-array = "^0.14.6"
 rand = "^0.7"
