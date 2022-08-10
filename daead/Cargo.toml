@@ -12,7 +12,7 @@ keywords = ["cryptography", "tink", "daead"]
 categories = ["cryptography"]
 
 [dependencies]
-aead = { version = "^0.4.3", features = ["std"] }
+aead = { version = "^0.5.1", features = ["std"] }
 aes-siv = "^0.6"
 tink-core = "^0.2"
 tink-proto = "^0.2"
