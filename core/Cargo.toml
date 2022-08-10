@@ -25,7 +25,7 @@ lazy_static = "^1.4"
 rand = "^0.7"
 serde = { version = "^1.0.143", features = ["derive"], optional = true }
 serde_json = { version = "^1.0.83", optional = true }
-sha-1 = "^0.9.8"
+sha-1 = "^0.10.0"
 sha2 = "^0.9.8"
 subtle = "^2.4"
 tink-proto = "^0.2"
