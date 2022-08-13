@@ -17,7 +17,10 @@
 //! AES-GCM-HKDF based implementation of the [`tink_core::StreamingAead`] trait.
 
 use super::{noncebased, AesVariant};
-use aes_gcm::aead::{generic_array::GenericArray, Aead, NewAead};
+use aes_gcm::{
+    aead::{generic_array::GenericArray, Aead},
+    KeyInit,
+};
 use std::convert::TryInto;
 use tink_core::{subtle::random::get_random_bytes, utils::wrap_err, TinkError};
 use tink_proto::HashType;

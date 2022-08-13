@@ -17,10 +17,8 @@
 //! AES-CTR implementation of [`IndCpaCipher`](super::IndCpaCipher).
 
 use super::IndCpaCipher;
-use aes::{
-    cipher::{consts::U16, generic_array::GenericArray, FromBlockCipher, StreamCipher},
-    NewBlockCipher,
-};
+use aes::cipher::{consts::U16, generic_array::GenericArray, KeyIvInit, StreamCipher};
+use std::convert::TryInto;
 use tink_core::{utils::wrap_err, TinkError};
 
 /// The minimum IV size that this implementation supports.
@@ -28,11 +26,14 @@ pub const AES_CTR_MIN_IV_SIZE: usize = 12;
 
 pub const AES_BLOCK_SIZE_IN_BYTES: usize = 16;
 
+type Aes128Ctr = ::ctr::Ctr64BE<aes::Aes128>;
+type Aes256Ctr = ::ctr::Ctr64BE<aes::Aes256>;
+
 #[allow(clippy::large_enum_variant)]
 #[derive(Clone)]
 enum AesCtrVariant {
-    Aes128(aes::Aes128),
-    Aes256(aes::Aes256),
+    Aes128([u8; 16]),
+    Aes256([u8; 32]),
 }
 
 /// `AesCtr` is an implementation of AEAD interface.
@@ -53,14 +54,10 @@ impl AesCtr {
         }
         let key = match key.len() {
             16 => {
-                AesCtrVariant::Aes128(
-                    aes::Aes128::new_from_slice(key).unwrap(/* safe: len checked */),
-                )
+                AesCtrVariant::Aes128(key.to_vec().try_into().unwrap(/* safe: len checked */))
             }
             32 => {
-                AesCtrVariant::Aes256(
-                    aes::Aes256::new_from_slice(key).unwrap(/* safe: len checked */),
-                )
+                AesCtrVariant::Aes256(key.to_vec().try_into().unwrap(/* safe: len checked */))
             }
             l => return Err(format!("AesCtr: invalid AES key size {} (want 16, 32)", l).into()),
         };
@@ -98,11 +95,13 @@ impl IndCpaCipher for AesCtr {
         ciphertext.extend_from_slice(plaintext);
         match &self.key {
             AesCtrVariant::Aes128(key) => {
-                let mut stream = aes::Aes128Ctr::from_block_cipher(key.clone(), &iv);
+                let mut stream =
+                    Aes128Ctr::new_from_slices(key, &iv).unwrap(/* safe: len checked */);
                 stream.apply_keystream(&mut ciphertext[self.iv_size..]);
             }
             AesCtrVariant::Aes256(key) => {
-                let mut stream = aes::Aes256Ctr::from_block_cipher(key.clone(), &iv);
+                let mut stream =
+                    Aes256Ctr::new_from_slices(key, &iv).unwrap(/* safe: len checked */);
                 stream.apply_keystream(&mut ciphertext[self.iv_size..]);
             }
         }
@@ -124,11 +123,13 @@ impl IndCpaCipher for AesCtr {
 
         match &self.key {
             AesCtrVariant::Aes128(key) => {
-                let mut stream = aes::Aes128Ctr::from_block_cipher(key.clone(), &padded_iv.into());
+                let mut stream =
+                    Aes128Ctr::new_from_slices(key, &padded_iv).unwrap(/* safe: len checked */);
                 stream.apply_keystream(&mut plaintext);
             }
             AesCtrVariant::Aes256(key) => {
-                let mut stream = aes::Aes256Ctr::from_block_cipher(key.clone(), &padded_iv.into());
+                let mut stream =
+                    Aes256Ctr::new_from_slices(key, &padded_iv).unwrap(/* safe: len checked */);
                 stream.apply_keystream(&mut plaintext);
             }
         }

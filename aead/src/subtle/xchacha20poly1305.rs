@@ -16,7 +16,10 @@
 
 //! XChaCha20 Poly1305 implementation of AEAD.
 
-use chacha20poly1305::aead::{Aead, NewAead, Payload};
+use chacha20poly1305::{
+    aead::{Aead, Payload},
+    KeyInit,
+};
 use tink_core::{utils::wrap_err, TinkError};
 
 /// Size of an XChaCh20 key in bytes.
