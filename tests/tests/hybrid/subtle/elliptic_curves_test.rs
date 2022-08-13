@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use lazy_static::lazy_static;
-use p256::{elliptic_curve::generic_array::typenum::Unsigned, pkcs8::FromPublicKey};
+use p256::{elliptic_curve::generic_array::typenum::Unsigned, pkcs8::DecodePublicKey};
 use serde::Deserialize;
 use std::collections::HashSet;
 use tink_core::TinkError;
