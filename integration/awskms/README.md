@@ -1,7 +1,7 @@
 # Tink-Rust: AWS-KMS integration
 
 [![Docs](https://img.shields.io/badge/docs-rust-brightgreen?style=for-the-badge)](https://docs.rs/tink-awskms)
-![MSRV](https://img.shields.io/badge/rustc-1.56+-yellow?style=for-the-badge)
+![MSRV](https://img.shields.io/badge/rustc-1.57+-yellow?style=for-the-badge)
 
 This crate provides functionality for integrating Tink with [AWS KMS](https://aws.amazon.com/kms/).
 
