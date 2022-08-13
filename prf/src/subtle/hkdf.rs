@@ -76,25 +76,18 @@ pub fn validate_hkdf_prf_params(
 
 impl tink_core::Prf for HkdfPrf {
     fn compute_prf(&self, data: &[u8], out_len: usize) -> Result<Vec<u8>, TinkError> {
+        let mut okm = vec![0; out_len];
         match &self.prk {
-            HkdfPrfVariant::Sha1(prk) => compute_hkdf_with::<sha1::Sha1>(prk, data, out_len),
-            HkdfPrfVariant::Sha256(prk) => compute_hkdf_with::<sha2::Sha256>(prk, data, out_len),
-            HkdfPrfVariant::Sha512(prk) => compute_hkdf_with::<sha2::Sha512>(prk, data, out_len),
+            HkdfPrfVariant::Sha1(prk) => prk
+                .expand(data, &mut okm)
+                .map_err(|_| "HkdfPrf: compute of hkdf failed")?,
+            HkdfPrfVariant::Sha256(prk) => prk
+                .expand(data, &mut okm)
+                .map_err(|_| "HkdfPrf: compute of hkdf failed")?,
+            HkdfPrfVariant::Sha512(prk) => prk
+                .expand(data, &mut okm)
+                .map_err(|_| "HkdfPrf: compute of hkdf failed")?,
         }
+        Ok(okm)
     }
-}
-
-fn compute_hkdf_with<D>(
-    prk: &hkdf::Hkdf<D>,
-    data: &[u8],
-    out_len: usize,
-) -> Result<Vec<u8>, TinkError>
-where
-    D: digest::Update + digest::BlockInput + digest::FixedOutput + digest::Reset + Default + Clone,
-{
-    let mut okm = vec![0; out_len];
-    prk.expand(data, &mut okm)
-        .map_err(|_| "HkdfPrf: compute of hkdf failed")?;
-
-    Ok(okm)
 }

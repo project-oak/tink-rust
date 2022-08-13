@@ -72,11 +72,11 @@ pub fn compute_hash(hash_fn: &mut HashFunc, data: &[u8]) -> Result<Vec<u8>, Tink
 /// Calculate a hash of the given data with the given hash function.
 fn compute_hash_with<T>(hash_func: &mut T, data: &[u8]) -> Vec<u8>
 where
-    T: digest::Digest,
+    T: digest::Digest + digest::Reset + digest::FixedOutputReset,
 {
-    hash_func.reset();
-    hash_func.update(data);
-    hash_func.finalize_reset().to_vec()
+    Digest::reset(hash_func);
+    Digest::update(hash_func, data);
+    Digest::finalize_reset(hash_func).to_vec()
 }
 
 /// Compare two slices in constant time. Return `true` if they are equal, `false` otherwise.

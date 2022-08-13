@@ -50,29 +50,29 @@ pub fn compute_hkdf(
     let key_size = key.len();
     validate_hkdf_params(hash_alg, key_size, tag_size).map_err(|e| wrap_err("hkdf", e))?;
 
-    match hash_alg {
-        HashType::Sha1 => compute_hkdf_with::<sha1::Sha1>(key, salt, info, tag_size),
-        HashType::Sha256 => compute_hkdf_with::<sha2::Sha256>(key, salt, info, tag_size),
-        HashType::Sha384 => compute_hkdf_with::<sha2::Sha384>(key, salt, info, tag_size),
-        HashType::Sha512 => compute_hkdf_with::<sha2::Sha512>(key, salt, info, tag_size),
-        h => Err(format!("hkdf: unsupported hash {:?}", h).into()),
-    }
-}
-
-/// Extract a pseudorandom key.
-fn compute_hkdf_with<D>(
-    key: &[u8],
-    salt: &[u8],
-    info: &[u8],
-    tag_size: usize,
-) -> Result<Vec<u8>, TinkError>
-where
-    D: digest::Update + digest::BlockInput + digest::FixedOutput + digest::Reset + Default + Clone,
-{
-    let prk = hkdf::Hkdf::<D>::new(Some(salt), key);
     let mut okm = vec![0; tag_size];
-    prk.expand(info, &mut okm)
-        .map_err(|_| "compute of hkdf failed")?;
-
+    match hash_alg {
+        HashType::Sha1 => {
+            let prk = hkdf::Hkdf::<sha1::Sha1>::new(Some(salt), key);
+            prk.expand(info, &mut okm)
+                .map_err(|_| "compute of hkdf failed")?;
+        }
+        HashType::Sha256 => {
+            let prk = hkdf::Hkdf::<sha2::Sha256>::new(Some(salt), key);
+            prk.expand(info, &mut okm)
+                .map_err(|_| "compute of hkdf failed")?;
+        }
+        HashType::Sha384 => {
+            let prk = hkdf::Hkdf::<sha2::Sha384>::new(Some(salt), key);
+            prk.expand(info, &mut okm)
+                .map_err(|_| "compute of hkdf failed")?;
+        }
+        HashType::Sha512 => {
+            let prk = hkdf::Hkdf::<sha2::Sha512>::new(Some(salt), key);
+            prk.expand(info, &mut okm)
+                .map_err(|_| "compute of hkdf failed")?;
+        }
+        h => return Err(format!("hkdf: unsupported hash {:?}", h).into()),
+    }
     Ok(okm)
 }
