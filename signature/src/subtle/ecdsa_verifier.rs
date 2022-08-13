@@ -51,7 +51,9 @@ impl EcdsaVerifier {
             EllipticCurveType::NistP256 => {
                 let x = element_from_padded_slice::<p256::NistP256>(x)?;
                 let y = element_from_padded_slice::<p256::NistP256>(y)?;
-                let pt = EncodedPoint::from_affine_coordinates(&x, &y, /* compress= */ false);
+                let pt = EncodedPoint::<p256::NistP256>::from_affine_coordinates(
+                    &x, &y, /* compress= */ false,
+                );
                 let verify_key = p256::ecdsa::VerifyingKey::from_encoded_point(&pt)
                     .map_err(|e| wrap_err("EcdsaVerifier: invalid point", e))?;
                 EcdsaPublicKey::NistP256(verify_key)

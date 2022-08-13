@@ -49,8 +49,10 @@ impl EcPublicKey {
                 let encoded_pt = EncodedPoint::<p256::NistP256>::from_affine_coordinates(
                     &x, &y, /* compress= */ false,
                 );
-                let affine_pt = AffinePoint::<p256::NistP256>::from_encoded_point(&encoded_pt)
-                    .ok_or_else(|| TinkError::new("invalid point"))?;
+                let affine_pt = Option::<_>::from(
+                    AffinePoint::<p256::NistP256>::from_encoded_point(&encoded_pt),
+                )
+                .ok_or_else(|| TinkError::new("invalid point"))?;
                 Ok(EcPublicKey::NistP256(affine_pt))
             }
             _ => Err(format!("unsupported curve {:?}", curve).into()),
@@ -118,7 +120,7 @@ impl EcPrivateKey {
         match curve {
             EllipticCurveType::NistP256 => {
                 let d_elt = element_from_padded_slice::<p256::NistP256>(d)?;
-                let d_scalar = p256::NonZeroScalar::from_repr(d_elt)
+                let d_scalar = Option::<_>::from(p256::NonZeroScalar::from_repr(d_elt))
                     .ok_or_else(|| TinkError::new("failed to parse D value"))?;
                 Ok(EcPrivateKey::NistP256(d_scalar))
             }
@@ -243,7 +245,7 @@ pub fn compute_shared_secret(
     let shared_secret = match (peer_pub_key, priv_key) {
         (EcPublicKey::NistP256(peer_pub_key), EcPrivateKey::NistP256(priv_key)) => {
             ecdh::diffie_hellman(priv_key, peer_pub_key)
-                .as_bytes()
+                .raw_secret_bytes()
                 .to_vec()
         }
     };
