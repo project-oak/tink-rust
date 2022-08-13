@@ -17,10 +17,7 @@
 //! AES-CTR-HMAC based implementation of the [`tink_core::StreamingAead`] trait.
 
 use super::{noncebased, AesVariant};
-use aes::{
-    cipher::{FromBlockCipher, StreamCipher},
-    NewBlockCipher,
-};
+use aes::cipher::{KeyIvInit, StreamCipher};
 use std::convert::TryInto;
 use tink_core::{subtle::random::get_random_bytes, utils::wrap_err, Mac, TinkError};
 use tink_proto::HashType;
@@ -34,11 +31,14 @@ pub const AES_CTR_HMAC_NONCE_PREFIX_SIZE_IN_BYTES: usize = 7;
 /// The size of the HMAC key.
 pub const AES_CTR_HMAC_KEY_SIZE_IN_BYTES: usize = 32;
 
+type Aes128Ctr = ::ctr::Ctr64BE<aes::Aes128>;
+type Aes256Ctr = ::ctr::Ctr64BE<aes::Aes256>;
+
 #[allow(clippy::large_enum_variant)]
 #[derive(Clone)]
 enum AesCtrKeyVariant {
-    Aes128(aes::Aes128),
-    Aes256(aes::Aes256),
+    Aes128([u8; 16]),
+    Aes256([u8; 32]),
 }
 
 /// `AesCtrHmac` implements streaming AEAD encryption using AES-CTR and HMAC.
@@ -147,12 +147,12 @@ impl tink_core::StreamingAead for AesCtrHmac {
         let aes_key = match self.aes_variant {
             AesVariant::Aes128 => {
                 AesCtrKeyVariant::Aes128(
-                    aes::Aes128::new_from_slice(&km[..key_size]).unwrap(/* safe: len checked */),
+                    km[..key_size].to_vec().try_into().unwrap(/* safe: len checked */),
                 )
             }
             AesVariant::Aes256 => {
                 AesCtrKeyVariant::Aes256(
-                    aes::Aes256::new_from_slice(&km[..key_size]).unwrap(/* safe: len checked */),
+                    km[..key_size].to_vec().try_into().unwrap(/* safe: len checked */),
                 )
             }
         };
@@ -213,12 +213,12 @@ impl tink_core::StreamingAead for AesCtrHmac {
         let aes_key = match self.aes_variant {
             AesVariant::Aes128 => {
                 AesCtrKeyVariant::Aes128(
-                    aes::Aes128::new_from_slice(&km[..key_size]).unwrap(/* safe: len checked */),
+                    km[..key_size].to_vec().try_into().unwrap(/* safe: len checked */),
                 )
             }
             AesVariant::Aes256 => {
                 AesCtrKeyVariant::Aes256(
-                    aes::Aes256::new_from_slice(&km[..key_size]).unwrap(/* safe: len checked */),
+                    km[..key_size].to_vec().try_into().unwrap(/* safe: len checked */),
                 )
             }
         };
@@ -259,11 +259,13 @@ impl noncebased::SegmentEncrypter for AesCtrHmacSegmentEncrypter {
         ciphertext[..s_len].copy_from_slice(segment);
         match &self.aes_key {
             AesCtrKeyVariant::Aes128(key) => {
-                let mut stream = aes::Aes128Ctr::from_block_cipher(key.clone(), nonce.into());
+                let mut stream =
+                    Aes128Ctr::new_from_slices(key, nonce).unwrap(/* safe: len checked */);
                 stream.apply_keystream(&mut ciphertext[..s_len]);
             }
             AesCtrKeyVariant::Aes256(key) => {
-                let mut stream = aes::Aes256Ctr::from_block_cipher(key.clone(), nonce.into());
+                let mut stream =
+                    Aes256Ctr::new_from_slices(key, nonce).unwrap(/* safe: len checked */);
                 stream.apply_keystream(&mut ciphertext[..s_len]);
             }
         }
@@ -305,11 +307,13 @@ impl noncebased::SegmentDecrypter for AesCtrHmacSegmentDecrypter {
         let mut result = (&segment[..tag_start]).to_vec();
         match &self.aes_key {
             AesCtrKeyVariant::Aes128(key) => {
-                let mut stream = aes::Aes128Ctr::from_block_cipher(key.clone(), nonce.into());
+                let mut stream =
+                    Aes128Ctr::new_from_slices(key, nonce).unwrap(/* safe: len checked */);
                 stream.apply_keystream(&mut result);
             }
             AesCtrKeyVariant::Aes256(key) => {
-                let mut stream = aes::Aes256Ctr::from_block_cipher(key.clone(), nonce.into());
+                let mut stream =
+                    Aes256Ctr::new_from_slices(key, nonce).unwrap(/* safe: len checked */);
                 stream.apply_keystream(&mut result);
             }
         }

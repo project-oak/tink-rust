@@ -51,6 +51,11 @@ version = "=0.4.4"
 name = "security-framework-sys"
 version = "=0.4.3"
 
+# ed25519-dalek(v1.0.1) => digest(v0.9.x)
+[[bans.skip]]
+name = "digest"
+version = "0.9.0"
+
 # ed25519-dalek(v1.0.1) => rand_core(v0.5.x), {rand(v0.7.3) => getrandom(v0.1.*)}
 # tonic(v0.4.0) ..=> rand(v0.8.3) ..=> {rand_core(v0.6.x), getrandom(v0.2.x)}
 [[bans.skip]]
@@ -71,10 +76,10 @@ version = "0.2.2"
 name = "heck"
 version = "0.3.1"
 
-# Various dependencies use cpufeatures(v0.1.5)
+# Various dependencies use block-buffer(0.9.0)
 [[bans.skip]]
-name = "cpufeatures"
-version = "0.1.5"
+name = "block-buffer"
+version = "0.9.0"
 
 # Various dependencies use itoa(0.4.6)
 [[bans.skip]]

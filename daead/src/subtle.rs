@@ -16,7 +16,7 @@
 
 //! Provides subtle implementations of the `DeterministicAEAD` primitive using AES-SIV.
 
-use aes_siv::{aead::generic_array::GenericArray, siv::Aes256Siv};
+use aes_siv::{aead::generic_array::GenericArray, siv::Aes256Siv, KeyInit};
 use std::{cell::RefCell, rc::Rc};
 use tink_core::{utils::wrap_err, TinkError};
 
@@ -61,7 +61,7 @@ impl AesSiv {
         }
 
         Ok(AesSiv {
-            cipher: Rc::new(RefCell::new(Aes256Siv::new(*GenericArray::from_slice(key)))),
+            cipher: Rc::new(RefCell::new(Aes256Siv::new(GenericArray::from_slice(key)))),
         })
     }
 }

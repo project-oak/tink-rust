@@ -17,7 +17,7 @@
 //! Provides an implementation of PRF using AES-CMAC.
 
 use aes::{Aes128, Aes192, Aes256};
-use cmac::{Cmac, Mac, NewMac};
+use cmac::{Cmac, Mac};
 use std::{
     cmp::min,
     ops::DerefMut,

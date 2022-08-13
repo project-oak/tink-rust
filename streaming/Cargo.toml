@@ -12,9 +12,10 @@ keywords = ["cryptography", "tink", "streaming-aead"]
 categories = ["cryptography"]
 
 [dependencies]
-aes = { version = "^0.7.4", features = ["ctr"] }
+aes = "^0.8.1"
 # Need the `std` feature for Error type conversion
-aes-gcm = { version = "^0.9.2", features = ["std"] }
+aes-gcm = { version = "^0.10.1", features = ["std"] }
+ctr = "^0.9.1"
 rand = "^0.7"
 tink-core = "^0.2"
 tink-mac = "^0.2"
