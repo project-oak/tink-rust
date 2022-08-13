@@ -39,6 +39,9 @@ version = "=0.7.0"
 name = "core-foundation-sys"
 version = "=0.7.0"
 [[bans.skip]]
+name = "hmac"
+version = "=0.11.0"
+[[bans.skip]]
 name = "pin-project"
 version = "=0.4.29"
 [[bans.skip]]
@@ -51,10 +54,13 @@ version = "=0.4.4"
 name = "security-framework-sys"
 version = "=0.4.3"
 
-# ed25519-dalek(v1.0.1) => digest(v0.9.x)
+# ed25519-dalek(v1.0.1) => digest(v0.9.x), sha2(v0.9.9)
 [[bans.skip]]
 name = "digest"
 version = "0.9.0"
+[[bans.skip]]
+name = "sha2"
+version = "0.9.9"
 
 # ed25519-dalek(v1.0.1) => rand_core(v0.5.x), {rand(v0.7.3) => getrandom(v0.1.*)}
 # tonic(v0.4.0) ..=> rand(v0.8.3) ..=> {rand_core(v0.6.x), getrandom(v0.2.x)}

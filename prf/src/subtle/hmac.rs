@@ -16,7 +16,7 @@
 
 //! Provides an implementation of PRF using HMAC.
 
-use ::hmac::{Hmac, Mac, NewMac};
+use ::hmac::{Hmac, Mac};
 use std::{
     cmp::min,
     ops::DerefMut,
