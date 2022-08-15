@@ -19,6 +19,8 @@ ignore = [
     # Remove once chrono has been updated to pull in a fixed version of time
     # See https://github.com/chronotope/chrono/issues/553
     "RUSTSEC-2020-0071",
+    # xml-rs is Unmaintained (via rusoto_core(0.48))
+    "RUSTSEC-2022-0048",
 ]
 
 # Deny multiple versions unless explicitly skipped.
