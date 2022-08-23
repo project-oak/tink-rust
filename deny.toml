@@ -21,6 +21,8 @@ ignore = [
     "RUSTSEC-2020-0071",
     # xml-rs is Unmaintained (via rusoto_core(0.48))
     "RUSTSEC-2022-0048",
+    # ansi_term is Unmaintained (via structopt(0.3.26))
+    "RUSTSEC-2021-0139",
 ]
 
 # Deny multiple versions unless explicitly skipped.
