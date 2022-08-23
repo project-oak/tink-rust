@@ -24,7 +24,7 @@ hkdf = "^0.12.3"
 lazy_static = "^1.4"
 rand = "^0.7"
 serde = { version = "^1.0.143", features = ["derive"], optional = true }
-serde_json = { version = "^1.0.83", optional = true }
+serde_json = { version = "^1.0.85", optional = true }
 sha-1 = "^0.10.0"
 sha2 = "^0.10.2"
 subtle = "^2.4"
