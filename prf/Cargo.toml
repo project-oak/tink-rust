@@ -18,6 +18,6 @@ digest = "^0.10.3"
 hkdf = "^0.12.3"
 hmac = { version = "^0.12.1", features = ["reset"] }
 sha-1 = "^0.10.0"
-sha2 = "^0.10.2"
+sha2 = "^0.10.3"
 tink-core = "^0.2"
 tink-proto = "^0.2"
