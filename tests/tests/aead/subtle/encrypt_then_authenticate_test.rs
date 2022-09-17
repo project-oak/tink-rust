@@ -81,10 +81,10 @@ const RFC_TEST_VECTORS : &[RfcTestVector] = &[
 #[test]
 fn test_eta_rfc_test_vectors() {
     for v in RFC_TEST_VECTORS {
-        let mac_key = hex::decode(&v.mac_key).unwrap();
-        let encryption_key = hex::decode(&v.encryption_key).unwrap();
-        let ciphertext = hex::decode(&v.ciphertext).unwrap();
-        let aad = hex::decode(&v.aad).unwrap();
+        let mac_key = hex::decode(v.mac_key).unwrap();
+        let encryption_key = hex::decode(v.encryption_key).unwrap();
+        let ciphertext = hex::decode(v.ciphertext).unwrap();
+        let aad = hex::decode(v.aad).unwrap();
 
         let cipher = create_aead_with_keys(
             &encryption_key,

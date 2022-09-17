@@ -52,7 +52,7 @@ fn modify_decrypt(curve: EllipticCurveType, k: tink_proto::KeyTemplate) {
             d.decrypt(g, &context).is_err(),
             "case {}: invalid cipher text should fail:\ninvalid: {},\n  valid: {}",
             i,
-            hex::encode(&g),
+            hex::encode(g),
             hex::encode(&ct),
         );
     }
@@ -233,8 +233,8 @@ fn test_ec_aes_siv_test_vectors() {
         },
     ];
     for tv in test_vectors {
-        let key = hex::decode(&tv.key).unwrap();
-        let ct = hex::decode(&tv.ciphertext).unwrap();
+        let key = hex::decode(tv.key).unwrap();
+        let ct = hex::decode(tv.ciphertext).unwrap();
         let ctx = tv.context.as_bytes();
         let pt = tv.plaintext.as_bytes();
 

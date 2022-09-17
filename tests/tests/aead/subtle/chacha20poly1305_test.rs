@@ -24,11 +24,11 @@ use tink_tests::WycheproofResult;
 #[test]
 fn test_cha_cha20_poly1305_encrypt_decrypt() {
     for (i, test) in CHA_CHA20_POLY1305_TESTS.iter().enumerate() {
-        let key = hex::decode(&test.key).unwrap();
-        let pt = hex::decode(&test.plaintext).unwrap();
-        let aad = hex::decode(&test.aad).unwrap();
-        let nonce = hex::decode(&test.nonce).unwrap();
-        let out = hex::decode(&test.out).unwrap();
+        let key = hex::decode(test.key).unwrap();
+        let pt = hex::decode(test.plaintext).unwrap();
+        let aad = hex::decode(test.aad).unwrap();
+        let nonce = hex::decode(test.nonce).unwrap();
+        let out = hex::decode(test.out).unwrap();
 
         let ca = subtle::ChaCha20Poly1305::new(&key).unwrap_or_else(|e| {
             panic!(
@@ -161,9 +161,9 @@ fn test_cha_cha20_poly1305_short_ciphertext() {
 #[test]
 fn test_cha_cha20_poly1305_modify_ciphertext() {
     for (i, test) in CHA_CHA20_POLY1305_TESTS.iter().enumerate() {
-        let key = hex::decode(&test.key).unwrap();
-        let pt = hex::decode(&test.plaintext).unwrap();
-        let mut aad = hex::decode(&test.aad).unwrap();
+        let key = hex::decode(test.key).unwrap();
+        let pt = hex::decode(test.plaintext).unwrap();
+        let mut aad = hex::decode(test.aad).unwrap();
 
         let ca = subtle::ChaCha20Poly1305::new(&key).unwrap();
 

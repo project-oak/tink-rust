@@ -157,15 +157,15 @@ pub fn point_encode(
     match p_format {
         EcPointFormat::Uncompressed => {
             let mut encoded = vec![0; 2 * c_size + 1];
-            (&mut encoded[1 + 2 * c_size - y.len()..]).copy_from_slice(&y);
-            (&mut encoded[1 + c_size - x.len()..1 + c_size]).copy_from_slice(&x);
+            encoded[1 + 2 * c_size - y.len()..].copy_from_slice(&y);
+            encoded[1 + c_size - x.len()..1 + c_size].copy_from_slice(&x);
             encoded[0] = EC_FORMAT_PREFIX_UNCOMPRESSED;
             Ok(encoded)
         }
         EcPointFormat::DoNotUseCrunchyUncompressed => {
             let mut encoded = vec![0; 2 * c_size];
-            (&mut encoded[2 * c_size - y.len()..]).copy_from_slice(&y);
-            (&mut encoded[c_size - x.len()..c_size]).copy_from_slice(&x);
+            encoded[2 * c_size - y.len()..].copy_from_slice(&y);
+            encoded[c_size - x.len()..c_size].copy_from_slice(&x);
             Ok(encoded)
         }
         EcPointFormat::Compressed => {
@@ -175,7 +175,7 @@ pub fn point_encode(
             } else {
                 EC_FORMAT_PREFIX_COMPRESSED_EVEN
             };
-            (&mut encoded[1 + c_size - x.len()..]).copy_from_slice(&x);
+            encoded[1 + c_size - x.len()..].copy_from_slice(&x);
             Ok(encoded)
         }
         _ => Err("invalid point format".into()),

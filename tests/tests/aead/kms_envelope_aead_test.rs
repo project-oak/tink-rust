@@ -41,9 +41,9 @@ fn test_kms_envelope_roundtrip() {
         plaintext,
         original_plaintext,
         "Decrypt(Encrypt({})) = {}; want {}",
-        hex::encode(&original_plaintext),
+        hex::encode(original_plaintext),
         hex::encode(&plaintext),
-        hex::encode(&original_plaintext)
+        hex::encode(original_plaintext)
     );
 
     // Can clone the boxed AEAD.

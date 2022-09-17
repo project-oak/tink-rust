@@ -318,7 +318,7 @@ fn test_aes_ctr_hmac_modified_ciphertext() {
         if end > ct.len() {
             end = ct.len()
         }
-        let mut ct2 = (&ct[..end]).to_vec();
+        let mut ct2 = ct[..end].to_vec();
         ct2.extend_from_slice(&ct[start..]);
         assert!(
             super::decrypt(&cipher, &aad, &pt, &ct2, chunk_size).is_err(),

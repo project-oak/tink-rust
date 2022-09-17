@@ -22,6 +22,7 @@
 
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![deny(broken_intra_doc_links)]
+#![allow(clippy::derive_partial_eq_without_eq)]
 
 /// Re-export to ensure that users of this crate can access the same version.
 pub use prost;

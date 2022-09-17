@@ -77,7 +77,7 @@ impl tink_core::DeterministicAead for AesSiv {
         }
         self.cipher
             .borrow_mut()
-            .encrypt(&[additional_data], plaintext)
+            .encrypt([additional_data], plaintext)
             .map_err(|e| wrap_err("AesSiv: encrypt failed", e))
     }
 
@@ -91,7 +91,7 @@ impl tink_core::DeterministicAead for AesSiv {
         }
         self.cipher
             .borrow_mut()
-            .decrypt(&[additional_data], ciphertext)
+            .decrypt([additional_data], ciphertext)
             .map_err(|e| wrap_err("AesSiv: decrypt failed", e))
     }
 }

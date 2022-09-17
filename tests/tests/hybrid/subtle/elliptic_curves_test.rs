@@ -557,8 +557,8 @@ fn test_point_on_curve() {
         if tc.curve != EllipticCurveType::NistP256 {
             continue;
         }
-        let x = hex::decode(&tc.pub_x).unwrap();
-        let y = hex::decode(&tc.pub_y).unwrap();
+        let x = hex::decode(tc.pub_x).unwrap();
+        let y = hex::decode(tc.pub_y).unwrap();
         let _pub_key = subtle::EcPublicKey::new(tc.curve, &x, &y).unwrap_or_else(|e| {
             panic!(
                 "case {}: failed to convert valid point to public key: {:?}",
@@ -626,7 +626,7 @@ fn bigint_str_to_bytes(curve: EllipticCurveType, val: &str) -> Vec<u8> {
         _ => panic!("unsupported curve {:?}", curve),
     };
     let mut result = vec![0; padded_width];
-    (&mut result[padded_width - v.len()..]).copy_from_slice(&v);
+    result[padded_width - v.len()..].copy_from_slice(&v);
     result
 }
 
@@ -645,7 +645,7 @@ fn test_point_encode() {
         .unwrap();
         let encoded_point = subtle::point_encode(tc.curve, tc.point_format, &pub_key)
             .unwrap_or_else(|e| panic!("error in point encoding in test case {} : {:?}", i, e,));
-        let want = hex::decode(&tc.encoded).unwrap();
+        let want = hex::decode(tc.encoded).unwrap();
         assert_eq!(
             encoded_point, want,
             "mismatch point encoding in test case {}",
@@ -668,7 +668,7 @@ fn test_point_decode() {
         if tc.curve != EllipticCurveType::NistP256 {
             continue;
         }
-        let e = hex::decode(&tc.encoded).unwrap();
+        let e = hex::decode(tc.encoded).unwrap();
         let pub_key = subtle::point_decode(tc.curve, tc.point_format, &e)
             .unwrap_or_else(|e| panic!("error in point decoding in test case {}: {}", i, e,));
         let spub_key = subtle::EcPublicKey::new(
