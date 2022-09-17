@@ -81,8 +81,8 @@ pub fn decrypt<T: tink_core::StreamingAead>(
         if got != want {
             return Err(format!(
                 "decrypted data doesn't match. got={};want={}",
-                hex::encode(&got),
-                hex::encode(&want)
+                hex::encode(got),
+                hex::encode(want)
             )
             .into());
         }

@@ -220,9 +220,9 @@ impl noncebased::SegmentDecrypter for TestDecrypter {
         if nonce != tag {
             return Err(format!(
                 "tag mismatch:\nsegment: {}\nnonce: {}\ntag: {}",
-                hex::encode(&segment),
-                hex::encode(&nonce),
-                hex::encode(&tag)
+                hex::encode(segment),
+                hex::encode(nonce),
+                hex::encode(tag)
             )
             .into());
         }
@@ -310,8 +310,8 @@ fn test_decrypt(
         if got != want {
             return Err(format!(
                 "decrypted data does not match. Got={};want={}",
-                hex::encode(&got),
-                hex::encode(&want)
+                hex::encode(got),
+                hex::encode(want)
             )
             .into());
         }

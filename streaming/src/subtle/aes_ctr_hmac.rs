@@ -304,7 +304,7 @@ impl noncebased::SegmentDecrypter for AesCtrHmacSegmentDecrypter {
             return Err("tag mismatch".into());
         }
 
-        let mut result = (&segment[..tag_start]).to_vec();
+        let mut result = segment[..tag_start].to_vec();
         match &self.aes_key {
             AesCtrKeyVariant::Aes128(key) => {
                 let mut stream =
