@@ -18,7 +18,7 @@ jobs:
         rust:
           - stable
           - beta
-          - nightly-2022-02-22
+          - nightly-2022-09-13
     steps:
       - uses: actions/checkout@629c2de402a417ea7690ca6ce3f33229e27606a5 # v2
       - uses: actions-rs/toolchain@63eb9591781c46a70274cb3ebdf190fce92702e8 # v1
@@ -38,7 +38,7 @@ jobs:
         rust:
           - stable
           - beta
-          - nightly-2022-02-22
+          - nightly-2022-09-13
     steps:
       - uses: actions/checkout@629c2de402a417ea7690ca6ce3f33229e27606a5 # v2
         with:
@@ -59,7 +59,7 @@ jobs:
         rust:
           - stable
           - beta
-          - nightly-2022-02-22
+          - nightly-2022-09-13
     steps:
       - uses: actions/checkout@629c2de402a417ea7690ca6ce3f33229e27606a5 # v2
         with:
@@ -104,7 +104,7 @@ jobs:
       - uses: actions-rs/toolchain@63eb9591781c46a70274cb3ebdf190fce92702e8 # v1
         with:
           profile: minimal
-          toolchain: nightly-2022-02-22
+          toolchain: nightly-2022-09-13
           override: true
           components: rustfmt
       - run: rustc --version
@@ -132,7 +132,7 @@ jobs:
       - uses: actions-rs/toolchain@63eb9591781c46a70274cb3ebdf190fce92702e8 # v1
         with:
           profile: minimal
-          toolchain: nightly-2022-02-22
+          toolchain: nightly-2022-09-13
           override: true
           components: rustfmt
       - run: cargo bench --all-targets
@@ -144,7 +144,7 @@ jobs:
       - uses: actions-rs/toolchain@63eb9591781c46a70274cb3ebdf190fce92702e8 # v1
         with:
           profile: minimal
-          toolchain: nightly-2022-02-22
+          toolchain: nightly-2022-09-13
           override: true
           components: rustfmt, clippy
       - run: rustc --version
@@ -168,7 +168,7 @@ jobs:
       - uses: actions-rs/toolchain@63eb9591781c46a70274cb3ebdf190fce92702e8 # v1
         with:
           profile: minimal
-          toolchain: nightly-2022-02-22
+          toolchain: nightly-2022-09-13
           override: true
           components: rustfmt
       - uses: actions-rs/install@69ec87709ffb5b19a7b5ddbf610cb221498bb1eb # v0.1.2
@@ -201,7 +201,7 @@ jobs:
       - uses: actions-rs/toolchain@63eb9591781c46a70274cb3ebdf190fce92702e8 # v1
         with:
           profile: minimal
-          toolchain: nightly-2022-02-22
+          toolchain: nightly-2022-09-13
           override: true
           components: rustfmt
       - uses: actions-rs/install@69ec87709ffb5b19a7b5ddbf610cb221498bb1eb # v0.1.2
