@@ -93,6 +93,21 @@ jobs:
       - run: rustc --version
       - run: cargo build --release --workspace --all-features
 
+  mindeps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@629c2de402a417ea7690ca6ce3f33229e27606a5 # v2
+      - uses: actions-rs/toolchain@63eb9591781c46a70274cb3ebdf190fce92702e8 # v1
+        with:
+          profile: minimal
+          toolchain: nightly-2022-09-13
+          components: rustfmt
+          override: true
+      - run: rm Cargo.lock
+      - run: cargo -Z minimal-versions update
+      - run: cargo build --release --workspace
+      - run: (cd core && cargo build --features=json --release --all-targets)
+
   formatting:
     runs-on: ubuntu-latest
     steps:
