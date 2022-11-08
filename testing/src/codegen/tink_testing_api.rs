@@ -1,24 +1,23 @@
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ServerInfoRequest {
-}
+pub struct ServerInfoRequest {}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ServerInfoResponse {
     /// For example '1.4'
-    #[prost(string, tag="1")]
+    #[prost(string, tag = "1")]
     pub tink_version: ::prost::alloc::string::String,
     /// For example 'cc', 'java', 'go' or 'python'.
-    #[prost(string, tag="2")]
+    #[prost(string, tag = "2")]
     pub language: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetTemplateRequest {
     /// template name used by Tinkey
-    #[prost(string, tag="1")]
+    #[prost(string, tag = "1")]
     pub template_name: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetTemplateResponse {
-    #[prost(oneof="keyset_template_response::Result", tags="1, 2")]
+    #[prost(oneof = "keyset_template_response::Result", tags = "1, 2")]
     pub result: ::core::option::Option<keyset_template_response::Result>,
 }
 /// Nested message and enum types in `KeysetTemplateResponse`.
@@ -26,21 +25,21 @@ pub mod keyset_template_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         /// serialized google.crypto.tink.KeyTemplate.
-        #[prost(bytes, tag="1")]
+        #[prost(bytes, tag = "1")]
         KeyTemplate(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag="2")]
+        #[prost(string, tag = "2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetGenerateRequest {
     /// serialized google.crypto.tink.KeyTemplate.
-    #[prost(bytes="vec", tag="1")]
+    #[prost(bytes = "vec", tag = "1")]
     pub template: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetGenerateResponse {
-    #[prost(oneof="keyset_generate_response::Result", tags="1, 2")]
+    #[prost(oneof = "keyset_generate_response::Result", tags = "1, 2")]
     pub result: ::core::option::Option<keyset_generate_response::Result>,
 }
 /// Nested message and enum types in `KeysetGenerateResponse`.
@@ -48,21 +47,21 @@ pub mod keyset_generate_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         /// serialized google.crypto.tink.Keyset.
-        #[prost(bytes, tag="1")]
+        #[prost(bytes, tag = "1")]
         Keyset(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag="2")]
+        #[prost(string, tag = "2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetPublicRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes="vec", tag="1")]
+    #[prost(bytes = "vec", tag = "1")]
     pub private_keyset: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetPublicResponse {
-    #[prost(oneof="keyset_public_response::Result", tags="1, 2")]
+    #[prost(oneof = "keyset_public_response::Result", tags = "1, 2")]
     pub result: ::core::option::Option<keyset_public_response::Result>,
 }
 /// Nested message and enum types in `KeysetPublicResponse`.
@@ -70,41 +69,41 @@ pub mod keyset_public_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         /// serialized google.crypto.tink.Keyset.
-        #[prost(bytes, tag="1")]
+        #[prost(bytes, tag = "1")]
         PublicKeyset(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag="2")]
+        #[prost(string, tag = "2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetToJsonRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes="vec", tag="1")]
+    #[prost(bytes = "vec", tag = "1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetToJsonResponse {
-    #[prost(oneof="keyset_to_json_response::Result", tags="1, 2")]
+    #[prost(oneof = "keyset_to_json_response::Result", tags = "1, 2")]
     pub result: ::core::option::Option<keyset_to_json_response::Result>,
 }
 /// Nested message and enum types in `KeysetToJsonResponse`.
 pub mod keyset_to_json_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(string, tag="1")]
+        #[prost(string, tag = "1")]
         JsonKeyset(::prost::alloc::string::String),
-        #[prost(string, tag="2")]
+        #[prost(string, tag = "2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetFromJsonRequest {
-    #[prost(string, tag="1")]
+    #[prost(string, tag = "1")]
     pub json_keyset: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetFromJsonResponse {
-    #[prost(oneof="keyset_from_json_response::Result", tags="1, 2")]
+    #[prost(oneof = "keyset_from_json_response::Result", tags = "1, 2")]
     pub result: ::core::option::Option<keyset_from_json_response::Result>,
 }
 /// Nested message and enum types in `KeysetFromJsonResponse`.
@@ -112,358 +111,356 @@ pub mod keyset_from_json_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         /// serialized google.crypto.tink.Keyset.
-        #[prost(bytes, tag="1")]
+        #[prost(bytes, tag = "1")]
         Keyset(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag="2")]
+        #[prost(string, tag = "2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AeadEncryptRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes="vec", tag="1")]
+    #[prost(bytes = "vec", tag = "1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes="vec", tag="2")]
+    #[prost(bytes = "vec", tag = "2")]
     pub plaintext: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes="vec", tag="3")]
+    #[prost(bytes = "vec", tag = "3")]
     pub associated_data: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AeadEncryptResponse {
-    #[prost(oneof="aead_encrypt_response::Result", tags="1, 2")]
+    #[prost(oneof = "aead_encrypt_response::Result", tags = "1, 2")]
     pub result: ::core::option::Option<aead_encrypt_response::Result>,
 }
 /// Nested message and enum types in `AeadEncryptResponse`.
 pub mod aead_encrypt_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(bytes, tag="1")]
+        #[prost(bytes, tag = "1")]
         Ciphertext(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag="2")]
+        #[prost(string, tag = "2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AeadDecryptRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes="vec", tag="1")]
+    #[prost(bytes = "vec", tag = "1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes="vec", tag="2")]
+    #[prost(bytes = "vec", tag = "2")]
     pub ciphertext: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes="vec", tag="3")]
+    #[prost(bytes = "vec", tag = "3")]
     pub associated_data: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AeadDecryptResponse {
-    #[prost(oneof="aead_decrypt_response::Result", tags="1, 2")]
+    #[prost(oneof = "aead_decrypt_response::Result", tags = "1, 2")]
     pub result: ::core::option::Option<aead_decrypt_response::Result>,
 }
 /// Nested message and enum types in `AeadDecryptResponse`.
 pub mod aead_decrypt_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(bytes, tag="1")]
+        #[prost(bytes, tag = "1")]
         Plaintext(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag="2")]
+        #[prost(string, tag = "2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DeterministicAeadEncryptRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes="vec", tag="1")]
+    #[prost(bytes = "vec", tag = "1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes="vec", tag="2")]
+    #[prost(bytes = "vec", tag = "2")]
     pub plaintext: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes="vec", tag="3")]
+    #[prost(bytes = "vec", tag = "3")]
     pub associated_data: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DeterministicAeadEncryptResponse {
-    #[prost(oneof="deterministic_aead_encrypt_response::Result", tags="1, 2")]
+    #[prost(oneof = "deterministic_aead_encrypt_response::Result", tags = "1, 2")]
     pub result: ::core::option::Option<deterministic_aead_encrypt_response::Result>,
 }
 /// Nested message and enum types in `DeterministicAeadEncryptResponse`.
 pub mod deterministic_aead_encrypt_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(bytes, tag="1")]
+        #[prost(bytes, tag = "1")]
         Ciphertext(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag="2")]
+        #[prost(string, tag = "2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DeterministicAeadDecryptRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes="vec", tag="1")]
+    #[prost(bytes = "vec", tag = "1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes="vec", tag="2")]
+    #[prost(bytes = "vec", tag = "2")]
     pub ciphertext: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes="vec", tag="3")]
+    #[prost(bytes = "vec", tag = "3")]
     pub associated_data: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DeterministicAeadDecryptResponse {
-    #[prost(oneof="deterministic_aead_decrypt_response::Result", tags="1, 2")]
+    #[prost(oneof = "deterministic_aead_decrypt_response::Result", tags = "1, 2")]
     pub result: ::core::option::Option<deterministic_aead_decrypt_response::Result>,
 }
 /// Nested message and enum types in `DeterministicAeadDecryptResponse`.
 pub mod deterministic_aead_decrypt_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(bytes, tag="1")]
+        #[prost(bytes, tag = "1")]
         Plaintext(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag="2")]
+        #[prost(string, tag = "2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StreamingAeadEncryptRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes="vec", tag="1")]
+    #[prost(bytes = "vec", tag = "1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes="vec", tag="2")]
+    #[prost(bytes = "vec", tag = "2")]
     pub plaintext: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes="vec", tag="3")]
+    #[prost(bytes = "vec", tag = "3")]
     pub associated_data: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StreamingAeadEncryptResponse {
-    #[prost(oneof="streaming_aead_encrypt_response::Result", tags="1, 2")]
+    #[prost(oneof = "streaming_aead_encrypt_response::Result", tags = "1, 2")]
     pub result: ::core::option::Option<streaming_aead_encrypt_response::Result>,
 }
 /// Nested message and enum types in `StreamingAeadEncryptResponse`.
 pub mod streaming_aead_encrypt_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(bytes, tag="1")]
+        #[prost(bytes, tag = "1")]
         Ciphertext(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag="2")]
+        #[prost(string, tag = "2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StreamingAeadDecryptRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes="vec", tag="1")]
+    #[prost(bytes = "vec", tag = "1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes="vec", tag="2")]
+    #[prost(bytes = "vec", tag = "2")]
     pub ciphertext: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes="vec", tag="3")]
+    #[prost(bytes = "vec", tag = "3")]
     pub associated_data: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StreamingAeadDecryptResponse {
-    #[prost(oneof="streaming_aead_decrypt_response::Result", tags="1, 2")]
+    #[prost(oneof = "streaming_aead_decrypt_response::Result", tags = "1, 2")]
     pub result: ::core::option::Option<streaming_aead_decrypt_response::Result>,
 }
 /// Nested message and enum types in `StreamingAeadDecryptResponse`.
 pub mod streaming_aead_decrypt_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(bytes, tag="1")]
+        #[prost(bytes, tag = "1")]
         Plaintext(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag="2")]
+        #[prost(string, tag = "2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ComputeMacRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes="vec", tag="1")]
+    #[prost(bytes = "vec", tag = "1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes="vec", tag="2")]
+    #[prost(bytes = "vec", tag = "2")]
     pub data: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ComputeMacResponse {
-    #[prost(oneof="compute_mac_response::Result", tags="1, 2")]
+    #[prost(oneof = "compute_mac_response::Result", tags = "1, 2")]
     pub result: ::core::option::Option<compute_mac_response::Result>,
 }
 /// Nested message and enum types in `ComputeMacResponse`.
 pub mod compute_mac_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(bytes, tag="1")]
+        #[prost(bytes, tag = "1")]
         MacValue(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag="2")]
+        #[prost(string, tag = "2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct VerifyMacRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes="vec", tag="1")]
+    #[prost(bytes = "vec", tag = "1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes="vec", tag="2")]
+    #[prost(bytes = "vec", tag = "2")]
     pub mac_value: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes="vec", tag="3")]
+    #[prost(bytes = "vec", tag = "3")]
     pub data: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct VerifyMacResponse {
-    #[prost(string, tag="1")]
+    #[prost(string, tag = "1")]
     pub err: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HybridEncryptRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes="vec", tag="1")]
+    #[prost(bytes = "vec", tag = "1")]
     pub public_keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes="vec", tag="2")]
+    #[prost(bytes = "vec", tag = "2")]
     pub plaintext: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes="vec", tag="3")]
+    #[prost(bytes = "vec", tag = "3")]
     pub context_info: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HybridEncryptResponse {
-    #[prost(oneof="hybrid_encrypt_response::Result", tags="1, 2")]
+    #[prost(oneof = "hybrid_encrypt_response::Result", tags = "1, 2")]
     pub result: ::core::option::Option<hybrid_encrypt_response::Result>,
 }
 /// Nested message and enum types in `HybridEncryptResponse`.
 pub mod hybrid_encrypt_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(bytes, tag="1")]
+        #[prost(bytes, tag = "1")]
         Ciphertext(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag="2")]
+        #[prost(string, tag = "2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HybridDecryptRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes="vec", tag="1")]
+    #[prost(bytes = "vec", tag = "1")]
     pub private_keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes="vec", tag="2")]
+    #[prost(bytes = "vec", tag = "2")]
     pub ciphertext: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes="vec", tag="3")]
+    #[prost(bytes = "vec", tag = "3")]
     pub context_info: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HybridDecryptResponse {
-    #[prost(oneof="hybrid_decrypt_response::Result", tags="1, 2")]
+    #[prost(oneof = "hybrid_decrypt_response::Result", tags = "1, 2")]
     pub result: ::core::option::Option<hybrid_decrypt_response::Result>,
 }
 /// Nested message and enum types in `HybridDecryptResponse`.
 pub mod hybrid_decrypt_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(bytes, tag="1")]
+        #[prost(bytes, tag = "1")]
         Plaintext(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag="2")]
+        #[prost(string, tag = "2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SignatureSignRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes="vec", tag="1")]
+    #[prost(bytes = "vec", tag = "1")]
     pub private_keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes="vec", tag="2")]
+    #[prost(bytes = "vec", tag = "2")]
     pub data: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SignatureSignResponse {
-    #[prost(oneof="signature_sign_response::Result", tags="1, 2")]
+    #[prost(oneof = "signature_sign_response::Result", tags = "1, 2")]
     pub result: ::core::option::Option<signature_sign_response::Result>,
 }
 /// Nested message and enum types in `SignatureSignResponse`.
 pub mod signature_sign_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(bytes, tag="1")]
+        #[prost(bytes, tag = "1")]
         Signature(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag="2")]
+        #[prost(string, tag = "2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SignatureVerifyRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes="vec", tag="1")]
+    #[prost(bytes = "vec", tag = "1")]
     pub public_keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes="vec", tag="2")]
+    #[prost(bytes = "vec", tag = "2")]
     pub signature: ::prost::alloc::vec::Vec<u8>,
-    #[prost(bytes="vec", tag="3")]
+    #[prost(bytes = "vec", tag = "3")]
     pub data: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SignatureVerifyResponse {
-    #[prost(string, tag="1")]
+    #[prost(string, tag = "1")]
     pub err: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PrfSetKeyIdsRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes="vec", tag="1")]
+    #[prost(bytes = "vec", tag = "1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PrfSetKeyIdsResponse {
-    #[prost(oneof="prf_set_key_ids_response::Result", tags="1, 2")]
+    #[prost(oneof = "prf_set_key_ids_response::Result", tags = "1, 2")]
     pub result: ::core::option::Option<prf_set_key_ids_response::Result>,
 }
 /// Nested message and enum types in `PrfSetKeyIdsResponse`.
 pub mod prf_set_key_ids_response {
     #[derive(Clone, PartialEq, ::prost::Message)]
     pub struct Output {
-        #[prost(uint32, tag="1")]
+        #[prost(uint32, tag = "1")]
         pub primary_key_id: u32,
-        #[prost(uint32, repeated, tag="2")]
+        #[prost(uint32, repeated, tag = "2")]
         pub key_id: ::prost::alloc::vec::Vec<u32>,
     }
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(message, tag="1")]
+        #[prost(message, tag = "1")]
         Output(Output),
-        #[prost(string, tag="2")]
+        #[prost(string, tag = "2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PrfSetComputeRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes="vec", tag="1")]
+    #[prost(bytes = "vec", tag = "1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(uint32, tag="2")]
+    #[prost(uint32, tag = "2")]
     pub key_id: u32,
-    #[prost(bytes="vec", tag="3")]
+    #[prost(bytes = "vec", tag = "3")]
     pub input_data: ::prost::alloc::vec::Vec<u8>,
-    #[prost(int32, tag="4")]
+    #[prost(int32, tag = "4")]
     pub output_length: i32,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PrfSetComputeResponse {
-    #[prost(oneof="prf_set_compute_response::Result", tags="1, 2")]
+    #[prost(oneof = "prf_set_compute_response::Result", tags = "1, 2")]
     pub result: ::core::option::Option<prf_set_compute_response::Result>,
 }
 /// Nested message and enum types in `PrfSetComputeResponse`.
 pub mod prf_set_compute_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(bytes, tag="1")]
+        #[prost(bytes, tag = "1")]
         Output(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag="2")]
+        #[prost(string, tag = "2")]
         Err(::prost::alloc::string::String),
     }
 }
-// TODO(b/179867503): Remove these copies of Timestamp, Duration and StringValue
-
 /// Copied from timestamp.proto
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Timestamp {
     /// Represents seconds of UTC time since Unix epoch
     /// 1970-01-01T00:00:00Z. Must be from 0001-01-01T00:00:00Z to
     /// 9999-12-31T23:59:59Z inclusive.
-    #[prost(int64, tag="1")]
+    #[prost(int64, tag = "1")]
     pub seconds: i64,
     /// Non-negative fractions of a second at nanosecond resolution. Negative
     /// second values with fractions must still have non-negative nanos values
     /// that count forward in time. Must be from 0 to 999,999,999
     /// inclusive.
-    #[prost(int32, tag="2")]
+    #[prost(int32, tag = "2")]
     pub nanos: i32,
 }
 /// Copied from duration.proto
@@ -472,7 +469,7 @@ pub struct Duration {
     /// Signed seconds of the span of time. Must be from -315,576,000,000
     /// to +315,576,000,000 inclusive. Note: these bounds are computed from:
     /// 60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years
-    #[prost(int64, tag="1")]
+    #[prost(int64, tag = "1")]
     pub seconds: i64,
     /// Signed fractions of a second at nanosecond resolution of the span
     /// of time. Durations less than one second are represented with a 0
@@ -480,160 +477,163 @@ pub struct Duration {
     /// of one second or more, a non-zero value for the `nanos` field must be
     /// of the same sign as the `seconds` field. Must be from -999,999,999
     /// to +999,999,999 inclusive.
-    #[prost(int32, tag="2")]
+    #[prost(int32, tag = "2")]
     pub nanos: i32,
 }
 /// Copied from wrappers.proto
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StringValue {
     /// The string value.
-    #[prost(string, tag="1")]
+    #[prost(string, tag = "1")]
     pub value: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtClaimValue {
-    #[prost(oneof="jwt_claim_value::Kind", tags="2, 3, 4, 5, 6, 7")]
+    #[prost(oneof = "jwt_claim_value::Kind", tags = "2, 3, 4, 5, 6, 7")]
     pub kind: ::core::option::Option<jwt_claim_value::Kind>,
 }
 /// Nested message and enum types in `JwtClaimValue`.
 pub mod jwt_claim_value {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Kind {
-        #[prost(enumeration="super::NullValue", tag="2")]
+        #[prost(enumeration = "super::NullValue", tag = "2")]
         NullValue(i32),
-        #[prost(double, tag="3")]
+        #[prost(double, tag = "3")]
         NumberValue(f64),
-        #[prost(string, tag="4")]
+        #[prost(string, tag = "4")]
         StringValue(::prost::alloc::string::String),
-        #[prost(bool, tag="5")]
+        #[prost(bool, tag = "5")]
         BoolValue(bool),
-        #[prost(string, tag="6")]
+        #[prost(string, tag = "6")]
         JsonObjectValue(::prost::alloc::string::String),
-        #[prost(string, tag="7")]
+        #[prost(string, tag = "7")]
         JsonArrayValue(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtToken {
-    #[prost(message, optional, tag="1")]
+    #[prost(message, optional, tag = "1")]
     pub issuer: ::core::option::Option<StringValue>,
-    #[prost(message, optional, tag="2")]
+    #[prost(message, optional, tag = "2")]
     pub subject: ::core::option::Option<StringValue>,
-    #[prost(string, repeated, tag="3")]
+    #[prost(string, repeated, tag = "3")]
     pub audiences: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
-    #[prost(message, optional, tag="4")]
+    #[prost(message, optional, tag = "4")]
     pub jwt_id: ::core::option::Option<StringValue>,
-    #[prost(message, optional, tag="5")]
+    #[prost(message, optional, tag = "5")]
     pub expiration: ::core::option::Option<Timestamp>,
-    #[prost(message, optional, tag="6")]
+    #[prost(message, optional, tag = "6")]
     pub not_before: ::core::option::Option<Timestamp>,
-    #[prost(message, optional, tag="7")]
+    #[prost(message, optional, tag = "7")]
     pub issued_at: ::core::option::Option<Timestamp>,
-    #[prost(map="string, message", tag="8")]
-    pub custom_claims: ::std::collections::HashMap<::prost::alloc::string::String, JwtClaimValue>,
-    #[prost(message, optional, tag="9")]
+    #[prost(map = "string, message", tag = "8")]
+    pub custom_claims: ::std::collections::HashMap<
+        ::prost::alloc::string::String,
+        JwtClaimValue,
+    >,
+    #[prost(message, optional, tag = "9")]
     pub type_header: ::core::option::Option<StringValue>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtValidator {
-    #[prost(message, optional, tag="7")]
+    #[prost(message, optional, tag = "7")]
     pub expected_type_header: ::core::option::Option<StringValue>,
-    #[prost(message, optional, tag="1")]
+    #[prost(message, optional, tag = "1")]
     pub expected_issuer: ::core::option::Option<StringValue>,
-    #[prost(message, optional, tag="3")]
+    #[prost(message, optional, tag = "3")]
     pub expected_audience: ::core::option::Option<StringValue>,
-    #[prost(bool, tag="8")]
+    #[prost(bool, tag = "8")]
     pub ignore_type_header: bool,
-    #[prost(bool, tag="9")]
+    #[prost(bool, tag = "9")]
     pub ignore_issuer: bool,
-    #[prost(bool, tag="11")]
+    #[prost(bool, tag = "11")]
     pub ignore_audience: bool,
-    #[prost(bool, tag="12")]
+    #[prost(bool, tag = "12")]
     pub allow_missing_expiration: bool,
-    #[prost(bool, tag="13")]
+    #[prost(bool, tag = "13")]
     pub expect_issued_in_the_past: bool,
-    #[prost(message, optional, tag="5")]
+    #[prost(message, optional, tag = "5")]
     pub now: ::core::option::Option<Timestamp>,
-    #[prost(message, optional, tag="6")]
+    #[prost(message, optional, tag = "6")]
     pub clock_skew: ::core::option::Option<Duration>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtSignRequest {
     /// serialized google.crypto.tink.Keyset
-    #[prost(bytes="vec", tag="1")]
+    #[prost(bytes = "vec", tag = "1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(message, optional, tag="2")]
+    #[prost(message, optional, tag = "2")]
     pub raw_jwt: ::core::option::Option<JwtToken>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtSignResponse {
-    #[prost(oneof="jwt_sign_response::Result", tags="1, 2")]
+    #[prost(oneof = "jwt_sign_response::Result", tags = "1, 2")]
     pub result: ::core::option::Option<jwt_sign_response::Result>,
 }
 /// Nested message and enum types in `JwtSignResponse`.
 pub mod jwt_sign_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(string, tag="1")]
+        #[prost(string, tag = "1")]
         SignedCompactJwt(::prost::alloc::string::String),
-        #[prost(string, tag="2")]
+        #[prost(string, tag = "2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtVerifyRequest {
     /// serialized google.crypto.tink.Keyset
-    #[prost(bytes="vec", tag="1")]
+    #[prost(bytes = "vec", tag = "1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
-    #[prost(string, tag="2")]
+    #[prost(string, tag = "2")]
     pub signed_compact_jwt: ::prost::alloc::string::String,
-    #[prost(message, optional, tag="3")]
+    #[prost(message, optional, tag = "3")]
     pub validator: ::core::option::Option<JwtValidator>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtVerifyResponse {
-    #[prost(oneof="jwt_verify_response::Result", tags="1, 2")]
+    #[prost(oneof = "jwt_verify_response::Result", tags = "1, 2")]
     pub result: ::core::option::Option<jwt_verify_response::Result>,
 }
 /// Nested message and enum types in `JwtVerifyResponse`.
 pub mod jwt_verify_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(message, tag="1")]
+        #[prost(message, tag = "1")]
         VerifiedJwt(super::JwtToken),
-        #[prost(string, tag="2")]
+        #[prost(string, tag = "2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtToJwkSetRequest {
     /// serialized google.crypto.tink.Keyset.
-    #[prost(bytes="vec", tag="1")]
+    #[prost(bytes = "vec", tag = "1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtToJwkSetResponse {
-    #[prost(oneof="jwt_to_jwk_set_response::Result", tags="1, 2")]
+    #[prost(oneof = "jwt_to_jwk_set_response::Result", tags = "1, 2")]
     pub result: ::core::option::Option<jwt_to_jwk_set_response::Result>,
 }
 /// Nested message and enum types in `JwtToJwkSetResponse`.
 pub mod jwt_to_jwk_set_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
-        #[prost(string, tag="1")]
+        #[prost(string, tag = "1")]
         JwkSet(::prost::alloc::string::String),
-        #[prost(string, tag="2")]
+        #[prost(string, tag = "2")]
         Err(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtFromJwkSetRequest {
-    #[prost(string, tag="1")]
+    #[prost(string, tag = "1")]
     pub jwk_set: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtFromJwkSetResponse {
-    #[prost(oneof="jwt_from_jwk_set_response::Result", tags="1, 2")]
+    #[prost(oneof = "jwt_from_jwk_set_response::Result", tags = "1, 2")]
     pub result: ::core::option::Option<jwt_from_jwk_set_response::Result>,
 }
 /// Nested message and enum types in `JwtFromJwkSetResponse`.
@@ -641,9 +641,9 @@ pub mod jwt_from_jwk_set_response {
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         /// serialized google.crypto.tink.Keyset.
-        #[prost(bytes, tag="1")]
+        #[prost(bytes, tag = "1")]
         Keyset(::prost::alloc::vec::Vec<u8>),
-        #[prost(string, tag="2")]
+        #[prost(string, tag = "2")]
         Err(::prost::alloc::string::String),
     }
 }
