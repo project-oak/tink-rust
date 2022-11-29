@@ -23,6 +23,8 @@ ignore = [
     "RUSTSEC-2022-0048",
     # ansi_term is Unmaintained (via structopt(0.3.26))
     "RUSTSEC-2021-0139",
+    # atty has advisory and is Unmaintained (via structopt(0.3.26) and env_logger(0.9.3))
+    "RUSTSEC-2021-0145",
 ]
 
 # Deny multiple versions unless explicitly skipped.
