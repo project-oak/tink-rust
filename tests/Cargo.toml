@@ -11,7 +11,7 @@ categories = ["cryptography"]
 publish = false
 
 [dependencies]
-base64 = "^0.13"
+base64 = "^0.20"
 ed25519-dalek = "^1.0.1"
 generic-array = "^0.14.6"
 hex = "^0.4.3"
@@ -28,7 +28,7 @@ tink-mac = "^0.2"
 tink-proto = "^0.2"
 
 [dev-dependencies]
-base64 = "^0.13"
+base64 = "^0.20"
 hex = "^0.4.3"
 lazy_static = "^1.4"
 maplit = "^1.0.2"

@@ -214,6 +214,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9e1b586273c5702936fe7b7d6896644d8be71e6314cfe09d3167c95f712589e8"
 
 [[package]]
+name = "base64"
+version = "0.20.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0ea22880d78093b0cbe17c89f64a7d457941e65759157ec6cb31a31d652b05e5"
+
+[[package]]
 name = "base64ct"
 version = "1.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1840,7 +1846,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1db30db44ea73551326269adcf7a2169428a054f14faf9e1768f2163494f2fa2"
 dependencies = [
  "async-trait",
- "base64",
+ "base64 0.13.1",
  "bytes",
  "crc32fast",
  "futures",
@@ -1896,7 +1902,7 @@ version = "0.48.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a5ae95491c8b4847931e291b151127eccd6ff8ca13f33603eb3d0035ecb05272"
 dependencies = [
- "base64",
+ "base64 0.13.1",
  "bytes",
  "chrono",
  "digest 0.9.0",
@@ -1931,7 +1937,7 @@ version = "0.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "064fd21ff87c6e87ed4506e68beb42459caa4a0e2eb144932e6776768556980b"
 dependencies = [
- "base64",
+ "base64 0.13.1",
  "log",
  "ring",
  "sct",
@@ -2361,7 +2367,7 @@ dependencies = [
 name = "tink-gcpkms"
 version = "0.2.5"
 dependencies = [
- "base64",
+ "base64 0.20.0",
  "chrono",
  "futures",
  "http",
@@ -2416,7 +2422,7 @@ dependencies = [
 name = "tink-proto"
 version = "0.2.5"
 dependencies = [
- "base64",
+ "base64 0.20.0",
  "prost",
  "prost-build",
  "serde",
@@ -2477,7 +2483,7 @@ dependencies = [
 name = "tink-tests"
 version = "0.2.5"
 dependencies = [
- "base64",
+ "base64 0.20.0",
  "ed25519-dalek",
  "generic-array",
  "hex",
@@ -2612,7 +2618,7 @@ dependencies = [
  "async-stream",
  "async-trait",
  "axum",
- "base64",
+ "base64 0.13.1",
  "bytes",
  "futures-core",
  "futures-util",
@@ -2985,7 +2991,7 @@ version = "5.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2573621fa28865489bdf556cdb8703604f4e8498612e3041a212ac20e59c4aeb"
 dependencies = [
- "base64",
+ "base64 0.13.1",
  "chrono",
  "futures",
  "http",

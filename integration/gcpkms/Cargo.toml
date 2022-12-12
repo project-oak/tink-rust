@@ -12,7 +12,7 @@ keywords = ["cryptography", "tink", "kms", "gcp"]
 categories = ["cryptography"]
 
 [dependencies]
-base64 = "^0.13"
+base64 = "^0.20"
 chrono = "^0.4"
 futures = "^0.3"
 http = "^0.2"
