@@ -2,8 +2,8 @@
 
 [![Docs](https://img.shields.io/badge/docs-rust-brightgreen?style=for-the-badge)](https://project-oak.github.io/tink-rust)
 ![MSRV](https://img.shields.io/badge/rustc-1.57+-yellow?style=for-the-badge)
-[![CI Status](https://img.shields.io/github/workflow/status/project-oak/tink-rust/CI?color=blue&style=for-the-badge)](https://github.com/project-oak/tink-rust/actions?query=workflow%3ACI)
-[![Interop Status](https://img.shields.io/github/workflow/status/project-oak/tink-rust/crosstest?color=orange&label=interop&style=for-the-badge)](https://github.com/project-oak/tink-rust/actions?query=workflow%3Acrosstest)
+[![CI Status](https://img.shields.io/github/actions/workflow/status/project-oak/tink-rust/ci.yml?branch=main&color=blue&style=for-the-badge)](https://github.com/project-oak/tink-rust/actions?query=workflow%3ACI)
+[![Interop Status](https://img.shields.io/github/actions/workflow/status/project-oak/tink-rust/crosstest.yml?branch=main&color=orange&label=interop&style=for-the-badge)](https://github.com/project-oak/tink-rust/actions?query=workflow%3Acrosstest)
 [![codecov](https://img.shields.io/codecov/c/github/project-oak/tink-rust?style=for-the-badge)](https://codecov.io/gh/project-oak/tink-rust)
 
 This repository holds a Rust port of Google's [Tink cryptography library](https://github.com/google/tink).
