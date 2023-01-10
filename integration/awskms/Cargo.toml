@@ -14,7 +14,7 @@ categories = ["cryptography"]
 [dependencies]
 csv = "^1.1.6"
 hex = "^0.4.3"
-regex = "^1.7.0"
+regex = "^1.7.1"
 rusoto_core = "^0.48"
 rusoto_credential = "^0.48"
 rusoto_kms = "^0.48"
