@@ -14,13 +14,16 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use signature::{Signature, Verifier as RustCryptoVerifier};
+use std::convert::TryInto;
+
+use ed25519_dalek::Verifier;
+// use signature::Verifier as RustCryptoVerifier;
 use tink_core::{utils::wrap_err, TinkError};
 
 /// A [`tink_core::Verifier`] for ED25519.
 #[derive(Clone)]
 pub struct Ed25519Verifier {
-    public_key: ed25519_dalek::PublicKey,
+    public_key: ed25519_dalek::VerifyingKey,
 }
 
 impl Ed25519Verifier {
@@ -29,12 +32,13 @@ impl Ed25519Verifier {
         // The docs for [`ed25519_dalek::PublicKey`] state that the caller is responsible
         // for ensuring that `pub_key` is a compressed point on the curve; however, the
         // implementation does appear to check this.
-        let public_key = ed25519_dalek::PublicKey::from_bytes(pub_key)
+        let public_key: ed25519_dalek::VerifyingKey = pub_key
+            .try_into()
             .map_err(|e| wrap_err("Ed25519Verifier: invalid key", e))?;
         Self::new_from_public_key(public_key)
     }
 
-    pub fn new_from_public_key(public_key: ed25519_dalek::PublicKey) -> Result<Self, TinkError> {
+    pub fn new_from_public_key(public_key: ed25519_dalek::VerifyingKey) -> Result<Self, TinkError> {
         Ok(Self { public_key })
     }
 }
@@ -48,7 +52,9 @@ impl tink_core::Verifier for Ed25519Verifier {
             )
             .into());
         }
-        let s = <ed25519_dalek::Signature as Signature>::from_bytes(signature)
+
+        let s: ed25519_dalek::Signature = signature
+            .try_into()
             .map_err(|e| wrap_err("invalid signature", e))?;
         self.public_key
             .verify(data, &s)

@@ -13,11 +13,10 @@ categories = ["cryptography"]
 
 [dependencies]
 ecdsa = { version = "^0.14.8", features = ["der"] }
-ed25519-dalek = "^1.0.1"
+ed25519-dalek = { version = "2.0.0-pre.0", features = ["rand_core"] }
 generic-array = "^0.14.7"
 p256 = "^0.11.1"
-# `rand` version must match that required by `ed25519-dalek`.
-rand = "^0.7"
+rand = "^0.8"
 signature = "^1.6"
 tink-core = "^0.2"
 tink-proto = "^0.2"
