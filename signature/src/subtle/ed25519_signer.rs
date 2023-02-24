@@ -14,19 +14,21 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use signature::{Signature, Signer as RustCryptoSigner};
+use std::convert::TryInto;
+
+use ed25519_dalek::Signer as DalekSigner;
 use tink_core::{utils::wrap_err, Signer, TinkError};
 
 /// A [`Signer`] implementation for ED25519.
 pub struct Ed25519Signer {
-    keypair: ed25519_dalek::Keypair,
+    signing_key: ed25519_dalek::SigningKey,
 }
 
 /// Manual implementation of [`Clone`].
 impl Clone for Ed25519Signer {
     fn clone(&self) -> Self {
         Self {
-            keypair: ed25519_dalek::Keypair::from_bytes(&self.keypair.to_bytes()).unwrap(), /* safe: round-trip */
+            signing_key: ed25519_dalek::SigningKey::from_bytes(&self.signing_key.to_bytes()),
         }
     }
 }
@@ -35,23 +37,22 @@ impl Ed25519Signer {
     /// Create an [`Ed25519Signer`] from the provided seed, which must be 32 bytes.
     /// RFC8032's private keys correspond to seeds here.
     pub fn new(seed: &[u8]) -> Result<Self, TinkError> {
-        let secret_key =
-            ed25519_dalek::SecretKey::from_bytes(seed).map_err(|e| wrap_err("invalid key", e))?;
-        let public_key: ed25519_dalek::PublicKey = (&secret_key).into();
-        Self::new_from_keypair(ed25519_dalek::Keypair {
-            secret: secret_key,
-            public: public_key,
-        })
+        let secret_key: ed25519_dalek::SecretKey =
+            seed.try_into().map_err(|e| wrap_err("invalid key", e))?;
+
+        Self::new_from_keypair(ed25519_dalek::SigningKey::from_bytes(&secret_key))
     }
 
-    pub fn new_from_keypair(keypair: ed25519_dalek::Keypair) -> Result<Self, TinkError> {
-        Ok(Self { keypair })
+    pub fn new_from_keypair(signer_key: ed25519_dalek::SigningKey) -> Result<Self, TinkError> {
+        Ok(Self {
+            signing_key: signer_key,
+        })
     }
 }
 
 impl Signer for Ed25519Signer {
     fn sign(&self, data: &[u8]) -> Result<Vec<u8>, tink_core::TinkError> {
-        let r = self.keypair.sign(data);
-        Ok(r.as_bytes().to_vec())
+        let r = self.signing_key.sign(data);
+        Ok(r.to_bytes().to_vec())
     }
 }

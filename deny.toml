@@ -42,29 +42,12 @@ version = "=0.11.0"
 [[bans.skip]]
 name = "base64"
 version = "=0.13.1"
-
-# ed25519-dalek(v1.0.1) => digest(v0.9.x), sha2(v0.9.9)
 [[bans.skip]]
 name = "digest"
 version = "0.9.0"
 [[bans.skip]]
 name = "sha2"
 version = "0.9.9"
-
-# ed25519-dalek(v1.0.1) => rand_core(v0.5.x), {rand(v0.7.3) => getrandom(v0.1.*)}
-# tonic(v0.4.0) ..=> rand(v0.8.3) ..=> {rand_core(v0.6.x), getrandom(v0.2.x)}
-[[bans.skip]]
-name = "getrandom"
-version = "0.1.15"
-[[bans.skip]]
-name = "rand"
-version = "0.7.3"
-[[bans.skip]]
-name = "rand_core"
-version = "0.5.1"
-[[bans.skip]]
-name = "rand_chacha"
-version = "0.2.2"
 
 # structopt(0.3.26) => structopt-derive(0.4.18) => heck(0.3.*)
 [[bans.skip]]
