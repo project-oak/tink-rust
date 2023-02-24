@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use ed25519_dalek::Keypair;
+use ed25519_dalek::SigningKey;
 use serde::Deserialize;
 use tink_core::{subtle::random::get_random_bytes, Signer, TinkError, Verifier};
 use tink_signature::subtle::{Ed25519Signer, Ed25519Verifier};
@@ -24,7 +24,7 @@ use tink_tests::WycheproofResult;
 fn test_ed25519_deterministic() {
     let data = get_random_bytes(20);
     let mut csprng = rand::thread_rng();
-    let keypair = Keypair::generate(&mut csprng);
+    let keypair = SigningKey::generate(&mut csprng);
 
     // Use the private key and public key directly to create new instances
     let (signer, verifier) = new_signer_verifier(keypair)
@@ -47,7 +47,7 @@ fn test_ed25519_deterministic() {
 fn test_ed25519_verify_modified_signature() {
     let data = get_random_bytes(20);
     let mut csprng = rand::thread_rng();
-    let keypair = Keypair::generate(&mut csprng);
+    let keypair = SigningKey::generate(&mut csprng);
 
     // Use the private key and public key directly to create new instances
     let (signer, verifier) =
@@ -74,7 +74,7 @@ fn test_ed25519_verify_modified_signature() {
 fn test_ed25519_verify_truncated_signature() {
     let data = get_random_bytes(20);
     let mut csprng = rand::thread_rng();
-    let keypair = Keypair::generate(&mut csprng);
+    let keypair = SigningKey::generate(&mut csprng);
 
     // Use the private key and public key directly to create new instances
     let (signer, verifier) =
@@ -90,7 +90,7 @@ fn test_ed25519_verify_truncated_signature() {
 fn test_ed25519_verify_modified_message() {
     let mut data = get_random_bytes(20);
     let mut csprng = rand::thread_rng();
-    let keypair = Keypair::generate(&mut csprng);
+    let keypair = SigningKey::generate(&mut csprng);
 
     // Use the private key and public key directly to create new instances
     let (signer, verifier) =
@@ -115,8 +115,8 @@ fn test_ed25519_verify_modified_message() {
 #[test]
 fn test_ed25519_sign_verify() {
     let mut csprng = rand::thread_rng();
-    let keypair = Keypair::generate(&mut csprng);
-    let seed = keypair.secret.as_bytes().to_vec();
+    let keypair = SigningKey::generate(&mut csprng);
+    let seed = keypair.to_bytes().to_vec();
 
     // Use the private key and public key directly to create new instances
     let (signer, verifier) = new_signer_verifier(keypair)
@@ -274,9 +274,9 @@ fn test_ed25519_wycheproof_cases() {
 }
 
 fn new_signer_verifier(
-    keypair: ed25519_dalek::Keypair,
+    keypair: ed25519_dalek::SigningKey,
 ) -> Result<(Ed25519Signer, Ed25519Verifier), TinkError> {
-    let pub_key = keypair.public;
+    let pub_key = keypair.verifying_key();
     let signer = Ed25519Signer::new_from_keypair(keypair)?;
     let verifier = Ed25519Verifier::new_from_public_key(pub_key)?;
     Ok((signer, verifier))
@@ -289,7 +289,7 @@ fn test_ed25519_point_on_curve() {
         215, 90, 152, 1, 130, 177, 10, 183, 213, 75, 254, 211, 201, 100, 7, 58, 14, 225, 114, 243,
         218, 166, 35, 37, 175, 2, 26, 104, 247, 7, 81, 26,
     ];
-    assert!(ed25519_dalek::PublicKey::from_bytes(&public_key_bytes).is_ok());
+    assert!(ed25519_dalek::VerifyingKey::from_bytes(&public_key_bytes).is_ok());
     assert!(Ed25519Verifier::new(&public_key_bytes).is_ok());
 
     // Change final byte, and confirm that a point not on the curve is rejected.
@@ -297,7 +297,7 @@ fn test_ed25519_point_on_curve() {
         215, 90, 152, 1, 130, 177, 10, 183, 213, 75, 254, 211, 201, 100, 7, 58, 14, 225, 114, 243,
         218, 166, 35, 37, 175, 2, 26, 104, 247, 7, 81, 24,
     ];
-    let result = ed25519_dalek::PublicKey::from_bytes(&public_key_bytes);
+    let result = ed25519_dalek::VerifyingKey::from_bytes(&public_key_bytes);
     assert!(result.is_err());
     assert!(format!("{:?}", result).contains("Cannot decompress"));
     assert!(Ed25519Verifier::new(&public_key_bytes).is_err());

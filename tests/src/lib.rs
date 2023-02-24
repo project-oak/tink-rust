@@ -395,16 +395,16 @@ pub fn get_ecdsa_params(
 /// material.
 pub fn new_ed25519_private_key() -> tink_proto::Ed25519PrivateKey {
     let mut csprng = rand::thread_rng();
-    let keypair = ed25519_dalek::Keypair::generate(&mut csprng);
+    let keypair = ed25519_dalek::SigningKey::generate(&mut csprng);
 
     let public_proto = tink_proto::Ed25519PublicKey {
         version: ED25519_SIGNER_KEY_VERSION,
-        key_value: keypair.public.as_bytes().to_vec(),
+        key_value: keypair.verifying_key().to_bytes().to_vec(),
     };
     tink_proto::Ed25519PrivateKey {
         version: ED25519_SIGNER_KEY_VERSION,
         public_key: Some(public_proto),
-        key_value: keypair.secret.as_bytes().to_vec(),
+        key_value: keypair.to_bytes().to_vec(),
     }
 }
 

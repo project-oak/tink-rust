@@ -19,7 +19,6 @@ daead = ["tink-daead"]
 
 [dependencies]
 p256 = { version = "^0.11.1", features = ["ecdh"] }
-rand = "^0.7"
 tink-aead = { version = "^0.2", optional = true }
 tink-core = "^0.2.3"
 tink-daead = { version = "^0.2", optional = true }
