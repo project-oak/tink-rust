@@ -17,7 +17,7 @@ done < <(find . -not \( -path '*/target' -prune \) -and -not \( -path '*/wychepr
 check_license() {
   local path="$1"
 
-  if head -1 "$path" | grep -iq -e 'generated' -e '::prost::message'; then
+  if [[ "$path" =~ "/codegen/" ]]; then
     return 0
   fi
 
