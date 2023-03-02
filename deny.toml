@@ -23,8 +23,6 @@ ignore = [
     "RUSTSEC-2021-0145",
     # xml-rs is Unmaintained (via rusoto_core(0.48))
     "RUSTSEC-2022-0048",
-    # tokio not used with named pipes + Windows
-    "RUSTSEC-2023-0001",
     # rusoto_* is Unmaintained
     # TODO(#416): migrate off rusoto
     "RUSTSEC-2022-0071",
@@ -43,29 +41,8 @@ wildcards = "allow"
 
 # Old versions of crates pulled in (transitively) by rusoto_*(v0.47.0)
 [[bans.skip]]
-name = "cfg-if"
-version = "0.1.10"
-[[bans.skip]]
-name = "core-foundation"
-version = "=0.7.0"
-[[bans.skip]]
-name = "core-foundation-sys"
-version = "=0.7.0"
-[[bans.skip]]
 name = "hmac"
 version = "=0.11.0"
-[[bans.skip]]
-name = "pin-project"
-version = "=0.4.29"
-[[bans.skip]]
-name = "pin-project-internal"
-version = "=0.4.29"
-[[bans.skip]]
-name = "security-framework"
-version = "=0.4.4"
-[[bans.skip]]
-name = "security-framework-sys"
-version = "=0.4.3"
 
 # ed25519-dalek(v1.0.1) => digest(v0.9.x), sha2(v0.9.9)
 [[bans.skip]]
@@ -95,6 +72,11 @@ version = "0.2.2"
 name = "heck"
 version = "0.3.1"
 
+# Various dependencies use windows-sys(0.42.x)
+[[bans.skip]]
+name = "windows-sys"
+version = "0.42.0"
+
 # Various dependencies use block-buffer(0.9.0)
 [[bans.skip]]
 name = "block-buffer"
@@ -116,6 +98,7 @@ allow = [
   "MIT",
   "OpenSSL",
   "BSD-3-Clause",
+  "Unicode-DFS-2016",
 ]
 copyleft = "deny"
 

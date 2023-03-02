@@ -1,5 +1,7 @@
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ServerInfoRequest {}
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ServerInfoResponse {
     /// For example '1.4'
@@ -9,12 +11,14 @@ pub struct ServerInfoResponse {
     #[prost(string, tag = "2")]
     pub language: ::prost::alloc::string::String,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetTemplateRequest {
     /// template name used by Tinkey
     #[prost(string, tag = "1")]
     pub template_name: ::prost::alloc::string::String,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetTemplateResponse {
     #[prost(oneof = "keyset_template_response::Result", tags = "1, 2")]
@@ -22,6 +26,7 @@ pub struct KeysetTemplateResponse {
 }
 /// Nested message and enum types in `KeysetTemplateResponse`.
 pub mod keyset_template_response {
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         /// serialized google.crypto.tink.KeyTemplate.
@@ -31,12 +36,14 @@ pub mod keyset_template_response {
         Err(::prost::alloc::string::String),
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetGenerateRequest {
     /// serialized google.crypto.tink.KeyTemplate.
     #[prost(bytes = "vec", tag = "1")]
     pub template: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetGenerateResponse {
     #[prost(oneof = "keyset_generate_response::Result", tags = "1, 2")]
@@ -44,6 +51,7 @@ pub struct KeysetGenerateResponse {
 }
 /// Nested message and enum types in `KeysetGenerateResponse`.
 pub mod keyset_generate_response {
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         /// serialized google.crypto.tink.Keyset.
@@ -53,12 +61,14 @@ pub mod keyset_generate_response {
         Err(::prost::alloc::string::String),
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetPublicRequest {
     /// serialized google.crypto.tink.Keyset.
     #[prost(bytes = "vec", tag = "1")]
     pub private_keyset: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetPublicResponse {
     #[prost(oneof = "keyset_public_response::Result", tags = "1, 2")]
@@ -66,6 +76,7 @@ pub struct KeysetPublicResponse {
 }
 /// Nested message and enum types in `KeysetPublicResponse`.
 pub mod keyset_public_response {
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         /// serialized google.crypto.tink.Keyset.
@@ -75,12 +86,14 @@ pub mod keyset_public_response {
         Err(::prost::alloc::string::String),
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetToJsonRequest {
     /// serialized google.crypto.tink.Keyset.
     #[prost(bytes = "vec", tag = "1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetToJsonResponse {
     #[prost(oneof = "keyset_to_json_response::Result", tags = "1, 2")]
@@ -88,6 +101,7 @@ pub struct KeysetToJsonResponse {
 }
 /// Nested message and enum types in `KeysetToJsonResponse`.
 pub mod keyset_to_json_response {
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         #[prost(string, tag = "1")]
@@ -96,11 +110,13 @@ pub mod keyset_to_json_response {
         Err(::prost::alloc::string::String),
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetFromJsonRequest {
     #[prost(string, tag = "1")]
     pub json_keyset: ::prost::alloc::string::String,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetFromJsonResponse {
     #[prost(oneof = "keyset_from_json_response::Result", tags = "1, 2")]
@@ -108,6 +124,7 @@ pub struct KeysetFromJsonResponse {
 }
 /// Nested message and enum types in `KeysetFromJsonResponse`.
 pub mod keyset_from_json_response {
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         /// serialized google.crypto.tink.Keyset.
@@ -117,6 +134,7 @@ pub mod keyset_from_json_response {
         Err(::prost::alloc::string::String),
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AeadEncryptRequest {
     /// serialized google.crypto.tink.Keyset.
@@ -127,6 +145,7 @@ pub struct AeadEncryptRequest {
     #[prost(bytes = "vec", tag = "3")]
     pub associated_data: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AeadEncryptResponse {
     #[prost(oneof = "aead_encrypt_response::Result", tags = "1, 2")]
@@ -134,6 +153,7 @@ pub struct AeadEncryptResponse {
 }
 /// Nested message and enum types in `AeadEncryptResponse`.
 pub mod aead_encrypt_response {
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         #[prost(bytes, tag = "1")]
@@ -142,6 +162,7 @@ pub mod aead_encrypt_response {
         Err(::prost::alloc::string::String),
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AeadDecryptRequest {
     /// serialized google.crypto.tink.Keyset.
@@ -152,6 +173,7 @@ pub struct AeadDecryptRequest {
     #[prost(bytes = "vec", tag = "3")]
     pub associated_data: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AeadDecryptResponse {
     #[prost(oneof = "aead_decrypt_response::Result", tags = "1, 2")]
@@ -159,6 +181,7 @@ pub struct AeadDecryptResponse {
 }
 /// Nested message and enum types in `AeadDecryptResponse`.
 pub mod aead_decrypt_response {
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         #[prost(bytes, tag = "1")]
@@ -167,6 +190,7 @@ pub mod aead_decrypt_response {
         Err(::prost::alloc::string::String),
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DeterministicAeadEncryptRequest {
     /// serialized google.crypto.tink.Keyset.
@@ -177,6 +201,7 @@ pub struct DeterministicAeadEncryptRequest {
     #[prost(bytes = "vec", tag = "3")]
     pub associated_data: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DeterministicAeadEncryptResponse {
     #[prost(oneof = "deterministic_aead_encrypt_response::Result", tags = "1, 2")]
@@ -184,6 +209,7 @@ pub struct DeterministicAeadEncryptResponse {
 }
 /// Nested message and enum types in `DeterministicAeadEncryptResponse`.
 pub mod deterministic_aead_encrypt_response {
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         #[prost(bytes, tag = "1")]
@@ -192,6 +218,7 @@ pub mod deterministic_aead_encrypt_response {
         Err(::prost::alloc::string::String),
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DeterministicAeadDecryptRequest {
     /// serialized google.crypto.tink.Keyset.
@@ -202,6 +229,7 @@ pub struct DeterministicAeadDecryptRequest {
     #[prost(bytes = "vec", tag = "3")]
     pub associated_data: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DeterministicAeadDecryptResponse {
     #[prost(oneof = "deterministic_aead_decrypt_response::Result", tags = "1, 2")]
@@ -209,6 +237,7 @@ pub struct DeterministicAeadDecryptResponse {
 }
 /// Nested message and enum types in `DeterministicAeadDecryptResponse`.
 pub mod deterministic_aead_decrypt_response {
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         #[prost(bytes, tag = "1")]
@@ -217,6 +246,7 @@ pub mod deterministic_aead_decrypt_response {
         Err(::prost::alloc::string::String),
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StreamingAeadEncryptRequest {
     /// serialized google.crypto.tink.Keyset.
@@ -227,6 +257,7 @@ pub struct StreamingAeadEncryptRequest {
     #[prost(bytes = "vec", tag = "3")]
     pub associated_data: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StreamingAeadEncryptResponse {
     #[prost(oneof = "streaming_aead_encrypt_response::Result", tags = "1, 2")]
@@ -234,6 +265,7 @@ pub struct StreamingAeadEncryptResponse {
 }
 /// Nested message and enum types in `StreamingAeadEncryptResponse`.
 pub mod streaming_aead_encrypt_response {
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         #[prost(bytes, tag = "1")]
@@ -242,6 +274,7 @@ pub mod streaming_aead_encrypt_response {
         Err(::prost::alloc::string::String),
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StreamingAeadDecryptRequest {
     /// serialized google.crypto.tink.Keyset.
@@ -252,6 +285,7 @@ pub struct StreamingAeadDecryptRequest {
     #[prost(bytes = "vec", tag = "3")]
     pub associated_data: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StreamingAeadDecryptResponse {
     #[prost(oneof = "streaming_aead_decrypt_response::Result", tags = "1, 2")]
@@ -259,6 +293,7 @@ pub struct StreamingAeadDecryptResponse {
 }
 /// Nested message and enum types in `StreamingAeadDecryptResponse`.
 pub mod streaming_aead_decrypt_response {
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         #[prost(bytes, tag = "1")]
@@ -267,6 +302,7 @@ pub mod streaming_aead_decrypt_response {
         Err(::prost::alloc::string::String),
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ComputeMacRequest {
     /// serialized google.crypto.tink.Keyset.
@@ -275,6 +311,7 @@ pub struct ComputeMacRequest {
     #[prost(bytes = "vec", tag = "2")]
     pub data: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ComputeMacResponse {
     #[prost(oneof = "compute_mac_response::Result", tags = "1, 2")]
@@ -282,6 +319,7 @@ pub struct ComputeMacResponse {
 }
 /// Nested message and enum types in `ComputeMacResponse`.
 pub mod compute_mac_response {
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         #[prost(bytes, tag = "1")]
@@ -290,6 +328,7 @@ pub mod compute_mac_response {
         Err(::prost::alloc::string::String),
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct VerifyMacRequest {
     /// serialized google.crypto.tink.Keyset.
@@ -300,11 +339,13 @@ pub struct VerifyMacRequest {
     #[prost(bytes = "vec", tag = "3")]
     pub data: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct VerifyMacResponse {
     #[prost(string, tag = "1")]
     pub err: ::prost::alloc::string::String,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HybridEncryptRequest {
     /// serialized google.crypto.tink.Keyset.
@@ -315,6 +356,7 @@ pub struct HybridEncryptRequest {
     #[prost(bytes = "vec", tag = "3")]
     pub context_info: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HybridEncryptResponse {
     #[prost(oneof = "hybrid_encrypt_response::Result", tags = "1, 2")]
@@ -322,6 +364,7 @@ pub struct HybridEncryptResponse {
 }
 /// Nested message and enum types in `HybridEncryptResponse`.
 pub mod hybrid_encrypt_response {
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         #[prost(bytes, tag = "1")]
@@ -330,6 +373,7 @@ pub mod hybrid_encrypt_response {
         Err(::prost::alloc::string::String),
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HybridDecryptRequest {
     /// serialized google.crypto.tink.Keyset.
@@ -340,6 +384,7 @@ pub struct HybridDecryptRequest {
     #[prost(bytes = "vec", tag = "3")]
     pub context_info: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HybridDecryptResponse {
     #[prost(oneof = "hybrid_decrypt_response::Result", tags = "1, 2")]
@@ -347,6 +392,7 @@ pub struct HybridDecryptResponse {
 }
 /// Nested message and enum types in `HybridDecryptResponse`.
 pub mod hybrid_decrypt_response {
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         #[prost(bytes, tag = "1")]
@@ -355,6 +401,7 @@ pub mod hybrid_decrypt_response {
         Err(::prost::alloc::string::String),
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SignatureSignRequest {
     /// serialized google.crypto.tink.Keyset.
@@ -363,6 +410,7 @@ pub struct SignatureSignRequest {
     #[prost(bytes = "vec", tag = "2")]
     pub data: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SignatureSignResponse {
     #[prost(oneof = "signature_sign_response::Result", tags = "1, 2")]
@@ -370,6 +418,7 @@ pub struct SignatureSignResponse {
 }
 /// Nested message and enum types in `SignatureSignResponse`.
 pub mod signature_sign_response {
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         #[prost(bytes, tag = "1")]
@@ -378,6 +427,7 @@ pub mod signature_sign_response {
         Err(::prost::alloc::string::String),
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SignatureVerifyRequest {
     /// serialized google.crypto.tink.Keyset.
@@ -388,17 +438,20 @@ pub struct SignatureVerifyRequest {
     #[prost(bytes = "vec", tag = "3")]
     pub data: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SignatureVerifyResponse {
     #[prost(string, tag = "1")]
     pub err: ::prost::alloc::string::String,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PrfSetKeyIdsRequest {
     /// serialized google.crypto.tink.Keyset.
     #[prost(bytes = "vec", tag = "1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PrfSetKeyIdsResponse {
     #[prost(oneof = "prf_set_key_ids_response::Result", tags = "1, 2")]
@@ -406,6 +459,7 @@ pub struct PrfSetKeyIdsResponse {
 }
 /// Nested message and enum types in `PrfSetKeyIdsResponse`.
 pub mod prf_set_key_ids_response {
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Message)]
     pub struct Output {
         #[prost(uint32, tag = "1")]
@@ -413,6 +467,7 @@ pub mod prf_set_key_ids_response {
         #[prost(uint32, repeated, tag = "2")]
         pub key_id: ::prost::alloc::vec::Vec<u32>,
     }
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         #[prost(message, tag = "1")]
@@ -421,6 +476,7 @@ pub mod prf_set_key_ids_response {
         Err(::prost::alloc::string::String),
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PrfSetComputeRequest {
     /// serialized google.crypto.tink.Keyset.
@@ -433,6 +489,7 @@ pub struct PrfSetComputeRequest {
     #[prost(int32, tag = "4")]
     pub output_length: i32,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PrfSetComputeResponse {
     #[prost(oneof = "prf_set_compute_response::Result", tags = "1, 2")]
@@ -440,6 +497,7 @@ pub struct PrfSetComputeResponse {
 }
 /// Nested message and enum types in `PrfSetComputeResponse`.
 pub mod prf_set_compute_response {
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         #[prost(bytes, tag = "1")]
@@ -449,6 +507,7 @@ pub mod prf_set_compute_response {
     }
 }
 /// Copied from timestamp.proto
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Timestamp {
     /// Represents seconds of UTC time since Unix epoch
@@ -464,6 +523,7 @@ pub struct Timestamp {
     pub nanos: i32,
 }
 /// Copied from duration.proto
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Duration {
     /// Signed seconds of the span of time. Must be from -315,576,000,000
@@ -481,12 +541,14 @@ pub struct Duration {
     pub nanos: i32,
 }
 /// Copied from wrappers.proto
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StringValue {
     /// The string value.
     #[prost(string, tag = "1")]
     pub value: ::prost::alloc::string::String,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtClaimValue {
     #[prost(oneof = "jwt_claim_value::Kind", tags = "2, 3, 4, 5, 6, 7")]
@@ -494,6 +556,7 @@ pub struct JwtClaimValue {
 }
 /// Nested message and enum types in `JwtClaimValue`.
 pub mod jwt_claim_value {
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Kind {
         #[prost(enumeration = "super::NullValue", tag = "2")]
@@ -510,6 +573,7 @@ pub mod jwt_claim_value {
         JsonArrayValue(::prost::alloc::string::String),
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtToken {
     #[prost(message, optional, tag = "1")]
@@ -534,6 +598,7 @@ pub struct JwtToken {
     #[prost(message, optional, tag = "9")]
     pub type_header: ::core::option::Option<StringValue>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtValidator {
     #[prost(message, optional, tag = "7")]
@@ -557,6 +622,7 @@ pub struct JwtValidator {
     #[prost(message, optional, tag = "6")]
     pub clock_skew: ::core::option::Option<Duration>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtSignRequest {
     /// serialized google.crypto.tink.Keyset
@@ -565,6 +631,7 @@ pub struct JwtSignRequest {
     #[prost(message, optional, tag = "2")]
     pub raw_jwt: ::core::option::Option<JwtToken>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtSignResponse {
     #[prost(oneof = "jwt_sign_response::Result", tags = "1, 2")]
@@ -572,6 +639,7 @@ pub struct JwtSignResponse {
 }
 /// Nested message and enum types in `JwtSignResponse`.
 pub mod jwt_sign_response {
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         #[prost(string, tag = "1")]
@@ -580,6 +648,7 @@ pub mod jwt_sign_response {
         Err(::prost::alloc::string::String),
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtVerifyRequest {
     /// serialized google.crypto.tink.Keyset
@@ -590,6 +659,7 @@ pub struct JwtVerifyRequest {
     #[prost(message, optional, tag = "3")]
     pub validator: ::core::option::Option<JwtValidator>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtVerifyResponse {
     #[prost(oneof = "jwt_verify_response::Result", tags = "1, 2")]
@@ -597,6 +667,7 @@ pub struct JwtVerifyResponse {
 }
 /// Nested message and enum types in `JwtVerifyResponse`.
 pub mod jwt_verify_response {
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         #[prost(message, tag = "1")]
@@ -605,12 +676,14 @@ pub mod jwt_verify_response {
         Err(::prost::alloc::string::String),
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtToJwkSetRequest {
     /// serialized google.crypto.tink.Keyset.
     #[prost(bytes = "vec", tag = "1")]
     pub keyset: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtToJwkSetResponse {
     #[prost(oneof = "jwt_to_jwk_set_response::Result", tags = "1, 2")]
@@ -618,6 +691,7 @@ pub struct JwtToJwkSetResponse {
 }
 /// Nested message and enum types in `JwtToJwkSetResponse`.
 pub mod jwt_to_jwk_set_response {
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         #[prost(string, tag = "1")]
@@ -626,11 +700,13 @@ pub mod jwt_to_jwk_set_response {
         Err(::prost::alloc::string::String),
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtFromJwkSetRequest {
     #[prost(string, tag = "1")]
     pub jwk_set: ::prost::alloc::string::String,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtFromJwkSetResponse {
     #[prost(oneof = "jwt_from_jwk_set_response::Result", tags = "1, 2")]
@@ -638,6 +714,7 @@ pub struct JwtFromJwkSetResponse {
 }
 /// Nested message and enum types in `JwtFromJwkSetResponse`.
 pub mod jwt_from_jwk_set_response {
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Result {
         /// serialized google.crypto.tink.Keyset.
@@ -1116,9 +1193,9 @@ pub mod deterministic_aead_client {
             &mut self,
             request: impl tonic::IntoRequest<super::DeterministicAeadEncryptRequest>,
         ) -> Result<
-                tonic::Response<super::DeterministicAeadEncryptResponse>,
-                tonic::Status,
-            > {
+            tonic::Response<super::DeterministicAeadEncryptResponse>,
+            tonic::Status,
+        > {
             self.inner
                 .ready()
                 .await
@@ -1139,9 +1216,9 @@ pub mod deterministic_aead_client {
             &mut self,
             request: impl tonic::IntoRequest<super::DeterministicAeadDecryptRequest>,
         ) -> Result<
-                tonic::Response<super::DeterministicAeadDecryptResponse>,
-                tonic::Status,
-            > {
+            tonic::Response<super::DeterministicAeadDecryptResponse>,
+            tonic::Status,
+        > {
             self.inner
                 .ready()
                 .await
@@ -1234,9 +1311,9 @@ pub mod streaming_aead_client {
             &mut self,
             request: impl tonic::IntoRequest<super::StreamingAeadEncryptRequest>,
         ) -> Result<
-                tonic::Response<super::StreamingAeadEncryptResponse>,
-                tonic::Status,
-            > {
+            tonic::Response<super::StreamingAeadEncryptResponse>,
+            tonic::Status,
+        > {
             self.inner
                 .ready()
                 .await
@@ -1257,9 +1334,9 @@ pub mod streaming_aead_client {
             &mut self,
             request: impl tonic::IntoRequest<super::StreamingAeadDecryptRequest>,
         ) -> Result<
-                tonic::Response<super::StreamingAeadDecryptResponse>,
-                tonic::Status,
-            > {
+            tonic::Response<super::StreamingAeadDecryptResponse>,
+            tonic::Status,
+        > {
             self.inner
                 .ready()
                 .await
@@ -1921,7 +1998,7 @@ pub mod jwt_client {
 pub mod metadata_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with MetadataServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with MetadataServer.
     #[async_trait]
     pub trait Metadata: Send + Sync + 'static {
         /// Returns some server information. A test may use this information to verify
@@ -2074,7 +2151,7 @@ pub mod metadata_server {
 pub mod keyset_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with KeysetServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with KeysetServer.
     #[async_trait]
     pub trait Keyset: Send + Sync + 'static {
         /// Generates a key template from a key template name.
@@ -2398,7 +2475,7 @@ pub mod keyset_server {
 pub mod aead_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with AeadServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with AeadServer.
     #[async_trait]
     pub trait Aead: Send + Sync + 'static {
         /// Encrypts a plaintext with the provided keyset
@@ -2587,7 +2664,7 @@ pub mod aead_server {
 pub mod deterministic_aead_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with DeterministicAeadServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with DeterministicAeadServer.
     #[async_trait]
     pub trait DeterministicAead: Send + Sync + 'static {
         /// Encrypts a plaintext with the provided keyset
@@ -2595,17 +2672,17 @@ pub mod deterministic_aead_server {
             &self,
             request: tonic::Request<super::DeterministicAeadEncryptRequest>,
         ) -> Result<
-                tonic::Response<super::DeterministicAeadEncryptResponse>,
-                tonic::Status,
-            >;
+            tonic::Response<super::DeterministicAeadEncryptResponse>,
+            tonic::Status,
+        >;
         /// Decrypts a ciphertext with the provided keyset
         async fn decrypt_deterministically(
             &self,
             request: tonic::Request<super::DeterministicAeadDecryptRequest>,
         ) -> Result<
-                tonic::Response<super::DeterministicAeadDecryptResponse>,
-                tonic::Status,
-            >;
+            tonic::Response<super::DeterministicAeadDecryptResponse>,
+            tonic::Status,
+        >;
     }
     /// Service for Deterministic AEAD encryption and decryption
     #[derive(Debug)]
@@ -2795,7 +2872,7 @@ pub mod deterministic_aead_server {
 pub mod streaming_aead_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with StreamingAeadServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with StreamingAeadServer.
     #[async_trait]
     pub trait StreamingAead: Send + Sync + 'static {
         /// Encrypts a plaintext with the provided keyset
@@ -2988,7 +3065,7 @@ pub mod streaming_aead_server {
 pub mod mac_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with MacServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with MacServer.
     #[async_trait]
     pub trait Mac: Send + Sync + 'static {
         /// Computes a MAC for given data
@@ -3177,7 +3254,7 @@ pub mod mac_server {
 pub mod hybrid_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with HybridServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with HybridServer.
     #[async_trait]
     pub trait Hybrid: Send + Sync + 'static {
         /// Encrypts plaintext binding context_info to the resulting ciphertext
@@ -3370,7 +3447,7 @@ pub mod hybrid_server {
 pub mod signature_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with SignatureServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with SignatureServer.
     #[async_trait]
     pub trait Signature: Send + Sync + 'static {
         /// Computes the signature for data
@@ -3563,7 +3640,7 @@ pub mod signature_server {
 pub mod prf_set_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with PrfSetServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with PrfSetServer.
     #[async_trait]
     pub trait PrfSet: Send + Sync + 'static {
         /// Returns the key ids and the primary key id in the keyset.
@@ -3756,7 +3833,7 @@ pub mod prf_set_server {
 pub mod jwt_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with JwtServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with JwtServer.
     #[async_trait]
     pub trait Jwt: Send + Sync + 'static {
         /// Computes a signed compact JWT token.
