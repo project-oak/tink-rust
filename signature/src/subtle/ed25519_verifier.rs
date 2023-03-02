@@ -48,7 +48,7 @@ impl tink_core::Verifier for Ed25519Verifier {
             )
             .into());
         }
-        let s = ed25519_dalek::Signature::from_bytes(signature)
+        let s = <ed25519_dalek::Signature as Signature>::from_bytes(signature)
             .map_err(|e| wrap_err("invalid signature", e))?;
         self.public_key
             .verify(data, &s)
