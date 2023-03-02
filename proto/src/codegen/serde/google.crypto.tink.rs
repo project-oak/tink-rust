@@ -1,9 +1,11 @@
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesCmacParams {
     #[prost(uint32, tag = "1")]
     pub tag_size: u32,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.AesCmacKey
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesCmacKey {
     #[prost(uint32, tag = "1")]
@@ -13,6 +15,7 @@ pub struct AesCmacKey {
     #[prost(message, optional, tag = "3")]
     pub params: ::core::option::Option<AesCmacParams>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesCmacKeyFormat {
     #[prost(uint32, tag = "1")]
@@ -21,6 +24,7 @@ pub struct AesCmacKeyFormat {
     pub params: ::core::option::Option<AesCmacParams>,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.AesCmacPrfKey
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesCmacPrfKey {
     #[prost(uint32, tag = "1")]
@@ -28,6 +32,7 @@ pub struct AesCmacPrfKey {
     #[prost(bytes = "vec", tag = "2")]
     pub key_value: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesCmacPrfKeyFormat {
     #[prost(uint32, tag = "2")]
@@ -35,11 +40,13 @@ pub struct AesCmacPrfKeyFormat {
     #[prost(uint32, tag = "1")]
     pub key_size: u32,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesCtrParams {
     #[prost(uint32, tag = "1")]
     pub iv_size: u32,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesCtrKeyFormat {
     #[prost(message, optional, tag = "1")]
@@ -48,6 +55,7 @@ pub struct AesCtrKeyFormat {
     pub key_size: u32,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.AesCtrKey
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesCtrKey {
     #[prost(uint32, tag = "1")]
@@ -135,6 +143,7 @@ impl HashType {
         }
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HmacParams {
     /// HashType is an enum.
@@ -144,6 +153,7 @@ pub struct HmacParams {
     pub tag_size: u32,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.HmacKey
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HmacKey {
     #[prost(uint32, tag = "1")]
@@ -153,6 +163,7 @@ pub struct HmacKey {
     #[prost(bytes = "vec", tag = "3")]
     pub key_value: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HmacKeyFormat {
     #[prost(message, optional, tag = "1")]
@@ -162,6 +173,7 @@ pub struct HmacKeyFormat {
     #[prost(uint32, tag = "3")]
     pub version: u32,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesCtrHmacAeadKeyFormat {
     #[prost(message, optional, tag = "1")]
@@ -170,6 +182,7 @@ pub struct AesCtrHmacAeadKeyFormat {
     pub hmac_key_format: ::core::option::Option<HmacKeyFormat>,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.AesCtrHmacAeadKey
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesCtrHmacAeadKey {
     #[prost(uint32, tag = "1")]
@@ -179,6 +192,7 @@ pub struct AesCtrHmacAeadKey {
     #[prost(message, optional, tag = "3")]
     pub hmac_key: ::core::option::Option<HmacKey>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesCtrHmacStreamingParams {
     #[prost(uint32, tag = "1")]
@@ -193,6 +207,7 @@ pub struct AesCtrHmacStreamingParams {
     #[prost(message, optional, tag = "4")]
     pub hmac_params: ::core::option::Option<HmacParams>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesCtrHmacStreamingKeyFormat {
     #[prost(uint32, tag = "3")]
@@ -204,6 +219,7 @@ pub struct AesCtrHmacStreamingKeyFormat {
     pub key_size: u32,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.AesCtrHmacStreamingKey
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesCtrHmacStreamingKey {
     #[prost(uint32, tag = "1")]
@@ -215,12 +231,14 @@ pub struct AesCtrHmacStreamingKey {
     pub key_value: ::prost::alloc::vec::Vec<u8>,
 }
 /// only allowing tag size in bytes = 16
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesEaxParams {
     /// possible value is 12 or 16 bytes.
     #[prost(uint32, tag = "1")]
     pub iv_size: u32,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesEaxKeyFormat {
     #[prost(message, optional, tag = "1")]
@@ -229,6 +247,7 @@ pub struct AesEaxKeyFormat {
     pub key_size: u32,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.AesEaxKey
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesEaxKey {
     #[prost(uint32, tag = "1")]
@@ -240,6 +259,7 @@ pub struct AesEaxKey {
 }
 /// only allowing IV size in bytes = 12 and tag size in bytes = 16
 /// Thus, accept no params.
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesGcmKeyFormat {
     #[prost(uint32, tag = "2")]
@@ -248,6 +268,7 @@ pub struct AesGcmKeyFormat {
     pub version: u32,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.AesGcmKey
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesGcmKey {
     #[prost(uint32, tag = "1")]
@@ -255,6 +276,7 @@ pub struct AesGcmKey {
     #[prost(bytes = "vec", tag = "3")]
     pub key_value: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesGcmHkdfStreamingParams {
     #[prost(uint32, tag = "1")]
@@ -265,6 +287,7 @@ pub struct AesGcmHkdfStreamingParams {
     #[prost(enumeration = "HashType", tag = "3")]
     pub hkdf_hash_type: i32,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesGcmHkdfStreamingKeyFormat {
     #[prost(uint32, tag = "3")]
@@ -276,6 +299,7 @@ pub struct AesGcmHkdfStreamingKeyFormat {
     pub key_size: u32,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.AesGcmHkdfStreamingKey
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesGcmHkdfStreamingKey {
     #[prost(uint32, tag = "1")]
@@ -287,6 +311,7 @@ pub struct AesGcmHkdfStreamingKey {
 }
 /// The only allowed IV size is 12 bytes and tag size is 16 bytes.
 /// Thus, accept no params.
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesGcmSivKeyFormat {
     #[prost(uint32, tag = "2")]
@@ -295,6 +320,7 @@ pub struct AesGcmSivKeyFormat {
     pub version: u32,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.AesGcmSivKey
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesGcmSivKey {
     #[prost(uint32, tag = "1")]
@@ -302,6 +328,7 @@ pub struct AesGcmSivKey {
     #[prost(bytes = "vec", tag = "3")]
     pub key_value: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesSivKeyFormat {
     /// Only valid value is: 64.
@@ -311,6 +338,7 @@ pub struct AesSivKeyFormat {
     pub version: u32,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.AesSivKey
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AesSivKey {
     #[prost(uint32, tag = "1")]
@@ -319,11 +347,13 @@ pub struct AesSivKey {
     #[prost(bytes = "vec", tag = "2")]
     pub key_value: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ChaCha20Poly1305KeyFormat {}
 /// key_type: type.googleapis.com/google.crypto.tink.ChaCha20Poly1305.
 /// This key type actually implements ChaCha20Poly1305 as described
 /// at <https://tools.ietf.org/html/rfc7539#section-2.8.>
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ChaCha20Poly1305Key {
     #[prost(uint32, tag = "1")]
@@ -334,6 +364,7 @@ pub struct ChaCha20Poly1305Key {
 /// An entry that describes a key type to be used with Tink library,
 /// specifying the corresponding primitive, key manager, and deprecation status.
 /// All fields are required.
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeyTypeEntry {
     /// E.g. “Aead”, “Mac”, ... (case-insensitive)
@@ -355,6 +386,7 @@ pub struct KeyTypeEntry {
 /// A complete configuration of Tink library: a list of key types
 /// to be available via the Registry after initialization.
 /// All fields are required.
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RegistryConfig {
     #[prost(string, tag = "1")]
@@ -363,6 +395,7 @@ pub struct RegistryConfig {
     pub entry: ::prost::alloc::vec::Vec<KeyTypeEntry>,
 }
 /// Protos for Ecdsa.
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct EcdsaParams {
     /// Required.
@@ -376,6 +409,7 @@ pub struct EcdsaParams {
     pub encoding: i32,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.EcdsaPublicKey
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct EcdsaPublicKey {
     /// Required.
@@ -396,6 +430,7 @@ pub struct EcdsaPublicKey {
     pub y: ::prost::alloc::vec::Vec<u8>,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.EcdsaPrivateKey
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct EcdsaPrivateKey {
     /// Required.
@@ -409,6 +444,7 @@ pub struct EcdsaPrivateKey {
     #[prost(bytes = "vec", tag = "3")]
     pub key_value: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct EcdsaKeyFormat {
     /// Required.
@@ -444,6 +480,7 @@ impl EcdsaSignatureEncoding {
         }
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeyTemplate {
     /// Required. The type_url of the key type in format
@@ -466,6 +503,7 @@ pub struct KeyTemplate {
 /// about the type key material.
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(rename_all = "camelCase")]
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeyData {
     /// Required.
@@ -529,6 +567,7 @@ pub mod key_data {
 /// Any given keyset (and any given key) can be used for one primitive only.
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(rename_all = "camelCase")]
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Keyset {
     /// Identifies key used to generate new crypto data (encrypt, sign).
@@ -544,6 +583,7 @@ pub struct Keyset {
 pub mod keyset {
     #[derive(serde::Serialize, serde::Deserialize)]
     #[serde(rename_all = "camelCase")]
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Message)]
     pub struct Key {
         /// Contains the actual, instantiation specific key proto.
@@ -569,6 +609,7 @@ pub mod keyset {
 /// Keyset.
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(rename_all = "camelCase")]
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KeysetInfo {
     /// See Keyset.primary_key_id.
@@ -583,6 +624,7 @@ pub struct KeysetInfo {
 pub mod keyset_info {
     #[derive(serde::Serialize, serde::Deserialize)]
     #[serde(rename_all = "camelCase")]
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Message)]
     pub struct KeyInfo {
         /// the type url of this key,
@@ -605,6 +647,7 @@ pub mod keyset_info {
 /// Represents a keyset that is encrypted with a master key.
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(rename_all = "camelCase")]
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct EncryptedKeyset {
     /// Required.
@@ -679,6 +722,7 @@ impl OutputPrefixType {
     }
 }
 /// Parameters of KEM (Key Encapsulation Mechanism)
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct EciesHkdfKemParams {
     /// Required.
@@ -692,6 +736,7 @@ pub struct EciesHkdfKemParams {
     pub hkdf_salt: ::prost::alloc::vec::Vec<u8>,
 }
 /// Parameters of AEAD DEM (Data Encapsulation Mechanism).
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct EciesAeadDemParams {
     /// Required.
@@ -700,6 +745,7 @@ pub struct EciesAeadDemParams {
     #[prost(message, optional, tag = "2")]
     pub aead_dem: ::core::option::Option<KeyTemplate>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct EciesAeadHkdfParams {
     /// Key Encapsulation Mechanism.
@@ -717,6 +763,7 @@ pub struct EciesAeadHkdfParams {
 }
 /// EciesAeadHkdfPublicKey represents HybridEncryption primitive.
 /// key_type: type.googleapis.com/google.crypto.tink.EciesAeadHkdfPublicKey
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct EciesAeadHkdfPublicKey {
     /// Required.
@@ -736,6 +783,7 @@ pub struct EciesAeadHkdfPublicKey {
 }
 /// EciesKdfAeadPrivateKey represents HybridDecryption primitive.
 /// key_type: type.googleapis.com/google.crypto.tink.EciesAeadHkdfPrivateKey
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct EciesAeadHkdfPrivateKey {
     /// Required.
@@ -750,18 +798,21 @@ pub struct EciesAeadHkdfPrivateKey {
     #[prost(bytes = "vec", tag = "3")]
     pub key_value: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct EciesAeadHkdfKeyFormat {
     /// Required.
     #[prost(message, optional, tag = "1")]
     pub params: ::core::option::Option<EciesAeadHkdfParams>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Ed25519KeyFormat {
     #[prost(uint32, tag = "1")]
     pub version: u32,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.Ed25519PublicKey
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Ed25519PublicKey {
     /// Required.
@@ -774,6 +825,7 @@ pub struct Ed25519PublicKey {
     pub key_value: ::prost::alloc::vec::Vec<u8>,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.Ed25519PrivateKey
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Ed25519PrivateKey {
     /// Required.
@@ -788,8 +840,10 @@ pub struct Ed25519PrivateKey {
     #[prost(message, optional, tag = "3")]
     pub public_key: ::core::option::Option<Ed25519PublicKey>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Empty {}
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HkdfPrfParams {
     #[prost(enumeration = "HashType", tag = "1")]
@@ -799,6 +853,7 @@ pub struct HkdfPrfParams {
     #[prost(bytes = "vec", tag = "2")]
     pub salt: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HkdfPrfKey {
     #[prost(uint32, tag = "1")]
@@ -808,6 +863,7 @@ pub struct HkdfPrfKey {
     #[prost(bytes = "vec", tag = "3")]
     pub key_value: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HkdfPrfKeyFormat {
     #[prost(message, optional, tag = "1")]
@@ -817,6 +873,7 @@ pub struct HkdfPrfKeyFormat {
     #[prost(uint32, tag = "3")]
     pub version: u32,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HmacPrfParams {
     /// HashType is an enum.
@@ -824,6 +881,7 @@ pub struct HmacPrfParams {
     pub hash: i32,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.HmacPrfKey
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HmacPrfKey {
     #[prost(uint32, tag = "1")]
@@ -833,6 +891,7 @@ pub struct HmacPrfKey {
     #[prost(bytes = "vec", tag = "3")]
     pub key_value: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HmacPrfKeyFormat {
     #[prost(message, optional, tag = "1")]
@@ -843,6 +902,7 @@ pub struct HmacPrfKeyFormat {
     pub version: u32,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.JwtHmacKey
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtHmacKey {
     #[prost(uint32, tag = "1")]
@@ -858,12 +918,14 @@ pub struct JwtHmacKey {
 pub mod jwt_hmac_key {
     /// Optional, custom kid header value to be used with "RAW" keys.
     /// "TINK" keys with this value set will be rejected.
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Message)]
     pub struct CustomKid {
         #[prost(string, tag = "1")]
         pub value: ::prost::alloc::string::String,
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct JwtHmacKeyFormat {
     #[prost(uint32, tag = "1")]
@@ -895,6 +957,7 @@ impl JwtHmacAlgorithm {
         }
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KmsAeadKeyFormat {
     /// Required.
@@ -907,6 +970,7 @@ pub struct KmsAeadKeyFormat {
     pub key_uri: ::prost::alloc::string::String,
 }
 /// There is no actual key material in the key.
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KmsAeadKey {
     #[prost(uint32, tag = "1")]
@@ -915,6 +979,7 @@ pub struct KmsAeadKey {
     #[prost(message, optional, tag = "2")]
     pub params: ::core::option::Option<KmsAeadKeyFormat>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KmsEnvelopeAeadKeyFormat {
     /// Required.
@@ -931,6 +996,7 @@ pub struct KmsEnvelopeAeadKeyFormat {
     pub dek_template: ::core::option::Option<KeyTemplate>,
 }
 /// There is no actual key material in the key.
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KmsEnvelopeAeadKey {
     #[prost(uint32, tag = "1")]
@@ -939,11 +1005,13 @@ pub struct KmsEnvelopeAeadKey {
     #[prost(message, optional, tag = "2")]
     pub params: ::core::option::Option<KmsEnvelopeAeadKeyFormat>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PrfBasedDeriverParams {
     #[prost(message, optional, tag = "1")]
     pub derived_key_template: ::core::option::Option<KeyTemplate>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PrfBasedDeriverKeyFormat {
     #[prost(message, optional, tag = "1")]
@@ -952,6 +1020,7 @@ pub struct PrfBasedDeriverKeyFormat {
     pub params: ::core::option::Option<PrfBasedDeriverParams>,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.PrfBasedDeriverKey
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PrfBasedDeriverKey {
     #[prost(uint32, tag = "1")]
@@ -961,6 +1030,7 @@ pub struct PrfBasedDeriverKey {
     #[prost(message, optional, tag = "3")]
     pub params: ::core::option::Option<PrfBasedDeriverParams>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RsaSsaPkcs1Params {
     /// Hash function used in computing hash of the signing message
@@ -970,6 +1040,7 @@ pub struct RsaSsaPkcs1Params {
     pub hash_type: i32,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.RsaSsaPkcs1PublicKey
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RsaSsaPkcs1PublicKey {
     /// Required.
@@ -988,6 +1059,7 @@ pub struct RsaSsaPkcs1PublicKey {
     pub e: ::prost::alloc::vec::Vec<u8>,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.RsaSsaPkcs1PrivateKey
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RsaSsaPkcs1PrivateKey {
     /// Required.
@@ -1028,6 +1100,7 @@ pub struct RsaSsaPkcs1PrivateKey {
     #[prost(bytes = "vec", tag = "8")]
     pub crt: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RsaSsaPkcs1KeyFormat {
     /// Required.
@@ -1040,6 +1113,7 @@ pub struct RsaSsaPkcs1KeyFormat {
     #[prost(bytes = "vec", tag = "3")]
     pub public_exponent: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RsaSsaPssParams {
     /// Hash function used in computing hash of the signing message
@@ -1058,6 +1132,7 @@ pub struct RsaSsaPssParams {
     pub salt_length: i32,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.RsaSsaPssPublicKey
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RsaSsaPssPublicKey {
     /// Required.
@@ -1076,6 +1151,7 @@ pub struct RsaSsaPssPublicKey {
     pub e: ::prost::alloc::vec::Vec<u8>,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.RsaSsaPssPrivateKey
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RsaSsaPssPrivateKey {
     /// Required.
@@ -1116,6 +1192,7 @@ pub struct RsaSsaPssPrivateKey {
     #[prost(bytes = "vec", tag = "8")]
     pub crt: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RsaSsaPssKeyFormat {
     /// Required.
@@ -1128,12 +1205,14 @@ pub struct RsaSsaPssKeyFormat {
     #[prost(bytes = "vec", tag = "3")]
     pub public_exponent: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct XChaCha20Poly1305KeyFormat {
     #[prost(uint32, tag = "1")]
     pub version: u32,
 }
 /// key_type: type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct XChaCha20Poly1305Key {
     #[prost(uint32, tag = "1")]
