@@ -88,6 +88,17 @@ impl EllipticCurveType {
             EllipticCurveType::Curve25519 => "CURVE25519",
         }
     }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "UNKNOWN_CURVE" => Some(Self::UnknownCurve),
+            "NIST_P256" => Some(Self::NistP256),
+            "NIST_P384" => Some(Self::NistP384),
+            "NIST_P521" => Some(Self::NistP521),
+            "CURVE25519" => Some(Self::Curve25519),
+            _ => None,
+        }
+    }
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
@@ -112,6 +123,16 @@ impl EcPointFormat {
             EcPointFormat::DoNotUseCrunchyUncompressed => {
                 "DO_NOT_USE_CRUNCHY_UNCOMPRESSED"
             }
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "UNKNOWN_FORMAT" => Some(Self::UnknownFormat),
+            "UNCOMPRESSED" => Some(Self::Uncompressed),
+            "COMPRESSED" => Some(Self::Compressed),
+            "DO_NOT_USE_CRUNCHY_UNCOMPRESSED" => Some(Self::DoNotUseCrunchyUncompressed),
+            _ => None,
         }
     }
 }
@@ -140,6 +161,18 @@ impl HashType {
             HashType::Sha256 => "SHA256",
             HashType::Sha512 => "SHA512",
             HashType::Sha224 => "SHA224",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "UNKNOWN_HASH" => Some(Self::UnknownHash),
+            "SHA1" => Some(Self::Sha1),
+            "SHA384" => Some(Self::Sha384),
+            "SHA256" => Some(Self::Sha256),
+            "SHA512" => Some(Self::Sha512),
+            "SHA224" => Some(Self::Sha224),
+            _ => None,
         }
     }
 }
@@ -479,6 +512,15 @@ impl EcdsaSignatureEncoding {
             EcdsaSignatureEncoding::Der => "DER",
         }
     }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "UNKNOWN_ENCODING" => Some(Self::UnknownEncoding),
+            "IEEE_P1363" => Some(Self::IeeeP1363),
+            "DER" => Some(Self::Der),
+            _ => None,
+        }
+    }
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -557,6 +599,17 @@ pub mod key_data {
                 KeyMaterialType::AsymmetricPrivate => "ASYMMETRIC_PRIVATE",
                 KeyMaterialType::AsymmetricPublic => "ASYMMETRIC_PUBLIC",
                 KeyMaterialType::Remote => "REMOTE",
+            }
+        }
+        /// Creates an enum from field names used in the ProtoBuf definition.
+        pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+            match value {
+                "UNKNOWN_KEYMATERIAL" => Some(Self::UnknownKeymaterial),
+                "SYMMETRIC" => Some(Self::Symmetric),
+                "ASYMMETRIC_PRIVATE" => Some(Self::AsymmetricPrivate),
+                "ASYMMETRIC_PUBLIC" => Some(Self::AsymmetricPublic),
+                "REMOTE" => Some(Self::Remote),
+                _ => None,
             }
         }
     }
@@ -682,6 +735,16 @@ impl KeyStatusType {
             KeyStatusType::Destroyed => "DESTROYED",
         }
     }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "UNKNOWN_STATUS" => Some(Self::UnknownStatus),
+            "ENABLED" => Some(Self::Enabled),
+            "DISABLED" => Some(Self::Disabled),
+            "DESTROYED" => Some(Self::Destroyed),
+            _ => None,
+        }
+    }
 }
 /// Tink produces and accepts ciphertexts or signatures that consist
 /// of a prefix and a payload. The payload and its format is determined
@@ -718,6 +781,17 @@ impl OutputPrefixType {
             OutputPrefixType::Legacy => "LEGACY",
             OutputPrefixType::Raw => "RAW",
             OutputPrefixType::Crunchy => "CRUNCHY",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "UNKNOWN_PREFIX" => Some(Self::UnknownPrefix),
+            "TINK" => Some(Self::Tink),
+            "LEGACY" => Some(Self::Legacy),
+            "RAW" => Some(Self::Raw),
+            "CRUNCHY" => Some(Self::Crunchy),
+            _ => None,
         }
     }
 }
@@ -954,6 +1028,16 @@ impl JwtHmacAlgorithm {
             JwtHmacAlgorithm::Hs256 => "HS256",
             JwtHmacAlgorithm::Hs384 => "HS384",
             JwtHmacAlgorithm::Hs512 => "HS512",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "HS_UNKNOWN" => Some(Self::HsUnknown),
+            "HS256" => Some(Self::Hs256),
+            "HS384" => Some(Self::Hs384),
+            "HS512" => Some(Self::Hs512),
+            _ => None,
         }
     }
 }

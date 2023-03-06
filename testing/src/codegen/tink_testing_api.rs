@@ -740,6 +740,13 @@ impl NullValue {
             NullValue::NullValue => "NULL_VALUE",
         }
     }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "NULL_VALUE" => Some(Self::NullValue),
+            _ => None,
+        }
+    }
 }
 /// Generated client implementations.
 pub mod metadata_client {
