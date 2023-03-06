@@ -2,7 +2,7 @@
 
 ## 0.2.5 - TBD
 
-- Increase MSRV to 1.57.0
+- Increase MSRV to 1.60.0
 - Upgrade dependencies
 - Only rebuild generated code if PROTOC environment variable is set
 
