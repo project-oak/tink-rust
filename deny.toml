@@ -30,6 +30,8 @@ ignore = [
     "RUSTSEC-2022-0071",
     # ansi_term is Unmaintained (via structopt(0.3.26))
     "RUSTSEC-2021-0139",
+    # No use of `remove_dir_all`
+    "RUSTSEC-2023-0018",
 ]
 
 # Deny multiple versions unless explicitly skipped.
