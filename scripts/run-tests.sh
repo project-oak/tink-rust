@@ -14,6 +14,7 @@
 # limitations under the License.
 
 set -o errexit
+set -o xtrace
 
 realpath() {
     [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
@@ -33,16 +34,18 @@ cargo build --package=tink-testing-server
 cd "${TINK_TESTING_DIR}/cross_language"
 (
     cd ../cc
-    bazel build :testing_server
+    bazel build --copt="-Wno-error=array-parameter" --copt="-Wno-error=stringop-overflow" :testing_server
     cd ../go
     bazel build :testing_server
     cd ../java_src
     bazel build :testing_server :testing_server_deploy.jar
     cd ../python
-    bazel build :testing_server
+    bazel build --copt="-Wno-error=array-parameter" --copt="-Wno-error=stringop-overflow" :testing_server
 )
 
-bazel test --cache_test_results=no --test_output=errors \
+bazel test \
+      --copt="-Wno-error=array-parameter" --copt="-Wno-error=stringop-overflow" \
+      --cache_test_results=no --test_output=errors \
       :aead_test \
       :aead_consistency_test \
       :deterministic_aead_test \
