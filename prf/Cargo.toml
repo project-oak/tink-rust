@@ -13,7 +13,7 @@ categories = ["cryptography"]
 
 [dependencies]
 aes = "^0.8.2"
-cmac = "^0.7.1"
+cmac = "^0.7.2"
 digest = "^0.10.6"
 hkdf = "^0.12.3"
 hmac = { version = "^0.12.1", features = ["reset"] }
