@@ -3,6 +3,7 @@
 ## 0.2.6 - TBD
 
 - Increase MSRV to 1.65.0
+- Upgrade dependencies
 
 ## 0.2.5 - 2023-03-14
 

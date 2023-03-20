@@ -15,10 +15,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use generic_array::typenum::Unsigned;
-use p256::{
-    ecdsa::signature::{RandomizedSigner, Signature},
-    elliptic_curve,
-};
+use p256::elliptic_curve;
+use signature::RandomizedSigner;
+use std::convert::TryInto;
 use tink_core::{utils::wrap_err, TinkError};
 use tink_proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType};
 
@@ -58,12 +57,18 @@ impl EcdsaSigner {
     ) -> Result<Self, TinkError> {
         let priv_key = match curve {
             EllipticCurveType::NistP256 => {
-                if key_value.len() != elliptic_curve::FieldSize::<p256::NistP256>::to_usize() {
+                if key_value.len()
+                    != <p256::NistP256 as elliptic_curve::Curve>::FieldBytesSize::to_usize()
+                {
                     return Err("EcdsaSigner: invalid private key len".into());
                 }
                 EcdsaPrivateKey::NistP256(
-                    p256::ecdsa::SigningKey::from_bytes(key_value)
-                        .map_err(|e| wrap_err("EcdsaSigner: invalid private key", e))?,
+                    p256::ecdsa::SigningKey::from_bytes(
+                        key_value
+                            .try_into()
+                            .map_err(|e| wrap_err("EcdsaSigner: invalid private key", e))?,
+                    )
+                    .map_err(|e| wrap_err("EcdsaSigner: invalid private key", e))?,
                 )
             }
             _ => return Err(format!("EcdsaSigner: unsupported curve {curve:?}").into()),
@@ -91,16 +96,14 @@ impl tink_core::Signer for EcdsaSigner {
     fn sign(&self, data: &[u8]) -> Result<Vec<u8>, tink_core::TinkError> {
         let mut csprng = signature::rand_core::OsRng {};
         match &self.private_key {
-            EcdsaPrivateKey::NistP256(secret_key) => match self.encoding {
-                super::SignatureEncoding::Der => {
-                    let signature = secret_key.sign_with_rng(&mut csprng, data).to_der();
-                    Ok(signature.as_bytes().to_vec())
+            EcdsaPrivateKey::NistP256(secret_key) => {
+                let signature: ecdsa::Signature<p256::NistP256> =
+                    secret_key.sign_with_rng(&mut csprng, data);
+                match self.encoding {
+                    super::SignatureEncoding::Der => Ok(signature.to_der().as_bytes().to_vec()),
+                    super::SignatureEncoding::IeeeP1363 => Ok(signature.to_bytes().to_vec()),
                 }
-                super::SignatureEncoding::IeeeP1363 => {
-                    let signature = secret_key.sign_with_rng(&mut csprng, data);
-                    Ok(signature.as_bytes().to_vec())
-                }
-            },
+            }
         }
     }
 }

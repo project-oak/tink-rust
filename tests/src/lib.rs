@@ -329,7 +329,7 @@ pub fn new_random_ecdsa_private_key(
         EllipticCurveType::NistP256 => {
             let sk = p256::ecdsa::SigningKey::random(&mut csprng);
             let pk = p256::ecdsa::VerifyingKey::from(&sk);
-            let point_len = elliptic_curve::FieldSize::<p256::NistP256>::to_usize();
+            let point_len = <p256::NistP256 as elliptic_curve::Curve>::FieldBytesSize::to_usize();
             let pk_point = pk.to_encoded_point(/* compress= */ false);
             let pk_data = pk_point.as_bytes();
             (
