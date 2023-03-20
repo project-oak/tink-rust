@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.6 - TBD
+
+- Increase MSRV to 1.65.0
+
 ## 0.2.5 - 2023-03-14
 
 - Increase MSRV to 1.57.0

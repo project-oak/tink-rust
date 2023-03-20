@@ -1,7 +1,7 @@
 # Tink-Rust: Streaming Authenticated Encryption with Additional Data
 
 [![Docs](https://img.shields.io/badge/docs-rust-brightgreen?style=for-the-badge)](https://docs.rs/tink-streaming-aead)
-![MSRV](https://img.shields.io/badge/rustc-1.60+-yellow?style=for-the-badge)
+![MSRV](https://img.shields.io/badge/rustc-1.65+-yellow?style=for-the-badge)
 
 This crate provides streaming authenticated encryption with additional data functionality, as described in the upstream
 [Tink documentation](https://github.com/google/tink/blob/master/docs/PRIMITIVES.md#streaming-authenticated-encryption-with-associated-data).

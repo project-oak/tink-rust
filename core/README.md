@@ -1,7 +1,7 @@
 # Tink-Rust: Core Library
 
 [![Docs](https://img.shields.io/badge/docs-rust-brightgreen?style=for-the-badge)](https://docs.rs/tink-core)
-![MSRV](https://img.shields.io/badge/rustc-1.60+-yellow?style=for-the-badge)
+![MSRV](https://img.shields.io/badge/rustc-1.65+-yellow?style=for-the-badge)
 
 This crate holds common code for the Rust version of Tink.
 

@@ -1,7 +1,7 @@
 # Tink-Rust: `rinkey` Command-Line Key Management Tool
 
 [![Docs](https://img.shields.io/badge/docs-rust-brightgreen?style=for-the-badge)](https://project-oak.github.io/tink-rust/rust/rinkey)
-![MSRV](https://img.shields.io/badge/rustc-1.60+-yellow?style=for-the-badge)
+![MSRV](https://img.shields.io/badge/rustc-1.65+-yellow?style=for-the-badge)
 
 This crate provides the `rinkey` binary, which allows command-line manipulation of Tink keysets,
 equivalent to the upstream [`tinkey` utility](https://github.com/google/tink/blob/master/docs/TINKEY.md).
