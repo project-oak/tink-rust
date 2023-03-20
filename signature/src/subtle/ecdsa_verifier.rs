@@ -20,7 +20,7 @@ use p256::{
     elliptic_curve,
     elliptic_curve::sec1::EncodedPoint,
 };
-use signature::Signature as _;
+use std::convert::TryFrom;
 use tink_core::{utils::wrap_err, TinkError};
 use tink_proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType};
 
@@ -83,7 +83,7 @@ impl EcdsaVerifier {
 pub fn element_from_padded_slice<C: elliptic_curve::Curve>(
     data: &[u8],
 ) -> Result<elliptic_curve::FieldBytes<C>, TinkError> {
-    let point_len = elliptic_curve::FieldSize::<C>::to_usize();
+    let point_len = <C>::FieldBytesSize::to_usize();
     if data.len() >= point_len {
         let offset = data.len() - point_len;
         for v in data.iter().take(offset) {
@@ -112,7 +112,7 @@ impl tink_core::Verifier for EcdsaVerifier {
         let signature = match self.encoding {
             super::SignatureEncoding::Der => Signature::from_der(signature)
                 .map_err(|e| wrap_err("EcdsaVerifier: invalid ASN.1 signature", e))?,
-            super::SignatureEncoding::IeeeP1363 => Signature::from_bytes(signature)
+            super::SignatureEncoding::IeeeP1363 => Signature::try_from(signature)
                 .map_err(|e| wrap_err("EcdsaVerifier: invalid IEEE-P1363 signature", e))?,
         };
         match &self.public_key {

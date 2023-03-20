@@ -12,11 +12,11 @@ keywords = ["cryptography", "tink", "signature"]
 categories = ["cryptography"]
 
 [dependencies]
-ecdsa = { version = "^0.14.8", features = ["der"] }
+ecdsa = { version = "^0.16.7", features = ["der", "signing", "verifying"] }
 ed25519-dalek = { version = "2.0.0-pre.0", features = ["rand_core"] }
 generic-array = "^0.14.7"
-p256 = "^0.11.1"
+p256 = { version = "^0.13.2", features = ["ecdsa"] }
 rand = "^0.8"
-signature = "^1.6"
+signature = "^2.1"
 tink-core = "^0.2"
 tink-proto = "^0.2"

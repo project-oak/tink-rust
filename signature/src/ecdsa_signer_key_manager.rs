@@ -75,7 +75,8 @@ impl tink_core::registry::KeyManager for EcdsaSignerKeyManager {
                 //  - P bytes of X coordinate
                 //  - P bytes of Y coordinate
                 // where P is the field element size.
-                let point_len = elliptic_curve::FieldSize::<p256::NistP256>::to_usize();
+                let point_len =
+                    <p256::NistP256 as elliptic_curve::Curve>::FieldBytesSize::to_usize();
                 if public_key_data.len() != 2 * point_len + 1
                     || public_key_data[0] != ECDSA_UNCOMPRESSED_POINT_PREFIX
                 {

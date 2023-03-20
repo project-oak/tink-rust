@@ -76,7 +76,8 @@ impl EcPublicKey {
                 let encoded_pt: EncodedPoint<p256::NistP256> =
                     EncodedPoint::<p256::NistP256>::from(*affine_pt);
                 let pub_key_data = encoded_pt.as_bytes().to_vec();
-                let point_len = elliptic_curve::FieldSize::<p256::NistP256>::to_usize();
+                let point_len =
+                    <p256::NistP256 as elliptic_curve::Curve>::FieldBytesSize::to_usize();
                 if pub_key_data.len() != 2 * point_len + 1
                     || pub_key_data[0] != EC_FORMAT_PREFIX_UNCOMPRESSED
                 {
@@ -131,7 +132,9 @@ impl EcPrivateKey {
 
 fn field_size_in_bytes(c: EllipticCurveType) -> Result<usize, TinkError> {
     match c {
-        EllipticCurveType::NistP256 => Ok(elliptic_curve::FieldSize::<p256::NistP256>::to_usize()),
+        EllipticCurveType::NistP256 => {
+            Ok(<p256::NistP256 as elliptic_curve::Curve>::FieldBytesSize::to_usize())
+        }
         _ => Err(format!("unsupported curve {c:?}").into()),
     }
 }
@@ -267,7 +270,7 @@ pub fn generate_ecdh_key_pair(c: EllipticCurveType) -> Result<EcPrivateKey, Tink
 pub(crate) fn element_from_padded_slice<C: elliptic_curve::Curve>(
     data: &[u8],
 ) -> Result<elliptic_curve::FieldBytes<C>, TinkError> {
-    let point_len = elliptic_curve::FieldSize::<C>::to_usize();
+    let point_len = C::FieldBytesSize::to_usize();
     if data.len() >= point_len {
         let offset = data.len() - point_len;
         for v in data.iter().take(offset) {

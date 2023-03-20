@@ -15,7 +15,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use lazy_static::lazy_static;
-use p256::{elliptic_curve::generic_array::typenum::Unsigned, pkcs8::DecodePublicKey};
+use p256::{
+    elliptic_curve, elliptic_curve::generic_array::typenum::Unsigned, pkcs8::DecodePublicKey,
+};
 use serde::Deserialize;
 use std::collections::HashSet;
 use tink_core::TinkError;
@@ -621,7 +623,7 @@ fn bigint_str_to_bytes(curve: EllipticCurveType, val: &str) -> Vec<u8> {
         .to_bytes_be();
     let padded_width = match curve {
         EllipticCurveType::NistP256 => {
-            p256::elliptic_curve::FieldSize::<p256::NistP256>::to_usize()
+            <p256::NistP256 as elliptic_curve::Curve>::FieldBytesSize::to_usize()
         }
         _ => panic!("unsupported curve {:?}", curve),
     };
