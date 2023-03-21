@@ -65,7 +65,7 @@ impl HmacPrf {
                 Hmac::<sha2::Sha512>::new_from_slice(key)
                     .map_err(|_| "HmacPrf: invalid key size")?,
             ),
-            h => return Err(format!("HmacPrf: unsupported hash {:?}", h).into()),
+            h => return Err(format!("HmacPrf: unsupported hash {h:?}").into()),
         };
         let mac_size = match &mac {
             HmacPrfVariant::Sha1(_) => 20,

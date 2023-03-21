@@ -94,11 +94,9 @@ impl AwsClient {
         kms: rusoto_kms::KmsClient,
     ) -> Result<AwsClient, TinkError> {
         if !uri_prefix.to_lowercase().starts_with(AWS_PREFIX) {
-            return Err(format!(
-                "uri_prefix must start with {}, but got {}",
-                AWS_PREFIX, uri_prefix
-            )
-            .into());
+            return Err(
+                format!("uri_prefix must start with {AWS_PREFIX}, but got {uri_prefix}").into(),
+            );
         }
 
         Ok(AwsClient {

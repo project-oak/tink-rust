@@ -38,7 +38,7 @@ impl proto::hybrid_server::Hybrid for HybridServerImpl {
         Ok(tonic::Response::new(proto::HybridEncryptResponse {
             result: Some(match closure() {
                 Ok(ct) => proto::hybrid_encrypt_response::Result::Ciphertext(ct),
-                Err(e) => proto::hybrid_encrypt_response::Result::Err(format!("{:?}", e)),
+                Err(e) => proto::hybrid_encrypt_response::Result::Err(format!("{e:?}")),
             }),
         }))
     }
@@ -59,7 +59,7 @@ impl proto::hybrid_server::Hybrid for HybridServerImpl {
         Ok(tonic::Response::new(proto::HybridDecryptResponse {
             result: Some(match closure() {
                 Ok(pt) => proto::hybrid_decrypt_response::Result::Plaintext(pt),
-                Err(e) => proto::hybrid_decrypt_response::Result::Err(format!("{:?}", e)),
+                Err(e) => proto::hybrid_decrypt_response::Result::Err(format!("{e:?}")),
             }),
         }))
     }

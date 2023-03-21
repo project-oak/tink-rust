@@ -50,7 +50,7 @@ impl proto::streaming_aead_server::StreamingAead for StreamingAeadServerImpl {
         Ok(tonic::Response::new(proto::StreamingAeadEncryptResponse {
             result: Some(match closure() {
                 Ok(ct) => proto::streaming_aead_encrypt_response::Result::Ciphertext(ct),
-                Err(e) => proto::streaming_aead_encrypt_response::Result::Err(format!("{:?}", e)),
+                Err(e) => proto::streaming_aead_encrypt_response::Result::Err(format!("{e:?}")),
             }),
         }))
     }
@@ -79,7 +79,7 @@ impl proto::streaming_aead_server::StreamingAead for StreamingAeadServerImpl {
         Ok(tonic::Response::new(proto::StreamingAeadDecryptResponse {
             result: Some(match closure() {
                 Ok(pt) => proto::streaming_aead_decrypt_response::Result::Plaintext(pt),
-                Err(e) => proto::streaming_aead_decrypt_response::Result::Err(format!("{:?}", e)),
+                Err(e) => proto::streaming_aead_decrypt_response::Result::Err(format!("{e:?}")),
             }),
         }))
     }

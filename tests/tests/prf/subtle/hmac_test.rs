@@ -105,9 +105,9 @@ fn test_hmac_prf_wycheproof_cases() {
         HashType::Sha256,
         HashType::Sha512,
     ] {
-        let hash_name = format!("{:?}", hash);
+        let hash_name = format!("{hash:?}");
         let filename = format!("testvectors/hmac_{}_test.json", hash_name.to_lowercase());
-        println!("wycheproof file '{}' hash {}", filename, hash_name);
+        println!("wycheproof file '{filename}' hash {hash_name}");
         let bytes = tink_tests::wycheproof_data(&filename);
         let data: TestData = serde_json::from_slice(&bytes).unwrap();
 

@@ -50,7 +50,7 @@ impl HkdfPrf {
             HashType::Sha512 => {
                 HkdfPrfVariant::Sha512(hkdf::Hkdf::<sha2::Sha512>::new(Some(salt), key))
             }
-            h => return Err(format!("HkdfPrf: unsupported hash {:?}", h).into()),
+            h => return Err(format!("HkdfPrf: unsupported hash {h:?}").into()),
         };
         Ok(HkdfPrf { prk })
     }

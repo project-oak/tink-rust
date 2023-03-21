@@ -644,12 +644,11 @@ fn test_point_encode() {
         )
         .unwrap();
         let encoded_point = subtle::point_encode(tc.curve, tc.point_format, &pub_key)
-            .unwrap_or_else(|e| panic!("error in point encoding in test case {} : {:?}", i, e,));
+            .unwrap_or_else(|e| panic!("error in point encoding in test case {i} : {:?}", e));
         let want = hex::decode(tc.encoded).unwrap();
         assert_eq!(
             encoded_point, want,
-            "mismatch point encoding in test case {}",
-            i
+            "mismatch point encoding in test case {i}",
         );
 
         // Check some invalid variants are rejected.
@@ -681,8 +680,7 @@ fn test_point_decode() {
         assert_eq!(
             pub_key.x_y_bytes().unwrap(),
             spub_key.x_y_bytes().unwrap(),
-            "mismatch point decoding in test case {}",
-            i
+            "mismatch point decoding in test case {i}",
         );
 
         // Check some invalid variants are rejected.
@@ -754,7 +752,7 @@ fn convert_x509_public_key(
                 .map_err(|_e| "failed to decode X509 public key")?;
             Ok(subtle::EcPublicKey::NistP256(*pub_key.as_affine()))
         }
-        _ => Err(format!("unsupported curve {:?}", curve).into()),
+        _ => Err(format!("unsupported curve {curve:?}").into()),
     }
 }
 
@@ -819,8 +817,8 @@ fn test_ec_wycheproof_cases() {
 }
 
 fn wycheproof_test(filename: &str) {
-    println!("wycheproof file 'testvectors/{}'", filename);
-    let bytes = tink_tests::wycheproof_data(&format!("testvectors/{}", filename));
+    println!("wycheproof file 'testvectors/{filename}'");
+    let bytes = tink_tests::wycheproof_data(&format!("testvectors/{filename}"));
     let data: EcdhSuite = serde_json::from_slice(&bytes).unwrap();
     let mut skipped_curves = HashSet::new();
     for g in &data.test_groups {
@@ -829,12 +827,12 @@ fn wycheproof_test(filename: &str) {
         // if curve == EllipticCurveType::UnknownCurve {
         if curve != EllipticCurveType::NistP256 {
             if !skipped_curves.contains(&curve) {
-                println!("skipping tests for unsupported curve {:?}", curve);
+                println!("skipping tests for unsupported curve {curve:?}");
                 skipped_curves.insert(curve);
             }
             continue;
         }
-        println!("   curve: {:?}", curve);
+        println!("   curve: {curve:?}");
 
         for tc in &g.tests {
             let case_name = format!(
@@ -871,8 +869,7 @@ fn wycheproof_test(filename: &str) {
                         });
                     assert_eq!(
                         shared, tc.shared,
-                        "{}: valid test case, incorrect shared secret",
-                        case_name
+                        "{case_name}: valid test case, incorrect shared secret",
                     );
                 }
                 WycheproofResult::Invalid => {
@@ -911,8 +908,7 @@ fn wycheproof_test(filename: &str) {
                     let shared = shared_result.unwrap();
                     assert_eq!(
                         shared, tc.shared,
-                        "{}: acceptable test case, incorrect shared secret",
-                        case_name
+                        "{case_name}: acceptable test case, incorrect shared secret",
                     );
                 }
             }

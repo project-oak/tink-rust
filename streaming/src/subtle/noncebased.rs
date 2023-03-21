@@ -186,7 +186,7 @@ impl io::Write for Writer {
             let ciphertext = self
                 .segment_encrypter
                 .encrypt_segment(&self.plaintext[..pt_lim], &nonce)
-                .map_err(|e| io::Error::new(io::ErrorKind::InvalidInput, format!("{:?}", e)))?;
+                .map_err(|e| io::Error::new(io::ErrorKind::InvalidInput, format!("{e:?}")))?;
             self.w.write_all(&ciphertext)?;
 
             // Ready to accumulate next segment.
@@ -428,7 +428,7 @@ impl io::Read for Reader {
         self.plaintext = self
             .segment_decrypter
             .decrypt_segment(&self.ciphertext[..segment], &nonce)
-            .map_err(|e| io::Error::new(io::ErrorKind::InvalidInput, format!("{:?}", e)))?;
+            .map_err(|e| io::Error::new(io::ErrorKind::InvalidInput, format!("{e:?}")))?;
 
         // Copy 1 byte remainder to the beginning of `self.ciphertext`.
         if !last_segment {

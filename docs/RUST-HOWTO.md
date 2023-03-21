@@ -242,7 +242,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     // is initialized.
     let kh = tink_core::keyset::Handle::new(&tink_daead::aes_siv_key_template())?;
 
-    println!("{:?}", kh);
+    println!("{kh:?}");
     Ok(())
 }
 ```
@@ -281,7 +281,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // Create a new keyset handle for the current state of the managed keyset.
     let kh2 = km.handle()?;
-    println!("{:?}", kh2); // debug output does not include key material
+    println!("{kh2:?}"); // debug output does not include key material
 
     // The original key is still in the keyset, and so can decrypt.
     let cipher2 = tink_aead::new(&kh2)?;
@@ -292,7 +292,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     km.set_primary(key_id_b)?;
     km.disable(key_id_a)?;
     let kh3 = km.handle()?;
-    println!("{:?}", kh3);
+    println!("{kh3:?}");
     Ok(())
 }
 ```

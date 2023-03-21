@@ -88,8 +88,7 @@ fn test_aes_gcm_siv_encrypt_decrypt() {
             });
             assert_eq!(
                 pt, decrypted,
-                "decrypted text and plaintext don't match: key_size {}, pt_size {}",
-                key_size, pt_size
+                "decrypted text and plaintext don't match: key_size {key_size}, pt_size {pt_size}",
             );
         }
     }
@@ -108,8 +107,7 @@ fn test_aes_gcm_siv_long_messages() {
             let decrypted = a.decrypt(&ct, &ad).unwrap();
             assert_eq!(
                 pt, decrypted,
-                "decrypted text and plaintext don't match: key_size {}, pt_size {}",
-                key_size, pt_size
+                "decrypted text and plaintext don't match: key_size {key_size}, pt_size {pt_size}",
             );
         }
         pt_size += 9 * pt_size / 11
@@ -129,8 +127,7 @@ fn test_aes_gcm_siv_modify_ciphertext() {
         for j in 0..8 {
             ct[i] ^= 1 << j;
             a.decrypt(&ct, &ad).expect_err(&format!(
-                "expect an error when flipping bit of ciphertext: byte {}, bit {}",
-                i, j
+                "expect an error when flipping bit of ciphertext: byte {i}, bit {j}",
             ));
             ct[i] = tmp;
         }
@@ -138,8 +135,7 @@ fn test_aes_gcm_siv_modify_ciphertext() {
     // truncated ciphertext
     for i in 1..ct.len() {
         a.decrypt(&ct[..i], &ad).expect_err(&format!(
-            "expect an error ciphertext is truncated until byte {}",
-            i
+            "expect an error ciphertext is truncated until byte {i}",
         ));
     }
     // modify additional authenticated data
@@ -148,8 +144,7 @@ fn test_aes_gcm_siv_modify_ciphertext() {
         for j in 0..8 {
             ad[i] ^= 1 << j;
             a.decrypt(&ct, &ad).expect_err(&format!(
-                "expect an error when flipping bit of ad: byte {}, bit {}",
-                i, j
+                "expect an error when flipping bit of ad: byte {i}, bit {j}",
             ));
             ad[i] = tmp;
         }
@@ -181,7 +176,7 @@ fn test_aes_gcm_siv_random_nonce_produces_different_ciphertexts() {
 #[test]
 fn test_aes_gcm_siv_wycheproof_cases() {
     let filename = "testvectors/aes_gcm_siv_test.json";
-    println!("wycheproof file '{}'", filename);
+    println!("wycheproof file '{filename}'");
     let bytes = tink_tests::wycheproof_data(filename);
     let data: wycheproof::TestData = serde_json::from_slice(&bytes).unwrap();
     assert_eq!("AES-GCM-SIV", data.suite.algorithm);

@@ -29,5 +29,5 @@ fn example() {
     let output = ps.compute_primary_prf(msg, 16).unwrap();
 
     println!("Message: {}", std::str::from_utf8(msg).unwrap());
-    println!("Redacted: {}", base64::encode(&output));
+    println!("Redacted: {}", base64::encode(output));
 }

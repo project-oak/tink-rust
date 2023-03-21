@@ -197,8 +197,7 @@ fn test_ecdsa_sign_new_key_multiple_times() {
         assert_eq!(
             keys.len(),
             n_test * 2,
-            "key is repeated with params: {:?}",
-            params
+            "key is repeated with params: {params:?}",
         );
     }
 }
@@ -224,14 +223,12 @@ fn test_ecdsa_sign_new_key_data_basic() {
         assert_eq!(
             key_data.type_url,
             tink_tests::ECDSA_SIGNER_TYPE_URL,
-            "incorrect type url in test case {}",
-            i
+            "incorrect type url in test case {i}",
         );
         assert_eq!(
             key_data.key_material_type,
             tink_proto::key_data::KeyMaterialType::AsymmetricPrivate as i32,
-            "incorrect key material type in test case  {}",
-            i
+            "incorrect key material type in test case {i}",
         );
         let key = tink_proto::EcdsaPrivateKey::decode(key_data.value.as_ref())
             .unwrap_or_else(|e| panic!("unexpected error in test case {}: {:?}", i, e));

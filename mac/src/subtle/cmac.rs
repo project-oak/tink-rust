@@ -38,15 +38,13 @@ impl AesCmac {
         }
         if tag_size < MIN_TAG_LENGTH_IN_BYTES {
             return Err(format!(
-                "AesCmac: tag length {} is shorter than minimum tag length {}",
-                tag_size, MIN_TAG_LENGTH_IN_BYTES
+                "AesCmac: tag length {tag_size} is shorter than minimum tag length {MIN_TAG_LENGTH_IN_BYTES}",
             )
             .into());
         }
         if tag_size > MAX_TAG_LENGTH_IN_BYTES {
             return Err(format!(
-                "AesCmac: tag length {} is longer than maximum tag length {}",
-                tag_size, MIN_TAG_LENGTH_IN_BYTES
+                "AesCmac: tag length {tag_size} is longer than maximum tag length {MAX_TAG_LENGTH_IN_BYTES}",
             )
             .into());
         }
@@ -66,8 +64,7 @@ impl tink_core::Mac for AesCmac {
 pub fn validate_cmac_params(key_size: usize, tag_size: usize) -> Result<(), TinkError> {
     if key_size != RECOMMENDED_CMAC_KEY_SIZE_IN_BYTES {
         return Err(format!(
-            "Only {} sized keys are allowed with Tink's AES-CMAC",
-            RECOMMENDED_CMAC_KEY_SIZE_IN_BYTES
+            "Only {RECOMMENDED_CMAC_KEY_SIZE_IN_BYTES} sized keys are allowed with Tink's AES-CMAC",
         )
         .into());
     }

@@ -59,7 +59,7 @@ pub fn key_template_proto(dir: &str, name: &str) -> Result<KeyTemplate, TinkErro
                 _ => tink_proto::OutputPrefixType::UnknownPrefix,
             } as i32;
         } else {
-            return Err(format!("Failed to parse text protobuf line: '{}'", line).into());
+            return Err(format!("Failed to parse text protobuf line: '{line}'").into());
         }
     }
 
@@ -85,7 +85,7 @@ fn escaped_string_to_bytes(input: &str) -> Result<Vec<u8>, TinkError> {
                     c.encode_utf8(&mut b);
                     output.push(b[0]);
                 }
-                _ => return Err(format!("Parse failure: invalid non-ASCII char {}", c).into()),
+                _ => return Err(format!("Parse failure: invalid non-ASCII char {c}").into()),
             },
             State::Escaped => match c {
                 'n' => {
@@ -120,7 +120,7 @@ fn escaped_string_to_bytes(input: &str) -> Result<Vec<u8>, TinkError> {
                 '1' => state = State::Octal1(1),
                 '2' => state = State::Octal1(2),
                 '3' => state = State::Octal1(3),
-                _ => return Err(format!("Parse failure: invalid escape char {}", c).into()),
+                _ => return Err(format!("Parse failure: invalid escape char {c}").into()),
             },
             State::Octal1(h) => match c {
                 '0' => state = State::Octal2(h << 3),
@@ -131,7 +131,7 @@ fn escaped_string_to_bytes(input: &str) -> Result<Vec<u8>, TinkError> {
                 '5' => state = State::Octal2((h << 3) + 5),
                 '6' => state = State::Octal2((h << 3) + 6),
                 '7' => state = State::Octal2((h << 3) + 7),
-                _ => return Err(format!("Parse failure: invalid first octal digit {}", c).into()),
+                _ => return Err(format!("Parse failure: invalid first octal digit {c}").into()),
             },
             State::Octal2(hi) => {
                 let lo = match c {
@@ -144,9 +144,7 @@ fn escaped_string_to_bytes(input: &str) -> Result<Vec<u8>, TinkError> {
                     '6' => 6,
                     '7' => 7,
                     _ => {
-                        return Err(
-                            format!("Parse failure: invalid second octal digit {}", c).into()
-                        )
+                        return Err(format!("Parse failure: invalid second octal digit {c}").into())
                     }
                 };
                 output.push((hi << 3) + lo);

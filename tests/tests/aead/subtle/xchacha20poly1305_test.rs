@@ -222,7 +222,7 @@ fn test_cha_cha20_poly1305_invalid_key() {
 #[test]
 fn test_x_cha_cha20_poly1305_wycheproof_vectors() {
     let filename = "testvectors/xchacha20_poly1305_test.json";
-    println!("wycheproof file '{}'", filename);
+    println!("wycheproof file '{filename}'");
     let bytes = tink_tests::wycheproof_data(filename);
     let data: TestData = serde_json::from_slice(&bytes).unwrap();
     assert_eq!("XCHACHA20-POLY1305", data.suite.algorithm);

@@ -110,11 +110,11 @@ fn test_hkdf_basic() {
         let i = hex::decode(test.info).unwrap();
 
         let result = compute_hkdf(test.hash_alg, &k, &s, &i, test.tag_size)
-            .map_err(|e| format!("mac computation failed in test case {}: {}", ti, e))
+            .map_err(|e| format!("mac computation failed in test case {ti}: {e}"))
             .unwrap();
         let r = hex::encode(result);
 
-        println!("Test no: {}", ti);
+        println!("Test no: {ti}");
         println!("Length of tag {}", test.tag_size);
         println!("Length of result {}", r.len());
         println!("Length of expected: {}\n\n", test.expected_kdf.len());
@@ -131,7 +131,7 @@ fn test_new_hmac_with_invalid_input() {
     // invalid hash algorithm
     if let Err(e) = compute_hkdf(HashType::UnknownHash, &get_random_bytes(16), &[], &[], 32) {
         assert!(
-            format!("{}", e).contains("invalid hash algorithm"),
+            format!("{e}").contains("invalid hash algorithm"),
             "expect error with 'invalid hash algorithm', got '{}'",
             e
         );
@@ -142,7 +142,7 @@ fn test_new_hmac_with_invalid_input() {
     // tag too short
     if let Err(e) = compute_hkdf(HashType::Sha256, &get_random_bytes(16), &[], &[], 9) {
         assert!(
-            format!("{}", e).contains("tag size too small"),
+            format!("{e}").contains("tag size too small"),
             "expect error with 'tag size too small', got '{}'",
             e
         );
@@ -153,7 +153,7 @@ fn test_new_hmac_with_invalid_input() {
     // tag too big
     if let Err(e) = compute_hkdf(HashType::Sha1, &get_random_bytes(16), &[], &[], 5101) {
         assert!(
-            format!("{}", e).contains("tag size too big"),
+            format!("{e}").contains("tag size too big"),
             "expect error with 'tag size too big', got '{}'",
             e
         );
@@ -162,7 +162,7 @@ fn test_new_hmac_with_invalid_input() {
     }
     if let Err(e) = compute_hkdf(HashType::Sha256, &get_random_bytes(16), &[], &[], 8162) {
         assert!(
-            format!("{}", e).contains("tag size too big"),
+            format!("{e}").contains("tag size too big"),
             "expect error with 'tag size too big', got '{}'",
             e
         );
@@ -171,7 +171,7 @@ fn test_new_hmac_with_invalid_input() {
     }
     if let Err(e) = compute_hkdf(HashType::Sha512, &get_random_bytes(16), &[], &[], 16323) {
         assert!(
-            format!("{}", e).contains("tag size too big"),
+            format!("{e}").contains("tag size too big"),
             "expect error with 'tag size too big', got '{}'",
             e
         );

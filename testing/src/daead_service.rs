@@ -40,7 +40,7 @@ impl proto::deterministic_aead_server::DeterministicAead for DaeadServerImpl {
                 result: Some(match closure() {
                     Ok(ct) => proto::deterministic_aead_encrypt_response::Result::Ciphertext(ct),
                     Err(e) => {
-                        proto::deterministic_aead_encrypt_response::Result::Err(format!("{:?}", e))
+                        proto::deterministic_aead_encrypt_response::Result::Err(format!("{e:?}"))
                     }
                 }),
             },
@@ -65,7 +65,7 @@ impl proto::deterministic_aead_server::DeterministicAead for DaeadServerImpl {
                 result: Some(match closure() {
                     Ok(pt) => proto::deterministic_aead_decrypt_response::Result::Plaintext(pt),
                     Err(e) => {
-                        proto::deterministic_aead_decrypt_response::Result::Err(format!("{:?}", e))
+                        proto::deterministic_aead_decrypt_response::Result::Err(format!("{e:?}"))
                     }
                 }),
             },

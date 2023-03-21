@@ -87,9 +87,7 @@ impl tink_core::registry::KeyManager for EcdsaSignerKeyManager {
                     public_key_data[point_len + 1..].to_vec(),
                 )
             }
-            _ => {
-                return Err(format!("EcdsaSignerKeyManager: unsupported curve {:?}", curve).into())
-            }
+            _ => return Err(format!("EcdsaSignerKeyManager: unsupported curve {curve:?}").into()),
         };
         let pub_key = tink_proto::EcdsaPublicKey {
             version: ECDSA_SIGNER_KEY_VERSION,

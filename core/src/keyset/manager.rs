@@ -103,7 +103,7 @@ impl Manager {
                 };
             }
         }
-        Err(format!("Key {} not found", key_id).into())
+        Err(format!("Key {key_id} not found").into())
     }
 
     /// Sets the status of the specified key to [`KeyStatusType::Disabled`].
@@ -111,7 +111,7 @@ impl Manager {
     /// is not primary and has status [`KeyStatusType::Disabled`] or [`KeyStatusType::Enabled`].
     pub fn disable(&mut self, key_id: KeyId) -> Result<(), TinkError> {
         if self.ks.primary_key_id == key_id {
-            return Err(format!("Cannot disable primary key (key_id {})", key_id).into());
+            return Err(format!("Cannot disable primary key (key_id {key_id})").into());
         }
         for key in &mut self.ks.key {
             if key.key_id == key_id {
@@ -128,7 +128,7 @@ impl Manager {
                 };
             }
         }
-        Err(format!("Key {} not found", key_id).into())
+        Err(format!("Key {key_id} not found").into())
     }
 
     /// Sets the status of the specified key to [`KeyStatusType::Destroyed`], and removes the
@@ -137,7 +137,7 @@ impl Manager {
     /// [`KeyStatusType::Enabled`], or [`KeyStatusType::Destroyed`].
     pub fn destroy(&mut self, key_id: KeyId) -> Result<(), TinkError> {
         if self.ks.primary_key_id == key_id {
-            return Err(format!("Cannot destroy primary key (key_id {})", key_id).into());
+            return Err(format!("Cannot destroy primary key (key_id {key_id})").into());
         }
         for key in &mut self.ks.key {
             if key.key_id == key_id {
@@ -157,14 +157,14 @@ impl Manager {
                 };
             }
         }
-        Err(format!("Key {} not found", key_id).into())
+        Err(format!("Key {key_id} not found").into())
     }
 
     /// Removes the specifed key from the managed keyset.  Succeeds only if the specified key is not
     /// primary.  After deletion the keyset contains one key fewer.
     pub fn delete(&mut self, key_id: KeyId) -> Result<(), TinkError> {
         if self.ks.primary_key_id == key_id {
-            return Err(format!("Cannot delete primary key (key_id {})", key_id).into());
+            return Err(format!("Cannot delete primary key (key_id {key_id})").into());
         }
         let mut idx: Option<usize> = None;
         for (i, key) in self.ks.key.iter().enumerate() {
@@ -178,7 +178,7 @@ impl Manager {
                 self.ks.key.remove(i);
                 Ok(())
             }
-            None => Err(format!("Key {} not found", key_id).into()),
+            None => Err(format!("Key {key_id} not found").into()),
         }
     }
 
@@ -199,7 +199,7 @@ impl Manager {
                 };
             }
         }
-        Err(format!("Key {} not found", key_id).into())
+        Err(format!("Key {key_id} not found").into())
     }
 
     /// Return the count of all keys in the keyset.

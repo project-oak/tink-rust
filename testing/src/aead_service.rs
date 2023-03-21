@@ -38,7 +38,7 @@ impl proto::aead_server::Aead for AeadServerImpl {
         Ok(tonic::Response::new(proto::AeadEncryptResponse {
             result: Some(match closure() {
                 Ok(ct) => proto::aead_encrypt_response::Result::Ciphertext(ct),
-                Err(e) => proto::aead_encrypt_response::Result::Err(format!("{:?}", e)),
+                Err(e) => proto::aead_encrypt_response::Result::Err(format!("{e:?}")),
             }),
         }))
     }
@@ -58,7 +58,7 @@ impl proto::aead_server::Aead for AeadServerImpl {
         Ok(tonic::Response::new(proto::AeadDecryptResponse {
             result: Some(match closure() {
                 Ok(pt) => proto::aead_decrypt_response::Result::Plaintext(pt),
-                Err(e) => proto::aead_decrypt_response::Result::Err(format!("{:?}", e)),
+                Err(e) => proto::aead_decrypt_response::Result::Err(format!("{e:?}")),
             }),
         }))
     }

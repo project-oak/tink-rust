@@ -38,11 +38,9 @@ impl FakeClient {
     /// `key_uri` must have the following format: `fake-kms://<base64 encoded aead keyset>`.
     pub fn new(uri_prefix: &str) -> Result<Self, TinkError> {
         if !uri_prefix.to_lowercase().starts_with(FAKE_PREFIX) {
-            return Err(format!(
-                "UriPrefix must start with {}, but got {}",
-                FAKE_PREFIX, uri_prefix
-            )
-            .into());
+            return Err(
+                format!("UriPrefix must start with {FAKE_PREFIX}, but got {uri_prefix}").into(),
+            );
         }
         Ok(FakeClient {
             uri_prefix: uri_prefix.to_string(),

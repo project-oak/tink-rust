@@ -58,7 +58,7 @@ impl EcdsaVerifier {
                     .map_err(|e| wrap_err("EcdsaVerifier: invalid point", e))?;
                 EcdsaPublicKey::NistP256(verify_key)
             }
-            _ => return Err(format!("EcdsaVerifier: unsupported curve {:?}", curve,).into()),
+            _ => return Err(format!("EcdsaVerifier: unsupported curve {curve:?}").into()),
         };
         Self::new_from_public_key(hash_alg, curve, encoding, public_key)
     }

@@ -122,14 +122,12 @@ fn test_new_key_data_cmac_basic() {
         assert_eq!(
             key_data.type_url,
             tink_tests::AES_CMAC_TYPE_URL,
-            "incorrect type url in test case {}",
-            i
+            "incorrect type url in test case {i}",
         );
         assert_eq!(
             key_data.key_material_type,
             tink_proto::key_data::KeyMaterialType::Symmetric as i32,
-            "incorrect key material type in test case {}",
-            i
+            "incorrect key material type in test case {i}",
         );
         let key =
             tink_proto::AesCmacKey::decode(key_data.value.as_ref()).expect("invalid key value");

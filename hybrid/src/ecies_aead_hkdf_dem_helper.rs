@@ -112,7 +112,7 @@ impl subtle::EciesAeadHkdfDemHelper for EciesAeadHkdfDemHelper {
         &self,
         symmetric_key_value: &[u8],
     ) -> Result<tink_core::Primitive, tink_core::TinkError> {
-        if symmetric_key_value.len() != self.get_symmetric_key_size() as usize {
+        if symmetric_key_value.len() != self.get_symmetric_key_size() {
             return Err("symmetric key has incorrect length".into());
         }
         let mut sk = Vec::new();

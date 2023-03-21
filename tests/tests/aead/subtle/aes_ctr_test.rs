@@ -47,7 +47,7 @@ fn test_new_aes_ctr() {
                     Err(e) => e,
                     Ok(_) => panic!("AesCtr: unexpected success"),
                 };
-                assert!(format!("{}", err).contains(
+                assert!(format!("{err}").contains(
                     "AesCtr: invalid AES key size; want 16 or 32"),
                         "wrong error message; want a String starting with \"AesCtr: invalid AES key size; want 16 or 32\", got {}", err);
             }
@@ -69,7 +69,7 @@ fn test_new_aes_ctr() {
                 Err(e) => e,
                 Ok(_) => panic!("want error for invalid IV size"),
             };
-            assert!(format!("{:?}", err).contains("AesCtr: invalid IV size"));
+            assert!(format!("{err:?}").contains("AesCtr: invalid IV size"));
         }
     }
 }
@@ -175,8 +175,7 @@ fn test_encrypt_random_message() {
         assert_eq!(
             ciphertext.len(),
             message.len() + subtle::AES_CTR_MIN_IV_SIZE,
-            "invalid ciphertext length for i = {}",
-            i
+            "invalid ciphertext length for i = {i}",
         );
 
         let plaintext = stream
@@ -185,8 +184,7 @@ fn test_encrypt_random_message() {
 
         assert_eq!(
             plaintext, message,
-            "plaintext doesn't match message, i = {}",
-            i
+            "plaintext doesn't match message, i = {i}",
         );
     }
 }
@@ -206,8 +204,7 @@ fn test_encrypt_random_key_and_message() {
         assert_eq!(
             ciphertext.len(),
             message.len() + subtle::AES_CTR_MIN_IV_SIZE,
-            "invalid ciphertext length for i = {}",
-            i
+            "invalid ciphertext length for i = {i}",
         );
 
         let plaintext = stream
@@ -216,8 +213,7 @@ fn test_encrypt_random_key_and_message() {
 
         assert_eq!(
             plaintext, message,
-            "plaintext doesn't match message, i = {}",
-            i
+            "plaintext doesn't match message, i = {i}",
         );
     }
 }

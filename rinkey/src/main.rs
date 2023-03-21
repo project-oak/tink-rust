@@ -40,7 +40,7 @@ impl FromStr for KeysetFormat {
         match variant.to_lowercase().as_ref() {
             "json" => Ok(KeysetFormat::Json),
             "binary" => Ok(KeysetFormat::Binary),
-            _ => Err(format!("Failed to parse format {}", variant)),
+            _ => Err(format!("Failed to parse format {variant}")),
         }
     }
 }
@@ -105,7 +105,7 @@ impl FromStr for KeyTemplate {
         if let Some(generator) = tink_core::registry::get_template_generator(template_name) {
             Ok(KeyTemplate(generator()))
         } else {
-            Err(format!("Unknown key template name {}", template_name))
+            Err(format!("Unknown key template name {template_name}",))
         }
     }
 }
@@ -405,7 +405,7 @@ fn list_keyset(opts: InOptions) {
 fn list_key_templates() {
     println!("The following key templates are supported:");
     for name in tink_core::registry::template_names() {
-        println!("{}", name);
+        println!("{name}");
     }
 }
 

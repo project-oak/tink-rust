@@ -71,8 +71,7 @@ fn test_cipher_key_size() {
         assert_eq!(
             r_dem.get_symmetric_key_size(),
             *l,
-            "incorrect key size for {:?} template",
-            c,
+            "incorrect key size for {c:?} template",
         );
     }
 }

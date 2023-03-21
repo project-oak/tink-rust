@@ -65,8 +65,7 @@ fn test_hmac_basic() {
         assert_eq!(
             hex::encode(&mac),
             test.expected_mac[..(test.tag_size * 2)],
-            "incorrect mac in test case {}",
-            i
+            "incorrect mac in test case {i}",
         );
         cipher
             .verify_mac(&mac, test.data)

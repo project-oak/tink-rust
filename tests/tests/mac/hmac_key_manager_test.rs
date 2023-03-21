@@ -119,18 +119,16 @@ fn test_new_key_data_basic() {
         let serialized_format = proto_encode(test_format);
         let key_data = km
             .new_key_data(&serialized_format)
-            .unwrap_or_else(|e| panic!("unexpected error in test case {}: {:?}", i, e));
+            .unwrap_or_else(|e| panic!("unexpected error in test case {i}: {:?}", e));
         assert_eq!(
             key_data.type_url,
             tink_tests::HMAC_TYPE_URL,
-            "incorrect type url in test case {}",
-            i
+            "incorrect type url in test case {i}",
         );
         assert_eq!(
             key_data.key_material_type,
             tink_proto::key_data::KeyMaterialType::Symmetric as i32,
-            "incorrect key material type in test case {}",
-            i
+            "incorrect key material type in test case {i}",
         );
         let key = tink_proto::HmacKey::decode(key_data.value.as_ref()).expect("invalid key value");
         validate_hmac_key(test_format, &key).expect("invalid key");

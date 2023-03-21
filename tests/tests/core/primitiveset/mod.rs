@@ -47,7 +47,7 @@ fn test_primitive_set_basic() {
     let mut entries = Vec::with_capacity(keys.len());
     for i in 0..keys.len() {
         let mac = Box::new(DummyMac {
-            name: format!("Mac#{}", i),
+            name: format!("Mac#{i}"),
         });
         macs.push(mac);
         entries.push(ps.add(Primitive::Mac(macs[i].clone()), &keys[i]).unwrap());

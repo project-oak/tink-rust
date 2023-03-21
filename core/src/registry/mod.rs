@@ -62,11 +62,9 @@ where
 
     let type_url = km.type_url();
     if key_mgrs.contains_key(type_url) {
-        return Err(format!(
-            "registry::register_key_manager: type {} already registered",
-            type_url
-        )
-        .into());
+        return Err(
+            format!("registry::register_key_manager: type {type_url} already registered",).into(),
+        );
     }
     key_mgrs.insert(type_url, km);
     Ok(())
@@ -77,8 +75,7 @@ pub fn get_key_manager(type_url: &str) -> Result<Arc<dyn KeyManager>, TinkError>
     let key_mgrs = KEY_MANAGERS.read().expect(MERR); // safe: lock
     let km = key_mgrs.get(type_url).ok_or_else(|| {
         TinkError::new(&format!(
-            "registry::get_key_manager: unsupported key type: {}",
-            type_url
+            "registry::get_key_manager: unsupported key type: {type_url}",
         ))
     })?;
     Ok(km.clone())
@@ -131,5 +128,5 @@ pub fn get_kms_client(key_uri: &str) -> Result<Arc<dyn KmsClient>, TinkError> {
             return Ok(k.clone());
         }
     }
-    Err(format!("KMS client supporting {} not found", key_uri).into())
+    Err(format!("KMS client supporting {key_uri} not found").into())
 }

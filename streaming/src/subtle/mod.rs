@@ -35,7 +35,7 @@ pub fn validate_aes_key_size(size_in_bytes: usize) -> Result<AesVariant, tink_co
     match size_in_bytes {
         16 => Ok(AesVariant::Aes128),
         32 => Ok(AesVariant::Aes256),
-        _ => Err(format!("invalid AES key size; want 16 or 32, got {}", size_in_bytes).into()),
+        _ => Err(format!("invalid AES key size; want 16 or 32, got {size_in_bytes}").into()),
     }
 }
 
