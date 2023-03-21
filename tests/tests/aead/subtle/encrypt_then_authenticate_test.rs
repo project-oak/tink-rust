@@ -223,8 +223,7 @@ fn test_eta_decrypt_modified_ciphertext() {
             "modified ciphertext shouldn't be the same as original"
         );
         cipher.decrypt(&modct, &aad[..]).expect_err(&format!(
-            "successfully decrypted modified ciphertext (i = {})",
-            i
+            "successfully decrypted modified ciphertext (i = {i})",
         ));
         // Restore the modified byte.
         modct[i / 8] = b;
@@ -243,8 +242,7 @@ fn test_eta_decrypt_modified_ciphertext() {
             "modified aad shouldn't be the same as aad"
         );
         cipher.decrypt(&ciphertext, &modaad).expect_err(&format!(
-            "successfully decrypted with modified aad (i = {})",
-            i
+            "successfully decrypted with modified aad (i = {i})",
         ));
         // Restore the modified byte.
         modaad[i / 8] = b
@@ -255,8 +253,7 @@ fn test_eta_decrypt_modified_ciphertext() {
         cipher
             .decrypt(&ciphertext[..(ciphertext.len() - i)], aad)
             .expect_err(&format!(
-                "successfully decrypted truncated ciphertext (i = {})",
-                i
+                "successfully decrypted truncated ciphertext (i = {i})",
             ));
     }
 }

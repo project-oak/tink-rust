@@ -36,8 +36,7 @@ fn test_json_io_unencrypted() {
     let ks2 = r.read().expect("cannot read keyset");
     assert_eq!(
         ks1, ks2,
-        "written keyset ({:?}) doesn't match read keyset ({:?})",
-        ks1, ks2
+        "written keyset ({ks1:?}) doesn't match read keyset ({ks2:?})",
     );
 }
 
@@ -177,7 +176,7 @@ fn test_json_reader_negative_ids() {
             }}
          ]
       }}"#,
-        base64::encode(&gcm_key),
+        base64::encode(gcm_key),
     );
     let mut buf = Vec::new();
     buf.write_all(json_keyset.as_bytes()).unwrap();
@@ -243,8 +242,7 @@ fn test_json_io_encrypted() {
     let kse2 = r.read_encrypted().expect("cannot read encrypted keyset");
     assert_eq!(
         kse1, kse2,
-        "written encrypted keyset ({:?}) doesn't match read encrypted keyset ({:?})",
-        kse1, kse2
+        "written encrypted keyset ({kse1:?}) doesn't match read encrypted keyset ({kse2:?})",
     );
 }
 

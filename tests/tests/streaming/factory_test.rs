@@ -61,7 +61,7 @@ fn validate_factory_cipher(
             t,
             32,
         )
-        .map_err(|e| wrap_err(&format!("failed plaintext-size={}", t), e))?;
+        .map_err(|e| wrap_err(&format!("failed plaintext-size={t}"), e))?;
     }
     Ok(())
 }

@@ -32,7 +32,7 @@ fn test_client_debug() {
     let uri_prefix =
         "aws-kms://arn:aws:kms:us-east-2:235739564943:key/3ee50705-5a82-4f5b-9753-05c4f473922f";
     let client = AwsClient::new(uri_prefix).unwrap();
-    assert_eq!(format!("{:?}", client), "AwsClient { key_uri_prefix: \"aws-kms://arn:aws:kms:us-east-2:235739564943:key/3ee50705-5a82-4f5b-9753-05c4f473922f\" }");
+    assert_eq!(format!("{client:?}"), "AwsClient { key_uri_prefix: \"aws-kms://arn:aws:kms:us-east-2:235739564943:key/3ee50705-5a82-4f5b-9753-05c4f473922f\" }");
 }
 
 #[test]

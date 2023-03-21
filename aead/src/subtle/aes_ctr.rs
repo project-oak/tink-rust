@@ -50,7 +50,7 @@ impl AesCtr {
         let key_size = key.len();
         super::validate_aes_key_size(key_size).map_err(|e| wrap_err("AesCtr", e))?;
         if !(AES_CTR_MIN_IV_SIZE..=AES_BLOCK_SIZE_IN_BYTES).contains(&iv_size) {
-            return Err(format!("AesCtr: invalid IV size: {}", iv_size).into());
+            return Err(format!("AesCtr: invalid IV size: {iv_size}").into());
         }
         let key = match key.len() {
             16 => {
@@ -59,7 +59,7 @@ impl AesCtr {
             32 => {
                 AesCtrVariant::Aes256(key.to_vec().try_into().unwrap(/* safe: len checked */))
             }
-            l => return Err(format!("AesCtr: invalid AES key size {} (want 16, 32)", l).into()),
+            l => return Err(format!("AesCtr: invalid AES key size {l} (want 16, 32)").into()),
         };
         Ok(AesCtr { key, iv_size })
     }

@@ -72,7 +72,7 @@ pub fn compute_hkdf(
             prk.expand(info, &mut okm)
                 .map_err(|_| "compute of hkdf failed")?;
         }
-        h => return Err(format!("hkdf: unsupported hash {:?}", h).into()),
+        h => return Err(format!("hkdf: unsupported hash {h:?}").into()),
     }
     Ok(okm)
 }

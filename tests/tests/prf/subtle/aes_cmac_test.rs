@@ -77,7 +77,7 @@ pub struct TestCase {
 #[test]
 fn test_aes_cmac_prf_wycheproof_cases() {
     let filename = "testvectors/aes_cmac_test.json";
-    println!("wycheproof file '{}'", filename);
+    println!("wycheproof file '{filename}'");
     let bytes = tink_tests::wycheproof_data(filename);
     let data: TestData = serde_json::from_slice(&bytes).unwrap();
 

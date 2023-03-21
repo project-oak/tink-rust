@@ -23,8 +23,7 @@ use crate::TinkError;
 pub fn validate_key_version(version: u32, max_expected: u32) -> Result<(), TinkError> {
     if version > max_expected {
         Err(format!(
-            "key has version {}; only keys with version in range [0..{}] are supported",
-            version, max_expected
+            "key has version {version}; only keys with version in range [0..{max_expected}] are supported",
         )
         .into())
     } else {

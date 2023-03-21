@@ -240,11 +240,8 @@ fn test_ecdsa_wycheproof_cases() {
 }
 
 fn wycheproof_test(filename: &str, encoding: EcdsaSignatureEncoding) {
-    println!(
-        "wycheproof file 'testvectors/{}', encoding '{:?}'",
-        filename, encoding
-    );
-    let bytes = tink_tests::wycheproof_data(&format!("testvectors/{}", filename));
+    println!("wycheproof file 'testvectors/{filename}', encoding '{encoding:?}'",);
+    let bytes = tink_tests::wycheproof_data(&format!("testvectors/{filename}"));
     let data: TestData = serde_json::from_slice(&bytes).unwrap();
     let mut skipped_hashes = HashSet::new();
     let mut skipped_curves = HashSet::new();

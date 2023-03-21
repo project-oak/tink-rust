@@ -38,7 +38,7 @@ impl proto::mac_server::Mac for MacServerImpl {
         Ok(tonic::Response::new(proto::ComputeMacResponse {
             result: Some(match closure() {
                 Ok(mac) => proto::compute_mac_response::Result::MacValue(mac),
-                Err(e) => proto::compute_mac_response::Result::Err(format!("{:?}", e)),
+                Err(e) => proto::compute_mac_response::Result::Err(format!("{e:?}")),
             }),
         }))
     }
@@ -57,7 +57,7 @@ impl proto::mac_server::Mac for MacServerImpl {
         Ok(tonic::Response::new(proto::VerifyMacResponse {
             err: match closure() {
                 Ok(_) => "".to_string(),
-                Err(e) => format!("{:?}", e),
+                Err(e) => format!("{e:?}"),
             },
         }))
     }

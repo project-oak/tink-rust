@@ -56,7 +56,7 @@ impl Default for DummyAeadKeyManager {
 
 impl tink_core::registry::KeyManager for DummyAeadKeyManager {
     fn primitive(&self, _serialized_key: &[u8]) -> Result<tink_core::Primitive, TinkError> {
-        Ok(tink_core::Primitive::Aead(Box::new(DummyAead::default())))
+        Ok(tink_core::Primitive::Aead(Box::<DummyAead>::default()))
     }
 
     fn new_key(&self, _serialized_key_format: &[u8]) -> Result<Vec<u8>, TinkError> {
@@ -124,7 +124,7 @@ impl DummySigner {
     pub fn new(name: &str) -> DummySigner {
         DummySigner {
             aead: DummyAead {
-                name: format!("dummy public key: {}", name),
+                name: format!("dummy public key: {name}"),
             },
         }
     }
@@ -148,7 +148,7 @@ impl DummyVerifier {
     pub fn new(name: &str) -> DummyVerifier {
         DummyVerifier {
             aead: DummyAead {
-                name: format!("dummy public key: {}", name),
+                name: format!("dummy public key: {name}"),
             },
         }
     }
@@ -190,7 +190,7 @@ impl tink_core::registry::KmsClient for DummyKmsClient {
     }
 
     fn get_aead(&self, _key_uri: &str) -> Result<Box<dyn tink_core::Aead>, TinkError> {
-        Ok(Box::new(DummyAead::default()))
+        Ok(Box::<DummyAead>::default())
     }
 }
 
@@ -987,7 +987,7 @@ pub fn expect_err<T, E: std::fmt::Debug>(result: Result<T, E>, err_msg: &str) {
     assert!(result.is_err(), "expected error containing '{}'", err_msg);
     let err = result.err();
     assert!(
-        format!("{:?}", err).contains(err_msg),
+        format!("{err:?}").contains(err_msg),
         "unexpected error {:?}, doesn't contain '{}'",
         err,
         err_msg
@@ -1004,7 +1004,7 @@ pub fn expect_err_for_case<T, E: std::fmt::Debug>(result: Result<T, E>, err_msg:
     );
     let err = result.err();
     assert!(
-        format!("{:?}", err).contains(err_msg),
+        format!("{err:?}").contains(err_msg),
         "{}: unexpected error {:?}, doesn't contain '{}'",
         name,
         err,

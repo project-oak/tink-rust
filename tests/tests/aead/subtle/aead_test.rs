@@ -26,8 +26,8 @@ fn test_validate_aes_key_size() {
             _ => {
                 // Invalid key sizes.
                 let err =
-                    result.expect_err(&format!("invalid key size ({}) should not be accepted", i));
-                assert!(format!("{:?}", err).contains( "invalid AES key size; want 16 or 32") ,
+                    result.expect_err(&format!("invalid key size ({i}) should not be accepted"));
+                assert!(format!("{err:?}").contains( "invalid AES key size; want 16 or 32") ,
                         "wrong error message; want a String starting with \"invalid AES key size; want 16 or 32\", got {}", err);
             }
         }

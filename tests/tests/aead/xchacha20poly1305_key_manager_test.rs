@@ -156,7 +156,7 @@ fn validate_x_cha_cha20_poly1305_key(
         )
         .into());
     }
-    if key.key_value.len() as usize != subtle::CHA_CHA20_KEY_SIZE {
+    if key.key_value.len() != subtle::CHA_CHA20_KEY_SIZE {
         return Err(format!(
             "incorrect key size: keySize != {}",
             subtle::CHA_CHA20_KEY_SIZE

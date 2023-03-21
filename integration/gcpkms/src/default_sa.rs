@@ -72,7 +72,7 @@ async fn on_gce_test() -> bool {
     // Method 1: check header returned by metadata server
     let http_result = async {
         let client = hyper::Client::new();
-        let uri = match format!("http://{}", METADATA_IP_STR).parse() {
+        let uri = match format!("http://{METADATA_IP_STR}").parse() {
             Ok(v) => v,
             Err(_) => return false,
         };
@@ -118,7 +118,7 @@ async fn get_gce_metadata(name: &str) -> Result<String, TinkError> {
     let uri = hyper::Uri::builder()
         .scheme("http")
         .authority(authority)
-        .path_and_query(format!("/computeMetadata/v1/{}", name))
+        .path_and_query(format!("/computeMetadata/v1/{name}"))
         .build()
         .map_err(|e| wrap_err("failed to build Uri", e))?;
     let client = hyper::Client::new();

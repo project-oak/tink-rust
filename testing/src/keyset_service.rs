@@ -63,7 +63,7 @@ impl proto::keyset_server::Keyset for KeysetServerImpl {
         Ok(tonic::Response::new(proto::KeysetGenerateResponse {
             result: Some(match closure() {
                 Ok(buf) => proto::keyset_generate_response::Result::Keyset(buf),
-                Err(e) => proto::keyset_generate_response::Result::Err(format!("{:?}", e)),
+                Err(e) => proto::keyset_generate_response::Result::Err(format!("{e:?}")),
             }),
         }))
     }
@@ -89,7 +89,7 @@ impl proto::keyset_server::Keyset for KeysetServerImpl {
         Ok(tonic::Response::new(proto::KeysetPublicResponse {
             result: Some(match closure() {
                 Ok(buf) => proto::keyset_public_response::Result::PublicKeyset(buf),
-                Err(e) => proto::keyset_public_response::Result::Err(format!("{:?}", e)),
+                Err(e) => proto::keyset_public_response::Result::Err(format!("{e:?}")),
             }),
         }))
     }
@@ -115,7 +115,7 @@ impl proto::keyset_server::Keyset for KeysetServerImpl {
         Ok(tonic::Response::new(proto::KeysetToJsonResponse {
             result: Some(match closure() {
                 Ok(json) => proto::keyset_to_json_response::Result::JsonKeyset(json),
-                Err(e) => proto::keyset_to_json_response::Result::Err(format!("{:?}", e)),
+                Err(e) => proto::keyset_to_json_response::Result::Err(format!("{e:?}")),
             }),
         }))
     }
@@ -140,7 +140,7 @@ impl proto::keyset_server::Keyset for KeysetServerImpl {
         Ok(tonic::Response::new(proto::KeysetFromJsonResponse {
             result: Some(match closure() {
                 Ok(buf) => proto::keyset_from_json_response::Result::Keyset(buf),
-                Err(e) => proto::keyset_from_json_response::Result::Err(format!("{:?}", e)),
+                Err(e) => proto::keyset_from_json_response::Result::Err(format!("{e:?}")),
             }),
         }))
     }

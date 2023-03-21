@@ -66,7 +66,7 @@ impl EcdsaSigner {
                         .map_err(|e| wrap_err("EcdsaSigner: invalid private key", e))?,
                 )
             }
-            _ => return Err(format!("EcdsaSigner: unsupported curve {:?}", curve).into()),
+            _ => return Err(format!("EcdsaSigner: unsupported curve {curve:?}").into()),
         };
         Self::new_from_private_key(hash_alg, curve, encoding, priv_key)
     }

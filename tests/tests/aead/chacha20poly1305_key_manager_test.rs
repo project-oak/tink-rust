@@ -154,7 +154,7 @@ fn validate_cha_cha20_poly1305_key(key: &tink_proto::ChaCha20Poly1305Key) -> Res
         )
         .into());
     }
-    if key.key_value.len() as usize != subtle::CHA_CHA20_KEY_SIZE {
+    if key.key_value.len() != subtle::CHA_CHA20_KEY_SIZE {
         return Err(format!(
             "incorrect key size: key_size != {}",
             subtle::CHA_CHA20_KEY_SIZE

@@ -38,7 +38,7 @@ impl proto::signature_server::Signature for SignatureServerImpl {
         Ok(tonic::Response::new(proto::SignatureSignResponse {
             result: Some(match closure() {
                 Ok(sig) => proto::signature_sign_response::Result::Signature(sig),
-                Err(e) => proto::signature_sign_response::Result::Err(format!("{:?}", e)),
+                Err(e) => proto::signature_sign_response::Result::Err(format!("{e:?}")),
             }),
         }))
     }
@@ -58,7 +58,7 @@ impl proto::signature_server::Signature for SignatureServerImpl {
         Ok(tonic::Response::new(proto::SignatureVerifyResponse {
             err: match closure() {
                 Ok(_) => "".to_string(),
-                Err(e) => format!("{:?}", e),
+                Err(e) => format!("{e:?}"),
             },
         }))
     }

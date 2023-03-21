@@ -105,7 +105,7 @@ fn test_aes_gcm_new_key_with_invalid_input() {
     for (i, serialized_format) in bad_formats.iter().enumerate() {
         key_manager
             .new_key(serialized_format)
-            .expect_err(&format!("expect an error in test case {}", i));
+            .expect_err(&format!("expect an error in test case {i}"));
     }
     // empty array
     key_manager
@@ -145,7 +145,7 @@ fn test_aes_gcm_new_key_data_with_invalid_input() {
     for (i, serialized_format) in bad_formats.iter().enumerate() {
         key_manager
             .new_key_data(serialized_format)
-            .expect_err(&format!("expect an error in test case {}", i));
+            .expect_err(&format!("expect an error in test case {i}"));
     }
     // empty array
     key_manager

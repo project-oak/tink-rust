@@ -55,7 +55,7 @@ impl EcPublicKey {
                 .ok_or_else(|| TinkError::new("invalid point"))?;
                 Ok(EcPublicKey::NistP256(affine_pt))
             }
-            _ => Err(format!("unsupported curve {:?}", curve).into()),
+            _ => Err(format!("unsupported curve {curve:?}").into()),
         }
     }
 
@@ -124,7 +124,7 @@ impl EcPrivateKey {
                     .ok_or_else(|| TinkError::new("failed to parse D value"))?;
                 Ok(EcPrivateKey::NistP256(d_scalar))
             }
-            _ => Err(format!("unsupported curve {:?}", curve).into()),
+            _ => Err(format!("unsupported curve {curve:?}").into()),
         }
     }
 }
@@ -132,7 +132,7 @@ impl EcPrivateKey {
 fn field_size_in_bytes(c: EllipticCurveType) -> Result<usize, TinkError> {
     match c {
         EllipticCurveType::NistP256 => Ok(elliptic_curve::FieldSize::<p256::NistP256>::to_usize()),
-        _ => Err(format!("unsupported curve {:?}", c).into()),
+        _ => Err(format!("unsupported curve {c:?}").into()),
     }
 }
 
@@ -142,7 +142,7 @@ pub fn encoding_size_in_bytes(c: EllipticCurveType, p: EcPointFormat) -> Result<
         EcPointFormat::Uncompressed => Ok(2 * c_size + 1), // 04 || x || y
         EcPointFormat::DoNotUseCrunchyUncompressed => Ok(2 * c_size), // x || y
         EcPointFormat::Compressed => Ok(c_size + 1),       // {02,03} || x
-        _ => Err(format!("invalid point format {:?}", p).into()),
+        _ => Err(format!("invalid point format {p:?}").into()),
     }
 }
 
@@ -203,7 +203,7 @@ pub fn point_decode(
                         .map_err(|e| wrap_err("invalid point", e))?;
                     Ok(EcPublicKey::NistP256(*pub_key.as_affine()))
                 }
-                _ => Err(format!("unsupported curve {:?}", c).into()),
+                _ => Err(format!("unsupported curve {c:?}").into()),
             }
         }
         EcPointFormat::DoNotUseCrunchyUncompressed => {
@@ -230,10 +230,10 @@ pub fn point_decode(
                         .map_err(|e| wrap_err("invalid point", e))?;
                     Ok(EcPublicKey::NistP256(*pub_key.as_affine()))
                 }
-                _ => Err(format!("unsupported curve {:?}", c).into()),
+                _ => Err(format!("unsupported curve {c:?}").into()),
             }
         }
-        _ => Err(format!("invalid point format: {:?}", p_format).into()),
+        _ => Err(format!("invalid point format: {p_format:?}").into()),
     }
 }
 
@@ -259,7 +259,7 @@ pub fn generate_ecdh_key_pair(c: EllipticCurveType) -> Result<EcPrivateKey, Tink
         EllipticCurveType::NistP256 => Ok(EcPrivateKey::NistP256(p256::NonZeroScalar::random(
             &mut csprng,
         ))),
-        _ => Err(format!("unsupported curve {:?}", c).into()),
+        _ => Err(format!("unsupported curve {c:?}").into()),
     }
 }
 

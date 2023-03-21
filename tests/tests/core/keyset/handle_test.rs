@@ -73,7 +73,7 @@ fn test_read() {
     let h = insecure::new_handle(ks).unwrap();
 
     // Also check that debug output of handle doesn't include key material.
-    let debug_output = format!("{:?}", h);
+    let debug_output = format!("{h:?}");
     assert!(!debug_output.contains("42"));
 
     let mem_keyset = &mut tink_core::keyset::MemReaderWriter::default();
@@ -82,9 +82,7 @@ fn test_read() {
     assert_eq!(
         insecure::keyset_material(&h),
         insecure::keyset_material(&h2),
-        "Decrypt failed: got {:?}, want {:?}",
-        h2,
-        h
+        "Decrypt failed: got {h2:?}, want {h:?}",
     );
 }
 
@@ -111,9 +109,7 @@ fn test_read_with_associated_data() {
     assert_eq!(
         insecure::keyset_material(&h),
         insecure::keyset_material(&h2),
-        "Decrypt failed: got {:?}, want {:?}",
-        h2,
-        h
+        "Decrypt failed: got {h2:?}, want {h:?}",
     );
 }
 #[test]
@@ -160,9 +156,7 @@ fn test_read_with_no_secrets() {
     assert_eq!(
         insecure::keyset_material(&h),
         insecure::keyset_material(&h2),
-        "Decrypt failed: got {:?}, want {:?}",
-        h2,
-        h
+        "Decrypt failed: got {h2:?}, want {h:?}",
     );
 }
 

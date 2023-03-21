@@ -25,6 +25,6 @@ fn main() -> Result<(), Box<dyn Error>> {
     // is initialized.
     let kh = tink_core::keyset::Handle::new(&tink_daead::aes_siv_key_template())?;
 
-    println!("{:?}", kh);
+    println!("{kh:?}");
     Ok(())
 }

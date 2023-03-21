@@ -65,8 +65,7 @@ impl AesCmacPrf {
 pub fn validate_aes_cmac_prf_params(key_size: usize) -> Result<(), TinkError> {
     if key_size != RECOMMENDED_KEY_SIZE {
         Err(format!(
-            "Recommended key size for AES-CMAC is {}, but {} given",
-            RECOMMENDED_KEY_SIZE, key_size
+            "Recommended key size for AES-CMAC is {RECOMMENDED_KEY_SIZE}, but {key_size} given",
         )
         .into())
     } else {
@@ -81,8 +80,7 @@ impl tink_core::Prf for AesCmacPrf {
     fn compute_prf(&self, data: &[u8], output_length: usize) -> Result<Vec<u8>, TinkError> {
         if output_length > AES_BLOCK_SIZE_IN_BYTES {
             return Err(format!(
-                "AesCmacPrf: output_length must be between 0 and {}",
-                AES_BLOCK_SIZE_IN_BYTES
+                "AesCmacPrf: output_length must be between 0 and {AES_BLOCK_SIZE_IN_BYTES}",
             )
             .into());
         }

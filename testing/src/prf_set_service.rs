@@ -45,7 +45,7 @@ impl proto::prf_set_server::PrfSet for PrfSetServerImpl {
         Ok(tonic::Response::new(proto::PrfSetKeyIdsResponse {
             result: Some(match closure() {
                 Ok(output) => proto::prf_set_key_ids_response::Result::Output(output),
-                Err(e) => proto::prf_set_key_ids_response::Result::Err(format!("{:?}", e)),
+                Err(e) => proto::prf_set_key_ids_response::Result::Err(format!("{e:?}")),
             }),
         }))
     }
@@ -64,7 +64,7 @@ impl proto::prf_set_server::PrfSet for PrfSetServerImpl {
         Ok(tonic::Response::new(proto::PrfSetComputeResponse {
             result: Some(match closure() {
                 Ok(output) => proto::prf_set_compute_response::Result::Output(output),
-                Err(e) => proto::prf_set_compute_response::Result::Err(format!("{:?}", e)),
+                Err(e) => proto::prf_set_compute_response::Result::Err(format!("{e:?}")),
             }),
         }))
     }

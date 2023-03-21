@@ -54,7 +54,7 @@ pub fn validate_ecdsa_params(
                 return Err("invalid hash type, expect SHA-512".into());
             }
         }
-        _ => return Err(format!("unsupported curve: {:?}", curve).into()),
+        _ => return Err(format!("unsupported curve: {curve:?}").into()),
     }
     Ok(encoding)
 }

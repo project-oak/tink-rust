@@ -192,7 +192,7 @@ struct TestCaseEd25519 {
 #[test]
 fn test_ed25519_wycheproof_cases() {
     let filename = "testvectors/eddsa_test.json";
-    println!("wycheproof file '{}'", filename);
+    println!("wycheproof file '{filename}'");
     let bytes = tink_tests::wycheproof_data(filename);
     let data: TestDataEd25519 = serde_json::from_slice(&bytes).unwrap();
     for g in &data.test_groups {
@@ -299,6 +299,6 @@ fn test_ed25519_point_on_curve() {
     ];
     let result = ed25519_dalek::PublicKey::from_bytes(&public_key_bytes);
     assert!(result.is_err());
-    assert!(format!("{:?}", result).contains("Cannot decompress"));
+    assert!(format!("{result:?}").contains("Cannot decompress"));
     assert!(Ed25519Verifier::new(&public_key_bytes).is_err());
 }

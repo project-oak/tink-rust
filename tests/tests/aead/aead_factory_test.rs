@@ -62,7 +62,7 @@ fn test_factory_multiple_keys() {
     let result = validate_aead_factory_cipher(a2.box_clone(), a.box_clone(), &expected_prefix);
     assert!(result.is_err(), "expect decryption to fail with random key");
     assert!(
-        format!("{:?}", result).contains("decryption failed"),
+        format!("{result:?}").contains("decryption failed"),
         "expect decryption to fail with random key: {:?}",
         result
     );

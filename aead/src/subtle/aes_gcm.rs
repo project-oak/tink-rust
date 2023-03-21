@@ -53,7 +53,7 @@ impl AesGcm {
             32 => AesGcmVariant::Aes256(Box::new(aes_gcm::Aes256Gcm::new(
                 GenericArray::from_slice(key),
             ))),
-            l => return Err(format!("AesGcm: invalid AES key size {} (want 16, 32)", l).into()),
+            l => return Err(format!("AesGcm: invalid AES key size {l} (want 16, 32)").into()),
         };
         Ok(AesGcm { key })
     }

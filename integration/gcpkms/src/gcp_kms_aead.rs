@@ -153,7 +153,7 @@ impl GcpAead {
             // Attempt to parse the response body as a GCP ErrorResponse object.
             let err_rsp: ErrorResponse = serde_json::from_reader(body.reader())
                 .map_err(|e| wrap_err("failed to parse JSON error response", e))?;
-            Err(format!("API failure {:?}", err_rsp).into())
+            Err(format!("API failure {err_rsp:?}").into())
         }
     }
 }

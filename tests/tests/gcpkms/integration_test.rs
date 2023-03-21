@@ -24,7 +24,7 @@ fn gcpkms_example() {
     tink_aead::init();
     let key_uri = key_uri(); // something like "gcp-kms://......";
     let creds = cred_file(); // e.g. "/mysecurestorage/credentials.json";
-    println!("Running with key {} and creds {:?}", key_uri, creds);
+    println!("Running with key {key_uri} and creds {creds:?}");
 
     let gcp_client = if creds.components().next().is_some() {
         tink_gcpkms::GcpClient::new_with_credentials(&key_uri, &creds)

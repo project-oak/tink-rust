@@ -143,9 +143,9 @@ struct HkdfTestCase {
 #[test]
 fn test_hkdf_prf_wycheproof_cases() {
     for hash in &[HashType::Sha1, HashType::Sha256, HashType::Sha512] {
-        let hash_name = format!("{:?}", hash);
+        let hash_name = format!("{hash:?}");
         let filename = format!("testvectors/hkdf_{}_test.json", hash_name.to_lowercase());
-        println!("wycheproof file '{}' hash {}", filename, hash_name);
+        println!("wycheproof file '{filename}' hash {hash_name}");
         let bytes = tink_tests::wycheproof_data(&filename);
         let data: HkdfTestData = serde_json::from_slice(&bytes).unwrap();
 

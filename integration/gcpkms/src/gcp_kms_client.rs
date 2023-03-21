@@ -33,7 +33,7 @@ impl GcpClient {
     /// `uri_prefix` prefix. `uri_prefix` must have the following format: `gcp-kms://[:path]`.
     pub fn new(uri_prefix: &str) -> Result<GcpClient, TinkError> {
         if !uri_prefix.to_lowercase().starts_with(GCP_PREFIX) {
-            return Err(format!("uri_prefix must start with {}", GCP_PREFIX).into());
+            return Err(format!("uri_prefix must start with {GCP_PREFIX}").into());
         }
 
         Ok(GcpClient {
@@ -49,7 +49,7 @@ impl GcpClient {
         credential_path: &std::path::Path,
     ) -> Result<GcpClient, TinkError> {
         if !uri_prefix.to_lowercase().starts_with(GCP_PREFIX) {
-            return Err(format!("uri_prefix must start with {}", GCP_PREFIX).into());
+            return Err(format!("uri_prefix must start with {GCP_PREFIX}").into());
         }
         let credential_path = credential_path.to_string_lossy();
         if credential_path.is_empty() {
