@@ -13,7 +13,7 @@ publish = false
 [dependencies]
 base64 = "^0.13"
 ed25519-dalek = "^1.0.1"
-generic-array = "^0.14.6"
+generic-array = "^0.14.7"
 hex = "^0.4.3"
 p256 = { version = "^0.11.1", features = ["pkcs8"] }
 # `rand` version must match that required by `ed25519-dalek`.
