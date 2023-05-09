@@ -21,8 +21,6 @@ ignore = [
     "RUSTSEC-2020-0071",
     # atty is not used with a custom global allocator
     "RUSTSEC-2021-0145",
-    # xml-rs is Unmaintained (via rusoto_core(0.48))
-    "RUSTSEC-2022-0048",
     # rusoto_* is Unmaintained
     # TODO(#416): migrate off rusoto
     "RUSTSEC-2022-0071",
@@ -79,6 +77,11 @@ version = "0.42.0"
 [[bans.skip]]
 name = "block-buffer"
 version = "0.9.0"
+
+# Various dependencies use syn(1.0.109)
+[[bans.skip]]
+name = "syn"
+version = "1.0.109"
 
 ######################################
 
