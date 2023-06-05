@@ -2372,7 +2372,7 @@ dependencies = [
 name = "tink-gcpkms"
 version = "0.2.5"
 dependencies = [
- "base64 0.13.1",
+ "base64 0.21.0",
  "chrono",
  "futures",
  "http",
@@ -2426,7 +2426,7 @@ dependencies = [
 name = "tink-proto"
 version = "0.2.5"
 dependencies = [
- "base64 0.13.1",
+ "base64 0.21.0",
  "prost",
  "prost-build",
  "serde",
@@ -2486,7 +2486,7 @@ dependencies = [
 name = "tink-tests"
 version = "0.2.5"
 dependencies = [
- "base64 0.13.1",
+ "base64 0.21.0",
  "ed25519-dalek",
  "generic-array",
  "hex",

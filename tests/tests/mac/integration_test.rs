@@ -37,7 +37,7 @@ fn example() {
 
     assert!(m.verify_mac(&tag, msg).is_ok());
     println!("Message: {}", std::str::from_utf8(msg).unwrap());
-    println!("Authentication tag: {}", base64::encode(&tag));
+    println!("Authentication tag: {}", hex::encode(&tag));
 }
 
 #[test]
@@ -53,5 +53,5 @@ fn test_legacy_prefix_type() {
 
     assert!(m.verify_mac(&tag, msg).is_ok());
     println!("Message: {}", std::str::from_utf8(msg).unwrap());
-    println!("Authentication tag: {}", base64::encode(&tag));
+    println!("Authentication tag: {}", hex::encode(&tag));
 }

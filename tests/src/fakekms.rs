@@ -24,6 +24,7 @@
 //! the key and generate an AEAD out of it. This is of course insecure and should
 //! only be used in testing.
 
+use base64::Engine;
 use tink_core::{utils::wrap_err, TinkError};
 
 const FAKE_PREFIX: &str = "fake-kms://";
@@ -68,7 +69,8 @@ impl tink_core::registry::KmsClient for FakeClient {
             key_uri
         };
 
-        let keyset_data = base64::decode_config(encoded_keyset, base64::URL_SAFE_NO_PAD)
+        let keyset_data = base64::engine::general_purpose::URL_SAFE_NO_PAD
+            .decode(encoded_keyset)
             .map_err(|e| wrap_err("Failed to decode", e))?;
         let cursor = std::io::Cursor::new(keyset_data);
         let mut reader = tink_core::keyset::BinaryReader::new(cursor);
@@ -85,6 +87,6 @@ pub fn new_key_uri() -> Result<String, TinkError> {
     tink_core::keyset::insecure::write(&handle, &mut writer)?;
 
     let mut output = FAKE_PREFIX.to_string();
-    base64::encode_config_buf(buf, base64::URL_SAFE_NO_PAD, &mut output);
+    base64::engine::general_purpose::URL_SAFE_NO_PAD.encode_string(buf, &mut output);
     Ok(output)
 }

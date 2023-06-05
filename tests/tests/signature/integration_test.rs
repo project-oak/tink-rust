@@ -47,7 +47,7 @@ fn example_ecdsa() {
     assert!(v.verify(&sig, msg).is_ok());
 
     println!("Message: {}", std::str::from_utf8(msg).unwrap());
-    println!("Signature: {}", base64::encode(&sig));
+    println!("Signature: {}", hex::encode(&sig));
 }
 
 #[test]

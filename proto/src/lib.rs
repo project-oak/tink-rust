@@ -122,23 +122,26 @@ pub mod json {
     }
     pub mod b64 {
         //! Manual serialization implementations for base64-encoded binary data.
+        use base64::Engine;
         use serde::Deserialize;
         pub fn serialize<S: serde::Serializer>(
             val: &[u8],
             serializer: S,
         ) -> Result<S::Ok, S::Error> {
-            serializer.serialize_str(&base64::encode(val))
+            serializer.serialize_str(&base64::engine::general_purpose::STANDARD.encode(val))
         }
         pub fn deserialize<'de, D: serde::Deserializer<'de>>(
             deserializer: D,
         ) -> Result<Vec<u8>, D::Error> {
             let s = String::deserialize(deserializer)?;
-            base64::decode(&s).map_err(|_e| {
-                serde::de::Error::invalid_value(
-                    serde::de::Unexpected::Str(&s),
-                    &"base64 data expected",
-                )
-            })
+            base64::engine::general_purpose::STANDARD
+                .decode(&s)
+                .map_err(|_e| {
+                    serde::de::Error::invalid_value(
+                        serde::de::Unexpected::Str(&s),
+                        &"base64 data expected",
+                    )
+                })
         }
     }
 }

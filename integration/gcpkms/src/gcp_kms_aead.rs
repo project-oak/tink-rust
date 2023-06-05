@@ -16,6 +16,7 @@
 
 //! AEAD functionality via GCP KMS.
 
+use base64::Engine;
 use hyper::{body::Buf, client::connect::HttpConnector};
 use hyper_rustls::HttpsConnector;
 use percent_encoding::percent_encode;
@@ -165,11 +166,10 @@ impl tink_core::Aead for GcpAead {
         additional_data: &[u8],
     ) -> Result<Vec<u8>, tink_core::TinkError> {
         let req = EncryptRequest {
-            plaintext: Some(base64::encode_config(plaintext, base64::URL_SAFE)),
-            additional_authenticated_data: Some(base64::encode_config(
-                additional_data,
-                base64::URL_SAFE,
-            )),
+            plaintext: Some(base64::engine::general_purpose::URL_SAFE.encode(plaintext)),
+            additional_authenticated_data: Some(
+                base64::engine::general_purpose::URL_SAFE.encode(additional_data),
+            ),
             ..EncryptRequest::default()
         };
         let http_req = self.build_http_req(req, "encrypt")?;
@@ -182,7 +182,9 @@ impl tink_core::Aead for GcpAead {
         let ct = rsp
             .ciphertext
             .ok_or_else(|| tink_core::TinkError::new("no ciphertext"))?;
-        base64::decode(ct).map_err(|e| wrap_err("base64 decode failed", e))
+        base64::engine::general_purpose::STANDARD
+            .decode(ct)
+            .map_err(|e| wrap_err("base64 decode failed", e))
     }
 
     fn decrypt(
@@ -191,11 +193,10 @@ impl tink_core::Aead for GcpAead {
         additional_data: &[u8],
     ) -> Result<Vec<u8>, tink_core::TinkError> {
         let req = DecryptRequest {
-            ciphertext: Some(base64::encode_config(ciphertext, base64::URL_SAFE)),
-            additional_authenticated_data: Some(base64::encode_config(
-                additional_data,
-                base64::URL_SAFE,
-            )),
+            ciphertext: Some(base64::engine::general_purpose::URL_SAFE.encode(ciphertext)),
+            additional_authenticated_data: Some(
+                base64::engine::general_purpose::URL_SAFE.encode(additional_data),
+            ),
             ..DecryptRequest::default()
         };
         let http_req = self.build_http_req(req, "decrypt")?;
@@ -209,7 +210,9 @@ impl tink_core::Aead for GcpAead {
         let pt = rsp
             .plaintext
             .ok_or_else(|| tink_core::TinkError::new("no plaintext"))?;
-        base64::decode(pt).map_err(|e| wrap_err("base64 decode failed", e))
+        base64::engine::general_purpose::STANDARD
+            .decode(pt)
+            .map_err(|e| wrap_err("base64 decode failed", e))
     }
 }
 
