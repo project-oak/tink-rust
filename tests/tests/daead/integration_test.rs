@@ -31,7 +31,7 @@ fn example() {
 
     assert_eq!(ct1, ct2, "ct1 != ct2");
 
-    println!("Ciphertext: {}", base64::encode(&ct1));
+    println!("Ciphertext: {}", hex::encode(&ct1));
     println!("Original  plaintext: {}", std::str::from_utf8(msg).unwrap());
     println!("Decrypted Plaintext: {}", std::str::from_utf8(&pt).unwrap());
     assert_eq!(msg, &pt[..]);

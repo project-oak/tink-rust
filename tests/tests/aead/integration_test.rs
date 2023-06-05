@@ -29,7 +29,7 @@ fn example() {
     let ct = a.encrypt(msg, aad).unwrap();
     let pt = a.decrypt(&ct, aad).unwrap();
 
-    println!("Ciphertext: {}", base64::encode(&ct));
+    println!("Ciphertext: {}", hex::encode(&ct));
     println!("Original  plaintext: {}", std::str::from_utf8(msg).unwrap());
     println!("Decrypted Plaintext: {}", std::str::from_utf8(&pt).unwrap());
 

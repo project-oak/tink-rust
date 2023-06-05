@@ -14,6 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+use base64::Engine;
 use std::io::Write;
 use tink_core::keyset::{Reader, Writer};
 use tink_proto::{key_data::KeyMaterialType, KeyStatusType, OutputPrefixType};
@@ -73,8 +74,8 @@ fn test_json_reader() {
             }}
          ]
       }}"#,
-        base64::encode(&gcm_key),
-        base64::encode(&eax_key)
+        base64::engine::general_purpose::STANDARD.encode(&gcm_key),
+        base64::engine::general_purpose::STANDARD.encode(&eax_key)
     );
 
     let mut buf = Vec::new();
@@ -131,7 +132,7 @@ fn test_json_reader_large_ids() {
             }}
          ]
       }}"#,
-        base64::encode(&gcm_key),
+        base64::engine::general_purpose::STANDARD.encode(&gcm_key),
     );
     let mut buf = Vec::new();
     buf.write_all(json_keyset.as_bytes()).unwrap();
@@ -176,7 +177,7 @@ fn test_json_reader_negative_ids() {
             }}
          ]
       }}"#,
-        base64::encode(gcm_key),
+        base64::engine::general_purpose::STANDARD.encode(gcm_key),
     );
     let mut buf = Vec::new();
     buf.write_all(json_keyset.as_bytes()).unwrap();
@@ -343,7 +344,7 @@ fn test_json_reader_all_enums() {
                           ]
                        }}"#,
                     material_name,
-                    base64::encode(&gcm_key),
+                    base64::engine::general_purpose::STANDARD.encode(&gcm_key),
                     prefix_name,
                     status_name
                 );
