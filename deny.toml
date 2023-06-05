@@ -39,6 +39,9 @@ wildcards = "allow"
 [[bans.skip]]
 name = "hmac"
 version = "=0.11.0"
+[[bans.skip]]
+name = "base64"
+version = "=0.13.1"
 
 # ed25519-dalek(v1.0.1) => digest(v0.9.x), sha2(v0.9.9)
 [[bans.skip]]
