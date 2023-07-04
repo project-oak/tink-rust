@@ -19,7 +19,7 @@ p256 = { version = "^0.11.1", features = ["pkcs8"] }
 # `rand` version must match that required by `ed25519-dalek`.
 rand = "^0.7"
 regex = "^1.8.4"
-serde = { version = "^1.0.164", features = ["derive"] }
+serde = { version = "^1.0.166", features = ["derive"] }
 serde_json = "^1.0.99"
 tink-core = { version = "^0.2", features = ["insecure", "json"] }
 tink-aead = "^0.2"
