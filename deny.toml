@@ -26,6 +26,8 @@ ignore = [
     "RUSTSEC-2022-0071",
     # ansi_term is Unmaintained (via structopt(0.3.26))
     "RUSTSEC-2021-0139",
+    # No use of externally-provided WebPKI chains.
+    "RUSTSEC-2023-0052",
 ]
 
 # Deny multiple versions unless explicitly skipped.
