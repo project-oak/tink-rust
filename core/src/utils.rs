@@ -26,7 +26,7 @@ use std::error::Error;
 #[derive(Debug)]
 pub struct TinkError {
     msg: String,
-    src: Option<Box<dyn Error>>,
+    src: Option<Box<dyn Error + Send>>,
 }
 
 impl TinkError {
@@ -73,7 +73,7 @@ impl std::convert::From<String> for TinkError {
 /// ```
 pub fn wrap_err<T>(msg: &str, src: T) -> TinkError
 where
-    T: Error + 'static,
+    T: Error + Send + 'static,
 {
     TinkError {
         msg: msg.to_string(),
