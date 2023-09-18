@@ -1,9 +1,10 @@
 # Change Log
 
-## 0.2.6 - TBD
+## 0.3.0 - TBD
 
 - Increase MSRV to 1.65.0
 - Upgrade dependencies
+- Make `tink_core::TinkError` implement `Send`; this is a breaking change, as it requires a `Send` bound on wrapped errors
 
 ## 0.2.5 - 2023-03-14
 
