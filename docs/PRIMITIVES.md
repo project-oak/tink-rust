@@ -27,15 +27,15 @@ describe the main properties of Tink primitives.
 
 ### Primitives supported by language
 
-**Primitive**      | **Java** | **C++** | **ObjC** | **Go** | **Python** | **Rust**
------------------- | -------- | ------- | -------- | ------ | ---------- | --------
-AEAD               | yes      | yes     | yes      | yes    | yes        | yes
-Streaming AEAD     | yes      | yes     | no       | yes    | yes        | yes
-Deterministic AEAD | yes      | yes     | yes      | yes    | yes        | yes
-MAC                | yes      | yes     | yes      | yes    | yes        | yes
-PRF                | yes      | yes     | no       | yes    | yes        | yes
-Digital signatures | yes      | yes     | yes      | yes    | yes        | yes
-Hybrid encryption  | yes      | yes     | yes      | yes    | yes        | no
+| **Primitive**      | **Java** | **C++** | **ObjC** | **Go** | **Python** | **Rust** |
+| ------------------ | -------- | ------- | -------- | ------ | ---------- | -------- |
+| AEAD               | yes      | yes     | yes      | yes    | yes        | yes      |
+| Streaming AEAD     | yes      | yes     | no       | yes    | yes        | yes      |
+| Deterministic AEAD | yes      | yes     | yes      | yes    | yes        | yes      |
+| MAC                | yes      | yes     | yes      | yes    | yes        | yes      |
+| PRF                | yes      | yes     | no       | yes    | yes        | yes      |
+| Digital signatures | yes      | yes     | yes      | yes    | yes        | yes      |
+| Hybrid encryption  | yes      | yes     | yes      | yes    | yes        | no       |
 
 JavaScript is currently under development.
 
@@ -57,7 +57,7 @@ JavaScript is currently under development.
 
 | Primitive          | C++ Implementations                                                                              |
 | ------------------ | ------------------------------------------------------------------------------------------------ |
-| AEAD               | AES-GCM, AES-GCM-SIV, AES-CTR-HMAC, AES-EAX, KMS Envelope, XCHACHA20-POLY1305 |
+| AEAD               | AES-GCM, AES-GCM-SIV, AES-CTR-HMAC, AES-EAX, KMS Envelope, XCHACHA20-POLY1305                    |
 | Streaming AEAD     | AES-GCM-HKDF-STREAMING, AES-CTR-HMAC-STREAMING                                                   |
 | Deterministic AEAD | AES-SIV                                                                                          |
 | MAC                | HMAC-SHA2, AES-CMAC                                                                              |
@@ -67,13 +67,13 @@ JavaScript is currently under development.
 
 #### Objective-C
 
-Primitive          | Objective-C Implementations
------------------- | ---------------------------------------------------------------
-AEAD               | AES-GCM, AES-CTR-HMAC, AES-EAX, XCHACHA20-POLY1305
-Deterministic AEAD | AES-SIV
-MAC                | HMAC-SHA2, AES-CMAC
-Digital Signatures | ECDSA over NIST curves, Ed25519, RSA-SSA-PKCS1, RSA-SSA-PSS
-Hybrid Encryption  | ECIES with AEAD and HKDF
+| Primitive          | Objective-C Implementations                                     |
+| ------------------ | --------------------------------------------------------------- |
+| AEAD               | AES-GCM, AES-CTR-HMAC, AES-EAX, XCHACHA20-POLY1305              |
+| Deterministic AEAD | AES-SIV                                                         |
+| MAC                | HMAC-SHA2, AES-CMAC                                             |
+| Digital Signatures | ECDSA over NIST curves, Ed25519, RSA-SSA-PKCS1, RSA-SSA-PSS     |
+| Hybrid Encryption  | ECIES with AEAD and HKDF                                        |
 
 #### Go
 
@@ -89,27 +89,27 @@ Hybrid Encryption  | ECIES with AEAD and HKDF
 
 #### Python
 
-Primitive          | Python Implementations
------------------- | -----------------------------------------------------------------------------
-AEAD               | AES-GCM, AES-CTR-HMAC, AES-EAX, KMS Envelope, XCHACHA20-POLY1305
-Streaming AEAD     | AES-GCM-HKDF-STREAMING, AES-CTR-HMAC-STREAMING
-Deterministic AEAD | AES-SIV
-MAC                | HMAC-SHA2, AES-CMAC
-PRF                | HKDF-SHA2, HMAC-SHA2, AES-CMAC
-Digital Signatures | ECDSA over NIST curves, Ed25519, RSA-SSA-PKCS1, RSA-SSA-PSS
-Hybrid Encryption  | ECIES with AEAD/DeterministicAEAD and HKDF
+| Primitive          | Python Implementations                                                   |
+| ------------------ | ------------------------------------------------------------------------ |
+| AEAD               | AES-GCM, AES-CTR-HMAC, AES-EAX, KMS Envelope, XCHACHA20-POLY1305         |
+| Streaming AEAD     | AES-GCM-HKDF-STREAMING, AES-CTR-HMAC-STREAMING                           |
+| Deterministic AEAD | AES-SIV                                                                  |
+| MAC                | HMAC-SHA2, AES-CMAC                                                      |
+| PRF                | HKDF-SHA2, HMAC-SHA2, AES-CMAC                                           |
+| Digital Signatures | ECDSA over NIST curves, Ed25519, RSA-SSA-PKCS1, RSA-SSA-PSS              |
+| Hybrid Encryption  | ECIES with AEAD/DeterministicAEAD and HKDF                               |
 
 #### Rust
 
-Primitive          | Rust Implementations
------------------- | ------------------------------------------------------------------------------------
-AEAD               | AES-GCM, AES-GCM-SIV, AES-CTR-HMAC, KMS Envelope, CHACHA20-POLY1305, XCHACHA-POLY1305
-Streaming AEAD     | AES-GCM-HKDF-STREAMING, AES-CTR-HMAC-STREAMING
-Deterministic AEAD | AES-SIV
-MAC                | HMAC-SHA2, AES-CMAC
-PRF                | HKDF-SHA2, HMAC-SHA2, AES-CMAC
-Digital Signatures | ECDSA over P-256 curve, Ed25519
-Hybrid Encryption  |
+| Primitive          | Rust Implementations                                                                  |
+| ------------------ | ------------------------------------------------------------------------------------- |
+| AEAD               | AES-GCM, AES-GCM-SIV, AES-CTR-HMAC, KMS Envelope, CHACHA20-POLY1305, XCHACHA-POLY1305 |
+| Streaming AEAD     | AES-GCM-HKDF-STREAMING, AES-CTR-HMAC-STREAMING                                        |
+| Deterministic AEAD | AES-SIV                                                                               |
+| MAC                | HMAC-SHA2, AES-CMAC                                                                   |
+| PRF                | HKDF-SHA2, HMAC-SHA2, AES-CMAC                                                        |
+| Digital Signatures | ECDSA over P-256 curve, Ed25519                                                       |
+| Hybrid Encryption  | ECIES with AEAD/DeterministicAEAD and HKDF                                            |
 
 ---
 
