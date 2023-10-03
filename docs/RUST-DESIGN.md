@@ -149,50 +149,50 @@ This section describes the mapping between the upstream Go packages and the equi
 
 ### Infrastructure
 
-|  Rust Crate/Module   | Go Package |
-|----------------------|------------|
-| `tink_core::cryptofmt`    | `core/cryptofmt` |
-| `tink_core::keyset`       | `keyset` |
+|  Rust Crate/Module        | Go Package          |
+|---------------------------|---------------------|
+| `tink_core::cryptofmt`    | `core/cryptofmt`    |
+| `tink_core::keyset`       | `keyset`            |
 | `tink_core::primitiveset` | `core/primitiveset` |
-| `tink_core::registry`     | `core/registry` |
-| `tink-core`               | `tink` |
-| `tink-proto`         | `*_go_proto` |
+| `tink_core::registry`     | `core/registry`     |
+| `tink-core`               | `tink`              |
+| `tink-proto`              | `*_go_proto`        |
 
 ### Common Crypto
 
-|  Rust Crate/Module     | Go Package |
-|------------------------|------------|
-|                        | `kwp` |
+|  Rust Crate/Module          | Go Package      |
+|-----------------------------|-----------------|
+|                             | `kwp`           |
 | `tink_core::subtle::random` | `subtle/random` |
-| `tink_core::subtle`         | `subtle` |
+| `tink_core::subtle`         | `subtle`        |
 
 ### Primitives
 
-|  Rust Crate/Module   | Go Package |
-|----------------------|------------|
-| `tink-aead`          | `aead` |
-| `tink-daead`         | `daead` |
-|  TODO(#233)          | `hybrid` |
-| `tink-mac`           | `mac` |
-| `tink-prf`           | `prf` |
-| `tink-signature`     | `signature` |
+|  Rust Crate/Module   | Go Package      |
+|----------------------|-----------------|
+| `tink-aead`          | `aead`          |
+| `tink-daead`         | `daead`         |
+|  TODO(#233)          | `hybrid`        |
+| `tink-mac`           | `mac`           |
+| `tink-prf`           | `prf`           |
+| `tink-signature`     | `signature`     |
 | `tink-streaming-aead`| `streamingaead` |
 
 ### Testing
 
-|  Rust Crate/Module       | Go Package |  Notes |
-|--------------------------|------------|--------|
-| `tink_core::keyset::insecure` | `insecurecleartextkeyset` | Gated on (non-default) `insecure` feature |
-| `tink_core::keyset::insecure` | `internal` | Gated on (non-default) `insecure` feature |
-| `tink_core::keyset::insecure` | `testkeyset` | Gated on (non-default) `insecure` feature |
-| `tink-tests`             | `testutil` | Depends on `insecure` feature of `tink-core` crate |
-| `tink-testing`           | `services` (`/testing/go/`) |
-| `tink-testing::proto`    | `testing_api_go_grpc` (`/proto/testing/`) |
+|  Rust Crate/Module            | Go Package                  |  Notes                                             |
+|-------------------------------|-----------------------------|----------------------------------------------------|
+| `tink_core::keyset::insecure` | `insecurecleartextkeyset`   | Gated on (non-default) `insecure` feature          |
+| `tink_core::keyset::insecure` | `internal`                  | Gated on (non-default) `insecure` feature          |
+| `tink_core::keyset::insecure` | `testkeyset`                | Gated on (non-default) `insecure` feature          |
+| `tink-tests`                  | `testutil`                  | Depends on `insecure` feature of `tink-core` crate |
+| `tink-testing`                | `services` (`/testing/go/`) |                                                    |
+| `tink-testing::proto`         | `testing_api_go_grpc` (`/proto/testing/`) |                                      |
 
 ### Key Management Systems
 
-|  Rust Crate/Module   | Go Package |
-|----------------------|------------|
-| `tink-awskms`        | `integration/awskms` |
-| `tink-gcpkms`        | `integration/gcpkms` |
+|  Rust Crate/Module   | Go Package            |
+|----------------------|-----------------------|
+| `tink-awskms`        | `integration/awskms`  |
+| `tink-gcpkms`        | `integration/gcpkms`  |
 |                      | `integration/hcvault` |
