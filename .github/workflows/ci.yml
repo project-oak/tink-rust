@@ -99,7 +99,10 @@ jobs:
       - uses: actions/checkout@629c2de402a417ea7690ca6ce3f33229e27606a5 # v2
       - uses: actions/setup-go@f6164bd8c8acb4a71fb2791a8b6c4024ff038dab # v3
       - run: go install github.com/campoy/embedmd@v1.0.0
-      - uses: actions/setup-ruby@b007fae6f1ffbe3a51c00a6df6f5ff01184d5340 # v1
+      - uses: ruby/setup-ruby@52b8784594ec115fd17094752708121dc5dabb47 # v1.154.0
+        with:
+            ruby-version: '2.7'
+            bundler-cache: true
       - run: gem install mdl
       - uses: actions-rs/toolchain@63eb9591781c46a70274cb3ebdf190fce92702e8 # v1
         with:
