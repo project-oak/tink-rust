@@ -94,7 +94,7 @@ pub fn aes256_ctr_hmac_sha512_key_template() -> KeyTemplate {
 /// Return a [`KeyTemplate`] that generates a CHACHA20_POLY1305 key.
 pub fn cha_cha20_poly1305_key_template() -> KeyTemplate {
     KeyTemplate {
-        /// Don't set value because key_format is not required.
+        // Don't set value because key_format is not required.
         value: vec![],
         type_url: crate::CHA_CHA20_POLY1305_TYPE_URL.to_string(),
         output_prefix_type: OutputPrefixType::Tink as i32,
@@ -104,7 +104,7 @@ pub fn cha_cha20_poly1305_key_template() -> KeyTemplate {
 /// Return a [`KeyTemplate`] that generates a XCHACHA20_POLY1305 key.
 pub fn x_cha_cha20_poly1305_key_template() -> KeyTemplate {
     KeyTemplate {
-        /// Don't set value because key_format is not required.
+        // Don't set value because key_format is not required.
         value: vec![],
         type_url: crate::X_CHA_CHA20_POLY1305_TYPE_URL.to_string(),
         output_prefix_type: OutputPrefixType::Tink as i32,
