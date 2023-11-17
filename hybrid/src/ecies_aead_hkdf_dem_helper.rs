@@ -130,7 +130,7 @@ impl subtle::EciesAeadHkdfDemHelper for EciesAeadHkdfDemHelper {
                     .ok_or_else(|| TinkError::new("invalid key"))?;
                 aes_ctr_key.key_value = symmetric_key_value[..aes_ctr_size].to_vec();
 
-                let mut hmac_key = aes_ctr
+                let hmac_key = aes_ctr
                     .hmac_key
                     .as_mut()
                     .ok_or_else(|| TinkError::new("invalid key"))?;
