@@ -44,11 +44,11 @@ static INIT: Once = Once::new();
 /// Tink.
 pub fn init() {
     INIT.call_once(|| {
-        register_key_manager(std::sync::Arc::new(HmacPrfKeyManager::default()))
+        register_key_manager(std::sync::Arc::new(HmacPrfKeyManager))
             .expect("tink_prf::init() failed"); // safe: init
-        register_key_manager(std::sync::Arc::new(HkdfPrfKeyManager::default()))
+        register_key_manager(std::sync::Arc::new(HkdfPrfKeyManager))
             .expect("tink_prf::init() failed"); // safe: init
-        register_key_manager(std::sync::Arc::new(AesCmacPrfKeyManager::default()))
+        register_key_manager(std::sync::Arc::new(AesCmacPrfKeyManager))
             .expect("tink_prf::init() failed"); // safe: init
 
         tink_core::registry::register_template_generator(

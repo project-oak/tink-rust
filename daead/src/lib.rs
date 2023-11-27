@@ -42,7 +42,7 @@ static INIT: Once = Once::new();
 /// tink-core.
 pub fn init() {
     INIT.call_once(|| {
-        tink_core::registry::register_key_manager(std::sync::Arc::new(AesSivKeyManager::default()))
+        tink_core::registry::register_key_manager(std::sync::Arc::new(AesSivKeyManager))
             .expect("tink_daead::init() failed"); // safe: init
 
         tink_core::registry::register_template_generator("AES256_SIV", aes_siv_key_template);
