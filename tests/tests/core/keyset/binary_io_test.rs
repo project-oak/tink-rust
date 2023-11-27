@@ -66,7 +66,7 @@ fn test_binary_io_read_fail() {
     let result = r.read();
     tink_tests::expect_err(result, "read failed");
 
-    let buf = vec![1, 2, 3];
+    let buf = [1, 2, 3];
     let mut r = tink_core::keyset::BinaryReader::new(&buf[..]);
     let result = r.read();
     tink_tests::expect_err(result, "decode failed");

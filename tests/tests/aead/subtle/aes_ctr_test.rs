@@ -20,7 +20,7 @@ use tink_core::subtle::random::get_random_bytes;
 
 #[test]
 fn test_new_aes_ctr() {
-    let key = vec![0; 64];
+    let key = [0; 64];
 
     // Test various key sizes with a fixed IV size.
     for i in 0..64 {

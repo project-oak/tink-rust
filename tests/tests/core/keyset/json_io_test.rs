@@ -250,11 +250,11 @@ fn test_json_io_encrypted() {
 #[test]
 fn test_json_io_read_fail_decode() {
     tink_mac::init();
-    let buf = vec![1, 2, 3];
+    let buf = [1, 2, 3];
     let mut r = tink_core::keyset::JsonReader::new(&buf[..]);
     assert!(r.read().is_err());
 
-    let buf = vec![1, 2, 3];
+    let buf = [1, 2, 3];
     let mut r = tink_core::keyset::JsonReader::new(&buf[..]);
     assert!(r.read_encrypted().is_err());
 }
