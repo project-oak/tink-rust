@@ -20,7 +20,7 @@
 /// data.
 ///
 /// ## Warning
-////
+///
 /// Unlike AEAD, implementations of this trait are not semantically secure, because
 /// encrypting the same plaintext always yields the same ciphertext.
 ///
