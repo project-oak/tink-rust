@@ -146,7 +146,7 @@ dependencies = [
  "bitflags",
  "bytes",
  "futures-util",
- "http",
+ "http 0.2.11",
  "http-body",
  "hyper",
  "itoa",
@@ -172,7 +172,7 @@ dependencies = [
  "async-trait",
  "bytes",
  "futures-util",
- "http",
+ "http 0.2.11",
  "http-body",
  "mime",
  "rustversion",
@@ -978,7 +978,7 @@ dependencies = [
  "futures-core",
  "futures-sink",
  "futures-util",
- "http",
+ "http 0.2.11",
  "indexmap",
  "slab",
  "tokio",
@@ -1077,13 +1077,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "http"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b32afd38673a8016f7c9ae69e5af41a58f81b1d31689040f2f1959594ce194ea"
+dependencies = [
+ "bytes",
+ "fnv",
+ "itoa",
+]
+
+[[package]]
 name = "http-body"
 version = "0.4.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d5f38f16d184e36f2408a55281cd658ecbd3ca05cce6d6510a176eca393e26d1"
 dependencies = [
  "bytes",
- "http",
+ "http 0.2.11",
  "pin-project-lite",
 ]
 
@@ -1116,7 +1127,7 @@ dependencies = [
  "futures-core",
  "futures-util",
  "h2",
- "http",
+ "http 0.2.11",
  "http-body",
  "httparse",
  "httpdate",
@@ -1847,7 +1858,7 @@ dependencies = [
  "bytes",
  "crc32fast",
  "futures",
- "http",
+ "http 0.2.11",
  "hyper",
  "hyper-tls",
  "lazy_static",
@@ -1906,7 +1917,7 @@ dependencies = [
  "futures",
  "hex",
  "hmac 0.11.0",
- "http",
+ "http 0.2.11",
  "hyper",
  "log",
  "md-5",
@@ -2368,7 +2379,7 @@ dependencies = [
  "base64 0.21.5",
  "chrono",
  "futures",
- "http",
+ "http 1.0.0",
  "hyper",
  "hyper-rustls",
  "lazy_static",
@@ -2619,7 +2630,7 @@ dependencies = [
  "futures-core",
  "futures-util",
  "h2",
- "http",
+ "http 0.2.11",
  "http-body",
  "hyper",
  "hyper-timeout",
@@ -3035,7 +3046,7 @@ dependencies = [
  "base64 0.13.1",
  "chrono",
  "futures",
- "http",
+ "http 0.2.11",
  "hyper",
  "hyper-rustls",
  "log",
