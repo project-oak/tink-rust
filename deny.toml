@@ -28,6 +28,8 @@ ignore = [
     "RUSTSEC-2021-0139",
     # No use of externally-provided WebPKI chains.
     "RUSTSEC-2023-0052",
+    # No use of X509
+    "RUSTSEC-2023-0072",
 ]
 
 # Deny multiple versions unless explicitly skipped.
@@ -55,6 +57,14 @@ version = "0.9.9"
 [[bans.skip]]
 name = "heck"
 version = "0.3.1"
+
+# tower(0.4.13) => indexmap(1.9.3) => hashbrown(0.12.3)
+[[bans.skip]]
+name = "indexmap"
+version = "1.9.3"
+[[bans.skip]]
+name = "hashbrown"
+version = "0.12.3"
 
 # Various dependencies use windows-sys(0.42.x)
 [[bans.skip]]
