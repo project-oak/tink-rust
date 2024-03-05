@@ -66,10 +66,19 @@ version = "1.9.3"
 name = "hashbrown"
 version = "0.12.3"
 
-# Various dependencies use windows-sys(0.42.x)
+# Various dependencies use earlier versions of windows-sys and its deps
+[[bans.skip]]
+name = "windows-sys"
+version = "0.45.0"
 [[bans.skip]]
 name = "windows-sys"
 version = "0.42.0"
+[[bans.skip]]
+name = "windows-targets"
+version = "0.42.1"
+[[bans.skip]]
+name = "windows_x86_64_msvc"
+version = "0.42.1"
 
 # Various dependencies use block-buffer(0.9.0)
 [[bans.skip]]
