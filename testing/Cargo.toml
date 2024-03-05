@@ -11,7 +11,7 @@ categories = ["cryptography"]
 publish = false
 
 [dependencies]
-env_logger = "^0.10.1"
+env_logger = "^0.11.2"
 futures = "^0.3.30"
 log = "^0.4.21"
 prost = "^0.11"
