@@ -2,6 +2,7 @@
 #
 # For further details on all configuration options see:
 # https://embarkstudios.github.io/cargo-deny/checks/cfg.html
+[graph]
 targets = [
     { triple = "x86_64-unknown-linux-gnu" },
     { triple = "x86_64-unknown-linux-musl" },
@@ -11,24 +12,21 @@ targets = [
 
 # Deny all advisories unless explicitly ignored.
 [advisories]
-vulnerability = "deny"
-unmaintained = "deny"
 yanked = "deny"
-notice = "deny"
 ignore = [
-    # Remove once chrono has been updated to pull in a fixed version of time
+    # Remove once chrono has been updated to pull in a fixed version of time.
     # See https://github.com/chronotope/chrono/issues/553
     "RUSTSEC-2020-0071",
-    # atty is not used with a custom global allocator
+    # atty is not used with a custom global allocator.
     "RUSTSEC-2021-0145",
-    # rusoto_* is Unmaintained
+    # rusoto_* is Unmaintained.
     # TODO(#416): migrate off rusoto
     "RUSTSEC-2022-0071",
-    # ansi_term is Unmaintained (via structopt(0.3.26))
+    # ansi_term is Unmaintained (via structopt(0.3.26)).
     "RUSTSEC-2021-0139",
     # No use of externally-provided WebPKI chains.
     "RUSTSEC-2023-0052",
-    # No use of X509
+    # No use of X.509.
     "RUSTSEC-2023-0072",
 ]
 
@@ -103,7 +101,6 @@ allow = [
   "BSD-3-Clause",
   "Unicode-DFS-2016",
 ]
-copyleft = "deny"
 
 [[licenses.clarify]]
 name = "ring"
