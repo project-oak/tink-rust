@@ -106,7 +106,7 @@ fn test_ecdsa_sign_new_key_with_invalid_input() {
     let km = tink_core::registry::get_key_manager(tink_tests::ECDSA_SIGNER_TYPE_URL)
         .expect("cannot obtain EcdsaSigner key manager");
     // invalid hash and curve type
-    let test_params = vec![
+    let test_params = [
         EcdsaParams {
             hash_type: HashType::UnknownHash as i32,
             curve: EllipticCurveType::NistP256 as i32,

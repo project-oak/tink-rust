@@ -34,6 +34,7 @@ lazy_static! {
     };
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 pub struct TestData {
     #[serde(flatten)]
@@ -42,6 +43,7 @@ pub struct TestData {
     pub test_groups: Vec<TestGroup>,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 pub struct TestGroup {
     #[serde(flatten)]

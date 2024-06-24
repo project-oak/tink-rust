@@ -32,11 +32,11 @@ include!("codegen/google.crypto.tink.rs");
 #[cfg(feature = "json")]
 include!("codegen/serde/google.crypto.tink.rs");
 
+// Manual keyset serialization implementations that map enums onto strings rather than
+// the `i32` values used by [prost](https://docs.rs/prost).
 #[cfg(feature = "json")]
 #[cfg_attr(docsrs, doc(cfg(feature = "json")))]
 pub mod json {
-    //! Manual keyset serialization implementations that map enums onto strings rather than
-    //! the `i32` values used by [prost](https://docs.rs/prost).
     pub mod key_status_type {
         //! Manual JSON serialization for [`KeyStatusType`](crate::KeyStatusType) enums.
         use serde::Deserialize;
