@@ -21,7 +21,7 @@ json = ["tink-proto/json", "serde", "serde_json"]
 [dependencies]
 digest = "^0.10.7"
 hkdf = "^0.12.4"
-lazy_static = "^1.4"
+lazy_static = "^1.5"
 rand = "^0.8"
 serde = { version = "^1.0.203", features = ["derive"], optional = true }
 serde_json = { version = "^1.0.116", optional = true }

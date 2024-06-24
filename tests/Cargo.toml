@@ -30,7 +30,7 @@ tink-proto = "^0.2"
 [dev-dependencies]
 base64 = "^0.21"
 hex = "^0.4.3"
-lazy_static = "^1.4"
+lazy_static = "^1.5"
 maplit = "^1.0.2"
 num-bigint = "^0.4.5"
 tempfile = "^3.3"
