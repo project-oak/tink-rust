@@ -88,13 +88,13 @@ fn test_factory_raw_key_as_primary() {
 
 // Return an `Err` if decryption fails, panic if something else goes wrong.
 #[allow(clippy::borrowed_box)]
-fn validate_daead_factory_cipher<T: ?Sized>(
+fn validate_daead_factory_cipher<T>(
     encrypt_cipher: &Box<T>,
     decrypt_cipher: &Box<T>,
     expected_prefix: &[u8],
 ) -> Result<(), TinkError>
 where
-    T: tink_core::DeterministicAead,
+    T: tink_core::DeterministicAead + ?Sized,
 {
     let prefix_size = expected_prefix.len();
     // regular plaintext.

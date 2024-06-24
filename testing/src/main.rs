@@ -21,9 +21,9 @@ use log::info;
 use structopt::StructOpt;
 use tonic::transport::Server;
 
-#[allow(clippy::wrong_self_convention)]
 pub mod proto {
     //! Auto-generated code from protocol buffer message and service definitions.
+    #![allow(clippy::wrong_self_convention)]
     #![allow(clippy::large_enum_variant)]
     #![allow(clippy::derive_partial_eq_without_eq)]
     include!("codegen/tink_testing_api.rs");

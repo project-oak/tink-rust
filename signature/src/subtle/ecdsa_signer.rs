@@ -17,7 +17,6 @@
 use generic_array::typenum::Unsigned;
 use p256::elliptic_curve;
 use signature::RandomizedSigner;
-use std::convert::TryInto;
 use tink_core::{utils::wrap_err, TinkError};
 use tink_proto::{EcdsaSignatureEncoding, EllipticCurveType, HashType};
 
@@ -63,12 +62,8 @@ impl EcdsaSigner {
                     return Err("EcdsaSigner: invalid private key len".into());
                 }
                 EcdsaPrivateKey::NistP256(
-                    p256::ecdsa::SigningKey::from_bytes(
-                        key_value
-                            .try_into()
-                            .map_err(|e| wrap_err("EcdsaSigner: invalid private key", e))?,
-                    )
-                    .map_err(|e| wrap_err("EcdsaSigner: invalid private key", e))?,
+                    p256::ecdsa::SigningKey::from_bytes(key_value.into())
+                        .map_err(|e| wrap_err("EcdsaSigner: invalid private key", e))?,
                 )
             }
             _ => return Err(format!("EcdsaSigner: unsupported curve {curve:?}").into()),

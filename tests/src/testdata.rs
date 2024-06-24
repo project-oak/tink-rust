@@ -42,7 +42,7 @@ pub fn key_template_proto(dir: &str, name: &str) -> Result<KeyTemplate, TinkErro
     let value_re = Regex::new(r#"^\s*value\s*:\s*"(.+)"\s*$"#).unwrap();
     let prefix_re = Regex::new(r#"^\s*output_prefix_type\s*:\s*(\S+)\s*$"#).unwrap();
     let file = std::fs::File::open(&path).map_err(|e| wrap_err("Failed to open", e))?;
-    for line in std::io::BufReader::new(file).lines().flatten() {
+    for line in std::io::BufReader::new(file).lines().map_while(Result::ok) {
         if comment_re.is_match(&line) {
             continue;
         }

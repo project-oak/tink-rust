@@ -27,6 +27,7 @@ pub struct TestData {
     pub test_groups: Vec<TestGroup>,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 pub struct TestGroup {
     #[serde(flatten)]
