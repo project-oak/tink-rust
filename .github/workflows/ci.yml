@@ -191,7 +191,7 @@ jobs:
           toolchain: stable
           override: true
           components: rustfmt
-      - run: cargo install --locked --version 0.14.20 cargo-deny
+      - run: cargo install --locked --version 0.16.1 cargo-deny
       - run: cargo deny --version
       - run: cargo deny check
 
