@@ -23,10 +23,10 @@ ignore = [
     "RUSTSEC-2022-0071",
     # ansi_term is Unmaintained (via structopt(0.3.26)).
     "RUSTSEC-2021-0139",
+    # proc-macro-error is Unmaintained (via structopt-derive(0.4.18)
+    "RUSTSEC-2024-0370",
     # No use of externally-provided WebPKI chains.
     "RUSTSEC-2023-0052",
-    # No use of X.509.
-    "RUSTSEC-2023-0072",
     # TODO(692): upgrade tink-gcp-kms dependencies
     "RUSTSEC-2024-0336",
 ]
@@ -51,6 +51,9 @@ version = "0.9.0"
 [[bans.skip]]
 name = "sha2"
 version = "0.9.9"
+[[bans.skip]]
+name = "bitflags"
+version = "1.3.2"
 
 # structopt(0.3.26) => structopt-derive(0.4.18) => heck(0.3.*)
 [[bans.skip]]
