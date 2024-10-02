@@ -24,9 +24,11 @@
 ///   * It is indistinguishable from a random function: Given the evaluation of n different inputs,
 ///     an attacker cannot distinguish between the PRF and random bytes on an input different from
 ///     the n that are known.
+///
 /// Use cases for PRF are deterministic redaction of PII, keyed hash functions,
 /// creating sub IDs that do not allow joining with the original dataset without
 /// knowing the key.
+///
 /// While PRFs can be used in order to prove authenticity of a message, using the
 /// [`Mac`](crate::Mac) interface is recommended for that use case, as it has support for
 /// verification, avoiding the security problems that often happen during

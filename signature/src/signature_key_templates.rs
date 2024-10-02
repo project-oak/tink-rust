@@ -23,6 +23,7 @@ use tink_proto::{prost::Message, KeyTemplate};
 ///   - Curve: NIST P-256
 ///   - Signature encoding: DER
 ///   - Output prefix type: TINK
+///
 /// Note that this template uses a different encoding than ESDSA_P256_RAW in Tinkey / `rinkey`.
 pub fn ecdsa_p256_key_template() -> KeyTemplate {
     create_ecdsa_key_template(
