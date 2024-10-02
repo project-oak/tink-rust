@@ -99,7 +99,7 @@ jobs:
       - uses: actions/checkout@629c2de402a417ea7690ca6ce3f33229e27606a5 # v2
       - uses: actions/setup-go@f6164bd8c8acb4a71fb2791a8b6c4024ff038dab # v3
       - run: go install github.com/campoy/embedmd@v1.0.0
-      - uses: ruby/setup-ruby@52b8784594ec115fd17094752708121dc5dabb47 # v1.154.0
+      - uses: ruby/setup-ruby@c04af2bb7258bb6a03df1d3c1865998ac9390972 # v1.194.0
         with:
             ruby-version: '2.7'
             bundler-cache: true
