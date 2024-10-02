@@ -17,7 +17,7 @@
 //! Handle wrapper for keysets.
 
 use crate::{utils::wrap_err, TinkError};
-use std::sync::Arc;
+use std::{convert::TryFrom, sync::Arc};
 use tink_proto::{key_data::KeyMaterialType, prost::Message, Keyset, KeysetInfo};
 
 /// `Handle` provides access to a [`Keyset`] protobuf, to limit the exposure
@@ -217,13 +217,13 @@ impl Handle {
         for k in &self.ks.key {
             match &k.key_data {
                 None => return Err("invalid keyset".into()),
-                Some(kd) => match KeyMaterialType::from_i32(kd.key_material_type) {
-                    Some(KeyMaterialType::UnknownKeymaterial) => result = true,
-                    Some(KeyMaterialType::Symmetric) => result = true,
-                    Some(KeyMaterialType::AsymmetricPrivate) => result = true,
-                    Some(KeyMaterialType::AsymmetricPublic) => {}
-                    Some(KeyMaterialType::Remote) => {}
-                    None => return Err("invalid key material type".into()),
+                Some(kd) => match KeyMaterialType::try_from(kd.key_material_type) {
+                    Ok(KeyMaterialType::UnknownKeymaterial) => result = true,
+                    Ok(KeyMaterialType::Symmetric) => result = true,
+                    Ok(KeyMaterialType::AsymmetricPrivate) => result = true,
+                    Ok(KeyMaterialType::AsymmetricPublic) => {}
+                    Ok(KeyMaterialType::Remote) => {}
+                    Err(_) => return Err("invalid key material type".into()),
                 },
             }
         }
@@ -264,9 +264,9 @@ fn validate_keyset(ks: Keyset) -> Result<Keyset, TinkError> {
         match &k.key_data {
             None if k.status == tink_proto::KeyStatusType::Destroyed as i32 => {}
             None => return Err("invalid keyset".into()),
-            Some(kd) => match KeyMaterialType::from_i32(kd.key_material_type) {
-                Some(_) => {}
-                None => return Err("invalid key material type".into()),
+            Some(kd) => match KeyMaterialType::try_from(kd.key_material_type) {
+                Ok(_) => {}
+                Err(_) => return Err("invalid key material type".into()),
             },
         }
     }

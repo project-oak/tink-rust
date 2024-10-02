@@ -16,6 +16,7 @@
 
 //! Key manager for streaming AES-CTR-HMAC keys.
 
+use std::convert::TryFrom;
 use tink_core::{subtle::random::get_random_bytes, utils::wrap_err, TinkError};
 use tink_proto::{prost::Message, HashType};
 
@@ -121,21 +122,21 @@ fn validate_params(
     params: &tink_proto::AesCtrHmacStreamingParams,
 ) -> Result<(tink_proto::HmacParams, HashType, HashType), TinkError> {
     crate::subtle::validate_aes_key_size(params.derived_key_size as usize)?;
-    let hkdf_hash = match HashType::from_i32(params.hkdf_hash_type) {
-        Some(HashType::UnknownHash) => return Err("AesCtrHmacKeyManager: unknown HKDF hash".into()),
-        Some(h) => h,
-        None => return Err("AesCtrHmacKeyManager: unknown HKDF hash".into()),
+    let hkdf_hash = match HashType::try_from(params.hkdf_hash_type) {
+        Ok(HashType::UnknownHash) => return Err("AesCtrHmacKeyManager: unknown HKDF hash".into()),
+        Ok(h) => h,
+        Err(_) => return Err("AesCtrHmacKeyManager: unknown HKDF hash".into()),
     };
     let hmac_params = params
         .hmac_params
         .as_ref()
         .ok_or_else(|| TinkError::new("AesCtrHmacKeyManager: no HMAC params"))?;
-    let hmac_hash = match HashType::from_i32(hmac_params.hash) {
-        Some(HashType::UnknownHash) => {
+    let hmac_hash = match HashType::try_from(hmac_params.hash) {
+        Ok(HashType::UnknownHash) => {
             return Err("AesCtrHmacKeyManager: unknown tag algorithm".into())
         }
-        Some(h) => h,
-        None => return Err("AesCtrHmacKeyManager: unknown tag algorithm".into()),
+        Ok(h) => h,
+        Err(_) => return Err("AesCtrHmacKeyManager: unknown tag algorithm".into()),
     };
     tink_mac::subtle::validate_hmac_params(
         hmac_hash,

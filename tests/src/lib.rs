@@ -21,7 +21,7 @@
 use generic_array::typenum::Unsigned;
 use p256::elliptic_curve;
 use serde::{Deserialize, Serialize};
-use std::convert::TryInto;
+use std::convert::{TryFrom, TryInto};
 use tink_core::{subtle::random::get_random_bytes, utils::wrap_err, Aead, TinkError};
 use tink_proto::{prost, EcdsaSignatureEncoding, EllipticCurveType, HashType, KeyData, Keyset};
 
@@ -385,9 +385,9 @@ pub fn get_ecdsa_params(
     params: &tink_proto::EcdsaParams,
 ) -> (HashType, EllipticCurveType, EcdsaSignatureEncoding) {
     (
-        HashType::from_i32(params.hash_type).unwrap(),
-        EllipticCurveType::from_i32(params.curve).unwrap(),
-        EcdsaSignatureEncoding::from_i32(params.encoding).unwrap(),
+        HashType::try_from(params.hash_type).unwrap(),
+        EllipticCurveType::try_from(params.curve).unwrap(),
+        EcdsaSignatureEncoding::try_from(params.encoding).unwrap(),
     )
 }
 

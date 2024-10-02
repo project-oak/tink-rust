@@ -16,6 +16,7 @@
 
 //! Key manager for AES-CMAC keys for HMAC.
 
+use std::convert::TryFrom;
 use tink_core::{utils::wrap_err, TinkError};
 use tink_proto::{prost::Message, HashType};
 
@@ -43,7 +44,7 @@ impl tink_core::registry::KeyManager for HmacKeyManager {
             None => return Err("HmacKeyManager: no key params".into()),
             Some(p) => p,
         };
-        let hash = HashType::from_i32(params.hash).unwrap_or(HashType::UnknownHash);
+        let hash = HashType::try_from(params.hash).unwrap_or(HashType::UnknownHash);
         match crate::subtle::Hmac::new(hash, &key.key_value, params.tag_size as usize) {
             Ok(p) => Ok(tink_core::Primitive::Mac(Box::new(p))),
             Err(e) => Err(wrap_err("HmacKeyManager: cannot create new primitive", e)),
@@ -90,7 +91,7 @@ fn validate_key(key: &tink_proto::HmacKey) -> Result<(), TinkError> {
     match &key.params {
         None => Err("HmacKeyManager: missing HMAC params".into()),
         Some(params) => {
-            let hash = HashType::from_i32(params.hash).unwrap_or(HashType::UnknownHash);
+            let hash = HashType::try_from(params.hash).unwrap_or(HashType::UnknownHash);
             crate::subtle::validate_hmac_params(hash, key_size, params.tag_size as usize)
         }
     }
@@ -101,7 +102,7 @@ fn validate_key_format(format: &tink_proto::HmacKeyFormat) -> Result<(), TinkErr
     match &format.params {
         None => Err("missing HMAC params".into()),
         Some(params) => {
-            let hash = HashType::from_i32(params.hash).unwrap_or(HashType::UnknownHash);
+            let hash = HashType::try_from(params.hash).unwrap_or(HashType::UnknownHash);
             crate::subtle::validate_hmac_params(
                 hash,
                 format.key_size as usize,

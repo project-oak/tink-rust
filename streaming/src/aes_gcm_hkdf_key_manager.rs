@@ -17,6 +17,7 @@
 //! Key manager for streaming AES-GCM-HKDF.
 
 use crate::subtle;
+use std::convert::TryFrom;
 use tink_core::{subtle::random::get_random_bytes, utils::wrap_err, TinkError};
 use tink_proto::{prost::Message, HashType};
 
@@ -116,10 +117,10 @@ fn validate_key_format(
 /// Validate the given [`tink_proto::AesGcmHkdfStreamingParams`].
 fn validate_params(params: &tink_proto::AesGcmHkdfStreamingParams) -> Result<HashType, TinkError> {
     crate::subtle::validate_aes_key_size(params.derived_key_size as usize)?;
-    let hkdf_hash = match HashType::from_i32(params.hkdf_hash_type) {
-        Some(HashType::UnknownHash) => return Err("unknown HKDF hash type".into()),
-        Some(h) => h,
-        None => return Err("unknown HKDF hash type".into()),
+    let hkdf_hash = match HashType::try_from(params.hkdf_hash_type) {
+        Ok(HashType::UnknownHash) => return Err("unknown HKDF hash type".into()),
+        Ok(h) => h,
+        Err(_) => return Err("unknown HKDF hash type".into()),
     };
     let min_segment_size = (params.derived_key_size as usize)
         + subtle::AES_GCM_HKDF_NONCE_PREFIX_SIZE_IN_BYTES

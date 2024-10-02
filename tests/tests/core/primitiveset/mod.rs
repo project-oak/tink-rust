@@ -14,6 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+use std::convert::TryFrom;
 use tink_core::{primitiveset::Entry, Primitive};
 use tink_proto::{keyset::Key, KeyStatusType, OutputPrefixType};
 use tink_tests::{new_dummy_key, DummyMac};
@@ -61,12 +62,12 @@ fn test_primitive_set_basic() {
     let raw_ids = vec![keys[3].key_id, keys[4].key_id];
     let raw_macs = vec![macs[3].clone(), macs[4].clone()];
     let raw_statuses = vec![
-        KeyStatusType::from_i32(keys[3].status).unwrap(),
-        KeyStatusType::from_i32(keys[4].status).unwrap(),
+        KeyStatusType::try_from(keys[3].status).unwrap(),
+        KeyStatusType::try_from(keys[4].status).unwrap(),
     ];
     let raw_prefix_types = vec![
-        OutputPrefixType::from_i32(keys[3].output_prefix_type).unwrap(),
-        OutputPrefixType::from_i32(keys[4].output_prefix_type).unwrap(),
+        OutputPrefixType::try_from(keys[3].output_prefix_type).unwrap(),
+        OutputPrefixType::try_from(keys[4].output_prefix_type).unwrap(),
     ];
     let raw_entries = ps.raw_entries();
     assert!(
@@ -84,12 +85,12 @@ fn test_primitive_set_basic() {
     let tink_ids = vec![keys[0].key_id, keys[5].key_id];
     let tink_macs = vec![macs[0].clone(), macs[5].clone()];
     let tink_statuses = vec![
-        KeyStatusType::from_i32(keys[0].status).unwrap(),
-        KeyStatusType::from_i32(keys[5].status).unwrap(),
+        KeyStatusType::try_from(keys[0].status).unwrap(),
+        KeyStatusType::try_from(keys[5].status).unwrap(),
     ];
     let tink_prefix_types = vec![
-        OutputPrefixType::from_i32(keys[0].output_prefix_type).unwrap(),
-        OutputPrefixType::from_i32(keys[5].output_prefix_type).unwrap(),
+        OutputPrefixType::try_from(keys[0].output_prefix_type).unwrap(),
+        OutputPrefixType::try_from(keys[5].output_prefix_type).unwrap(),
     ];
     let prefix = tink_core::cryptofmt::output_prefix(&keys[0]).unwrap();
     let tink_entries = ps.entries_for_prefix(&prefix);
@@ -107,8 +108,8 @@ fn test_primitive_set_basic() {
     // check another tink primitive
     let tink_ids = vec![keys[2].key_id];
     let tink_macs = vec![macs[2].clone()];
-    let tink_statuses = vec![KeyStatusType::from_i32(keys[2].status).unwrap()];
-    let tink_prefix_types = vec![OutputPrefixType::from_i32(keys[2].output_prefix_type).unwrap()];
+    let tink_statuses = vec![KeyStatusType::try_from(keys[2].status).unwrap()];
+    let tink_prefix_types = vec![OutputPrefixType::try_from(keys[2].output_prefix_type).unwrap()];
     let prefix = tink_core::cryptofmt::output_prefix(&keys[2]).unwrap();
     let tink_entries = ps.entries_for_prefix(&prefix);
     assert!(
@@ -125,8 +126,8 @@ fn test_primitive_set_basic() {
     // check legacy primitives
     let legacy_ids = vec![keys[1].key_id];
     let legacy_macs = vec![macs[1].clone()];
-    let legacy_statuses = vec![KeyStatusType::from_i32(keys[1].status).unwrap()];
-    let legacy_prefix_types = vec![OutputPrefixType::from_i32(keys[1].output_prefix_type).unwrap()];
+    let legacy_statuses = vec![KeyStatusType::try_from(keys[1].status).unwrap()];
+    let legacy_prefix_types = vec![OutputPrefixType::try_from(keys[1].output_prefix_type).unwrap()];
     let legacy_prefix = tink_core::cryptofmt::output_prefix(&keys[1]).unwrap();
     let legacy_entries = ps.entries_for_prefix(&legacy_prefix);
     assert!(

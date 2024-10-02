@@ -17,6 +17,7 @@
 //! Provides constants and convenience methods that define the format of ciphertexts and signatures.
 
 use crate::TinkError;
+use std::convert::TryFrom;
 use tink_proto::OutputPrefixType;
 
 /// Prefix size of Tink and Legacy key types.
@@ -44,17 +45,19 @@ pub const RAW_PREFIX: Vec<u8> = Vec::new();
 /// prefix can be either empty (for RAW-type prefix), or consists of a 1-byte indicator of the type
 /// of the prefix, followed by 4 bytes of the key ID in big endian encoding.
 pub fn output_prefix(key: &tink_proto::keyset::Key) -> Result<Vec<u8>, TinkError> {
-    match OutputPrefixType::from_i32(key.output_prefix_type) {
-        Some(OutputPrefixType::Legacy) | Some(OutputPrefixType::Crunchy) => Ok(
-            create_output_prefix(LEGACY_PREFIX_SIZE, LEGACY_START_BYTE, key.key_id),
-        ),
-        Some(OutputPrefixType::Tink) => Ok(create_output_prefix(
+    match OutputPrefixType::try_from(key.output_prefix_type) {
+        Ok(OutputPrefixType::Legacy) | Ok(OutputPrefixType::Crunchy) => Ok(create_output_prefix(
+            LEGACY_PREFIX_SIZE,
+            LEGACY_START_BYTE,
+            key.key_id,
+        )),
+        Ok(OutputPrefixType::Tink) => Ok(create_output_prefix(
             TINK_PREFIX_SIZE,
             TINK_START_BYTE,
             key.key_id,
         )),
-        Some(OutputPrefixType::Raw) => Ok(RAW_PREFIX),
-        Some(OutputPrefixType::UnknownPrefix) | None => {
+        Ok(OutputPrefixType::Raw) => Ok(RAW_PREFIX),
+        Ok(OutputPrefixType::UnknownPrefix) | Err(_) => {
             Err("cryptofmt: unknown output prefix type".into())
         }
     }

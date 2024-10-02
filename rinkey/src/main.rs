@@ -18,6 +18,7 @@
 
 use std::{
     cell::RefCell,
+    convert::TryFrom,
     fs::{File, OpenOptions},
     path::PathBuf,
     rc::Rc,
@@ -378,21 +379,21 @@ fn list_keyset(opts: InOptions) {
         println!("  type_url: \"{}\"", key.type_url);
         println!(
             "  status: {}",
-            match KeyStatusType::from_i32(key.status) {
-                Some(KeyStatusType::Enabled) => "ENABLED",
-                Some(KeyStatusType::Disabled) => "DISABLED",
-                Some(KeyStatusType::Destroyed) => "DESTROYED",
+            match KeyStatusType::try_from(key.status) {
+                Ok(KeyStatusType::Enabled) => "ENABLED",
+                Ok(KeyStatusType::Disabled) => "DISABLED",
+                Ok(KeyStatusType::Destroyed) => "DESTROYED",
                 _ => "UNKNOWN",
             }
         );
         println!("  key_id: {}", key.key_id);
         println!(
             "  output_prefix_type: {}",
-            match OutputPrefixType::from_i32(key.output_prefix_type) {
-                Some(OutputPrefixType::Tink) => "TINK",
-                Some(OutputPrefixType::Legacy) => "LEGACY",
-                Some(OutputPrefixType::Raw) => "RAW",
-                Some(OutputPrefixType::Crunchy) => "CRUNCHY",
+            match OutputPrefixType::try_from(key.output_prefix_type) {
+                Ok(OutputPrefixType::Tink) => "TINK",
+                Ok(OutputPrefixType::Legacy) => "LEGACY",
+                Ok(OutputPrefixType::Raw) => "RAW",
+                Ok(OutputPrefixType::Crunchy) => "CRUNCHY",
                 _ => "UNKNOWN",
             }
         );

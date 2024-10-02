@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use std::collections::HashSet;
+use std::{collections::HashSet, convert::TryFrom};
 use tink_core::{subtle::random::get_random_bytes, Signer, TinkError, Verifier};
 use tink_proto::{
     prost::Message, EcdsaKeyFormat, EcdsaParams, EcdsaPrivateKey, EcdsaPublicKey,
@@ -373,18 +373,18 @@ fn validate_ecdsa_private_key(
     }
     // check private key's size
     let key_size = key.key_value.len();
-    match EllipticCurveType::from_i32(params.curve) {
-        Some(EllipticCurveType::NistP256) => {
+    match EllipticCurveType::try_from(params.curve) {
+        Ok(EllipticCurveType::NistP256) => {
             if !(256 / 8 - 8..=256 / 8 + 1).contains(&key_size) {
                 return Err("private key doesn't have adequate size".into());
             }
         }
-        Some(EllipticCurveType::NistP384) => {
+        Ok(EllipticCurveType::NistP384) => {
             if !(384 / 8 - 8..=384 / 8 + 1).contains(&key_size) {
                 return Err("private key doesn't have adequate size".into());
             }
         }
-        Some(EllipticCurveType::NistP521) => {
+        Ok(EllipticCurveType::NistP521) => {
             if !(521 / 8 - 8..=521 / 8 + 1).contains(&key_size) {
                 return Err("private key doesn't have adequate size".into());
             }

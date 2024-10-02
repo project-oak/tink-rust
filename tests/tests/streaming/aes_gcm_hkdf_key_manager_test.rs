@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use std::collections::HashSet;
+use std::{collections::HashSet, convert::TryFrom};
 use tink_core::TinkError;
 use tink_proto::{prost::Message, HashType};
 use tink_streaming_aead::subtle;
@@ -352,8 +352,8 @@ fn validate_aes_gcm_hkdf_key(
         return Err("incorrect HKDF hash type".into());
     }
     // try to encrypt and decrypt
-    let hkdf_hash_type = HashType::from_i32(key_params.hkdf_hash_type)
-        .ok_or_else(|| TinkError::new("invalid HKDF hash"))?;
+    let hkdf_hash_type = HashType::try_from(key_params.hkdf_hash_type)
+        .map_err(|_e| TinkError::new("invalid HKDF hash"))?;
     let p = subtle::AesGcmHkdf::new(
         &key.key_value,
         hkdf_hash_type,

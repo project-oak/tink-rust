@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use std::collections::HashSet;
+use std::{collections::HashSet, convert::TryFrom};
 use tink_core::{utils::wrap_err, Prf, TinkError};
 use tink_proto::{prost::Message, HashType};
 use tink_tests::proto_encode;
@@ -263,7 +263,7 @@ fn validate_hkdf_key(
         return Err("key format and generated key do not match".into());
     }
     let p = tink_prf::subtle::HkdfPrf::new(
-        HashType::from_i32(key.params.as_ref().unwrap().hash).unwrap(),
+        HashType::try_from(key.params.as_ref().unwrap().hash).unwrap(),
         &key.key_value,
         &key.params.as_ref().unwrap().salt,
     )
@@ -280,7 +280,7 @@ fn validate_hkdf_primitive(
         tink_core::Primitive::Prf(prf) => prf,
         _ => return Err("not a Prf primitive".into()),
     };
-    let hash = HashType::from_i32(key.params.as_ref().unwrap().hash).unwrap();
+    let hash = HashType::try_from(key.params.as_ref().unwrap().hash).unwrap();
     let prf_primitive =
         tink_prf::subtle::HkdfPrf::new(hash, &key.key_value, &key.params.as_ref().unwrap().salt)
             .map_err(|e| {

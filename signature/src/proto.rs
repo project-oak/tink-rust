@@ -16,6 +16,7 @@
 
 //! Utilities for dealing with protobuf types for signing.
 
+use std::convert::TryFrom;
 use tink_proto::{EcdsaParams, EcdsaSignatureEncoding, EllipticCurveType, HashType};
 
 /// Return the enum values of each parameter in
@@ -24,9 +25,9 @@ pub(crate) fn get_ecdsa_param_ids(
     params: &EcdsaParams,
 ) -> (HashType, EllipticCurveType, EcdsaSignatureEncoding) {
     (
-        HashType::from_i32(params.hash_type).unwrap_or(HashType::UnknownHash),
-        EllipticCurveType::from_i32(params.curve).unwrap_or(EllipticCurveType::UnknownCurve),
-        EcdsaSignatureEncoding::from_i32(params.encoding)
+        HashType::try_from(params.hash_type).unwrap_or(HashType::UnknownHash),
+        EllipticCurveType::try_from(params.curve).unwrap_or(EllipticCurveType::UnknownCurve),
+        EcdsaSignatureEncoding::try_from(params.encoding)
             .unwrap_or(EcdsaSignatureEncoding::UnknownEncoding),
     )
 }
