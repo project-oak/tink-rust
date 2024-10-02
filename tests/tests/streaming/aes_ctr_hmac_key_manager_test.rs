@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use std::collections::HashSet;
+use std::{collections::HashSet, convert::TryFrom};
 use tink_core::TinkError;
 use tink_proto::{
     prost::Message, AesCtrHmacStreamingKey, AesCtrHmacStreamingKeyFormat,
@@ -342,14 +342,14 @@ fn validate_aes_ctr_hmac_key(
     if key_params.hkdf_hash_type != format_params.hkdf_hash_type {
         return Err("incorrect HKDF hash type".into());
     }
-    let hkdf_hash_type = HashType::from_i32(key_params.hkdf_hash_type)
-        .ok_or_else(|| TinkError::new("invalid HKDF hash"))?;
+    let hkdf_hash_type = HashType::try_from(key_params.hkdf_hash_type)
+        .map_err(|_e| TinkError::new("invalid HKDF hash"))?;
     let hmac_params = key_params
         .hmac_params
         .as_ref()
         .ok_or_else(|| TinkError::new("no params"))?;
     let hmac_hash =
-        HashType::from_i32(hmac_params.hash).ok_or_else(|| TinkError::new("invalid HMAC hash"))?;
+        HashType::try_from(hmac_params.hash).map_err(|_e| TinkError::new("invalid HMAC hash"))?;
     // try to encrypt and decrypt
     let p = subtle::AesCtrHmac::new(
         &key.key_value,
@@ -885,9 +885,9 @@ fn test_aes_ctr_hmac_new_with_invalid_params() {
         let hmac_params = params.hmac_params.as_ref().unwrap();
         let result = subtle::AesCtrHmac::new(
             &key.key_value,
-            HashType::from_i32(params.hkdf_hash_type).unwrap(),
+            HashType::try_from(params.hkdf_hash_type).unwrap(),
             params.derived_key_size as usize,
-            HashType::from_i32(hmac_params.hash).unwrap(),
+            HashType::try_from(hmac_params.hash).unwrap(),
             hmac_params.tag_size as usize,
             params.ciphertext_segment_size as usize,
             0,

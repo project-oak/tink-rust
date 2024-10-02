@@ -18,6 +18,7 @@
 
 use crate::{utils::wrap_err, KeyId, TinkError};
 use rand::Rng;
+use std::convert::TryFrom;
 use tink_proto::{KeyStatusType, OutputPrefixType};
 
 /// Manager manages a [`Keyset`](tink_proto::Keyset)-proto, with convenience methods that rotate,
@@ -59,11 +60,11 @@ impl Manager {
         let key_data = crate::registry::new_key_data(kt)
             .map_err(|e| wrap_err("keyset::Manager: cannot create KeyData", e))?;
         let key_id = self.new_key_id();
-        let output_prefix_type = match OutputPrefixType::from_i32(kt.output_prefix_type) {
-            None | Some(OutputPrefixType::UnknownPrefix) => {
+        let output_prefix_type = match OutputPrefixType::try_from(kt.output_prefix_type) {
+            Err(_) | Ok(OutputPrefixType::UnknownPrefix) => {
                 return Err("keyset::Manager: unknown output prefix type".into())
             }
-            Some(p) => p,
+            Ok(p) => p,
         };
         let key = tink_proto::keyset::Key {
             key_data: Some(key_data),
@@ -90,8 +91,8 @@ impl Manager {
     pub fn enable(&mut self, key_id: KeyId) -> Result<(), TinkError> {
         for key in &mut self.ks.key {
             if key.key_id == key_id {
-                return match KeyStatusType::from_i32(key.status) {
-                    Some(KeyStatusType::Enabled) | Some(KeyStatusType::Disabled) => {
+                return match KeyStatusType::try_from(key.status) {
+                    Ok(KeyStatusType::Enabled) | Ok(KeyStatusType::Disabled) => {
                         key.status = KeyStatusType::Enabled as i32;
                         Ok(())
                     }
@@ -115,8 +116,8 @@ impl Manager {
         }
         for key in &mut self.ks.key {
             if key.key_id == key_id {
-                return match KeyStatusType::from_i32(key.status) {
-                    Some(KeyStatusType::Enabled) | Some(KeyStatusType::Disabled) => {
+                return match KeyStatusType::try_from(key.status) {
+                    Ok(KeyStatusType::Enabled) | Ok(KeyStatusType::Disabled) => {
                         key.status = KeyStatusType::Disabled as i32;
                         Ok(())
                     }
@@ -141,10 +142,10 @@ impl Manager {
         }
         for key in &mut self.ks.key {
             if key.key_id == key_id {
-                return match KeyStatusType::from_i32(key.status) {
-                    Some(KeyStatusType::Enabled)
-                    | Some(KeyStatusType::Disabled)
-                    | Some(KeyStatusType::Destroyed) => {
+                return match KeyStatusType::try_from(key.status) {
+                    Ok(KeyStatusType::Enabled)
+                    | Ok(KeyStatusType::Disabled)
+                    | Ok(KeyStatusType::Destroyed) => {
                         key.key_data = None;
                         key.status = KeyStatusType::Destroyed as i32;
                         Ok(())
@@ -186,8 +187,8 @@ impl Manager {
     pub fn set_primary(&mut self, key_id: KeyId) -> Result<(), TinkError> {
         for key in &self.ks.key {
             if key.key_id == key_id {
-                return match KeyStatusType::from_i32(key.status) {
-                    Some(KeyStatusType::Enabled) => {
+                return match KeyStatusType::try_from(key.status) {
+                    Ok(KeyStatusType::Enabled) => {
                         self.ks.primary_key_id = key_id;
                         Ok(())
                     }

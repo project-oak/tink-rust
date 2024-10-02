@@ -21,7 +21,10 @@
 //! primary" one.
 
 use crate::utils::{wrap_err, TinkError};
-use std::collections::{hash_map, HashMap};
+use std::{
+    collections::{hash_map, HashMap},
+    convert::TryFrom,
+};
 
 /// `Entry` represents a single entry in the keyset. In addition to the actual
 /// primitive, it holds the identifier and status of the primitive.
@@ -111,10 +114,10 @@ impl PrimitiveSet {
             key.key_id,
             p,
             &prefix,
-            tink_proto::OutputPrefixType::from_i32(key.output_prefix_type)
-                .ok_or_else(|| TinkError::new("invalid key prefix type"))?,
-            tink_proto::KeyStatusType::from_i32(key.status)
-                .ok_or_else(|| TinkError::new("invalid key status"))?,
+            tink_proto::OutputPrefixType::try_from(key.output_prefix_type)
+                .map_err(|_e| TinkError::new("invalid key prefix type"))?,
+            tink_proto::KeyStatusType::try_from(key.status)
+                .map_err(|_e| TinkError::new("invalid key status"))?,
         );
         let retval = entry.clone();
         match self.entries.entry(prefix) {

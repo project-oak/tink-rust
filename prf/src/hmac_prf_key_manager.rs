@@ -17,6 +17,7 @@
 //! Key manager for HMAC keys for PRF.
 
 use crate::subtle;
+use std::convert::TryFrom;
 use tink_core::{utils::wrap_err, TinkError};
 use tink_proto::{prost::Message, HashType};
 
@@ -89,7 +90,7 @@ fn validate_key(
         None => return Err("no key params".into()),
         Some(p) => p,
     };
-    let hash = HashType::from_i32(params.hash).unwrap_or(HashType::UnknownHash);
+    let hash = HashType::try_from(params.hash).unwrap_or(HashType::UnknownHash);
     subtle::validate_hmac_prf_params(hash, key_size)?;
     Ok((params.clone(), hash))
 }
@@ -100,6 +101,6 @@ fn validate_key_format(format: &tink_proto::HmacPrfKeyFormat) -> Result<(), Tink
         .params
         .as_ref()
         .ok_or_else(|| TinkError::new("no params"))?;
-    let hash = HashType::from_i32(params.hash).unwrap_or(HashType::UnknownHash);
+    let hash = HashType::try_from(params.hash).unwrap_or(HashType::UnknownHash);
     subtle::validate_hmac_prf_params(hash, format.key_size as usize)
 }

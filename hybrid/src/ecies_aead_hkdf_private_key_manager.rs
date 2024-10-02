@@ -16,6 +16,7 @@
 
 //! Key manager for ECIES-AEAD-HKDF private keys.
 
+use std::convert::TryFrom;
 use tink_core::{utils::wrap_err, TinkError};
 use tink_proto::{
     prost::Message, EcPointFormat, EciesHkdfKemParams, EllipticCurveType, HashType, KeyTemplate,
@@ -195,18 +196,18 @@ pub(crate) fn check_ecies_aead_hkdf_params(
         .as_ref()
         .ok_or_else(|| TinkError::new("no dem_params"))?;
 
-    let curve = EllipticCurveType::from_i32(kem_params.curve_type)
+    let curve = EllipticCurveType::try_from(kem_params.curve_type)
         .unwrap_or(EllipticCurveType::UnknownCurve);
 
-    let hkdf_hash = match HashType::from_i32(kem_params.hkdf_hash_type) {
-        Some(HashType::UnknownHash) => return Err("unsupported HKDF hash".into()),
-        Some(h) => h,
-        None => return Err("unknown HKDF hash".into()),
+    let hkdf_hash = match HashType::try_from(kem_params.hkdf_hash_type) {
+        Ok(HashType::UnknownHash) => return Err("unsupported HKDF hash".into()),
+        Ok(h) => h,
+        Err(_) => return Err("unknown HKDF hash".into()),
     };
-    let ec_point_format = match EcPointFormat::from_i32(params.ec_point_format) {
-        Some(EcPointFormat::UnknownFormat) => return Err("unknown EC point format".into()),
-        Some(f) => f,
-        None => return Err("unknown EC point format".into()),
+    let ec_point_format = match EcPointFormat::try_from(params.ec_point_format) {
+        Ok(EcPointFormat::UnknownFormat) => return Err("unknown EC point format".into()),
+        Ok(f) => f,
+        Err(_) => return Err("unknown EC point format".into()),
     };
     let aead_dem = dem_params
         .aead_dem

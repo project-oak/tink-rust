@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-use std::collections::HashSet;
+use std::{collections::HashSet, convert::TryFrom};
 use tink_core::{utils::wrap_err, Mac, TinkError};
 use tink_proto::{prost::Message, HashType};
 use tink_tests::proto_encode;
@@ -262,7 +262,7 @@ fn validate_hmac_key(
         return Err("key format and generated key do not match".into());
     }
     let p = tink_mac::subtle::Hmac::new(
-        HashType::from_i32(key.params.as_ref().unwrap().hash).unwrap(),
+        HashType::try_from(key.params.as_ref().unwrap().hash).unwrap(),
         &key.key_value,
         key.params.as_ref().unwrap().tag_size as usize,
     )
@@ -280,7 +280,7 @@ fn validate_hmac_primitive(
         _ => return Err("not a Mac primitive".into()),
     };
     let key_primitive = tink_mac::subtle::Hmac::new(
-        HashType::from_i32(key.params.as_ref().unwrap().hash).unwrap(),
+        HashType::try_from(key.params.as_ref().unwrap().hash).unwrap(),
         &key.key_value,
         key.params.as_ref().unwrap().tag_size as usize,
     )

@@ -40,14 +40,15 @@ pub mod json {
     pub mod key_status_type {
         //! Manual JSON serialization for [`KeyStatusType`](crate::KeyStatusType) enums.
         use serde::Deserialize;
+        use std::convert::TryFrom;
         pub fn serialize<S: serde::Serializer>(
             val: &i32,
             serializer: S,
         ) -> Result<S::Ok, S::Error> {
-            serializer.serialize_str(match crate::KeyStatusType::from_i32(*val) {
-                Some(crate::KeyStatusType::Enabled) => "ENABLED",
-                Some(crate::KeyStatusType::Disabled) => "DISABLED",
-                Some(crate::KeyStatusType::Destroyed) => "DESTROYED",
+            serializer.serialize_str(match crate::KeyStatusType::try_from(*val) {
+                Ok(crate::KeyStatusType::Enabled) => "ENABLED",
+                Ok(crate::KeyStatusType::Disabled) => "DISABLED",
+                Ok(crate::KeyStatusType::Destroyed) => "DESTROYED",
                 _ => "UNKNOWN",
             })
         }
@@ -66,15 +67,16 @@ pub mod json {
     pub mod output_prefix_type {
         //! Manual JSON serialization for [`OutputPrefixType`](crate::OutputPrefixType) enums.
         use serde::Deserialize;
+        use std::convert::TryFrom;
         pub fn serialize<S: serde::Serializer>(
             val: &i32,
             serializer: S,
         ) -> Result<S::Ok, S::Error> {
-            serializer.serialize_str(match crate::OutputPrefixType::from_i32(*val) {
-                Some(crate::OutputPrefixType::Tink) => "TINK",
-                Some(crate::OutputPrefixType::Legacy) => "LEGACY",
-                Some(crate::OutputPrefixType::Raw) => "RAW",
-                Some(crate::OutputPrefixType::Crunchy) => "CRUNCHY",
+            serializer.serialize_str(match crate::OutputPrefixType::try_from(*val) {
+                Ok(crate::OutputPrefixType::Tink) => "TINK",
+                Ok(crate::OutputPrefixType::Legacy) => "LEGACY",
+                Ok(crate::OutputPrefixType::Raw) => "RAW",
+                Ok(crate::OutputPrefixType::Crunchy) => "CRUNCHY",
                 _ => "UNKNOWN",
             })
         }
@@ -95,15 +97,16 @@ pub mod json {
         //! Manual JSON serialization for [`KeyMaterialType`](crate::key_data::KeyMaterialType)
         //! enums.
         use serde::Deserialize;
+        use std::convert::TryFrom;
         pub fn serialize<S: serde::Serializer>(
             val: &i32,
             serializer: S,
         ) -> Result<S::Ok, S::Error> {
-            serializer.serialize_str(match crate::key_data::KeyMaterialType::from_i32(*val) {
-                Some(crate::key_data::KeyMaterialType::Symmetric) => "SYMMETRIC",
-                Some(crate::key_data::KeyMaterialType::AsymmetricPrivate) => "ASYMMETRIC_PRIVATE",
-                Some(crate::key_data::KeyMaterialType::AsymmetricPublic) => "ASYMMETRIC_PUBLIC",
-                Some(crate::key_data::KeyMaterialType::Remote) => "REMOTE",
+            serializer.serialize_str(match crate::key_data::KeyMaterialType::try_from(*val) {
+                Ok(crate::key_data::KeyMaterialType::Symmetric) => "SYMMETRIC",
+                Ok(crate::key_data::KeyMaterialType::AsymmetricPrivate) => "ASYMMETRIC_PRIVATE",
+                Ok(crate::key_data::KeyMaterialType::AsymmetricPublic) => "ASYMMETRIC_PUBLIC",
+                Ok(crate::key_data::KeyMaterialType::Remote) => "REMOTE",
                 _ => "UNKNOWN",
             })
         }

@@ -17,6 +17,7 @@
 //! Key manager for AES-CTR-HMAC keys.
 
 use crate::subtle;
+use std::convert::TryFrom;
 use tink_core::{utils::wrap_err, TinkError};
 use tink_proto::{prost::Message, HashType};
 
@@ -155,8 +156,8 @@ fn validate_hmac_key(
         .params
         .as_ref()
         .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: no HMAC params"))?;
-    let hash = HashType::from_i32(hmac_params.hash)
-        .ok_or_else(|| TinkError::new("AesCtrHmacAeadKeyManager: unknown hash"))?;
+    let hash = HashType::try_from(hmac_params.hash)
+        .map_err(|_e| TinkError::new("AesCtrHmacAeadKeyManager: unknown hash"))?;
 
     Ok((hmac_key, hmac_params, hash))
 }
@@ -203,12 +204,12 @@ fn validate_key_format(
         .into());
     }
 
-    let tag_size = match HashType::from_i32(hmac_params.hash) {
-        Some(HashType::Sha1) => 20,
-        Some(HashType::Sha224) => 28,
-        Some(HashType::Sha256) => 32,
-        Some(HashType::Sha384) => 48,
-        Some(HashType::Sha512) => 64,
+    let tag_size = match HashType::try_from(hmac_params.hash) {
+        Ok(HashType::Sha1) => 20,
+        Ok(HashType::Sha224) => 28,
+        Ok(HashType::Sha256) => 32,
+        Ok(HashType::Sha384) => 48,
+        Ok(HashType::Sha512) => 64,
         _ => {
             return Err(format!(
                 "AesCtrHmacAeadKeyManager: invalid HmacParams: hash_type {:?} not supported",

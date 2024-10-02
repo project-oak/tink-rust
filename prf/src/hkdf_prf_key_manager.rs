@@ -17,6 +17,7 @@
 //! Key manager for HKDF keys for PRF.
 
 use crate::subtle;
+use std::convert::TryFrom;
 use tink_core::{utils::wrap_err, TinkError};
 use tink_proto::{prost::Message, HashType};
 
@@ -91,7 +92,7 @@ fn validate_key(
         None => return Err("HkdfPrfKeyManager: no key params".into()),
         Some(p) => p,
     };
-    let hash = HashType::from_i32(params.hash).unwrap_or(HashType::UnknownHash);
+    let hash = HashType::try_from(params.hash).unwrap_or(HashType::UnknownHash);
     subtle::validate_hkdf_prf_params(hash, key_size, &params.salt)?;
     Ok((params.clone(), hash))
 }
@@ -102,6 +103,6 @@ fn validate_key_format(format: &tink_proto::HkdfPrfKeyFormat) -> Result<(), Tink
         .params
         .as_ref()
         .ok_or_else(|| TinkError::new("no key params"))?;
-    let hash = HashType::from_i32(params.hash).unwrap_or(HashType::UnknownHash);
+    let hash = HashType::try_from(params.hash).unwrap_or(HashType::UnknownHash);
     subtle::validate_hkdf_prf_params(hash, format.key_size as usize, &params.salt)
 }
