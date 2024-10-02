@@ -98,7 +98,7 @@ fn validate_key(
         .as_ref()
         .ok_or_else(|| TinkError::new("no key params"))?;
     let hkdf_hash = validate_params(key_params)?;
-    Ok((key_params.clone(), hkdf_hash))
+    Ok((*key_params, hkdf_hash))
 }
 
 /// Validate the given [`tink_proto::AesGcmHkdfStreamingKeyFormat`].
@@ -111,7 +111,7 @@ fn validate_key_format(
         .as_ref()
         .ok_or_else(|| TinkError::new("no format params"))?;
     validate_params(format_params).map_err(|e| wrap_err("AesGcmHkdfKeyManager", e))?;
-    Ok(format_params.clone())
+    Ok(*format_params)
 }
 
 /// Validate the given [`tink_proto::AesGcmHkdfStreamingParams`].

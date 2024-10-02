@@ -314,7 +314,7 @@ pub fn new_ecdsa_params(
 /// Create an [`EcdsaKeyFormat`](tink_proto::EcdsaKeyFormat) with the specified parameters.
 pub fn new_ecdsa_key_format(params: &tink_proto::EcdsaParams) -> tink_proto::EcdsaKeyFormat {
     tink_proto::EcdsaKeyFormat {
-        params: Some(params.clone()),
+        params: Some(*params),
     }
 }
 

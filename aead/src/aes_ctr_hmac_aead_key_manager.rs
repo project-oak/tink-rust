@@ -226,5 +226,5 @@ fn validate_key_format(
         )
         .into());
     }
-    Ok((aes_ctr_format.clone(), hmac_key_format.clone()))
+    Ok((*aes_ctr_format, *hmac_key_format))
 }
