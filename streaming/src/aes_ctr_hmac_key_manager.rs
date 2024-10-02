@@ -100,7 +100,7 @@ fn validate_key(
         .params
         .as_ref()
         .ok_or_else(|| TinkError::new("AesCtrHmacKeyManager: no params"))?;
-    Ok(key_params.clone())
+    Ok(*key_params)
 }
 
 /// Validate the given [`tink_proto::AesCtrHmacStreamingKeyFormat`].
@@ -114,7 +114,7 @@ fn validate_key_format(
         .as_ref()
         .ok_or_else(|| TinkError::new("AesCtrHmacKeyManager: no params"))?;
     validate_params(key_params)?;
-    Ok(key_params.clone())
+    Ok(*key_params)
 }
 
 /// Validate the given [`tink_proto::AesCtrHmacStreamingParams`].
@@ -151,5 +151,5 @@ fn validate_params(
     if (params.ciphertext_segment_size as usize) < min_segment_size {
         return Err("AesCtrHmacKeyManager: ciphertext segment size must be at least (derived_key_size + nonce_prefix_in_bytes + tag_size_in_bytes + 2)".into());
     }
-    Ok((hmac_params.clone(), hkdf_hash, hmac_hash))
+    Ok((*hmac_params, hkdf_hash, hmac_hash))
 }

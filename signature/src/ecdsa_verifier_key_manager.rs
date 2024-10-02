@@ -71,5 +71,5 @@ pub(crate) fn validate_ecdsa_public_key(
         .ok_or_else(|| TinkError::new("no public key parameters"))?;
     let (hash, curve, encoding) = crate::get_ecdsa_param_ids(params);
     crate::subtle::validate_ecdsa_params(hash, curve, encoding)?;
-    Ok(params.clone())
+    Ok(*params)
 }

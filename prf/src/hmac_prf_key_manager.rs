@@ -92,7 +92,7 @@ fn validate_key(
     };
     let hash = HashType::try_from(params.hash).unwrap_or(HashType::UnknownHash);
     subtle::validate_hmac_prf_params(hash, key_size)?;
-    Ok((params.clone(), hash))
+    Ok((*params, hash))
 }
 
 /// Validates the given [`HmacPrfKeyFormat`](tink_proto::HmacPrfKeyFormat).
