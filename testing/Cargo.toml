@@ -2,7 +2,7 @@
 name = "tink-testing-server"
 version = "0.2.5"
 authors = ["David Drysdale <drysdale@google.com>"]
-edition = "2018"
+edition = "2021"
 license = "Apache-2.0"
 description = "Testing server for Rust port of Google's Tink cryptography library"
 repository = "https://github.com/project-oak/tink-rust"

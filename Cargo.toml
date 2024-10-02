@@ -25,6 +25,7 @@ members = [
   "tests",
   "testing",
 ]
+resolver = "1"
 
 # Patch dependencies on tink crates so that they refer to the versions within this same repository.
 [patch.crates-io]
