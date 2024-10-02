@@ -1,7 +1,7 @@
 # Tink-Rust: GCP-KMS integration
 
 [![Docs](https://img.shields.io/badge/docs-rust-brightgreen?style=for-the-badge)](https://docs.rs/tink-gcpkms)
-![MSRV](https://img.shields.io/badge/rustc-1.65+-yellow?style=for-the-badge)
+![MSRV](https://img.shields.io/badge/rustc-1.71.1+-yellow?style=for-the-badge)
 
 This crate provides functionality for integrating Tink with [Google Cloud KMS](https://cloud.google.com/kms/docs/quickstart).
 
