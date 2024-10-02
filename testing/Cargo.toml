@@ -14,7 +14,7 @@ publish = false
 env_logger = "^0.10.1"
 futures = "^0.3.30"
 log = "^0.4.22"
-prost = "^0.11"
+prost = "^0.13"
 structopt = "^0.3.26"
 tink-aead = "^0.2"
 tink-core = { version = "^0.2", features = [
@@ -34,7 +34,7 @@ tokio = { version = "^1.16", features = [
   "rt-multi-thread",
   "signal",
 ] }
-tonic = "^0.9"
+tonic = "^0.12"
 
 [build-dependencies]
-tonic-build = "^0.8"
+tonic-build = "^0.12"
