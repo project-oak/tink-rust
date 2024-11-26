@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.3.0 - TBD
+## 0.3.0 - 2024-11-28
 
 - Increase MSRV to 1.71.1
 - Upgrade dependencies
