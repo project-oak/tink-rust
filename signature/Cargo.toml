@@ -1,6 +1,6 @@
 [package]
 name = "tink-signature"
-version = "0.2.5"
+version = "0.3.0"
 authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -18,5 +18,5 @@ generic-array = "^0.14.7"
 p256 = { version = "^0.13.2", features = ["ecdsa"] }
 rand = "^0.8"
 signature = "^2.2"
-tink-core = "^0.2"
-tink-proto = "^0.2"
+tink-core = "^0.3"
+tink-proto = "^0.3"

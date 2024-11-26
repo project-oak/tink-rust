@@ -1,6 +1,6 @@
 [package]
 name = "tink-prf"
-version = "0.2.5"
+version = "0.3.0"
 authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -19,5 +19,5 @@ hkdf = "^0.12.4"
 hmac = { version = "^0.12.1", features = ["reset"] }
 sha-1 = "^0.10.1"
 sha2 = "^0.10.8"
-tink-core = "^0.2"
-tink-proto = "^0.2"
+tink-core = "^0.3"
+tink-proto = "^0.3"
