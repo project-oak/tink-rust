@@ -18,7 +18,7 @@ jobs:
         rust:
           - stable
           - beta
-          - nightly-2024-04-01
+          - nightly-2024-09-01
     steps:
       - uses: actions/checkout@629c2de402a417ea7690ca6ce3f33229e27606a5 # v2
       - uses: actions-rs/toolchain@63eb9591781c46a70274cb3ebdf190fce92702e8 # v1
@@ -38,7 +38,7 @@ jobs:
         rust:
           - stable
           - beta
-          - nightly-2024-04-01
+          - nightly-2024-09-01
     steps:
       - uses: actions/checkout@629c2de402a417ea7690ca6ce3f33229e27606a5 # v2
         with:
@@ -59,7 +59,7 @@ jobs:
         rust:
           - stable
           - beta
-          - nightly-2024-04-01
+          - nightly-2024-09-01
     steps:
       - uses: actions/checkout@629c2de402a417ea7690ca6ce3f33229e27606a5 # v2
         with:
@@ -107,7 +107,7 @@ jobs:
       - uses: actions-rs/toolchain@63eb9591781c46a70274cb3ebdf190fce92702e8 # v1
         with:
           profile: minimal
-          toolchain: nightly-2024-04-01
+          toolchain: nightly-2024-09-01
           override: true
           components: rustfmt
       - run: rustc --version
@@ -135,7 +135,7 @@ jobs:
       - uses: actions-rs/toolchain@63eb9591781c46a70274cb3ebdf190fce92702e8 # v1
         with:
           profile: minimal
-          toolchain: nightly-2024-04-01
+          toolchain: nightly-2024-09-01
           override: true
           components: rustfmt
       - run: cargo bench --all-targets
@@ -147,7 +147,7 @@ jobs:
       - uses: actions-rs/toolchain@63eb9591781c46a70274cb3ebdf190fce92702e8 # v1
         with:
           profile: minimal
-          toolchain: nightly-2024-04-01
+          toolchain: nightly-2024-09-01
           override: true
           components: rustfmt, clippy
       - run: rustc --version
