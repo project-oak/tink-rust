@@ -1,11 +1,11 @@
 [package]
 name = "example-keymgr"
-version = "0.2.3"
+version = "0.3.0"
 authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 license = "Apache-2.0"
 publish = false
 
 [dependencies]
-tink-aead = "^0.2"
-tink-core = "^0.2"
+tink-aead = "^0.3"
+tink-core = "^0.3"

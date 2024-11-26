@@ -1,6 +1,6 @@
 [package]
 name = "tink-hybrid"
-version = "0.2.5"
+version = "0.3.0"
 authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -19,10 +19,10 @@ daead = ["tink-daead"]
 
 [dependencies]
 p256 = { version = "^0.13.2", features = ["ecdh"] }
-tink-aead = { version = "^0.2", optional = true }
-tink-core = "^0.2.3"
-tink-daead = { version = "^0.2", optional = true }
-tink-proto = "^0.2"
+tink-aead = { version = "^0.3", optional = true }
+tink-core = "^0.3"
+tink-daead = { version = "^0.3", optional = true }
+tink-proto = "^0.3"
 
 [package.metadata.docs.rs]
 all-features = true

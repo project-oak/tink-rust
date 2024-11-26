@@ -1,6 +1,6 @@
 [package]
 name = "tink-daead"
-version = "0.2.5"
+version = "0.3.0"
 authors = ["David Drysdale <drysdale@google.com>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -14,5 +14,5 @@ categories = ["cryptography"]
 [dependencies]
 aead = { version = "^0.5.2", features = ["std"] }
 aes-siv = "^0.7"
-tink-core = "^0.2"
-tink-proto = "^0.2"
+tink-core = "^0.3"
+tink-proto = "^0.3"
