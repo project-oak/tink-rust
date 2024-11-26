@@ -15,20 +15,20 @@ function crate_name() {
 }
 
 # All available crates.
-CRATE_DIRS=(proto core prf mac aead daead streaming signature hybrid integration/awskms integration/gcpkms rinkey tests testing examples/aead examples/daead examples/keygen examples/keymgr examples/kms examples/mac examples/signature examples/streaming examples/hybrid)
+CRATE_DIRS=(proto core prf mac aead daead streaming signature hybrid integration/awskms integration/gcpkms rinkey tests testing examples/aead examples/daead examples/keygen examples/keymgr examples/kms examples/mac examples/prf examples/signature examples/streaming examples/hybrid)
 
 for dir in "${CRATE_DIRS[@]}"; do
     echo "Update $dir to $VERSION"
 
-    sed -i '.orig' "s/^version = \".*\"$/version = \"$VERSION\"/" "$dir/Cargo.toml"
-    sed -i '.orig' "s/^tink\(.*\) = \"^.*\"$/tink\1 = \"^$DEP_VERSION\"/" "$dir/Cargo.toml"
-    sed -i '.orig' "s/^tink-core = { version = \"^[^\"]*\",\(.*\)$/tink-core = { version = \"^$DEP_VERSION\",\1/" "$dir/Cargo.toml"
+    sed -i'.orig' "s/^version = \".*\"$/version = \"$VERSION\"/" "$dir/Cargo.toml"
+    sed -i'.orig' "s/^tink\(.*\) = \"^.*\"$/tink\1 = \"^$DEP_VERSION\"/" "$dir/Cargo.toml"
+    sed -i'.orig' "s/^tink\(.*\) = { version = \"^[^\"]*\",\(.*\)$/tink\1 = { version = \"^$DEP_VERSION\",\2/" "$dir/Cargo.toml"
     rm "$dir/Cargo.toml.orig"
 
     git add "$dir/Cargo.toml"
 done
 
-cargo clippy --all-targets
+cargo +nightly clippy --all-targets
 git add Cargo.lock
 
 git commit -m "Update crate versions to $VERSION"
