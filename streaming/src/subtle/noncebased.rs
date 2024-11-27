@@ -55,9 +55,10 @@ pub trait SegmentEncrypter {
     fn encrypt_segment(&self, segment: &[u8], nonce: &[u8]) -> Result<Vec<u8>, TinkError>;
 }
 
-/// `Writer` provides a framework for ingesting plaintext data and
-/// writing encrypted data to the wrapped [`io::Write`]. The scheme used for
-/// encrypting segments is specified by providing a `SegmentEncrypter`
+/// `Writer` provides a framework for ingesting plaintext data and writing encrypted data to the
+/// wrapped [`io::Write`].
+///
+/// The scheme used for encrypting segments is specified by providing a `SegmentEncrypter`
 /// implementation.
 pub struct Writer {
     w: Box<dyn io::Write>,

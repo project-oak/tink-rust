@@ -20,8 +20,9 @@ use super::IndCpaCipher;
 use tink_core::{utils::wrap_err, TinkError};
 
 /// `EncryptThenAuthenticate` performs an encrypt-then-MAC operation on plaintext
-/// and additional authenticated data (aad). The MAC is computed over (aad ||
-/// ciphertext || size of aad). This implementation is based on
+/// and additional authenticated data (aad).
+///
+/// The MAC is computed over (aad || ciphertext || size of aad). This implementation is based on
 /// <http://tools.ietf.org/html/draft-mcgrew-aead-aes-cbc-hmac-sha2-05>.
 pub struct EncryptThenAuthenticate {
     ind_cpa_cipher: Box<dyn IndCpaCipher>,

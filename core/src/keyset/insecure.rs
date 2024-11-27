@@ -52,6 +52,7 @@ where
 }
 
 /// Exports the keyset from `h` to the given writer `w` without encrypting it.
+///
 /// Storing secret key material in an unencrypted fashion is dangerous. If feasible, you should use
 /// [`super::Handle::write()`] instead.
 pub fn write<T>(h: &super::Handle, w: &mut T) -> Result<(), TinkError>

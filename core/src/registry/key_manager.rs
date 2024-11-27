@@ -19,9 +19,11 @@
 use crate::TinkError;
 
 /// `KeyManager` "understands" keys of a specific key types: it can generate keys of a supported
-/// type and create primitives for supported keys.  A key type is identified by the global name of
-/// the protocol buffer that holds the corresponding key material, and is given by `type_url`-field
-/// of [`KeyData`](tink_proto::KeyData)-protocol buffer.
+/// type and create primitives for supported keys.
+///
+/// A key type is identified by the global name of the protocol buffer that holds the corresponding
+/// key material, and is given by `type_url`-field of [`KeyData`](tink_proto::KeyData)-protocol
+/// buffer.
 pub trait KeyManager: Send + Sync {
     /// Construct a primitive instance for the key given in `serialized_key`, which must be a
     /// serialized key protocol buffer handled by this manager.
