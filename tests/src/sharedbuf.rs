@@ -19,8 +19,10 @@
 use std::sync::{Arc, Mutex};
 
 /// Shared buffer, which allows [`Read`](std::io::Read) and [`Write`](std::io::Write) operations to
-/// happen in parallel. This also means that a `clone`d copy can be enclosed as a `Box<dyn Read>`
-/// (which is implicitly `Box<dyn Read + 'static>`) without lifetime concerns.
+/// happen in parallel.
+///
+/// This also means that a `clone`d copy can be enclosed as a `Box<dyn Read>` (which is implicitly
+/// `Box<dyn Read + 'static>`) without lifetime concerns.
 #[derive(Clone, Default)]
 pub struct SharedBuf {
     contents: Arc<Mutex<Vec<u8>>>,

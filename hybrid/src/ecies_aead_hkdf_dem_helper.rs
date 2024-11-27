@@ -23,8 +23,9 @@ const AES_CTR_HMAC_AEAD_TYPE_URL: &str = "type.googleapis.com/google.crypto.tink
 const AES_SIV_TYPE_URL: &str = "type.googleapis.com/google.crypto.tink.AesSivKey";
 
 /// Generator for [`tink_core::Aead`] or [`tink_core::DeterministicAead`] primitives for the
-/// specified [`tink_proto::KeyTemplate`] and key material. in order to implement the
-/// [`subtle::EciesAeadHkdfDemHelper`] interface.
+/// specified [`tink_proto::KeyTemplate`] and key material.
+///
+/// Provided in order to implement the [`subtle::EciesAeadHkdfDemHelper`] interface.
 #[derive(Clone)]
 pub struct EciesAeadHkdfDemHelper {
     /// Protobuf key structure of the relevant type.  Note that the key material held in this key

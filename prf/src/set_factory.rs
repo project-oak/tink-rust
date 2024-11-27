@@ -19,10 +19,11 @@
 use std::{collections::HashMap, sync::Arc};
 use tink_core::{utils::wrap_err, Prf, TinkError};
 
-/// `Set` is a set of PRFs. A [`Keyset`](tink_proto::Keyset) can be converted into a set of PRFs
-/// using this primitive. Every key in the keyset corresponds to a PRF in the prf.Set.
-/// Every PRF in the set is given an ID, which is the same ID as the key id in
-/// the `Keyset`.
+/// `Set` is a set of PRFs.
+///
+/// A [`Keyset`](tink_proto::Keyset) can be converted into a set of PRFs using this primitive. Every
+/// key in the keyset corresponds to a PRF in the prf.Set.  Every PRF in the set is given an ID,
+/// which is the same ID as the key id in the `Keyset`.
 pub struct Set {
     /// The key ID marked as primary in the corresponding [`Keyset`](tink_proto::Keyset).
     pub primary_id: u32,

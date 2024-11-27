@@ -76,9 +76,11 @@ impl tink_core::registry::KeyManager for DummyAeadKeyManager {
     }
 }
 
-/// Dummy implementation of [`tink_core::Aead`] trait. It "encrypts" data with a simple
-/// serialization capturing the dummy name, plaintext, and additional data, and "decrypts" it by
-/// reversing this and checking that the name and additional data match.
+/// Dummy implementation of [`tink_core::Aead`] trait.
+///
+/// It "encrypts" data with a simple serialization capturing the dummy name, plaintext, and
+/// additional data, and "decrypts" it by reversing this and checking that the name and additional
+/// data match.
 #[derive(Clone, Debug, Default)]
 pub struct DummyAead {
     pub name: String,
@@ -858,8 +860,9 @@ fn rotate(bytes: &[u8]) -> Vec<u8> {
 }
 
 /// Test that the cross-correlation of two byte strings of equal length points to independent and
-/// uniformly distributed strings. Returns non `Ok` status if the z test fails by more than 10
-/// standard deviations.
+/// uniformly distributed strings.
+///
+/// Returns non `Ok` status if the z test fails by more than 10 standard deviations.
 ///
 /// With less statistics jargon: This xors two strings and then performs the z_test_uniform_string
 /// on the result. If the two strings are independent and uniformly distributed, the xor'ed string
@@ -882,8 +885,9 @@ pub fn z_test_crosscorrelation_uniform_strings(
     z_test_uniform_string(&crossed)
 }
 
-/// Test whether the autocorrelation of a string
-/// points to the bits being independent and uniformly distributed.
+/// Test whether the autocorrelation of a string points to the bits being independent and uniformly
+/// distributed.
+///
 /// Rotates the string in a cyclic fashion. Returns non ok status if the z test
 /// fails by more than 10 standard deviations.
 ///

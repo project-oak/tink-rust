@@ -41,9 +41,10 @@ pub const RAW_PREFIX_SIZE: usize = 0;
 /// Empty prefix for Raw key types.
 pub const RAW_PREFIX: Vec<u8> = Vec::new();
 
-/// Generate the prefix of ciphertexts produced by the crypto primitive obtained from key.  The
-/// prefix can be either empty (for RAW-type prefix), or consists of a 1-byte indicator of the type
-/// of the prefix, followed by 4 bytes of the key ID in big endian encoding.
+/// Generate the prefix of ciphertexts produced by the crypto primitive obtained from key.
+///
+/// The prefix can be either empty (for RAW-type prefix), or consists of a 1-byte indicator of the
+/// type of the prefix, followed by 4 bytes of the key ID in big endian encoding.
 pub fn output_prefix(key: &tink_proto::keyset::Key) -> Result<Vec<u8>, TinkError> {
     match OutputPrefixType::try_from(key.output_prefix_type) {
         Ok(OutputPrefixType::Legacy) | Ok(OutputPrefixType::Crunchy) => Ok(create_output_prefix(

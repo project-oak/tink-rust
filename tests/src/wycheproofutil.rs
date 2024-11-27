@@ -19,7 +19,9 @@
 use serde::Deserialize;
 
 /// `WycheproofSuite` represents the common elements of the top level object in a Wycheproof json
-/// file.  Implementations should embed (using `#[serde(flatten)]`) `WycheproofSuite` in a struct
+/// file.
+///
+/// Implementations should embed (using `#[serde(flatten)]`) `WycheproofSuite` in a struct
 /// that strongly types the `testGroups` field.  See tests/wycheproofutil_test.rs for an example.
 #[derive(Debug, Deserialize)]
 pub struct WycheproofSuite {
@@ -32,6 +34,7 @@ pub struct WycheproofSuite {
 }
 
 /// `WycheproofGroup` represents the common elements of a testGroups object in a Wycheproof suite.
+///
 /// Implementations should embed (using `#[serde(flatten)]`) WycheproofGroup in a struct that
 /// strongly types its list of cases.  See tests/wycheproofutil_test.rs for an example.
 #[derive(Debug, Deserialize)]
@@ -67,6 +70,7 @@ impl std::fmt::Display for WycheproofResult {
 }
 
 /// `WycheproofCase` represents the common elements of a tests object in a Wycheproof group.
+///
 /// Implementations should embed (using `#[serde(flatten)]`) `WycheproofCase` in a struct that
 /// contains fields specific to the test type.  See tests/wycheproofutil_test.rs for an example.
 #[derive(Debug, Deserialize)]
@@ -80,9 +84,11 @@ pub struct WycheproofCase {
     pub flags: Vec<String>,
 }
 
-/// Retrieve Wycheproof test vectors from the given filename.  The location of the Wycheproof
-/// repository is assumed to be "../wycheproof/" relative to the crate manifest file, but this can
-/// be overridden with the the `WYCHEPROOF_DIR` environment variable.
+/// Retrieve Wycheproof test vectors from the given filename.
+///
+/// The location of the Wycheproof repository is assumed to be "../wycheproof/" relative to the
+/// crate manifest file, but this can be overridden with the the `WYCHEPROOF_DIR` environment
+/// variable.
 pub fn wycheproof_data(filename: &str) -> Vec<u8> {
     let wycheproof_dir = match std::env::var("WYCHEPROOF_DIR") {
         Ok(d) => d,
