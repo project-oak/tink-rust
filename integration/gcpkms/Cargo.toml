@@ -21,7 +21,7 @@ hyper-rustls = "^0.22.1"
 lazy_static = "^1.5"
 percent-encoding = "^2.3"
 serde = { version = "^1.0", features = ["derive"] }
-serde_json = "^1.0.120"
+serde_json = "^1.0.138"
 tink-core = "^0.3"
 tokio = "^1.16"
 yup-oauth2 = "^5.1"
