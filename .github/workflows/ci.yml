@@ -172,16 +172,11 @@ jobs:
       - uses: actions-rs/toolchain@63eb9591781c46a70274cb3ebdf190fce92702e8 # v1
         with:
           profile: minimal
-          toolchain: nightly-2024-09-01
+          toolchain: 1.83.0
           override: true
           components: rustfmt
-      - uses: actions-rs/install@69ec87709ffb5b19a7b5ddbf610cb221498bb1eb # v0.1.2
-        with:
-          crate: cargo-udeps
-          use-tool-cache: true
-          locked: true
-          version: 0.1.50
-      - run: cargo udeps
+      - run: cargo install --locked --version 0.1.55 cargo-udeps
+      - run: cargo +nightly udeps
 
   deny:
     runs-on: ubuntu-latest
