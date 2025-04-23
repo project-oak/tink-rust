@@ -31,6 +31,12 @@ ignore = [
     "RUSTSEC-2023-0052",
     # TODO(692): upgrade tink-gcp-kms dependencies
     "RUSTSEC-2024-0336",
+    # TODO: upgrade idna dep (via yup-oauth2)
+    "RUSTSEC-2024-0421",
+    # *ring* overflow checking not turned on for release builts
+    "RUSTSEC-2025-0009",
+    # *ring* is Unmaintained
+    "RUSTSEC-2025-0010",
 ]
 
 # Deny multiple versions unless explicitly skipped.
