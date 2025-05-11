@@ -165,6 +165,17 @@ jobs:
       - run: rustc --version
       - run: cargo doc --no-deps --document-private-items --all-features
 
+  wasm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@629c2de402a417ea7690ca6ce3f33229e27606a5 # v2
+      - uses: actions-rs/toolchain@63eb9591781c46a70274cb3ebdf190fce92702e8 # v1
+        with:
+          profile: minimal
+          toolchain: 1.81.0
+          target: wasm32-unknown-unknown
+      - run: (cd examples/aead && cargo +1.81.0 build --target wasm32-unknown-unknown --release)
+
   udeps:
     runs-on: ubuntu-latest
     steps:
