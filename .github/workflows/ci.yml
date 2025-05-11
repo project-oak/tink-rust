@@ -205,11 +205,7 @@ jobs:
           toolchain: 1.81.0
           override: true
           components: rustfmt
-      - uses: actions-rs/install@69ec87709ffb5b19a7b5ddbf610cb221498bb1eb # v0.1.2
-        with:
-          crate: cargo-tarpaulin
-          use-tool-cache: true
-          version: 0.32.3
+      - run: cargo install --locked --version 0.32.3 cargo-tarpaulin
       - run: cargo tarpaulin --verbose --ignore-tests --all-features --timeout=600 --out xml
       - name: Upload to codecov.io
         run: |
