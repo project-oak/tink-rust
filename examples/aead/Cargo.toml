@@ -9,7 +9,7 @@ publish = false
 [dependencies]
 # Force on the `js` feature of `getrandom` so a build of this example
 # for `wasm32-unknown-unknown` works.
-getrandom = { version = "^0.2.8", features = ["js"] }
+getrandom = { version = "^0.2.16", features = ["js"] }
 hex = "^0.4.3"
 tink-aead = "^0.3"
 tink-core = "^0.3"
