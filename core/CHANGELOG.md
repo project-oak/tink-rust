@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.4.0 - TBD
+
+- Make `tink_core::TinkError` implement `Sync`; this is a breaking change, as it requires a `Sync` bound on wrapped errors
+
 ## 0.3.0 - 2024-11-28
 
 - Increase MSRV to 1.71.1
