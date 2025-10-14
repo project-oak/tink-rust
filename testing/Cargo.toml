@@ -29,7 +29,7 @@ tink-proto = "^0.3"
 tink-signature = "^0.3"
 tink-streaming-aead = "^0.3"
 tink-tests = "^0.3"
-tokio = { version = "^1.16", features = [
+tokio = { version = "^1.48", features = [
   "macros",
   "rt-multi-thread",
   "signal",
