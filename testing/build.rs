@@ -39,7 +39,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     // Emit generated code into the source directory, so it can be checked in.
-    tonic_build::configure()
+    tonic_prost_build::configure()
         .out_dir("src/codegen")
         .compile_protos(&proto_files, &[PathBuf::from(".")])?;
 
