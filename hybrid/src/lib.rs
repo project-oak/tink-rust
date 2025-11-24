@@ -28,7 +28,7 @@
 //! the secrecy or authenticity of `context_info`).
 
 #![cfg_attr(docsrs, feature(doc_cfg))]
-#![deny(broken_intra_doc_links)]
+#![deny(rustdoc::broken_intra_doc_links)]
 
 use std::sync::Once;
 use tink_core::registry::{register_key_manager, register_template_generator};
