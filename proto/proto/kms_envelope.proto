@@ -28,9 +28,9 @@ message KmsEnvelopeAeadKeyFormat {
   // Required.
   // The location of the KEK in a remote KMS.
   // With Google Cloud KMS, valid values have this format:
-  // gcp-kms://projects/*/locations/*/keyRings/*/cryptoKeys/*.
+  // `gcp-kms://projects/*/locations/*/keyRings/*/cryptoKeys/*`.
   // With AWS KMS, valid values have this format:
-  // aws-kms://arn:aws:kms:<region>:<account-id>:key/<key-id>
+  // `aws-kms://arn:aws:kms:<region>:<account-id>:key/<key-id>`
   string kek_uri = 1;
   // Key template of the Data Encryption Key, e.g., AesCtrHmacAeadKeyFormat.
   // Required.
