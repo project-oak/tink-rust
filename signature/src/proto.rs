@@ -19,8 +19,7 @@
 use std::convert::TryFrom;
 use tink_proto::{EcdsaParams, EcdsaSignatureEncoding, EllipticCurveType, HashType};
 
-/// Return the enum values of each parameter in
-/// the given [`EcdsaParams`](tink_proto::EcdsaParams).
+/// Return the enum values of each parameter in the given [`EcdsaParams`].
 pub(crate) fn get_ecdsa_param_ids(
     params: &EcdsaParams,
 ) -> (HashType, EllipticCurveType, EcdsaSignatureEncoding) {

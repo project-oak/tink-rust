@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-//! AES-CTR implementation of [`IndCpaCipher`](super::IndCpaCipher).
+//! AES-CTR implementation of [`IndCpaCipher`].
 
 use super::IndCpaCipher;
 use aes::cipher::{consts::U16, generic_array::GenericArray, KeyIvInit, StreamCipher};
