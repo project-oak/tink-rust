@@ -128,7 +128,7 @@ impl AesCtrHmac {
 }
 
 impl tink_core::StreamingAead for AesCtrHmac {
-    /// Return a wrapper around an underlying [`std::io.Write`], such that
+    /// Return a wrapper around an underlying [`std::io::Write`], such that
     /// any write-operation via the wrapper results in AEAD-encryption of the
     /// written data, using `aad` as associated authenticated data. The associated
     /// data is not included in the ciphertext and has to be passed in as parameter
