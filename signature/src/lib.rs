@@ -18,7 +18,7 @@
 //!
 //! To sign data using Tink you can use ECDSA or ED25519 key templates.
 
-#![deny(broken_intra_doc_links)]
+#![deny(rustdoc::broken_intra_doc_links)]
 
 use std::sync::Once;
 use tink_core::registry::{register_key_manager, register_template_generator};

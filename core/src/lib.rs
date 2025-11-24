@@ -17,7 +17,7 @@
 //! Core crate for Tink.
 
 #![cfg_attr(docsrs, feature(doc_cfg))]
-#![deny(broken_intra_doc_links)]
+#![deny(rustdoc::broken_intra_doc_links)]
 
 pub mod cryptofmt;
 pub mod keyset;

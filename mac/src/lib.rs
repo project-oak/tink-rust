@@ -20,7 +20,7 @@
 //! message.  MAC protects data integrity as well as provides for authenticity
 //! of the message.
 
-#![deny(broken_intra_doc_links)]
+#![deny(rustdoc::broken_intra_doc_links)]
 
 use std::sync::Once;
 

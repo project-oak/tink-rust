@@ -16,7 +16,7 @@
 
 //! Provides common methods needed in test code.
 
-#![deny(broken_intra_doc_links)]
+#![deny(rustdoc::broken_intra_doc_links)]
 
 use generic_array::typenum::Unsigned;
 use p256::elliptic_curve;
