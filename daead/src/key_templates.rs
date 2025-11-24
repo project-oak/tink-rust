@@ -18,7 +18,7 @@
 
 use tink_proto::{prost::Message, KeyTemplate};
 
-/// Return a [`KeyTemplate`](tink_proto::KeyTemplate) that generates a AES-SIV key.
+/// Return a [`KeyTemplate`] that generates a AES-SIV key.
 pub fn aes_siv_key_template() -> KeyTemplate {
     let format = tink_proto::AesSivKeyFormat {
         key_size: 64,
