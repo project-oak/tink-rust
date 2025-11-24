@@ -983,9 +983,9 @@ pub struct KmsAeadKeyFormat {
     /// Required.
     /// The location of a KMS key.
     /// With Google Cloud KMS, valid values have this format:
-    /// gcp-kms://projects/*/locations/*/keyRings/*/cryptoKeys/*.
+    /// `gcp-kms://projects/*/locations/*/keyRings/*/cryptoKeys/*`.
     /// With AWS KMS, valid values have this format:
-    /// aws-kms://arn:aws:kms:<region>:<account-id>:key/<key-id>
+    /// `aws-kms://arn:aws:kms:<region>:<account-id>:key/<key-id>`
     #[prost(string, tag = "1")]
     pub key_uri: ::prost::alloc::string::String,
 }
@@ -1003,9 +1003,9 @@ pub struct KmsEnvelopeAeadKeyFormat {
     /// Required.
     /// The location of the KEK in a remote KMS.
     /// With Google Cloud KMS, valid values have this format:
-    /// gcp-kms://projects/*/locations/*/keyRings/*/cryptoKeys/*.
+    /// `gcp-kms://projects/*/locations/*/keyRings/*/cryptoKeys/*`.
     /// With AWS KMS, valid values have this format:
-    /// aws-kms://arn:aws:kms:<region>:<account-id>:key/<key-id>
+    /// `aws-kms://arn:aws:kms:<region>:<account-id>:key/<key-id>`
     #[prost(string, tag = "1")]
     pub kek_uri: ::prost::alloc::string::String,
     /// Key template of the Data Encryption Key, e.g., AesCtrHmacAeadKeyFormat.
