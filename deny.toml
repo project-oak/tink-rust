@@ -78,18 +78,15 @@ version = "0.14.24"
 name = "socket2"
 version = "0.4.9"
 
+# tonic(0.14.2) => socket2(0.6.1) in addition to 0.5
+[[bans.skip]]
+name = "socket2"
+version = "0.5.7"
+
 # structopt(0.3.26) => structopt-derive(0.4.18) => heck(0.3.*)
 [[bans.skip]]
 name = "heck"
 version = "0.3.1"
-
-# tower(0.4.13) => indexmap(1.9.3) => hashbrown(0.12.3)
-[[bans.skip]]
-name = "indexmap"
-version = "1.9.3"
-[[bans.skip]]
-name = "hashbrown"
-version = "0.12.3"
 
 # Various dependencies use block-buffer(0.9.0)
 [[bans.skip]]
