@@ -10,6 +10,7 @@ documentation = "https://docs.rs/tink-proto"
 readme = "README.md"
 keywords = ["cryptography", "tink", "protobuf"]
 categories = ["cryptography"]
+rust-version = "1.78.0"
 
 [features]
 default = []

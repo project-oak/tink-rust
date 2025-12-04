@@ -10,6 +10,7 @@ documentation = "https://docs.rs/tink-aead"
 readme = "README.md"
 keywords = ["cryptography", "tink", "aead"]
 categories = ["cryptography"]
+rust-version = "1.78.0"
 
 [dependencies]
 # Need the `std` feature for Error type conversion

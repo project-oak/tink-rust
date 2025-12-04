@@ -1,7 +1,7 @@
 # Tink-Rust: Digital Signatures
 
 [![Docs](https://img.shields.io/badge/docs-rust-brightgreen?style=for-the-badge)](https://docs.rs/tink-signature)
-![MSRV](https://img.shields.io/badge/rustc-1.71.1+-yellow?style=for-the-badge)
+![MSRV](https://img.shields.io/badge/rustc-1.78.0+-yellow?style=for-the-badge)
 
 This crate provides digital signature functionality, as described in the upstream
 [Tink documentation](https://github.com/google/tink/blob/master/docs/PRIMITIVES.md#digital-signatures).

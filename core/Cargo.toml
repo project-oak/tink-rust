@@ -10,6 +10,7 @@ documentation = "https://docs.rs/tink-core"
 readme = "README.md"
 keywords = ["cryptography", "tink"]
 categories = ["cryptography"]
+rust-version = "1.78.0"
 
 [features]
 default = []

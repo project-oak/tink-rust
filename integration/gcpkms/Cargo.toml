@@ -10,6 +10,7 @@ documentation = "https://docs.rs/tink-gcpkms"
 readme = "README.md"
 keywords = ["cryptography", "tink", "kms", "gcp"]
 categories = ["cryptography"]
+rust-version = "1.78.0"
 
 [dependencies]
 base64 = "^0.22"

@@ -3,6 +3,7 @@
 ## 0.4.0 - TBD
 
 - Make `tink_core::TinkError` implement `Sync`; this is a breaking change, as it requires a `Sync` bound on wrapped errors
+- Increase MSRV to 1.78.0
 
 ## 0.3.0 - 2024-11-28
 
