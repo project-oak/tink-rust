@@ -104,7 +104,7 @@ jobs:
             ruby-version: '2.7'
             bundler-cache: true
       - run: gem install mixlib-shellout -v 3.3.8
-      - run: gem install mdl
+      - run: gem install mdl -v 0.14.0
       - uses: actions-rs/toolchain@63eb9591781c46a70274cb3ebdf190fce92702e8 # v1
         with:
           profile: minimal
