@@ -10,6 +10,7 @@ documentation = "https://docs.rs/tink-hybrid"
 readme = "README.md"
 keywords = ["cryptography", "tink", "hybrid"]
 categories = ["cryptography"]
+rust-version = "1.78.0"
 
 [features]
 # Need at least one of aead/daead for this crate to be functional

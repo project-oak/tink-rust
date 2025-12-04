@@ -10,6 +10,7 @@ documentation = "https://docs.rs/tink-streaming-aead"
 readme = "README.md"
 keywords = ["cryptography", "tink", "streaming-aead"]
 categories = ["cryptography"]
+rust-version = "1.78.0"
 
 [dependencies]
 aes = "^0.8.4"
