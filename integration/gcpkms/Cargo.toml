@@ -16,7 +16,7 @@ rust-version = "1.78.0"
 base64 = "^0.22"
 chrono = "^0.4"
 futures = "^0.3"
-http = "^0.2"
+http = "^1.1"
 hyper = { version = "^0.14.20", features = ["client", "http1", "http2"] }
 hyper-rustls = "^0.22.1"
 lazy_static = "^1.5"
