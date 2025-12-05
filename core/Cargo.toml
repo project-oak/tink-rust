@@ -23,7 +23,7 @@ json = ["tink-proto/json", "serde", "serde_json"]
 digest = "^0.10.7"
 hkdf = "^0.12.4"
 lazy_static = "^1.5"
-rand = "^0.8"
+rand = "^0.9"
 serde = { version = "^1.0.203", features = ["derive"], optional = true }
 serde_json = { version = "^1.0.120", optional = true }
 sha-1 = "^0.10.1"
