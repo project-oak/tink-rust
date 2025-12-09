@@ -12,7 +12,7 @@ This crate provides streaming authenticated encryption with additional data func
 [embedmd]:# (../examples/streaming/src/main.rs Rust /fn main/ /^}/)
 ```Rust
 fn main() -> Result<(), Box<dyn Error>> {
-    let dir = tempfile::tempdir()?.into_path();
+    let dir = tempfile::tempdir()?.keep();
     let ct_filename = dir.join("ciphertext.bin");
 
     tink_streaming_aead::init();

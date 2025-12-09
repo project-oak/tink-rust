@@ -22,7 +22,7 @@ const CHUNK_SIZE: usize = 20;
 const PT: &[u8] = b"This is a long string that will be written in chunks to the encrypting writer. It needs to be longer than several of the CHUNK_SIZE chunks, so that there are multiple write operations demonstrated";
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let dir = tempfile::tempdir()?.into_path();
+    let dir = tempfile::tempdir()?.keep();
     let ct_filename = dir.join("ciphertext.bin");
 
     tink_streaming_aead::init();
