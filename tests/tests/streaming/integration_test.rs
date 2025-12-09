@@ -22,7 +22,7 @@ use tink_tests::SharedBuf;
 #[test]
 fn example() {
     tink_streaming_aead::init();
-    let dir = tempfile::tempdir().unwrap().into_path();
+    let dir = tempfile::tempdir().unwrap().keep();
     let src_filename = dir.join("plaintext.src");
     let ct_filename = dir.join("ciphertext.bin");
     let dst_filename = dir.join("plaintext.dst");
@@ -197,7 +197,7 @@ fn streaming_partial_reads() {
     let pt = get_random_bytes(20_000);
     let aad = get_random_bytes(100);
 
-    let dir = tempfile::tempdir().unwrap().into_path();
+    let dir = tempfile::tempdir().unwrap().keep();
     let src_filename = dir.join("plaintext.src");
     let ct_filename = dir.join("ciphertext.bin");
     let dst_filename = dir.join("plaintext.dst");
