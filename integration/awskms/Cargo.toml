@@ -13,7 +13,7 @@ categories = ["cryptography"]
 rust-version = "1.78.0"
 
 [dependencies]
-csv = "^1.3.1"
+csv = "^1.4.0"
 hex = "^0.4.3"
 regex = "^1.12.2"
 rusoto_core = "^0.48"
