@@ -646,6 +646,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "eax"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9954fabd903b82b9d7a68f65f97dc96dd9ad368e40ccc907a7c19d53e6bfac28"
+dependencies = [
+ "aead",
+ "cipher",
+ "cmac",
+ "ctr",
+ "subtle",
+]
+
+[[package]]
 name = "ecdsa"
 version = "0.16.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2491,6 +2504,7 @@ dependencies = [
  "aes-gcm-siv",
  "chacha20poly1305",
  "ctr",
+ "eax",
  "generic-array",
  "tink-core",
  "tink-mac",
