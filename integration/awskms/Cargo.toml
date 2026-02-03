@@ -15,7 +15,7 @@ rust-version = "1.78.0"
 [dependencies]
 csv = "^1.4.0"
 hex = "^0.4.3"
-regex = "^1.12.2"
+regex = "^1.12.3"
 rusoto_core = "^0.48"
 rusoto_credential = "^0.48"
 rusoto_kms = "^0.48"
