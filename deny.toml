@@ -13,9 +13,6 @@ targets = [
 [advisories]
 yanked = "deny"
 ignore = [
-    # Remove once chrono has been updated to pull in a fixed version of time.
-    # See https://github.com/chronotope/chrono/issues/553
-    "RUSTSEC-2020-0071",
     # atty is not used with a custom global allocator.
     "RUSTSEC-2021-0145",
     # rusoto_* is Unmaintained.
