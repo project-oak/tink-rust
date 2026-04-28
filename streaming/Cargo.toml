@@ -13,7 +13,7 @@ categories = ["cryptography"]
 rust-version = "1.78.0"
 
 [dependencies]
-aes = "^0.8.4"
+aes = "^0.9.0"
 # Need the `std` feature for Error type conversion
 aes-gcm = { version = "^0.10.3", features = ["std"] }
 ctr = "^0.9.2"

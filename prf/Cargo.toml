@@ -13,7 +13,7 @@ categories = ["cryptography"]
 rust-version = "1.78.0"
 
 [dependencies]
-aes = "^0.8.4"
+aes = "^0.9.0"
 cmac = "^0.7.2"
 digest = "^0.10.7"
 hkdf = "^0.12.4"
