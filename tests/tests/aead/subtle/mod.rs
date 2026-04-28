@@ -16,6 +16,7 @@
 
 mod aead_test;
 mod aes_ctr_test;
+mod aes_eax_test;
 mod aes_gcm_siv_test;
 mod aes_gcm_test;
 mod chacha20poly1305_test;

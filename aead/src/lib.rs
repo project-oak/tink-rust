@@ -30,6 +30,8 @@ mod aead_key_templates;
 pub use aead_key_templates::*;
 mod aes_ctr_hmac_aead_key_manager;
 pub use aes_ctr_hmac_aead_key_manager::*;
+mod aes_eax_key_manager;
+pub use aes_eax_key_manager::*;
 mod aes_gcm_key_manager;
 pub use aes_gcm_key_manager::*;
 mod aes_gcm_siv_key_manager;
@@ -57,6 +59,8 @@ pub fn init() {
     INIT.call_once(|| {
         register_key_manager(std::sync::Arc::new(AesCtrHmacAeadKeyManager::default()))
             .expect("tink_aead::init() failed"); // safe: init
+        register_key_manager(std::sync::Arc::new(AesEaxKeyManager::default()))
+            .expect("tink_aead::init() failed"); // safe: init
         register_key_manager(std::sync::Arc::new(AesGcmKeyManager::default()))
             .expect("tink_aead::init() failed"); // safe: init
         register_key_manager(std::sync::Arc::new(AesGcmSivKeyManager::default()))
@@ -68,6 +72,8 @@ pub fn init() {
         register_key_manager(std::sync::Arc::new(KmsEnvelopeAeadKeyManager::default()))
             .expect("tink_aead::init() failed"); // safe:init
 
+        tink_core::registry::register_template_generator("AES128_EAX", aes128_eax_key_template);
+        tink_core::registry::register_template_generator("AES256_EAX", aes256_eax_key_template);
         tink_core::registry::register_template_generator("AES128_GCM", aes128_gcm_key_template);
         tink_core::registry::register_template_generator("AES256_GCM", aes256_gcm_key_template);
         tink_core::registry::register_template_generator(

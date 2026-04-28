@@ -17,6 +17,7 @@
 mod aead_factory_test;
 mod aead_key_templates_test;
 mod aes_ctr_hmac_aead_key_manager_test;
+mod aes_eax_key_manager_test;
 mod aes_gcm_key_manager_test;
 mod aes_gcm_siv_key_manager_test;
 mod chacha20poly1305_key_manager_test;

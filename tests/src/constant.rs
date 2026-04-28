@@ -24,6 +24,11 @@ pub const AES_CTR_HMAC_AEAD_KEY_VERSION: u32 = 0;
 pub const AES_CTR_HMAC_AEAD_TYPE_URL: &str =
     "type.googleapis.com/google.crypto.tink.AesCtrHmacAeadKey";
 
+/// Maximal version of AES-EAX keys.
+pub const AES_EAX_KEY_VERSION: u32 = 0;
+/// Type URL of AES-EAX keys that Tink supports.
+pub const AES_EAX_TYPE_URL: &str = "type.googleapis.com/google.crypto.tink.AesEaxKey";
+
 /// Maximal version of AES-GCM keys.
 pub const AES_GCM_KEY_VERSION: u32 = 0;
 /// Type URL of AES-GCM keys that Tink supports.

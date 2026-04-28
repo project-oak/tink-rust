@@ -61,6 +61,22 @@ pub fn aes256_gcm_siv_no_prefix_key_template() -> KeyTemplate {
     create_aes_gcm_siv_key_template(32, OutputPrefixType::Raw)
 }
 
+/// Return a [`KeyTemplate`] that generates an AES-EAX key with the following parameters:
+///   - Key size: 16 bytes
+///   - IV size: 16 bytes
+///   - Output prefix type: TINK
+pub fn aes128_eax_key_template() -> KeyTemplate {
+    create_aes_eax_key_template(16, 16, OutputPrefixType::Tink)
+}
+
+/// Return a [`KeyTemplate`] that generates an AES-EAX key with the following parameters:
+///   - Key size: 32 bytes
+///   - IV size: 16 bytes
+///   - Output prefix type: TINK
+pub fn aes256_eax_key_template() -> KeyTemplate {
+    create_aes_eax_key_template(32, 16, OutputPrefixType::Tink)
+}
+
 /// Return a [`KeyTemplate`] that generates an AES-CTR-HMAC-AEAD key with the following parameters:
 ///  - AES key size: 16 bytes
 ///  - AES CTR IV size: 16 bytes
@@ -159,6 +175,25 @@ fn create_aes_gcm_siv_key_template(
     format.encode(&mut serialized_format).unwrap(); // safe: proto-encode
     KeyTemplate {
         type_url: crate::AES_GCM_SIV_TYPE_URL.to_string(),
+        value: serialized_format,
+        output_prefix_type: output_prefix_type as i32,
+    }
+}
+
+/// Return an AES-EAX key template with the given key size and IV size in bytes.
+fn create_aes_eax_key_template(
+    key_size: u32,
+    iv_size: u32,
+    output_prefix_type: OutputPrefixType,
+) -> KeyTemplate {
+    let format = tink_proto::AesEaxKeyFormat {
+        params: Some(tink_proto::AesEaxParams { iv_size }),
+        key_size,
+    };
+    let mut serialized_format = Vec::new();
+    format.encode(&mut serialized_format).unwrap(); // safe: proto-encode
+    KeyTemplate {
+        type_url: crate::AES_EAX_TYPE_URL.to_string(),
         value: serialized_format,
         output_prefix_type: output_prefix_type as i32,
     }

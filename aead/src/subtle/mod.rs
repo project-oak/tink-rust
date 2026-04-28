@@ -20,6 +20,8 @@ mod aead;
 pub use self::aead::*;
 mod aes_ctr;
 pub use self::aes_ctr::*;
+mod aes_eax;
+pub use self::aes_eax::*;
 mod aes_gcm;
 pub use self::aes_gcm::*;
 mod aes_gcm_siv;
