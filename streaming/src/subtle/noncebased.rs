@@ -68,10 +68,12 @@ pub struct Writer {
     nonce_size: usize,
     nonce_prefix: Vec<u8>,
     /// Buffer to hold incomplete segments of plaintext, until they are complete and
-    /// ready for encryption.
+    /// ready for encryption. Its length is the amount of plaintext buffered so far;
+    /// its capacity starts small and grows toward `plaintext_segment_size` only as
+    /// data actually arrives.
     plaintext: Vec<u8>,
-    /// Next free position in `plaintext`.
-    plaintext_pos: usize,
+    /// The full plaintext segment size, which bounds the growth of `plaintext`.
+    plaintext_segment_size: usize,
     /// A final smaller segment can be written by calling `close()`, but after that
     /// no more data can be written.
     closed: bool,
@@ -128,8 +130,11 @@ impl Writer {
             first_ciphertext_segment_offset: params.first_ciphertext_segment_offset,
             nonce_size: params.nonce_size,
             nonce_prefix: params.nonce_prefix,
-            plaintext: vec![0; params.plaintext_segment_size],
-            plaintext_pos: 0,
+            // Grown lazily toward `plaintext_segment_size`; see `initial_segment_buffer_size`.
+            plaintext: Vec::with_capacity(initial_segment_buffer_size(
+                params.plaintext_segment_size,
+            )),
+            plaintext_segment_size: params.plaintext_segment_size,
             closed: false,
         })
     }
@@ -147,16 +152,14 @@ impl io::Write for Writer {
         let mut pos = 0; // read position in input plaintext (`buf`)
         loop {
             // Move a chunk of the input plaintext into the internal buffer.
-            let mut pt_lim = self.plaintext.len();
+            let mut pt_lim = self.plaintext_segment_size;
             if self.encrypted_segment_cnt == 0 {
                 pt_lim -= self.first_ciphertext_segment_offset
             }
+            let copy_lim = std::cmp::min(pt_lim, self.plaintext.capacity());
 
-            let n = std::cmp::min(pt_lim - self.plaintext_pos, buf.len() - pos);
-            self.plaintext[self.plaintext_pos..self.plaintext_pos + n]
-                .copy_from_slice(&buf[pos..pos + n]);
-
-            self.plaintext_pos += n;
+            let n = std::cmp::min(copy_lim - self.plaintext.len(), buf.len() - pos);
+            self.plaintext.extend_from_slice(&buf[pos..pos + n]);
             pos += n;
             if pos == buf.len() {
                 // All of the input plaintext has been consumed, but some (less than a segment's
@@ -166,14 +169,29 @@ impl io::Write for Writer {
                 break;
             }
 
+            if self.plaintext.len() < pt_lim {
+                // The buffer is full but the segment is not complete: grow toward the full
+                // segment size, no less than the buffered data plus the data still pending in
+                // `buf`, so that a single large write skips the intermediate growth steps.
+                let needed = self.plaintext.len() + buf.len() - pos;
+                let grown = grown_segment_buffer_size(
+                    self.plaintext.capacity(),
+                    needed,
+                    self.plaintext_segment_size,
+                );
+                self.plaintext.reserve_exact(grown - self.plaintext.len());
+                continue;
+            }
+
             // At this point there is a full segment's worth of plaintext in
-            // `self.plaintext[..pt_lim]`, ready to encrypt and write out.
-            if self.plaintext_pos != pt_lim {
+            // `self.plaintext`, ready to encrypt and write out.
+            if self.plaintext.len() != pt_lim {
                 return Err(io::Error::new(
                     io::ErrorKind::Other,
                     format!(
                         "internal error: pos={} != pt_lim={}",
-                        self.plaintext_pos, pt_lim
+                        self.plaintext.len(),
+                        pt_lim
                     ),
                 ));
             }
@@ -186,12 +204,12 @@ impl io::Write for Writer {
 
             let ciphertext = self
                 .segment_encrypter
-                .encrypt_segment(&self.plaintext[..pt_lim], &nonce)
+                .encrypt_segment(&self.plaintext, &nonce)
                 .map_err(|e| io::Error::new(io::ErrorKind::InvalidInput, format!("{e:?}")))?;
             self.w.write_all(&ciphertext)?;
 
             // Ready to accumulate next segment.
-            self.plaintext_pos = 0;
+            self.plaintext.clear();
             self.encrypted_segment_cnt += 1;
         }
         Ok(pos)
@@ -219,12 +237,12 @@ impl EncryptingWrite for Writer {
         .map_err(|e| wrap_err("internal error", e))?;
         let ciphertext = self
             .segment_encrypter
-            .encrypt_segment(&self.plaintext[..self.plaintext_pos], &nonce)?;
+            .encrypt_segment(&self.plaintext, &nonce)?;
         self.w
             .write_all(&ciphertext)
             .map_err(|e| wrap_err("write failure", e))?;
 
-        self.plaintext_pos = 0;
+        self.plaintext.clear();
         self.encrypted_segment_cnt += 1;
         self.closed = true;
         Ok(())
@@ -259,9 +277,12 @@ pub struct Reader {
     /// indicates the part of it that has not yet been returns from a `read` operation.
     plaintext: Vec<u8>,
     plaintext_pos: usize,
-    /// `ciphertext` is a fixed-size buffer that holds encrypted data that has already been read
-    /// from `r`.
+    /// `ciphertext` holds encrypted data that has already been read from `r`. It starts small
+    /// and grows toward `ciphertext_buffer_limit` only as bytes actually arrive.
     ciphertext: Vec<u8>,
+    /// The full segment buffer size (ciphertext segment size plus one lookahead byte),
+    /// which bounds the growth of `ciphertext`.
+    ciphertext_buffer_limit: usize,
 
     ciphertext_pos: usize,
 }
@@ -322,55 +343,120 @@ impl Reader {
             nonce_prefix: params.nonce_prefix,
             plaintext: vec![],
             plaintext_pos: 0,
-            // Allocate an extra byte to detect the last segment.
-            ciphertext: vec![0; params.ciphertext_segment_size + 1],
+            // Grown lazily toward `ciphertext_buffer_limit`; see `initial_segment_buffer_size`.
+            ciphertext: vec![0; initial_segment_buffer_size(params.ciphertext_segment_size + 1)],
+            ciphertext_buffer_limit: params.ciphertext_segment_size + 1,
             // Offset of data in `ciphertext`. Only ever set to:
             //  - 0 (for first segment), or
             //  - 1 (for all subsequent segments).
             ciphertext_pos: 0,
         })
     }
-}
 
-/// Extension trait for [`std::io::Read`] to support `read_full()` method.
-trait ReadFullExt {
-    /// Read the exact number of bytes required to fill `buf`, if possible.
+    /// Read into `self.ciphertext[self.ciphertext_pos..ct_lim]`, growing `self.ciphertext`
+    /// toward the full segment buffer size as the stream proves to have more data than the
+    /// current buffer. `ct_lim` must not exceed `self.ciphertext_buffer_limit`.
     ///
-    /// This function reads as many bytes as necessary to completely fill the
-    /// specified buffer `buf`.
-    ///
-    /// If this function encounters an error of the kind
-    /// [`std::io::ErrorKind::Interrupted`] then the error is ignored and the
-    /// operation will continue.
-    ///
-    /// If this function encounters an "end of file" before completely filling
-    /// the buffer, it returns an `Ok(n)` value holding the number of bytes read
-    /// into `buf`.
-    ///
-    /// If any other read error is encountered then this function immediately
-    /// returns. The contents of `buf` are unspecified in this case.
-    ///
-    /// (This is similar to `Read::read_exact` except for partial read behaviour,
-    /// and also behaves like Go's `io::ReadFull`, as used in the upstream Go code.)
-    fn read_full(&mut self, buf: &mut [u8]) -> std::io::Result<usize>;
-}
-
-impl ReadFullExt for dyn std::io::Read {
-    fn read_full(&mut self, mut buf: &mut [u8]) -> std::io::Result<usize> {
-        let mut count = 0;
-        while !buf.is_empty() {
-            match self.read(buf) {
-                Ok(0) => break,
-                Ok(n) => {
-                    count += n;
-                    let tmp = buf;
-                    buf = &mut tmp[n..];
+    /// This behaves like Go's `io.ReadFull` (as used in the upstream Go code) into
+    /// `self.ciphertext[self.ciphertext_pos..ct_lim]`: it reads as many bytes as necessary to reach
+    /// `ct_lim`, ignores [`io::ErrorKind::Interrupted`], and on end-of-file returns `Ok(n)`
+    /// holding the number of bytes read so far. Any other error is returned immediately, in
+    /// which case the contents of the buffer are unspecified. It issues one `read` call per
+    /// buffer growth step more than a fully pre-sized read would, which only a reader sensitive
+    /// to request sizes or call counts can observe.
+    fn read_segment_growing(&mut self, ct_lim: usize) -> io::Result<usize> {
+        debug_assert!(ct_lim <= self.ciphertext_buffer_limit);
+        let start = self.ciphertext_pos;
+        let mut end = start;
+        while end < ct_lim {
+            if end == self.ciphertext.len() {
+                // The buffer is full but the segment is not complete. Before growing, probe for
+                // a single further byte so that a stream that ends exactly at the buffer size
+                // does not pay for a larger buffer it will never fill.
+                let mut probe = [0u8; 1];
+                match self.r.read(&mut probe) {
+                    Ok(0) => break,
+                    Ok(_) => {}
+                    Err(e) if e.kind() == io::ErrorKind::Interrupted => continue,
+                    Err(e) => return Err(e),
                 }
-                Err(e) if e.kind() == std::io::ErrorKind::Interrupted => {}
+                // Grow toward the full segment buffer size. Unlike the `Writer`, the `Reader`
+                // never knows how much data is still pending.
+                let grown = grown_segment_buffer_size(
+                    self.ciphertext.len(),
+                    0,
+                    self.ciphertext_buffer_limit,
+                );
+                // `reserve_exact` rather than `resize` alone: amortized growth could allocate
+                // up to twice the segment size.
+                self.ciphertext.reserve_exact(grown - self.ciphertext.len());
+                self.ciphertext.resize(grown, 0);
+                self.ciphertext[end] = probe[0];
+                end += 1;
+                continue;
+            }
+            let read_lim = std::cmp::min(self.ciphertext.len(), ct_lim);
+            match self.r.read(&mut self.ciphertext[end..read_lim]) {
+                Ok(0) => break,
+                Ok(n) => end += n,
+                Err(e) if e.kind() == io::ErrorKind::Interrupted => {}
                 Err(e) => return Err(e),
             }
         }
-        Ok(count)
+        Ok(end - start)
+    }
+}
+
+/// Initial allocation size for a segment buffer. Segment buffers start small and grow (see
+/// `grown_segment_buffer_size`) so that streams much smaller than the segment size do not pay
+/// for a segment-sized allocation.
+const INITIAL_SEGMENT_BUFFER_SIZE: usize = 4096;
+
+/// Return the initial allocation size for a segment buffer: `INITIAL_SEGMENT_BUFFER_SIZE`,
+/// unless the full segment buffer is not much larger (or is smaller), in which case the full
+/// size is allocated at once.
+fn initial_segment_buffer_size(limit: usize) -> usize {
+    if INITIAL_SEGMENT_BUFFER_SIZE >= jump_threshold(limit) {
+        limit
+    } else {
+        INITIAL_SEGMENT_BUFFER_SIZE
+    }
+}
+
+/// The size from which a growing segment buffer jumps straight to `limit`: three quarters of
+/// it. The jump avoids a nearly-full-sized step, such as one covering all but the `Reader`'s
+/// one-byte lookahead.
+fn jump_threshold(limit: usize) -> usize {
+    limit - limit / 4
+}
+
+/// Return the next size for a segment buffer of size `cur` that must grow toward `limit`:
+/// the next step of the sequence `INITIAL_SEGMENT_BUFFER_SIZE * GROWTH_FACTOR^k` above `cur`,
+/// but no smaller than `needed`, and `limit` itself once the chosen size would reach
+/// `jump_threshold(limit)`.
+///
+/// `needed` is the number of buffered and pending bytes already known to the caller, or zero
+/// when unknown, so that a caller holding more data than a growth step covers allocates for
+/// it in one step. Stepping along a fixed sequence rather than multiplying `cur` keeps the
+/// total allocated over a segment's growth independent of the sizes such callers ask for.
+fn grown_segment_buffer_size(cur: usize, needed: usize, limit: usize) -> usize {
+    const GROWTH_FACTOR: usize = 8;
+    let jump_threshold = jump_threshold(limit);
+    let mut stepped = INITIAL_SEGMENT_BUFFER_SIZE;
+    while stepped <= cur {
+        // The multiplication is only taken when its result is below `jump_threshold`, so it
+        // cannot overflow.
+        if stepped >= jump_threshold / GROWTH_FACTOR {
+            stepped = limit;
+            break;
+        }
+        stepped *= GROWTH_FACTOR;
+    }
+    let new_size = std::cmp::max(stepped, needed);
+    if new_size >= jump_threshold {
+        limit
+    } else {
+        new_size
     }
 }
 
@@ -389,14 +475,12 @@ impl io::Read for Reader {
         self.plaintext_pos = 0;
 
         // Read up to a segment's worth of ciphertext.
-        let mut ct_lim = self.ciphertext.len();
+        let mut ct_lim = self.ciphertext_buffer_limit;
         if self.decrypted_segment_cnt == 0 {
             // The first segment of ciphertext might be offset in the stream.
             ct_lim -= self.first_ciphertext_segment_offset;
         }
-        let n = self
-            .r
-            .read_full(&mut self.ciphertext[self.ciphertext_pos..ct_lim])?;
+        let n = self.read_segment_growing(ct_lim)?;
         if n == 0 {
             // No ciphertext available, so therefore no plaintext available for now.
             return Ok(0);
@@ -484,4 +568,69 @@ fn generate_segment_nonce(
         nonce[offset] = 1;
     }
     Ok(nonce)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{grown_segment_buffer_size, initial_segment_buffer_size};
+
+    #[test]
+    fn initial_size_is_capped_by_limit_and_skips_near_misses() {
+        assert_eq!(initial_segment_buffer_size(1), 1);
+        assert_eq!(initial_segment_buffer_size(4095), 4095);
+        assert_eq!(initial_segment_buffer_size(4096), 4096);
+        // A limit only slightly above the initial size (such as a 4 KiB ciphertext segment
+        // plus the lookahead byte) is allocated in full rather than grown by a single step.
+        assert_eq!(initial_segment_buffer_size(4097), 4097);
+        assert_eq!(initial_segment_buffer_size(5461), 5461);
+        assert_eq!(initial_segment_buffer_size(5462), 4096);
+        assert_eq!(initial_segment_buffer_size(1 << 20), 4096);
+    }
+
+    #[test]
+    fn growth_sequence_for_one_mib_segment() {
+        let limit = (1 << 20) + 1;
+        let mut sizes = vec![initial_segment_buffer_size(limit)];
+        while *sizes.last().unwrap() < limit {
+            let cur = *sizes.last().unwrap();
+            sizes.push(grown_segment_buffer_size(cur, 0, limit));
+        }
+        assert_eq!(sizes, vec![4096, 32768, 262144, limit]);
+    }
+
+    #[test]
+    fn growth_never_overshoots_and_always_progresses() {
+        for limit in 1..6000usize {
+            let mut cur = initial_segment_buffer_size(limit);
+            let mut steps = 0;
+            while cur < limit {
+                let next = grown_segment_buffer_size(cur, 0, limit);
+                assert!(next > cur, "limit={} cur={} next={}", limit, cur, next);
+                assert!(next <= limit, "limit={} cur={} next={}", limit, cur, next);
+                cur = next;
+                steps += 1;
+                assert!(steps <= 4, "limit={}: too many growth steps", limit);
+            }
+        }
+    }
+
+    #[test]
+    fn growth_honours_needed_and_jumps_near_limit() {
+        let limit = 1 << 20;
+        // A caller with more pending data than the next step covers is sized to that data.
+        assert_eq!(grown_segment_buffer_size(4096, 100_000, limit), 100_000);
+        // ... unless that would land within a quarter of the limit, in which case the buffer
+        // jumps straight to the limit.
+        assert_eq!(grown_segment_buffer_size(4096, 800_000, limit), limit);
+        // Growth from such an off-sequence size continues along the fixed sequence.
+        assert_eq!(grown_segment_buffer_size(100_000, 0, limit), 262_144);
+        assert_eq!(grown_segment_buffer_size(262_143, 0, limit), 262_144);
+        // A step that would land within a quarter of the limit jumps to the limit.
+        assert_eq!(grown_segment_buffer_size(262_144, 0, limit), limit);
+        assert_eq!(grown_segment_buffer_size(300_000, 0, limit), limit);
+        // The `Writer` passes the bytes pending in the current write as `needed`, which can
+        // exceed the limit; the result is clamped to the limit.
+        assert_eq!(grown_segment_buffer_size(4096, limit, limit), limit);
+        assert_eq!(grown_segment_buffer_size(4096, 10 * limit, limit), limit);
+    }
 }

@@ -327,3 +327,541 @@ fn test_decrypt(
     }
     Ok(())
 }
+
+/// Initial size of the lazily-allocated segment buffers in `noncebased`. The tests below probe
+/// plaintext and ciphertext sizes around this boundary; if the constant changes, they still
+/// pass but no longer pin the boundary itself.
+const INITIAL_BUFFER_SIZE: usize = 4096;
+
+/// A reader that returns at most one byte per `read` call.
+struct OneByteReader<R: Read>(R);
+
+impl<R: Read> Read for OneByteReader<R> {
+    fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
+        if buf.is_empty() {
+            return Ok(0);
+        }
+        self.0.read(&mut buf[..1])
+    }
+}
+
+/// A reader that fails every other `read` call with [`std::io::ErrorKind::Interrupted`].
+struct InterruptedReader<R: Read> {
+    inner: R,
+    interrupt_next: bool,
+}
+
+impl<R: Read> Read for InterruptedReader<R> {
+    fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
+        self.interrupt_next = !self.interrupt_next;
+        if self.interrupt_next {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::Interrupted,
+                "interrupted",
+            ));
+        }
+        self.inner.read(buf)
+    }
+}
+
+/// Exercise the lazily-grown ciphertext buffer in [`noncebased::Reader`] at ciphertext and
+/// segment sizes around the initial buffer size and its growth steps.
+#[test]
+fn test_read_with_small_initial_buffer() {
+    const NONCE_SIZE: usize = 10;
+    const NONCE_PREFIX_SIZE: usize = 5;
+    // With `TestEncrypter` a ciphertext segment is its plaintext segment plus `NONCE_SIZE`
+    // trailing bytes, so a single-segment ciphertext of size S corresponds to a plaintext of
+    // size S - NONCE_SIZE.
+    struct TestCase {
+        name: &'static str,
+        plaintext_size: usize,
+        plaintext_segment_size: usize,
+        first_ciphertext_segment_offset: usize,
+        chunk_size: usize,
+        one_byte_reads: bool,
+        interrupted_reads: bool,
+    }
+    let test_cases = vec![
+        TestCase {
+            name: "singleSegmentCiphertextJustBelowInitialBuffer",
+            plaintext_size: INITIAL_BUFFER_SIZE - NONCE_SIZE - 1, // ciphertext: 4095 bytes
+            plaintext_segment_size: 1 << 20,
+            first_ciphertext_segment_offset: 0,
+            chunk_size: 1000,
+            one_byte_reads: false,
+            interrupted_reads: false,
+        },
+        TestCase {
+            name: "singleSegmentCiphertextExactlyInitialBuffer",
+            plaintext_size: INITIAL_BUFFER_SIZE - NONCE_SIZE, // ciphertext: 4096 bytes
+            plaintext_segment_size: 1 << 20,
+            first_ciphertext_segment_offset: 0,
+            chunk_size: 1000,
+            one_byte_reads: false,
+            interrupted_reads: false,
+        },
+        TestCase {
+            name: "singleSegmentCiphertextJustAboveInitialBuffer",
+            plaintext_size: INITIAL_BUFFER_SIZE - NONCE_SIZE + 1, // ciphertext: 4097 bytes
+            plaintext_segment_size: 1 << 20,
+            first_ciphertext_segment_offset: 0,
+            chunk_size: 1000,
+            one_byte_reads: false,
+            interrupted_reads: false,
+        },
+        TestCase {
+            name: "singleSegmentCiphertextWellAboveInitialBuffer",
+            plaintext_size: 100_000,
+            plaintext_segment_size: 1 << 20,
+            first_ciphertext_segment_offset: 0,
+            chunk_size: 1000,
+            one_byte_reads: false,
+            interrupted_reads: false,
+        },
+        // A ciphertext that ends exactly at a grown buffer size.
+        TestCase {
+            name: "singleSegmentCiphertextExactlySecondBufferSize",
+            plaintext_size: 32768 - NONCE_SIZE,
+            plaintext_segment_size: 1 << 20,
+            first_ciphertext_segment_offset: 0,
+            chunk_size: 1000,
+            one_byte_reads: false,
+            interrupted_reads: false,
+        },
+        TestCase {
+            name: "emptyPlaintextLargeSegmentSize",
+            plaintext_size: 0,
+            plaintext_segment_size: 1 << 20,
+            first_ciphertext_segment_offset: 0,
+            chunk_size: 1000,
+            one_byte_reads: false,
+            interrupted_reads: false,
+        },
+        // Ciphertext segments of exactly INITIAL_BUFFER_SIZE - 1: the buffer limit equals the
+        // initial size, so the buffer never grows and every non-final segment fills it
+        // completely.
+        TestCase {
+            name: "multiSegmentCiphertextSegmentJustBelowInitialBuffer",
+            plaintext_size: 3 * (INITIAL_BUFFER_SIZE - NONCE_SIZE - 1) + 100,
+            plaintext_segment_size: INITIAL_BUFFER_SIZE - NONCE_SIZE - 1,
+            first_ciphertext_segment_offset: 0,
+            chunk_size: 1000,
+            one_byte_reads: false,
+            interrupted_reads: false,
+        },
+        // Ciphertext segments of exactly INITIAL_BUFFER_SIZE: the buffer limit is
+        // INITIAL_BUFFER_SIZE + 1, so the very first segment grows the buffer by a single byte.
+        TestCase {
+            name: "multiSegmentCiphertextSegmentExactlyInitialBuffer",
+            plaintext_size: 3 * (INITIAL_BUFFER_SIZE - NONCE_SIZE) + 100,
+            plaintext_segment_size: INITIAL_BUFFER_SIZE - NONCE_SIZE,
+            first_ciphertext_segment_offset: 0,
+            chunk_size: 1000,
+            one_byte_reads: false,
+            interrupted_reads: false,
+        },
+        TestCase {
+            name: "multiSegmentCiphertextSegmentJustAboveInitialBuffer",
+            plaintext_size: 3 * (INITIAL_BUFFER_SIZE - NONCE_SIZE + 1) + 100,
+            plaintext_segment_size: INITIAL_BUFFER_SIZE - NONCE_SIZE + 1,
+            first_ciphertext_segment_offset: 0,
+            chunk_size: 1000,
+            one_byte_reads: false,
+            interrupted_reads: false,
+        },
+        // A segment large enough that the buffer walks the whole growth sequence, ending with
+        // the jump to the full buffer size, and then completes segments in the fully-grown
+        // buffer.
+        TestCase {
+            name: "multiSegmentRequiringMultipleGrowthSteps",
+            plaintext_size: (1 << 20) + 100,
+            plaintext_segment_size: 1 << 20,
+            first_ciphertext_segment_offset: 0,
+            chunk_size: 1000,
+            one_byte_reads: false,
+            interrupted_reads: false,
+        },
+        // A plaintext that ends exactly at a segment boundary, so the last ciphertext segment
+        // is a full-sized segment.
+        TestCase {
+            name: "multiSegmentPlaintextAlignedWithSegmentSize",
+            plaintext_size: 2 * (INITIAL_BUFFER_SIZE - NONCE_SIZE),
+            plaintext_segment_size: INITIAL_BUFFER_SIZE - NONCE_SIZE,
+            first_ciphertext_segment_offset: 0,
+            chunk_size: 1000,
+            one_byte_reads: false,
+            interrupted_reads: false,
+        },
+        TestCase {
+            name: "firstSegmentOffsetWithCiphertextAtInitialBuffer",
+            plaintext_size: INITIAL_BUFFER_SIZE - NONCE_SIZE,
+            plaintext_segment_size: 1 << 20,
+            first_ciphertext_segment_offset: 10,
+            chunk_size: 1000,
+            one_byte_reads: false,
+            interrupted_reads: false,
+        },
+        TestCase {
+            name: "firstSegmentOffsetWithMultipleSegmentsAtInitialBuffer",
+            plaintext_size: 3 * (INITIAL_BUFFER_SIZE - NONCE_SIZE) + 100,
+            plaintext_segment_size: INITIAL_BUFFER_SIZE - NONCE_SIZE,
+            first_ciphertext_segment_offset: 10,
+            chunk_size: 1000,
+            one_byte_reads: false,
+            interrupted_reads: false,
+        },
+        TestCase {
+            name: "oneByteReadsAcrossGrowBoundary",
+            plaintext_size: INITIAL_BUFFER_SIZE - NONCE_SIZE + 1,
+            plaintext_segment_size: 1 << 20,
+            first_ciphertext_segment_offset: 0,
+            chunk_size: 1000,
+            one_byte_reads: true,
+            interrupted_reads: false,
+        },
+        TestCase {
+            name: "oneByteReadsMultiSegment",
+            plaintext_size: 3 * (INITIAL_BUFFER_SIZE - NONCE_SIZE) + 100,
+            plaintext_segment_size: INITIAL_BUFFER_SIZE - NONCE_SIZE,
+            first_ciphertext_segment_offset: 0,
+            chunk_size: 7,
+            one_byte_reads: true,
+            interrupted_reads: false,
+        },
+        TestCase {
+            name: "interruptedReadsAcrossGrowBoundary",
+            plaintext_size: INITIAL_BUFFER_SIZE - NONCE_SIZE + 1,
+            plaintext_segment_size: 1 << 20,
+            first_ciphertext_segment_offset: 0,
+            chunk_size: 1000,
+            one_byte_reads: true,
+            interrupted_reads: true,
+        },
+        TestCase {
+            name: "interruptedReadsMultiSegment",
+            plaintext_size: 3 * (INITIAL_BUFFER_SIZE - NONCE_SIZE) + 100,
+            plaintext_segment_size: INITIAL_BUFFER_SIZE - NONCE_SIZE,
+            first_ciphertext_segment_offset: 0,
+            chunk_size: 1000,
+            one_byte_reads: false,
+            interrupted_reads: true,
+        },
+    ];
+    for tc in test_cases {
+        let test_params = TestParams {
+            nonce_size: NONCE_SIZE,
+            plaintext_segment_size: tc.plaintext_segment_size,
+            first_ciphertext_segment_offset: tc.first_ciphertext_segment_offset,
+        };
+        let result = test_encrypt(tc.plaintext_size, NONCE_PREFIX_SIZE, &test_params)
+            .unwrap_or_else(|e| panic!("{}: encrypting failed: {}", tc.name, e));
+
+        let mut r: Box<dyn Read> = Box::new(std::io::Cursor::new(result.ciphertext));
+        if tc.one_byte_reads {
+            r = Box::new(OneByteReader(r));
+        }
+        if tc.interrupted_reads {
+            r = Box::new(InterruptedReader {
+                inner: r,
+                interrupt_next: false,
+            });
+        }
+        let mut reader = noncebased::Reader::new(noncebased::ReaderParams {
+            r,
+            segment_decrypter: Box::new(TestDecrypter {}),
+            nonce_size: NONCE_SIZE,
+            nonce_prefix: result.nonce_prefix,
+            ciphertext_segment_size: tc.plaintext_segment_size + NONCE_SIZE,
+            first_ciphertext_segment_offset: tc.first_ciphertext_segment_offset,
+        })
+        .unwrap_or_else(|e| panic!("{}: Reader::new failed: {}", tc.name, e));
+
+        let mut decrypted = Vec::new();
+        let mut chunk = vec![0; tc.chunk_size];
+        loop {
+            let n = reader
+                .read(&mut chunk)
+                .unwrap_or_else(|e| panic!("{}: read failed: {}", tc.name, e));
+            if n == 0 {
+                break;
+            }
+            decrypted.extend_from_slice(&chunk[..n]);
+        }
+        assert_eq!(
+            decrypted, result.plaintext,
+            "{}: decrypted data does not match plaintext",
+            tc.name
+        );
+    }
+}
+
+/// Truncated ciphertexts at boundaries around the initial buffer size must fail regardless of
+/// where the truncation falls relative to a buffer growth step.
+#[test]
+fn test_read_truncated_ciphertext() {
+    const NONCE_SIZE: usize = 10;
+    const NONCE_PREFIX_SIZE: usize = 5;
+    let plaintext_segment_size = INITIAL_BUFFER_SIZE - NONCE_SIZE;
+    let test_params = TestParams {
+        nonce_size: NONCE_SIZE,
+        plaintext_segment_size,
+        first_ciphertext_segment_offset: 0,
+    };
+    let result = test_encrypt(
+        3 * plaintext_segment_size + 100,
+        NONCE_PREFIX_SIZE,
+        &test_params,
+    )
+    .unwrap_or_else(|e| panic!("encrypting failed: {}", e));
+
+    struct TestCase {
+        truncate: usize,
+        want_err: bool,
+    }
+    let test_cases = vec![
+        TestCase {
+            truncate: 1,
+            want_err: true,
+        },
+        TestCase {
+            truncate: 4095,
+            want_err: true,
+        },
+        TestCase {
+            truncate: 4096,
+            want_err: true,
+        },
+        TestCase {
+            truncate: result.ciphertext.len() - 1,
+            want_err: true,
+        },
+    ];
+    for tc in test_cases {
+        let mut reader = noncebased::Reader::new(noncebased::ReaderParams {
+            r: Box::new(std::io::Cursor::new(
+                result.ciphertext[..tc.truncate].to_vec(),
+            )),
+            segment_decrypter: Box::new(TestDecrypter {}),
+            nonce_size: NONCE_SIZE,
+            nonce_prefix: result.nonce_prefix.clone(),
+            ciphertext_segment_size: plaintext_segment_size + NONCE_SIZE,
+            first_ciphertext_segment_offset: 0,
+        })
+        .unwrap_or_else(|e| panic!("truncatedAt{}: Reader::new failed: {}", tc.truncate, e));
+        let mut decrypted = Vec::new();
+        let got_err = reader.read_to_end(&mut decrypted).is_err();
+        assert_eq!(
+            got_err, tc.want_err,
+            "truncatedAt{}: read_to_end error mismatch",
+            tc.truncate
+        );
+    }
+}
+
+/// Exercise the lazily-grown plaintext buffer in [`noncebased::Writer`] at plaintext and
+/// segment sizes around the initial buffer size and its growth steps. Each case also checks
+/// that chunked writes produce ciphertext byte-identical to a single write of the whole
+/// plaintext.
+#[test]
+fn test_write_with_small_initial_buffer() {
+    const NONCE_SIZE: usize = 10;
+    const NONCE_PREFIX_SIZE: usize = 5;
+    struct TestCase {
+        name: &'static str,
+        plaintext_size: usize,
+        plaintext_segment_size: usize,
+        first_ciphertext_segment_offset: usize,
+        write_chunk_size: usize,
+    }
+    let test_cases = vec![
+        TestCase {
+            name: "singleSegmentPlaintextJustBelowInitialBuffer",
+            plaintext_size: INITIAL_BUFFER_SIZE - 1,
+            plaintext_segment_size: 1 << 20,
+            first_ciphertext_segment_offset: 0,
+            write_chunk_size: 1000,
+        },
+        TestCase {
+            name: "singleSegmentPlaintextExactlyInitialBuffer",
+            plaintext_size: INITIAL_BUFFER_SIZE,
+            plaintext_segment_size: 1 << 20,
+            first_ciphertext_segment_offset: 0,
+            write_chunk_size: 1000,
+        },
+        TestCase {
+            name: "singleSegmentPlaintextJustAboveInitialBuffer",
+            plaintext_size: INITIAL_BUFFER_SIZE + 1,
+            plaintext_segment_size: 1 << 20,
+            first_ciphertext_segment_offset: 0,
+            write_chunk_size: 1000,
+        },
+        TestCase {
+            name: "singleSegmentPlaintextWellAboveInitialBuffer",
+            plaintext_size: 100_000,
+            plaintext_segment_size: 1 << 20,
+            first_ciphertext_segment_offset: 0,
+            write_chunk_size: 1000,
+        },
+        TestCase {
+            name: "emptyPlaintextLargeSegmentSize",
+            plaintext_size: 0,
+            plaintext_segment_size: 1 << 20,
+            first_ciphertext_segment_offset: 0,
+            write_chunk_size: 1000,
+        },
+        // Plaintext segments of exactly INITIAL_BUFFER_SIZE - 1: the buffer never grows and
+        // every non-final segment fills it completely.
+        TestCase {
+            name: "multiSegmentSegmentJustBelowInitialBuffer",
+            plaintext_size: 3 * (INITIAL_BUFFER_SIZE - 1) + 100,
+            plaintext_segment_size: INITIAL_BUFFER_SIZE - 1,
+            first_ciphertext_segment_offset: 0,
+            write_chunk_size: 1000,
+        },
+        TestCase {
+            name: "multiSegmentSegmentExactlyInitialBuffer",
+            plaintext_size: 3 * INITIAL_BUFFER_SIZE + 100,
+            plaintext_segment_size: INITIAL_BUFFER_SIZE,
+            first_ciphertext_segment_offset: 0,
+            write_chunk_size: 1000,
+        },
+        // Plaintext segments of INITIAL_BUFFER_SIZE + 1: the very first segment grows the
+        // buffer by a single byte.
+        TestCase {
+            name: "multiSegmentSegmentJustAboveInitialBuffer",
+            plaintext_size: 3 * (INITIAL_BUFFER_SIZE + 1) + 100,
+            plaintext_segment_size: INITIAL_BUFFER_SIZE + 1,
+            first_ciphertext_segment_offset: 0,
+            write_chunk_size: 1000,
+        },
+        // A segment large enough that the buffer walks the whole growth sequence, ending with
+        // the jump to the full segment size, and then completes segments in the fully-grown
+        // buffer.
+        TestCase {
+            name: "multiSegmentRequiringMultipleGrowthSteps",
+            plaintext_size: (1 << 20) + 100,
+            plaintext_segment_size: 1 << 20,
+            first_ciphertext_segment_offset: 0,
+            write_chunk_size: 1000,
+        },
+        // A first write large enough that the buffer is sized to the pending data exactly,
+        // followed by writes that grow it from that intermediate size and complete segments.
+        TestCase {
+            name: "largeFirstWriteThenGrowthFromOddSize",
+            plaintext_size: (1 << 20) + 100,
+            plaintext_segment_size: 1 << 20,
+            first_ciphertext_segment_offset: 0,
+            write_chunk_size: 500_000,
+        },
+        TestCase {
+            name: "mediumWritesGrowingFromOddSizes",
+            plaintext_size: (1 << 20) + 100,
+            plaintext_segment_size: 1 << 20,
+            first_ciphertext_segment_offset: 0,
+            write_chunk_size: 65536,
+        },
+        // A plaintext that ends exactly at a segment boundary: `write` defers the
+        // exactly-filled segment, and `close` emits it as the last segment.
+        TestCase {
+            name: "multiSegmentPlaintextAlignedWithSegmentSize",
+            plaintext_size: 2 * INITIAL_BUFFER_SIZE,
+            plaintext_segment_size: INITIAL_BUFFER_SIZE,
+            first_ciphertext_segment_offset: 0,
+            write_chunk_size: 1000,
+        },
+        // A single write that fills the initial buffer exactly without completing a segment,
+        // followed directly by `close`.
+        TestCase {
+            name: "singleWriteFillingInitialBufferThenClose",
+            plaintext_size: INITIAL_BUFFER_SIZE,
+            plaintext_segment_size: 1 << 20,
+            first_ciphertext_segment_offset: 0,
+            write_chunk_size: INITIAL_BUFFER_SIZE,
+        },
+        TestCase {
+            name: "firstSegmentOffsetWithPlaintextAtInitialBuffer",
+            plaintext_size: INITIAL_BUFFER_SIZE,
+            plaintext_segment_size: 1 << 20,
+            first_ciphertext_segment_offset: 10,
+            write_chunk_size: 1000,
+        },
+        TestCase {
+            name: "firstSegmentOffsetWithMultipleSegmentsAtInitialBuffer",
+            plaintext_size: 3 * INITIAL_BUFFER_SIZE + 100,
+            plaintext_segment_size: INITIAL_BUFFER_SIZE,
+            first_ciphertext_segment_offset: 10,
+            write_chunk_size: 1000,
+        },
+        TestCase {
+            name: "oneByteWritesAcrossGrowBoundary",
+            plaintext_size: INITIAL_BUFFER_SIZE + 1,
+            plaintext_segment_size: 1 << 20,
+            first_ciphertext_segment_offset: 0,
+            write_chunk_size: 1,
+        },
+        TestCase {
+            name: "oneByteWritesMultiSegment",
+            plaintext_size: 2 * INITIAL_BUFFER_SIZE + 50,
+            plaintext_segment_size: INITIAL_BUFFER_SIZE,
+            first_ciphertext_segment_offset: 0,
+            write_chunk_size: 1,
+        },
+    ];
+
+    let encrypt_chunked = |plaintext: &[u8],
+                           nonce_prefix: &[u8],
+                           segment_size: usize,
+                           offset: usize,
+                           chunk_size: usize|
+     -> Vec<u8> {
+        let dst = SharedBuf::new();
+        let mut w = noncebased::Writer::new(noncebased::WriterParams {
+            w: Box::new(dst.clone()),
+            segment_encrypter: Box::new(TestEncrypter {}),
+            nonce_size: NONCE_SIZE,
+            nonce_prefix: nonce_prefix.to_vec(),
+            plaintext_segment_size: segment_size,
+            first_ciphertext_segment_offset: offset,
+        })
+        .expect("Writer::new failed");
+        for chunk in plaintext.chunks(chunk_size) {
+            w.write_all(chunk).expect("write failed");
+        }
+        w.close().expect("close failed");
+        dst.contents()
+    };
+
+    for tc in test_cases {
+        let plaintext = get_random_bytes(tc.plaintext_size);
+        let nonce_prefix = get_random_bytes(NONCE_PREFIX_SIZE);
+
+        let ciphertext = encrypt_chunked(
+            &plaintext,
+            &nonce_prefix,
+            tc.plaintext_segment_size,
+            tc.first_ciphertext_segment_offset,
+            tc.write_chunk_size,
+        );
+        let single_write = encrypt_chunked(
+            &plaintext,
+            &nonce_prefix,
+            tc.plaintext_segment_size,
+            tc.first_ciphertext_segment_offset,
+            tc.plaintext_size + 1,
+        );
+        assert_eq!(
+            ciphertext, single_write,
+            "{}: chunked writes produced different ciphertext from a single write",
+            tc.name
+        );
+
+        let test_params = TestParams {
+            nonce_size: NONCE_SIZE,
+            plaintext_segment_size: tc.plaintext_segment_size,
+            first_ciphertext_segment_offset: tc.first_ciphertext_segment_offset,
+        };
+        test_decrypt(&plaintext, &ciphertext, 1000, &test_params, &nonce_prefix)
+            .unwrap_or_else(|e| panic!("{}: decrypting failed: {}", tc.name, e));
+    }
+}
