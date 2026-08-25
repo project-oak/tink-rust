@@ -17,7 +17,7 @@
 //! AES-GCM-SIV based implementation of the [`tink_core::Aead`] trait.
 
 use aes_gcm_siv::{
-    aead::{consts::U12, generic_array::GenericArray, Aead, Payload},
+    aead::{consts::U12, generic_array::GenericArray, Aead, AeadInPlace, Payload},
     KeyInit,
 };
 use tink_core::{utils::wrap_err, TinkError};
@@ -71,15 +71,20 @@ impl tink_core::Aead for AesGcmSiv {
             return Err("AesGcmSiv: additional-data too long".into());
         }
         let iv = new_iv();
-        let payload = Payload { msg: pt, aad };
-        let ct = match &self.key {
-            AesGcmSivVariant::Aes128(key) => key.encrypt(&iv, payload),
-            AesGcmSivVariant::Aes256(key) => key.encrypt(&iv, payload),
+        // Build the output buffer directly as `iv || pt`, then encrypt the plaintext
+        // portion in place (detached tag) and append the tag. This avoids the extra
+        // allocation and copy that would otherwise be needed to splice a separately
+        // allocated ciphertext buffer onto the IV.
+        let mut ret = Vec::with_capacity(iv.len() + pt.len() + AES_GCM_SIV_TAG_SIZE);
+        ret.extend_from_slice(&iv);
+        ret.extend_from_slice(pt);
+        let ct_buf = &mut ret[iv.len()..];
+        let tag = match &self.key {
+            AesGcmSivVariant::Aes128(key) => key.encrypt_in_place_detached(&iv, aad, ct_buf),
+            AesGcmSivVariant::Aes256(key) => key.encrypt_in_place_detached(&iv, aad, ct_buf),
         }
         .map_err(|e| wrap_err("AesGcmSiv", e))?;
-        let mut ret = Vec::with_capacity(iv.len() + ct.len());
-        ret.extend_from_slice(&iv);
-        ret.extend_from_slice(&ct);
+        ret.extend_from_slice(&tag);
         Ok(ret)
     }
 
